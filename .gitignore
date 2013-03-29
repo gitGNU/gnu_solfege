@@ -1,6 +1,7 @@
 *.pyc
 *.swp
 /ChangeLog
+/Makefile
 /config.h
 /config.log
 /config.status
