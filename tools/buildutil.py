@@ -23,6 +23,7 @@ import pprint
 import re
 sys.path.append(".")
 
+
 def create_languages_py():
     f = file("solfege/languages.py", "w")
 
@@ -37,6 +38,7 @@ def create_languages_py():
     print >> f, "]"
     f.close()
 
+
 def create_manpage():
     sys.argv = ['solfege']
     import solfege.i18n
@@ -48,8 +50,10 @@ def create_manpage():
     del v[0]
     del v[0]
     options = "\n".join(v)
-    # This option is so long that it messes with the columns, and it confuses txt2man.
-    options = re.sub('--disable-exception-handler\s*', '--disable-exception-handler  ', options)
+    # This option is so long that it messes with the columns,
+    # and it confuses txt2man.
+    options = re.sub('--disable-exception-handler\s*',
+                     '--disable-exception-handler  ', options)
     s = open("solfege.1.txt", "r").read()
     s = s.replace('XXOPTIONS', options)
     print >> sys.stdout, s
@@ -57,12 +61,11 @@ def create_manpage():
 
 def get_last_git_sha():
     p = subprocess.Popen("git log -n 1".split(),
-                    stdout=subprocess.PIPE,
-                    cwd='/home/tom',
-                    stderr=subprocess.STDOUT)
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
     while 1:
         p.poll()
-        if p.returncode != None:
+        if p.returncode is not None:
             break
         while True:
             s = p.stdout.readline()
