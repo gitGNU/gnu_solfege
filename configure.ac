@@ -17,7 +17,7 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT([GNU Solfege],[3.21.0],[bug-solfege@gnu.org])
+AC_INIT([GNU Solfege],[3.23.0],[bug-solfege@gnu.org])
 AC_CONFIG_HEADER(config.h)
 
 PACKAGE=solfege
@@ -27,7 +27,7 @@ AC_SUBST(PACKAGE)
 # soon we create a new branch. This because the version numbers are used
 # when uploading the user manual to docs.solfege.org
 MAJOR_VERSION=3
-MINOR_VERSION=21
+MINOR_VERSION=23
 # ALWAYS set PATCH_LEVEL to bzr-checkout for non-releases.
 # Never commit an actual patch level to the bzr repo.
 PATCH_LEVEL=git-checkout
