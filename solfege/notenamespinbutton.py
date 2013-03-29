@@ -16,8 +16,7 @@
 
 from __future__ import absolute_import
 
-from gi.repository import GObject
-from gi.repository import Gtk
+from gi.repository import GObject, Gdk, Gtk
 
 from solfege import cfg
 from solfege import mpd
@@ -25,41 +24,26 @@ from solfege import mpd
 DELAY1 = 500
 DELAY2 = 50
 
-class NotenameSpinButton(Gtk.HBox):
+class NotenameSpinButton(Gtk.Box):
     def __init__(self, default_value):
-        Gtk.HBox.__init__(self)
+        Gtk.Box.__init__(self)
         self.m_value = mpd.notename_to_int(default_value)
-        self.g_label = Gtk.Label(label=mpd.int_to_user_octave_notename(self.m_value))
-        self.g_label.set_use_markup(1)
-        frame = Gtk.Frame()
-        e = Gtk.EventBox()
-        frame.add(e)
-        self.pack_start(frame, False, False, 0)
-        self.g_label.set_size_request(60, -1)#FIXME hardcoded value
-        frame.set_shadow_type(Gtk.ShadowType.IN)
-        e.add(self.g_label)
-        vbox = Gtk.VBox()
-        self.pack_start(vbox, False, False, 0)
+        self.g_entry = Gtk.Entry()
+        self.g_entry.set_editable(False)
+        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
+        self.pack_start(self.g_entry, False, False, 0)
         # up
-        self.g_up = Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.OUT)
-        eb1 = Gtk.EventBox()
+        eb1 = Gtk.Button()
+        eb1.add(Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.OUT))
         eb1.connect('button-press-event', self.on_up_press)
         eb1.connect('button-release-event', self.on_up_release)
-        frame = Gtk.Frame()
-        frame.set_shadow_type(Gtk.ShadowType.OUT)
-        frame.add(self.g_up)
-        eb1.add(frame)
-        vbox.pack_start(eb1, True, True, 0)
+        self.pack_start(eb1, True, True, 0)
         # down
-        self.g_down = Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.ETCHED_IN)
-        eb2 = Gtk.EventBox()
+        eb2 = Gtk.Button()
+        eb2.add(Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.IN))
         eb2.connect('button-press-event', self.on_down_press)
         eb2.connect('button-release-event', self.on_down_release)
-        frame = Gtk.Frame()
-        frame.set_shadow_type(Gtk.ShadowType.OUT)
-        frame.add(self.g_down)
-        eb2.add(frame)
-        vbox.pack_start(eb2, True, True, 0)
+        self.pack_start(eb2, True, True, 0)
         self.m_timeout = None
     def on_up_press(self, eb, ev):
         if self.m_timeout:
@@ -80,8 +64,7 @@ class NotenameSpinButton(Gtk.HBox):
             self.m_timeout = GObject.timeout_add(DELAY2, self.on_up_timeout)
     def up(self):
         self.m_value += 1
-        self.g_label.set_text(mpd.int_to_user_octave_notename(self.m_value))
-        self.g_label.set_use_markup(1)
+        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
         self.emit('value-changed', self.m_value)
     def on_down_press(self, eb, ev):
         if self.m_timeout:
@@ -102,15 +85,13 @@ class NotenameSpinButton(Gtk.HBox):
             self.m_timeout = GObject.timeout_add(DELAY2, self.on_down_timeout)
     def down(self):
         self.m_value -= 1
-        self.g_label.set_text(mpd.int_to_user_octave_notename(self.m_value))
-        self.g_label.set_use_markup(1)
+        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
         self.emit('value-changed', self.m_value)
     def get_value(self):
         return self.m_value
     def set_value(self, val):
         self.m_value = val
-        self.g_label.set_text(mpd.int_to_user_octave_notename(val))
-        self.g_label.set_use_markup(1)
+        self.g_entry.set_text(mpd.int_to_user_octave_notename(val))
 
 GObject.signal_new('value-changed', NotenameSpinButton,
                    GObject.SignalFlags.RUN_FIRST,
