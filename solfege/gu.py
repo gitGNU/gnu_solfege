@@ -378,16 +378,16 @@ class hig(object):
     SPACE_MEDIUM = 12
     SPACE_LARGE = 18
 
+
 class hig_dlg_vbox(Gtk.VBox):
     """a GtkVBox containing as many rows as you wish to have categories
     inside the control area of the GtkDialog.
     """
-    spacing = 12
-    border_width = 18
     def __init__(self):
         Gtk.VBox.__init__(self)
-        self.set_spacing(self.spacing)
-        self.set_border_width(self.border_width)
+        self.set_spacing(hig.SPACE_MEDIUM)
+        self.set_border_width(hig.SPACE_LARGE)
+
 
 def hig_category_vbox(title, spacing=6):
     """
@@ -400,12 +400,12 @@ def hig_category_vbox(title, spacing=6):
     box2    The box you should pack your stuff in.
     """
     vbox = Gtk.VBox(False, 0)
-    vbox.set_spacing(6)
+    vbox.set_spacing(hig.SPACE_SMALL)
     label = Gtk.Label(label='<span weight="bold">%s</span>' % title)
     label.set_use_markup(True)
     label.set_alignment(0.0, 0.0)
     vbox.pack_start(label, False, False, 0)
-    hbox = Gtk.HBox(False, 0)
+    hbox = Gtk.Box(False, 0)
     vbox.pack_start(hbox, False, False, 0)
     fill = Gtk.Label(label="    ")
     hbox.pack_start(fill, False, False, 0)
@@ -415,14 +415,15 @@ def hig_category_vbox(title, spacing=6):
     vbox.show_all()
     return vbox, category_content_vbox
 
+
 def hig_label_widget(txt, widget, sizegroup, expand=False, fill=False):
     """
     Return a box containing a label and a widget, aligned nice
-    as the HIG say we should. widget could also be a list or tuple of
+    as the HIG say we should. widget can also be a list or tuple of
     widgets.
     """
-    hbox = Gtk.HBox(False, 0)
-    hbox.set_spacing(6)
+    hbox = Gtk.Box()
+    hbox.set_spacing(hig.SPACE_SMALL)
     label = Gtk.Label(label=txt)
     label.set_alignment(0.0, 0.5)
     if sizegroup:
@@ -435,6 +436,7 @@ def hig_label_widget(txt, widget, sizegroup, expand=False, fill=False):
     label.set_use_underline(True)
     label.set_mnemonic_widget(widget[0])
     return hbox
+
 
 class SpinButtonRangeController(object):
     def __init__(self, spin_low, spin_high, lowest_value, highest_value):
