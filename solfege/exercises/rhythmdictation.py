@@ -59,8 +59,8 @@ class Teacher(abstract.Teacher):
         if 'rhythm' in self.m_P.get_question():
             music_obj = self.m_P.get_question()['rhythm']
             if not isinstance(music_obj, lessonfile.MpdParsable):
-                raise lessonfile.LessonfileException(_("The music object named «rhythm» is not a subclass of MpdParsable"),
-                _('Read about the «rhythm» variable in the section «Question block» in the chapter named «Extending GNU Solfege» in the user manual.'))
+                raise lessonfile.LessonfileException(_(u"The music object named «rhythm» is not a subclass of MpdParsable"),
+                _(u'Read about the «rhythm» variable in the section «Question block» in the chapter named «Extending GNU Solfege» in the user manual.'))
             music = music_obj.get_mpd_music_string(self.m_P)
         else:
             music_obj = self.m_P.get_question()['music']

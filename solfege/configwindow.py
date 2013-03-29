@@ -791,7 +791,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                 self.g_synth.set_active(soundcard.synth.m_devnum + 1)
     def delete_statistics(self, *w):
         if gu.dialog_delete(_("Delete statistics and test results?"), self,
-                _("This will delete and recreate the file «%s».") % solfege.db.get_statistics_filename()):
+                _(u"This will delete and recreate the file «%s».") % solfege.db.get_statistics_filename()):
             restart = False
             # We need to test for this, because get_view() can also return the front page
             if isinstance(solfege.win.get_view(), abstract.Gui):
@@ -805,7 +805,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         self.update_statistics_info()
     def delete_obsolete_statistics(self, *w):
         if gu.dialog_delete(_("Delete obsolete statistics?"), self,
-                _("This will delete the directory «%s».") % os.path.join(filesystem.app_data(), u"statistics")):
+                _(u"This will delete the directory «%s».") % os.path.join(filesystem.app_data(), u"statistics")):
             try:
                 shutil.rmtree(os.path.join(filesystem.app_data(), u"statistics"))
             except OSError, e:

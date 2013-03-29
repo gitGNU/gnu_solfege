@@ -170,9 +170,9 @@ class TestParser(TmpFileBase):
               a = "en " + "to"
               i = 3 + 5
               tr1 = _("major")
-              tr2 = _("«%s» was not found")
-              tr3 = _("«%s» was not found") % "x"
-              tr4 = _("«%s» was not found") % 4
+              tr2 = _(u"«%s» was not found")
+              tr3 = _(u"«%s» was not found") % "x"
+              tr4 = _(u"«%s» was not found") % 4
               title = _("Is the interval flat, in tune or sharp? %s cent wrong") % 10
               """)
         self.assertEquals(p.m_globals['a'], "en to")
@@ -367,15 +367,15 @@ class TestMusic(MObjTest):
         self.do_file("""
         header { random_transpose = no }
         question { music = music("\staff{c''}\staff{e'}\staff{c}") }
-        question { 
+        question {
             instrument = 33, 34, 35, 36, 37, 38
             music = music("\staff{c''}\staff{e'}\staff{c}")
         }
-        question { 
+        question {
             instrument = 33, 34, 35, 36, 37, 38
             music = music("\staff{c''}\staff{b'}")
         }
-        question { 
+        question {
             instrument = 33, 34, 35, 36, 37, 38
             music = music("\staff{c''}")
         }
@@ -554,7 +554,7 @@ class TestVoice(MObjTest):
         except mpd.MpdException, e:
             self._m(1).complete_to_musicdata_coords(self.p, e)
             ec = self._m(1).get_err_context(e, self.p)
-            self.assertEquals(ec, 
+            self.assertEquals(ec,
               "Bad input to the music object of type voice made\n"
               "the parser fail to parse the following generated\n"
               "music code:\n"

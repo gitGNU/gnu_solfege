@@ -250,7 +250,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
                     lesson['delay']))
             else:
                 self.g_liststore.append((filename,
-                    _("«%s» not found") % filename,
+                    _(u"«%s» not found") % filename,
                     lesson['count'],
                     lesson['repeat'],
                     lesson['delay']))

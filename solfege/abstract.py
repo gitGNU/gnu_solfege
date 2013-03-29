@@ -197,7 +197,7 @@ class MelodicIntervalTeacher(Teacher):
                             interval_list,
                             lock_tonic, lock_scaletype)
                     if not i:
-                        raise self.ConfigureException(_("Failed to select random interval number %i because of the configuration of the exercise. Either you have enabled intervals only if one direction, or none of the intervals belong to the key selected when you enabled «Lock to key».") % x)
+                        raise self.ConfigureException(_(u"Failed to select random interval number %i because of the configuration of the exercise. Either you have enabled intervals only if one direction, or none of the intervals belong to the key selected when you enabled «Lock to key».") % x)
                 else:
                     i = utils.random_interval(t, L, H,
                             self.get_list('ask_for_intervals_%i' % x))

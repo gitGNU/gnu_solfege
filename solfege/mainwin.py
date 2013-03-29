@@ -526,7 +526,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             pass
         for filename in lessonfile.infocache.frontpage.iter_old_format_files():
             gu.dialog_ok(_("Cannot load front page file"), None,
-                _("The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
+                _(u"The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
     def activate_exercise(self, module, urlobj=None):
         self.show_view(module)
         # We need this test because not all exercises use a notebook.

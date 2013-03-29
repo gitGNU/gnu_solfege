@@ -602,7 +602,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             else:
                 if lessonfile.infocache.get(lessonfilename, 'module') == 'harmonicinterval':
                     d['intervals'] = []
-                    gu.dialog_ok("FIXME: «%s» was saved with a buggy version of solfege, so you must set the intervals by selecting the file in the dialog and clicking the intervals to be asked. Sorry!" % lessonfilename)
+                    gu.dialog_ok(u"FIXME: «%s» was saved with a buggy version of solfege, so you must set the intervals by selecting the file in the dialog and clicking the intervals to be asked. Sorry!" % lessonfilename)
             d['count'] = int(section.find('count').text)
             d['line_len'] = int(section.find('line_len').text)
             d['qtype'] = int(section.find('qtype').text)
@@ -620,7 +620,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
                 lessonfile.infocache.get(lessonfilename, 'title')
                 self.g_liststore.append((d['title'], lessonfilename))
             except lessonfile.infocache.InfoCacheException, e:
-                self.g_liststore.append((_("«%s» not found") % str(e), None))
+                self.g_liststore.append((_(u"«%s» not found") % str(e), None))
             self.g_treeview.set_cursor((0,))
         self.m_filename = filename
     def save(self):
