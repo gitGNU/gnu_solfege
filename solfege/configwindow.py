@@ -122,29 +122,24 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         page_vbox.pack_start(vbox, False, False, 0)
         sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
 
-        tempo_hbox = Gtk.HBox(spacing=6)
+        tempo_hbox = Gtk.Box(spacing=6)
         self.g_default_bpm = gu.nSpinButton('config', 'default_bpm',
             Gtk.Adjustment(self.get_int('config/default_bpm'), 10, 500, 1, 10))
         self.g_arpeggio_bpm = gu.nSpinButton('config', 'arpeggio_bpm',
             Gtk.Adjustment(self.get_int('config/arpeggio_bpm'), 10, 500, 1, 10))
         for text, widget in [(_("_Default:") ,self.g_default_bpm),
                              (_("A_rpeggio:") ,self.g_arpeggio_bpm)]:
-            label = Gtk.Label(label=text)
-            label.set_alignment(0.0, 0.5)
-            label.set_use_underline(True)
-            tempo_hbox.pack_start(label, False, True, 0)
-            label.set_mnemonic_widget(widget)
-            tempo_hbox.pack_start(widget, False, True, 0)
-            label = Gtk.Label(label=_("BPM"))
-            label.set_alignment(0.0, 0.5)
+            label = Gtk.Label(_("BPM"))
+            tempo_hbox.pack_start(
+                gu.hig_label_widget(text, [widget, label], None),
+                False, False, 0)
             label.set_tooltip_text(_("Beats per minute"))
-            tempo_hbox.pack_start(label, True, True, 0)
         category_vbox.pack_start(tempo_hbox, False, False, 0)
 
         box, category_vbox = gu.hig_category_vbox(_("Preferred Instrument"))
         page_vbox.pack_start(box, False, False, 0)
         self.g_instrsel = nInstrumentSelector('config',
-                        'preferred_instrument', sizegroup)
+                        'preferred_instrument', None)
         category_vbox.pack_start(self.g_instrsel, False, False, 0)
 
         box, category_vbox = gu.hig_category_vbox(_("Chord Instruments"))
@@ -159,11 +154,11 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         category_box.pack_start(gu.hig_label_widget(
             _("Count in:"),
             gu.PercussionNameButton("config", "countin_perc", "Claves"),
-            sizegroup), True, True, 0)
+            sizegroup, True, True), True, True, 0)
         category_box.pack_start(gu.hig_label_widget(
             _("Rhythm:"),
             gu.PercussionNameButton("config", "rhythm_perc", "Side Stick"),
-            sizegroup), True, True, 0)
+            sizegroup, True, True), False, False, 0)
     def create_user_config(self):
         it, page_vbox = self.new_page_box(None, _("User"))
         box, category_vbox = gu.hig_category_vbox(_("User's Vocal Range"))
@@ -259,7 +254,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             ("text-editor", _("Text editor:"), osutils.find_progs(("sensible-editor", "gvim", "gedit", "emacs", "notepad.exe"))),
             ):
             combo = gu.sComboBox("programs", binary, bins)
-            def csound_changed_cb(widget, binary):
+            def binary_changed_cb(widget, binary):
                 widget.warning.props.visible = not bool(
                     osutils.find_progs((cfg.get_string('programs/%s' % binary),)))
             combo.warning = Gtk.Image()
@@ -271,8 +266,8 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                                       sizegroup, True, True)
             category_vbox.pack_start(box, True, True, 0)
             combo.warning.props.no_show_all = True
-            csound_changed_cb(combo, binary)
-            combo.connect('changed', csound_changed_cb, binary)
+            binary_changed_cb(combo, binary)
+            combo.connect('changed', binary_changed_cb, binary)
     def create_gui_config(self):
         i_iter, page_vbox = self.new_page_box(None, _("Interface"))
 
@@ -579,7 +574,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                     self.g_alsa_radio.set_active(True)
                 item.connect('activate', ff, clientid, portid)
             menu.show_all()
-            menu.popup(None, None, None, None, 1, 0)
+            menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
     def create_linux_sound_page(self):
         it, page_vbox = self.new_page_box(None, _("Sound Setup"))
         #############
