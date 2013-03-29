@@ -286,7 +286,7 @@ class Section(Gtk.VBox):
         item.connect('activate', self.on_add_link_by_search)
         menu.append(item)
         menu.show_all()
-        menu.popup(None, None, None, event.button, event.time)
+        menu.popup(None, None, None, None, event.button, event.time)
     def on_remove(self, btn, event):
         self.m_parent.remove_section(self)
     def on_add_link_by_search(self, btn):
@@ -391,7 +391,7 @@ class Section(Gtk.VBox):
             item.connect('activate', self.on_edit_file, idx)
             m.append(item)
             m.show_all()
-            m.popup(None, None, None, event.button, event.time)
+            m.popup(None, None, None, None, event.button, event.time)
             return True
     def on_delete_link(self, menuitem, linked):
         idx = self.m_model.index(linked)

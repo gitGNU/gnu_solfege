@@ -72,7 +72,7 @@ class nInstrumentSelector(Gtk.VBox, cfg.ConfigUtils):
         self.pack_start(hbox, True, True, 0)
 
     def on_btnclick(self, *argv):
-        self.g_menu.popup(None, None, None, 1, 0)
+        self.g_menu.popup(None, None, None, None, 1, 0)
     def on_instrument_selected(self, instrument=None):
         self.set_int(self.m_name, instrument)
         self.g_button.get_children()[0].set_text(soundcard.instrument_names[instrument])

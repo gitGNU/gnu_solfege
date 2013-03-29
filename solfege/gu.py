@@ -269,7 +269,7 @@ class PercussionNameButton(Gtk.Button, cfg.ConfigUtils):
             i = soundcard.percussionname_to_int(default)
             self.set_int(name, i)
         self.set_label(soundcard.int_to_percussionname(i))
-        self.connect('clicked', lambda w: self.g_menu.popup(None, None, None, 1, 0))
+        self.connect('clicked', lambda w: self.g_menu.popup(None, None, None, None, 1, 0))
     def entry_changed(self, widget, value):
         self.set_int(self.m_name, value + soundcard.first_percussion_int_value)
         self.set_label(soundcard.percussion_names[value])
