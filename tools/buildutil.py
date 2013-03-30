@@ -59,8 +59,15 @@ def create_manpage():
     print >> sys.stdout, s
 
 
-def get_last_git_sha():
-    p = subprocess.Popen("git log -n 1".split(),
+def get_last_git_sha(git=None):
+    import os
+    print ":%s:"%git
+    print os.path.exists(git)
+    if git:
+        gitcmd = git
+    else:
+        gitcmd = "git"
+    p = subprocess.Popen(("%s log -n 1" % gitcmd).split(),
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
     while 1:
@@ -77,8 +84,8 @@ def get_last_git_sha():
     raise Exception("git_last_git_sha failed")
 
 
-def create_versions_file():
-    version_info = {'git_sha': get_last_git_sha()}
+def create_versions_file(git):
+    version_info = {'git_sha': get_last_git_sha(git)}
     with open("solfege/_version.py", "w") as f:
         print >> f, "version_info =",
         pprint.pprint(version_info, stream=f)

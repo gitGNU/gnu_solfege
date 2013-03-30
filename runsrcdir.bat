@@ -13,6 +13,8 @@ IF EXIST "%APPDATA%\GNU Solfege\langenviron.bat" (call "%APPDATA%\GNU Solfege\la
 
 rem The following line is not necessary if gtk+ adds to the PATH, but we
 rem do this just to be safe.
-set PATH=win32\bin
-win32\bin\python.exe solfege.py
+rem set PATH=win32\bin
+rem win32\bin\python.exe solfege.py
+set PATH=C:\Python27\Lib\site-packages\gtk
+C:\python27\python solfege.py
 pause

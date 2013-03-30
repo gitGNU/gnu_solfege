@@ -210,7 +210,7 @@ test-screenshots:
 	$(PYTHON) tools/missing-screenshots.py
 
 solfege/_version.py:
-	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_versions_file()"
+	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_versions_file('@GIT@')"
 
 check-revision-id:
 ifndef skip_rev_test
