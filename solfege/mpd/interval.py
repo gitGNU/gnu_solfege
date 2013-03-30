@@ -316,7 +316,10 @@ class Interval:
         Return the full untranslated interval name, both the number and quality.
         """
         if self.m_interval == 4 and self.m_mod == -1:
-            return u"Tritone"
+            if self.m_octave == 0:
+                return u"Tritone"
+            elif self.m_octave == 1:
+                return u"Octave + Tritone"
         return u"%s %s" % (
                 self._nn_to_interval_quality[self.get_quality_short()],
                 number_name(self.steps()))
