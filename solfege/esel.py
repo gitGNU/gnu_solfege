@@ -60,13 +60,13 @@ class SelectWinBase(Gtk.ScrolledWindow):
         a = w.get_allocation()
         adj = self.get_vadjustment()
         if a.y + a.height > adj.get_value() + adj.get_page_size():
-            if w.get_data('last'):
+            if getattr(w, 'm_last', None):
                 adj.set_value(adj.upper - adj.get_page_size())
             else:
                 adj.set_value(a.y - adj.get_page_size() + a.height)
         elif a.y < adj.get_value():
             # If the widget is the first row of the first category, then...
-            if w.get_data('first'):
+            if getattr(w, 'm_first', None):
                 adj.set_value(0.0)
             else:
                 adj.set_value(a.y)
@@ -254,7 +254,7 @@ class ExerciseView(SelectWinBase):
                             label = gu.ClickableLabel(_(u"Failed to parse «%s»") % link)
                             label.make_warning()
                     if first:
-                        label.set_data('first', True)
+                        label.m_first = True
                         first = False
                     w = label.size_request().width
                     if w > self.max_exercise_label_width:
@@ -283,7 +283,7 @@ class ExerciseView(SelectWinBase):
                     if do_sg:
                         sizegroup.add_widget(label)
             if label:
-                label.set_data('last', True)
+                label.m_last = True
         self.g_hbox.show_all()
         self.adjust_scrolledwin_size()
         self.get_vadjustment().set_value(0.0)

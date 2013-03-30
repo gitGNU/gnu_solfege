@@ -36,13 +36,12 @@ class MidiInstrumentMenu(Gtk.Menu):
                 menuitem.set_submenu(submenu)
                 menuitem.show()
             item = Gtk.MenuItem(soundcard.instrument_names[x])
-            item.connect('activate', self.on_activate)
-            item.set_data('instrument', x)
+            item.connect('activate', self.on_activate, x)
             submenu.append(item)
             item.show()
         self.show()
-    def on_activate(self, menuitem):
-        self.m_callback(menuitem.get_data('instrument'))
+    def on_activate(self, menuitem, instrument):
+        self.m_callback(instrument)
 
 
 class nInstrumentSelector(Gtk.VBox, cfg.ConfigUtils):
