@@ -23,6 +23,7 @@ from gi.repository import Gdk
 import math
 
 from solfege import cfg
+from solfege import gu
 from solfege import mpd
 from solfege import utils
 
@@ -211,7 +212,7 @@ class IntervalPianoWidget(PianoKeyboard):
         self._handle_tone_clicked(midi_int, event.button)
 
 
-class IntervalButtonsWidgetBase(Gtk.VBox, cfg.ConfigUtils):
+class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
     use_users_vocal_range = True
 
     def __init__(self, exname, callback, sensicallback):
@@ -220,8 +221,9 @@ class IntervalButtonsWidgetBase(Gtk.VBox, cfg.ConfigUtils):
         sensicallback -- a function that will return a list of all interval
                          it will be asked for.
         """
-        Gtk.VBox.__init__(self, True)
+        Gtk.Grid.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
+        self.set_orientation(Gtk.Orientation.VERTICAL)
         self.get_sensitive_buttons = sensicallback
         self.m_callback = callback
         self.m_buttons = {}
@@ -241,19 +243,27 @@ class IntervalButtonsWidgetBase(Gtk.VBox, cfg.ConfigUtils):
         for x in range(1, mpd.interval.max_interval + 1):
             if x in self.m_buttons:
                 self.m_buttons[x].set_sensitive(x in make_active)
-    def mk_button(self, txt, nr):
+    def mk_button(self, nr):
         # buttonwidget calls m_callback with None as midi_int because it
         # does not know if you mean interval up or down when you click
         # the buttons
+        txt = mpd.Interval.new_from_int(nr).get_name()
         self.m_buttons[nr] = b = Gtk.Button(txt)
-        l=b.get_child().set_justify(Gtk.Justification.CENTER)
         b.connect('clicked',
                   lambda s, nr=nr, self=self:self.m_callback(1, nr, None))
         b.set_data('interval', nr)
-        b.connect('event', self._abc)
+        b.connect('button-press-event', self._abc)
+        b.set_vexpand(True)
+        b.set_hexpand(True)
         return b
+    def row(self, *data):
+        row = Gtk.Grid()
+        row.set_column_homogeneous(True)
+        self.add(row)
+        for i in data:
+            row.add(self.mk_button(i))
     def _abc(self, button, event):
-        if event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3:
+        if event.button == 3:
             self.m_callback(3, button.get_data('interval'), None)
     def set_first_note(self, note):
         self.m_first_note = int(note)
@@ -277,154 +287,82 @@ class IntervalButtonsWidgetBase(Gtk.VBox, cfg.ConfigUtils):
 class IntervalButtonsWidget(IntervalButtonsWidgetBase):
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.g_table = Gtk.Table()
-        self.pack_start(self.g_table, False, False, 0)
-        self.new_int_button(_("Minor Second"), 1, 0, 1, 0, 2)
-        self.new_int_button(_("Major Second"),  2, 0, 1, 2, 4)
-        self.new_int_button(_("Minor Third"),   3, 0, 1, 4, 6)
-        self.new_int_button(_("Major Third"),    4, 0, 1, 6, 8)
-        self.new_int_button(_("Perfect Fourth"),    5, 1, 2, 0, 2)
-        self.new_int_button(_("Tritone"),    6, 1, 2, 2, 4)
-        self.new_int_button(_("Perfect Fifth"),    7, 1, 2, 4, 6)
-        self.new_int_button(_("Minor Sixth"),  8, 1, 2, 6, 8)
-        self.new_int_button(_("Major Sixth"),   9, 2, 3, 0, 2)
-        self.new_int_button(_("Minor Seventh"), 10, 2, 3, 2, 4)
-        self.new_int_button(_("Major Seventh"), 11, 2, 3, 4, 6)
-        self.new_int_button(_("Perfect Octave"),   12, 2, 3, 6, 8)
-        self.new_int_button(_("Minor Ninth"),  13, 3, 4, 0, 2)
-        self.new_int_button(_("Major Ninth"),   14, 3, 4, 2, 4)
-        self.new_int_button(_("Minor Tenth"), 15, 3, 4, 4, 6)
-        self.new_int_button(_("Major Tenth"),  16, 3, 4, 6, 8)
+        self.set_name("IntervalButtonsWidget")
+        self.row(1, 2, 3, 4)
+        self.row(5, 6, 7, 8)
+        self.row(9, 10, 11, 12)
+        self.row(13, 14, 15, 16)
         self.post_construct(vars_to_watch)
-    def new_int_button(self, txt, nr, x1, x2, y1, y2):
-        b = self.mk_button(txt, nr)
-        b.set_size_request(b.size_request().width,
-                           int(b.size_request().height * 1.4))
-        self.g_table.attach(b, x1, x2, y1, y2)
+
 
 class IntervalButtonsWidget4(IntervalButtonsWidgetBase):
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.g_table = Gtk.Table()
-        self.pack_start(self.g_table, False, False, 0)
-        self.new_int_button(_("Minor Second"),   1, 0, 1, 0, 1)
-        self.new_int_button(_("Major Second"),   2, 1, 2, 0, 1)
-        self.new_int_button(_("Minor Third"),    3, 2, 3, 0, 1)
-        self.new_int_button(_("Major Third"),    4, 3, 4, 0, 1)
-        self.new_int_button(_("Perfect Fourth"), 5, 0, 1, 1, 2)
-        self.new_int_button(_("Tritone"),        6, 1, 2, 1, 2)
-        self.new_int_button(_("Perfect Fifth"),  7, 2, 3, 1, 2)
-        self.new_int_button(_("Minor Sixth"),    8, 3, 4, 1, 2)
-        self.new_int_button(_("Major Sixth"),     9, 0, 1, 2, 3)
-        self.new_int_button(_("Minor Seventh"),  10, 1, 2, 2, 3)
-        self.new_int_button(_("Major Seventh"),  11, 2, 3, 2, 3)
-        self.new_int_button(_("Perfect Octave"), 12, 3, 4, 2, 3)
-        self.new_int_button(_("Minor Ninth"),    13, 0, 1, 3, 4)
-        self.new_int_button(_("Major Ninth"),    14, 1, 2, 3, 4)
-        self.new_int_button(_("Minor Tenth"),    15, 2, 3, 3, 4)
-        self.new_int_button(_("Major Tenth"),    16, 3, 4, 3, 4)
-        self.new_int_button(_("Perfect 11th"),     17, 0, 1, 4, 5)
-        self.new_int_button(_("Octave + Tritone"), 18, 1, 2, 4, 5)
-        self.new_int_button(_("Perfect 12th"),     19, 2, 3, 4, 5)
-        self.new_int_button(_("Minor 13th"),       20, 3, 4, 4, 5)
-        self.new_int_button(_("Major 13th"),    21, 0, 1, 5, 6)
-        self.new_int_button(_("Minor 14th"),    22, 1, 2, 5, 6)
-        self.new_int_button(_("Major 14th"),    23, 2, 3, 5, 6)
-        self.new_int_button(_("Perfect 15th"),  24, 3, 4, 5, 6)
+        g1 = Gtk.Grid()
+        for i, (x, y) in enumerate((
+                (0, 0), (1, 0), (2, 0), (3, 0),
+                (0, 1), (1, 1), (2, 1), (3, 1),
+                (0, 2), (1, 2), (2, 2), (3, 2))):
+            g1.attach(self.mk_button(i + 1), x, y, 1, 1)
+        g2 = Gtk.Grid()
+        for i, (x, y) in enumerate((
+                (0, 0), (1, 0), (2, 0), (3, 0),
+                (0, 1), (1, 1), (2, 1), (3, 1),
+                (0, 2), (1, 2), (2, 2), (3, 2))):
+            g2.attach(self.mk_button(i + 13), x, y, 1, 1)
+        self.set_row_spacing(gu.hig.SPACE_MEDIUM)
+        self.add(g1)
+        self.add(g2)
         self.post_construct(vars_to_watch)
-    def new_int_button(self, txt, nr, x1, x2, y1, y2):
-        b = self.mk_button(txt, nr)
-        b.set_size_request(b.size_request().width,
-                           int(b.size_request().height * 1.4))
-        self.g_table.attach(b, x1, x2, y1, y2)
 
 
 class IntervalButtonsWidget2(IntervalButtonsWidgetBase):
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.row(((_("Minor Second"), 1),
-                  (_("Major Second"), 2),
-                  (_("Minor Third"), 3),
-                  (_("Major Third"), 4)))
-        self.row(((_("Perfect Fourth"), 5),
-                  (_("Tritone"), 6),
-                  (_("Perfect Fifth"), 7)))
-        self.row(((_("Minor Sixth"), 8),
-                  (_("Major Sixth"), 9),
-                  (_("Minor Seventh"), 10),
-                  (_("Major Seventh"), 11)))
-        self.row(((_("Perfect Octave"), 12),))
-        self.row(((_("Minor Ninth"), 13),
-                  (_("Major Ninth"), 14),
-                  (_("Minor Tenth"), 15),
-                  (_("Major Tenth"), 16),))
-        self.row(((_("Perfect 11th"), 17),
-                  (_("Octave + Tritone"), 18),
-                  (_("Perfect 12th"), 19),))
-        self.row(((_("Minor 13th"), 20),
-                  (_("Major 13th"), 21),
-                  (_("Major 14th"), 22),
-                  (_("Minor 14th"), 23),))
-        self.row(((_("Perfect 15th"), 24),))
+        self.row(1, 2, 3, 4)
+        self.row(5, 6, 7)
+        self.row(8, 9, 10, 11)
+        self.row(12)
+        self.row(13, 14, 15, 16)
+        self.row(17, 18, 19)
+        self.row(20, 21, 22, 23)
+        self.row(24)
         self.post_construct(vars_to_watch)
-
-    def row(self, data):
-        hbox = Gtk.HBox(True)
-        self.pack_start(hbox, False, False, 0)
-        for label, i in data:
-            b = self.mk_button(label, i)
-            hbox.pack_start(b, True, True, 0)
 
 
 class IntervalButtonsWidget3(IntervalButtonsWidgetBase):
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.set_spacing(16)
-        t1 = Gtk.Table()
-        self.pack_start(t1, False, False, 0)
-        t1.attach(self.mk_button(_("Minor Second"), 1), 0, 1, 0, 1)
-        t1.attach(self.mk_button(_("Major Second"), 2), 1, 2, 0, 1)
-        t1.attach(self.mk_button(_("Minor Seventh"), 10), 2, 3, 0, 1)
-        t1.attach(self.mk_button(_("Major Seventh"), 11), 3, 4, 0, 1)
-        t1.attach(self.mk_button(_("Minor Ninth"), 13), 0, 1, 1, 2)
-        t1.attach(self.mk_button(_("Major Ninth"), 14), 1, 2, 1, 2)
-        t1.attach(self.mk_button(_("Major 14th"), 22), 2, 3, 1, 2)
-        t1.attach(self.mk_button(_("Minor 14th"), 23), 3, 4, 1, 2)
-        t2 = Gtk.Table()
-        self.pack_start(t2, False, False, 0)
-        t2.attach(self.mk_button(_("Minor Third"), 3), 0, 1, 0, 1)
-        t2.attach(self.mk_button(_("Major Third"), 4), 1, 2, 0, 1)
-        t2.attach(self.mk_button(_("Minor Sixth"), 8), 2, 3, 0, 1)
-        t2.attach(self.mk_button(_("Major Sixth"), 9), 3, 4, 0, 1)
-        t2.attach(self.mk_button(_("Minor Tenth"), 15), 0, 1, 1, 2)
-        t2.attach(self.mk_button(_("Major Tenth"), 16), 1, 2, 1, 2)
-        t2.attach(self.mk_button(_("Minor 13th"), 20), 2, 3, 1, 2)
-        t2.attach(self.mk_button(_("Major 13th"),  21), 3, 4,1 , 2)
+        self.set_row_spacing(gu.hig.SPACE_MEDIUM)
+        g1 = Gtk.Grid()
+        g1.set_column_homogeneous(True)
+        for y, row in enumerate([[1, 2, 10, 11], [13, 14, 22, 23]]):
+            for x, i in enumerate(row):
+                g1.attach(self.mk_button(i), x, y, 1, 1)
+        g2 = Gtk.Grid()
+        g2.set_column_homogeneous(True)
+        for y, row in enumerate([[3, 4, 8, 9], [15, 16, 20, 21]]):
+            for x, i in enumerate(row):
+                g2.attach(self.mk_button(i), x, y, 1, 1)
 
-        hbox = Gtk.HBox(spacing=16)
-        self.pack_start(hbox, False, False, 0)
-        t3 = Gtk.Table()
-        hbox.pack_start(t3, False, False, 0)
-        t3.attach(self.mk_button(_("Perfect Fourth"), 5), 0, 1, 0, 1)
-        t3.attach(self.mk_button(_("Perfect Fifth"), 7), 1, 2, 0, 1)
-        t3.attach(self.mk_button(_("Perfect Octave"), 12), 2, 3, 0, 1)
-        t3.attach(self.mk_button(_("Perfect 11th"), 17), 0, 1, 1, 2)
-        t3.attach(self.mk_button(_("Perfect 12th"), 19), 1, 2, 1, 2)
-        t3.attach(self.mk_button(_("Perfect 15th"), 24), 2, 3, 1, 2)
+        g3 = Gtk.Grid()
+        g3.set_column_homogeneous(True)
+        for y, row in enumerate([[5, 7, 12], [17, 19, 24]]):
+            for x, i in enumerate(row):
+                g3.attach(self.mk_button(i), x, y, 1, 1)
 
-        t4 = Gtk.Table()
-        hbox.pack_start(t4, False, False, 0)
-        t4.attach(self.mk_button(_("Tritone"), 6), 0, 1, 0, 1)
-        t4.attach(self.mk_button(_("Octave + Tritone"), 18), 0, 1, 1, 2)
+        g4 = Gtk.Grid()
+        g4.attach(self.mk_button(6), 0, 0, 1, 1)
+        g4.attach(self.mk_button(18), 0, 1, 1, 1)
+
+        self.add(g1)
+        self.add(g2)
+        horiz = Gtk.Grid()
+        horiz.set_column_spacing(gu.hig.SPACE_MEDIUM)
+        self.add(horiz)
+        horiz.add(g3)
+        horiz.add(g4)
         self.post_construct(vars_to_watch)
-
-    def row(self, data):
-        hbox = Gtk.HBox(True)
-        self.pack_start(hbox, False, False, 0)
-        for label, i in data:
-            b = self.mk_button(label, i)
-            hbox.pack_start(b, False, False, 0)
-
 
 
 class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):

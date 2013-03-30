@@ -350,7 +350,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
 
         self.practise_box = Gtk.VBox()
         self.practise_box.show()
-        vbox.pack_start(self.practise_box, False, False, 0)
+        vbox.pack_start(self.practise_box, True, True, 0)
 
         box = Gtk.VBox()
         self.practise_box.pack_start(box, False, False, padding=gu.hig.SPACE_LARGE)

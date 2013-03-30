@@ -24,3 +24,8 @@
 
 #FlashBarLabel { font: Sans 16 }
 
+#IntervalButtonsWidget GtkButton
+ {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
