@@ -108,7 +108,7 @@ class Gui(abstract.LessonbasedGui):
         ##################
         # chordtype frame
         ##################
-        frame = Gtk.Frame(_("Identify chord type"))
+        frame = Gtk.Frame(label=_("Identify chord type"))
         hbox.pack_start(frame, True, True, 0)
         self.g_chordtype_box = Gtk.VBox()
         self.g_chordtype_box.set_border_width(gu.PAD_SMALL)
@@ -117,7 +117,7 @@ class Gui(abstract.LessonbasedGui):
         #################
         # stacking frame
         #################
-        self.g_stacking_frame = Gtk.Frame(_("Chord voicing"))
+        self.g_stacking_frame = Gtk.Frame(label=_("Chord voicing"))
         self.g_stacking_frame.set_sensitive(False)
         hbox.pack_start(self.g_stacking_frame, True, True, 0)
         vbox = Gtk.VBox()
@@ -131,10 +131,10 @@ class Gui(abstract.LessonbasedGui):
         t.attach(self.g_answer, 1, 2, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
         self.g_redo = Gtk.Button("<<<")
         self.g_redo.connect('clicked', lambda o, self=self: self.fill_stacking_frame())
-        vbox.pack_end(self.g_redo, False, False)
+        vbox.pack_end(self.g_redo, False, False, 0)
 
         self.g_flashbar = gu.FlashBar()
-        self.practise_box.pack_start(self.g_flashbar, False)
+        self.practise_box.pack_start(self.g_flashbar, False, False, 0)
 
         self.std_buttons_add(('new-chord', self.new_question),
             ('repeat', lambda _o: self.m_t.m_P.play_question()),
@@ -193,7 +193,7 @@ class Gui(abstract.LessonbasedGui):
             nn = mpd.MusicalPitch.new_from_notename(n)
             b = Gtk.Button(nn.get_user_notename())
             b.connect('clicked', self.on_notebutton_clicked, nn.get_notename(), nn.get_user_notename())
-            self.g_source.pack_end(b, False, False)
+            self.g_source.pack_end(b, False, False, 0)
             b.show()
         self.g_source.get_children()[0].grab_focus()
     def give_up(self, v=None):
@@ -228,7 +228,7 @@ class Gui(abstract.LessonbasedGui):
                         return
             #
             for idx, question in enumerate(self.m_t.m_P.m_questions):
-                if question.name.cval == button.get_data('chordtype'):
+                if question.name.cval == button.m_chordtype:
                     self.m_t.m_P.play_question(question)
                     return
         except Exception, e:
@@ -252,7 +252,7 @@ class Gui(abstract.LessonbasedGui):
         newb.show()
         btn.destroy()
         self.m_answer.append(n)
-        self.g_answer.pack_end(newb, False, False)
+        self.g_answer.pack_end(newb, False, False, 0)
         if not self.g_source.get_children():
             # no children mean that the user has finished answering
             if self.m_t.guess_voicing(self.m_answer):
@@ -281,20 +281,20 @@ class Gui(abstract.LessonbasedGui):
             b = Gtk.Button(mpd.MusicalPitch.new_from_notename(n).get_user_octave_notename())
             b.get_children()[0].set_use_markup(1)
             b.show()
-            self.g_answer.pack_end(b, False, False)
+            self.g_answer.pack_end(b, False, False, 0)
     def fill_chordtype_box(self):
         for x in self.g_chordtype_box.get_children():
             x.destroy()
         for name in [q.name for q in self.m_t.m_P.iterate_questions_with_unique_names()]:
             b = Gtk.Button(name)
-            b.set_data('chordtype', name.cval)
-            self.g_chordtype_box.pack_start(b, False)
+            b.m_chordtype = name.cval
+            self.g_chordtype_box.pack_start(b, False, False, 0)
             b.connect('clicked', self.on_chordtype_clicked, name.cval)
             b.connect('button_release_event', self.on_chordtype_right_clicked, name)
             b.show()
     def set_chordtype_frame_status_solved(self, t):
         for c in self.g_chordtype_box.get_children():
-            c.set_sensitive(c.get_data('chordtype')==t)
+            c.set_sensitive(c.m_chordtype == t)
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.g_random_transpose.set_text(str(self.m_t.m_P.header.random_transpose))

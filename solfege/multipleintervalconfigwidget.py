@@ -37,7 +37,6 @@ class IntervalCheckBox(Gtk.HBox):
         for x in range(1, mpd.interval.max_interval + 1):
             self.checkbox_dict[x] = c \
                 = Gtk.ToggleButton(mpd.interval.short_name[x])
-            c.set_data('interval', x)
             c.connect('toggled', self.on_toggle)
             c.show()
             self.pack_start(c, True, True, 0)
@@ -129,11 +128,10 @@ class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
                   % (self.g_int_sel_spin.get_value_as_int()-1))
         for x in range(1, mpd.interval.max_interval + 1):
             self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[x])
-            c.set_data('interval', x)
             if x in V:
                 c.set_active(True)
             c.show()
-            c.connect('clicked', self.on_interval_chk_clicked)
+            c.connect('clicked', self.on_interval_chk_clicked, x)
             table.attach(c, x, x+1, 0, 1)
 
         box = gu.bHBox(self, expand=False)
@@ -144,11 +142,10 @@ class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
         v.reverse()
         for x in v:
             self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[-x])
-            c.set_data('interval', x)
             if x in V:
                 c.set_active(True)
             c.show()
-            c.connect('clicked', self.on_interval_chk_clicked)
+            c.connect('clicked', self.on_interval_chk_clicked, x)
             table.attach(c, -x, -x+1, 1, 2)
         table.show_all()
         if self.g_num_int_spin.get_value_as_int() == 1:
@@ -165,17 +162,17 @@ class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
                                % (self.g_int_sel_spin.get_value_as_int()-1))
         for i in range(self.get_int('number_of_intervals')):
             self.set_string('ask_for_intervals_%i' % i, str(v))
-    def on_interval_chk_clicked(self, _o):
+    def on_interval_chk_clicked(self, widget, interval):
         if self.m_ignore_iclick:
             return
         i = self.g_int_sel_spin.get_value_as_int() - 1
         v = self.get_list('ask_for_intervals_%i' % i)
-        if _o.get_active():
-            if not _o.get_data('interval') in v:
-                v.append(_o.get_data('interval'))
+        if widget.get_active():
+            if not interval in v:
+                v.append(interval)
         else:
-            if _o.get_data('interval') in v:
-                del v[v.index(_o.get_data('interval'))]
+            if interval in v:
+                del v[v.index(interval)]
         self.set_list('ask_for_intervals_%i' % i, v)
     def on_num_int_spin(self, _o):
         adj = Gtk.Adjustment(self.get_int('cur_edit_interval'), 1,

@@ -103,7 +103,7 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
             print >> sys.stderr, "         This is a bug in the lesson file."
         self.m_button_dict[question.name.cval] = b
         self.m_name_list.append(question.name.cval)
-        b.set_data('cname', question.name.cval)
+        b.m_cname = question.name.cval
         b.set_sensitive(question.active)
         b.add(lessonfilegui.new_labelobject(question.name))
         b.show_all()
@@ -143,7 +143,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
         self.m_name_list.append(question.name.cval)
         b.set_active(question.active)
         b.connect('toggled', self.on_checkbutton_toggled)
-        b.set_data('cname', question.name.cval)
+        b.m_cname = question.name.cval
         b.add(lessonfilegui.new_labelobject(question.name))
         b.show_all()
         self.attach(b, self.m_x, self.m_x+1, self.m_y, self.m_y+1)

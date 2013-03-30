@@ -90,11 +90,11 @@ class Gui(abstract.LessonbasedGui):
 
         self.g_music_displayer = mpd.MusicDisplayer()
         self.g_music_displayer.set_size_request(100, -1)
-        hbox.pack_start(self.g_music_displayer, False)
+        hbox.pack_start(self.g_music_displayer, False, False, 0)
         spacebox = Gtk.HBox()
         hbox.pack_start(spacebox, True, True, 0)
         self.g_flashbar = gu.FlashBar()
-        self.practise_box.pack_start(self.g_flashbar, False)
+        self.practise_box.pack_start(self.g_flashbar, False, False, 0)
 
         self.g_new = gu.bButton(self.action_area, _("_New chord"),
                                 self.new_question)
@@ -114,10 +114,10 @@ class Gui(abstract.LessonbasedGui):
         # -----------------------------------------
         self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
             _("Chord types to ask"))
-        self.config_box.pack_start(self.g_select_questions_category_box, True)
+        self.config_box.pack_start(self.g_select_questions_category_box, True, True, 0)
         self.g_select_questions = QuestionNameCheckButtonTable(self.m_t)
         self.g_select_questions.initialize(4, 0)
-        category_box.pack_start(self.g_select_questions, False)
+        category_box.pack_start(self.g_select_questions, False, False, 0)
         self.g_select_questions.show()
     def update_select_question_buttons(self):
         """
@@ -153,7 +153,7 @@ class Gui(abstract.LessonbasedGui):
             pass
         self.g_atable = Gtk.Table()
         self.g_atable.show()
-        self.g_hbox.pack_start(self.g_atable, False)
+        self.g_hbox.pack_start(self.g_atable, False, False, 0)
         self.g_hbox.reorder_child(self.g_atable, 1)
         # pprops say how many properties are we going to display.
         # We will not display a property if no questions use it.
@@ -172,8 +172,8 @@ class Gui(abstract.LessonbasedGui):
         for x, prop in enumerate(self.m_t.m_P.header.qprops):
             for y, proplabel in enumerate(self.m_t.m_P.m_props[prop]):
                 button = Gtk.Button(unicode(proplabel))
-                button.set_data('property_name', prop)
-                button.set_data('property_value', proplabel.cval)
+                button.m_property_name = prop
+                button.m_property_value = proplabel.cval
                 button.connect('clicked', self.on_prop_button_clicked)
                 button.connect('button_release_event', self.on_prop_button_right_clicked)
                 self.g_atable.attach(button, x * 2, x * 2 + 1, y + 2, y + 3,
@@ -207,15 +207,16 @@ class Gui(abstract.LessonbasedGui):
     def on_prop_button_clicked(self, button):
         if self.m_t.q_status != self.QSTATUS_NEW:
             return
-        g = self.m_t.guess_property(button.get_data('property_name'),
-                                    button.get_data('property_value'))
+        g = self.m_t.guess_property(button.m_property_name,
+                                    button.m_property_value)
         if g:
             self.g_flashbar.flash(_("Correct"))
             for btn in self.g_atable.get_children():
-                if btn.get_data('property_name') == button.get_data('property_name')\
-                 and btn.get_data('property_value') == button.get_data('property_value'):
-                    btn.get_children()[0].set_name("BoldText")
-                    break
+                if isinstance(btn, Gtk.Button):
+                    if btn.m_property_name == button.m_property_name \
+                    and btn.m_property_value == button.m_property_value:
+                        btn.get_children()[0].set_name("BoldText")
+                        break
             if g == self.m_t.ALL_CORRECT:
                 self.all_guessed_correct()
         else:
@@ -238,7 +239,7 @@ class Gui(abstract.LessonbasedGui):
         for k in self.m_t.m_P.header.qprops:
             d[k] = self.m_t.m_P.get_question()[k].cval
         # replace one property with the one we right clicked
-        d[button.get_data('property_name')] = button.get_data('property_value')
+        d[button.m_property_name] = button.m_property_value
         for idx, question in enumerate(self.m_t.m_P.m_questions):
             match = True
             for k in d:
@@ -314,7 +315,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_give_up.set_sensitive(False)
             for button in self.g_atable.get_children():
                 if isinstance(button, Gtk.Button):
-                    if button.get_data('property_value') == self.m_t.m_P.get_question()[button.get_data('property_name')].cval:
+                    if button.m_property_value == self.m_t.m_P.get_question()[button.m_property_name].cval:
                         button.get_children()[0].set_name('BoldText')
                     else:
                         button.get_children()[0].set_name('')

@@ -1017,7 +1017,6 @@ class ExceptionDialog(Gtk.Dialog):
         Gtk.Dialog.__init__(self, sys.exc_info()[0].__name__)
         self.set_resizable(True)
         self.set_border_width(6)
-        self.set_has_separator(False)
         self.vbox.set_spacing(0)
         hbox = Gtk.HBox(False, 0)
         hbox.set_spacing(12)
@@ -1054,7 +1053,7 @@ class ExceptionDialog(Gtk.Dialog):
         # This label is here just for spacing
         l = Gtk.Label(label="")
         vbox.pack_start(l, True, True, 0)
-        expander = Gtk.Expander("Traceback")
+        expander = Gtk.Expander(label="Traceback")
         self.vbox.pack_start(expander, True, True, 0)
         l = Gtk.Label("".join(traceback.format_exception(
             sys.exc_type, sys.exc_value, sys.exc_traceback)).decode(sys.getfilesystemencoding(), 'replace'))

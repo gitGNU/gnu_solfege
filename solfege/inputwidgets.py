@@ -251,8 +251,7 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         self.m_buttons[nr] = b = Gtk.Button(txt)
         b.connect('clicked',
                   lambda s, nr=nr, self=self:self.m_callback(1, nr, None))
-        b.set_data('interval', nr)
-        b.connect('button-press-event', self._abc)
+        b.connect('button-press-event', self._abc, nr)
         b.set_vexpand(True)
         b.set_hexpand(True)
         return b
@@ -262,9 +261,9 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         self.add(row)
         for i in data:
             row.add(self.mk_button(i))
-    def _abc(self, button, event):
+    def _abc(self, button, event, interval):
         if event.button == 3:
-            self.m_callback(3, button.get_data('interval'), None)
+            self.m_callback(3, interval, None)
     def set_first_note(self, note):
         self.m_first_note = int(note)
     def know_directions(self):

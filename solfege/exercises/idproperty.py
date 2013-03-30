@@ -172,8 +172,8 @@ class Gui(abstract.LessonbasedGui):
         for x, prop in enumerate(self.m_t.m_P.header.qprops):
             for y, proplabel in enumerate(self.m_t.m_P.m_props[prop]):
                 button = Gtk.Button(unicode(proplabel))
-                button.set_data('property_name', prop)
-                button.set_data('property_value', proplabel.cval)
+                button.m_property_name = prop
+                button.m_property_value = proplabel.cval
                 button.connect('clicked', self.on_prop_button_clicked)
                 button.connect('button_release_event', self.on_prop_button_right_clicked)
                 self.g_atable.attach(button, x * 2, x * 2 + 1, y + 2, y + 3,
@@ -195,13 +195,15 @@ class Gui(abstract.LessonbasedGui):
     def on_prop_button_clicked(self, button):
         if self.m_t.q_status != self.QSTATUS_NEW:
             return
-        g = self.m_t.guess_property(button.get_data('property_name'),
-                                    button.get_data('property_value'))
+        g = self.m_t.guess_property(button.m_property_name,
+                                    button.m_property_value)
         if g:
             self.g_flashbar.flash(_("Correct"))
             for btn in self.g_atable.get_children():
-                if btn.get_data('property_name') == button.get_data('property_name')\
-                 and btn.get_data('property_value') == button.get_data('property_value'):
+                if not isinstance(btn, Gtk.Button):
+                    continue
+                if btn.m_property_name == button.m_property_name \
+                 and btn.m_property_value == button.m_property_value:
                     btn.get_children()[0].set_name("BoldText")
                     break
             if g == self.m_t.ALL_CORRECT:
@@ -226,7 +228,7 @@ class Gui(abstract.LessonbasedGui):
         for k in self.m_t.m_P.header.qprops:
             d[k] = self.m_t.m_P.get_question()[k].cval
         # replace one property with the one we right clicked
-        d[button.get_data('property_name')] = button.get_data('property_value')
+        d[button.m_property_name] = button.m_property_value
         for idx, question in enumerate(self.m_t.m_P.m_questions):
             match = True
             for k in d:
@@ -301,7 +303,7 @@ class Gui(abstract.LessonbasedGui):
             self.std_buttons_give_up()
             for button in self.g_atable.get_children():
                 if isinstance(button, Gtk.Button):
-                    if button.get_data('property_value') == self.m_t.m_P.get_question()[button.get_data('property_name')].cval:
+                    if button.m_property_value == self.m_t.m_P.get_question()[button.m_property_name].cval:
                         button.get_children()[0].set_name('BoldText')
                     else:
                         button.get_children()[0].set_name('')

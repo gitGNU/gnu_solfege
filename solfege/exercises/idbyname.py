@@ -217,11 +217,11 @@ class Gui(abstract.LessonbasedGui):
             if 'set' in self.m_t.m_P.get_question():
                 for idx, question in enumerate(self.m_t.m_P.m_questions):
                     if question.set == self.m_t.m_P.get_question().set \
-                        and question.name.cval == button.get_data('cname'):
+                        and question.name.cval == button.m_cname:
                         self.m_t.m_P.play_question(question)
                         return
             for idx, question in enumerate(self.m_t.m_P.m_questions):
-                if question.name.cval == button.get_data('cname'):
+                if question.name.cval == button.m_cname:
                     self.m_t.m_P.play_question(question)
                     return
         except Exception, e:
@@ -236,12 +236,12 @@ class Gui(abstract.LessonbasedGui):
             return
         try:
             if self.m_t.q_status == self.QSTATUS_SOLVED:
-                if self.m_t.guess_answer(button.get_data('cname')):
+                if self.m_t.guess_answer(button.m_cname):
                     self.g_flashbar.flash(_("Correct, but you have already solved this question"))
                 else:
                     self.g_flashbar.flash(_("Wrong, but you have already solved this question"))
             elif self.m_t.q_status in (self.QSTATUS_NEW, self.QSTATUS_WRONG):
-                if self.m_t.guess_answer(button.get_data('cname')):
+                if self.m_t.guess_answer(button.m_cname):
                     self.g_flashbar.flash(_("Correct"))
                     self.std_buttons_answer_correct()
                     if self.m_t.m_P.header.have_music_displayer:

@@ -176,10 +176,10 @@ class Gui(abstract.Gui):
         def pack_rdbs(box, callback):
             D = {}
             D['harmonic'] = b = gu.RadioButton(None, _("Harmonic"), callback)
-            b.set_data('idir', 'harmonic')
+            b.m_idir = 'harmonic'
             box.pack_start(b, False, False, 0)
             D['melodic'] = b = gu.RadioButton(b, _("Melodic"), callback)
-            b.set_data('idir', 'melodic')
+            b.m_idir = 'melodic'
             box.pack_start(b, False, False, 0)
             return D
         #---------
@@ -237,16 +237,16 @@ class Gui(abstract.Gui):
         """
         if self._ignore_events:
             return
-        self.set_string('first_interval_type', button.get_data('idir'))
-        self.g_first_interval_down.set_sensitive(button.get_data('idir') == 'melodic')
+        self.set_string('first_interval_type', button.m_idir)
+        self.g_first_interval_down.set_sensitive(button.m_idir == 'melodic')
     def update_last(self, button):
         """
         Called when the type of interval has changed.
         """
         if self._ignore_events:
             return
-        self.set_string('last_interval_type', button.get_data('idir'))
-        self.g_last_interval_down.set_sensitive(button.get_data('idir') == 'melodic')
+        self.set_string('last_interval_type', button.m_idir)
+        self.g_last_interval_down.set_sensitive(button.m_idir == 'melodic')
     def guess_answer(self, g):
         if self.m_t.q_status == self.QSTATUS_NO:
             return

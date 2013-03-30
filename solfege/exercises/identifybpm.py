@@ -124,8 +124,8 @@ class Gui(abstract.Gui):
                 button = Gtk.Button(str(bpm))
                 box.pack_start(button, True, True, 0)
                 button.connect('clicked', self.on_click)
-                button.connect('event', self.on_event)
-                button.set_data('bpm', bpm)
+                button.connect('button-release-event', self.on_event)
+                button.m_bpm = bpm
                 self.m_buttons.append(button)
 
         self.g_flashbar = gu.FlashBar()
@@ -151,8 +151,8 @@ class Gui(abstract.Gui):
         self.g_notebook.get_nth_page(1).hide()
         self.update_buttons()
     def on_event(self, button, event):
-        if event.type == Gdk.EventType.BUTTON_RELEASE and event.button == 3:
-            self.m_t.toggle_active(button.get_data('bpm'))
+        if event.button == 3:
+            self.m_t.toggle_active(button.m_bpm)
             self.update_buttons()
     def on_level_change(self, adjustment):
         self.set_int('level', adjustment.value)
@@ -179,20 +179,20 @@ class Gui(abstract.Gui):
     def update_buttons(self):
         v = self.m_t.get_possible_bpms()
         for b in self.m_buttons:
-            if b.get_data('bpm') in v:
+            if b.m_bpm in v:
                 b.get_children()[0].set_name("BpmActiveLabel")
             else:
                 b.get_children()[0].set_name("BpmInactiveLabel")
     def on_click(self, _o):
         if self.m_t.q_status in (self.QSTATUS_SOLVED, self.QSTATUS_GIVE_UP):
             return
-        if _o.get_data('bpm') not in self.m_t.get_possible_bpms():
+        if _o.m_bpm not in self.m_t.get_possible_bpms():
             return
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_flashbar.flash(_("Click 'New tempo' to begin."))
             return
-        if self.m_t.guess_answer(_o.get_data('bpm')):
-            self.g_flashbar.flash(_("Correct, it is %i") % _o.get_data('bpm'))
+        if self.m_t.guess_answer(_o.m_bpm):
+            self.g_flashbar.flash(_("Correct, it is %i") % _o.m_bpm)
             self.std_buttons_answer_correct()
         else:
             self.g_flashbar.flash(_("Wrong"))

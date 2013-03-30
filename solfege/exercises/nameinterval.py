@@ -181,7 +181,7 @@ class Gui(abstract.LessonbasedGui):
             return
         self.m_t.answer_quality(n)
         self.unbold_quality()
-        b = [b for b in self.g_quality_box.get_children() if b.get_data('interval_quality') == n][0]
+        b = [b for b in self.g_quality_box.get_children() if b.m_interval_quality == n][0]
         b.get_child().set_name("BoldText")
         if self.m_t.answer_complete():
             self.handle_do_answer()
@@ -197,7 +197,7 @@ class Gui(abstract.LessonbasedGui):
             return
         self.m_t.answer_number(n)
         self.unbold_interval()
-        b = [b for b in self.g_number_box.get_children() if b.get_data('interval_number') == n][0]
+        b = [b for b in self.g_number_box.get_children() if b.m_interval_number == n][0]
         b.get_child().set_name("BoldText")
         if self.m_t.answer_complete():
             self.handle_do_answer()
@@ -214,14 +214,14 @@ class Gui(abstract.LessonbasedGui):
         for n in self.m_t.m_P.header.interval_number:
             xgettext_ignore = _i
             b = Gtk.Button(xgettext_ignore("interval|%s" % mpd.interval.number_name(n)))
-            b.set_data('interval_number', n)
+            b.m_interval_number = n
             b.connect('clicked', self.on_interval_number_clicked, n)
             self.g_number_box.pack_start(b, True, True, 0)
             b.show()
         [btn.destroy() for btn in self.g_quality_box.get_children()]
         for n in self.m_t.m_P.header.interval_quality:
             b = Gtk.Button(mpd.Interval.nn_to_translated_quality(n))
-            b.set_data('interval_quality', n)
+            b.m_interval_quality = n
             b.connect('clicked', self.on_interval_quality_clicked, n)
             self.g_quality_box.pack_start(b, True, True, 0)
             b.show()

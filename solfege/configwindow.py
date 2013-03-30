@@ -566,7 +566,6 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             menu = Gtk.Menu()
             for clientid, portid, clientname, portname, labeltext in connection_list:
                 item = Gtk.MenuItem(labeltext)
-                item.set_data('client-port-id', (clientid, portid))
                 menu.append(item)
                 def ff(widget, clientid, portid):
                     self.g_alsa_device.set_label(widget.get_child().get_text())
