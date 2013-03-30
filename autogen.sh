@@ -12,7 +12,12 @@ fi
 aclocal $ACINCLUDE
 
 autoconf
-./configure $CONFIGURE_OPTS
+
+if [ "$OSTYPE" = "msys" ]; then	
+  PYTHON=/c/python27/python.exe GIT=C:/Programfiler/Git/bin/git.exe ./configure $CONFIGURE_OPTS
+else
+  $CONFIGURE_OPTS
+fi
 
 make solfege/_version.py
 make solfege/languages.py
