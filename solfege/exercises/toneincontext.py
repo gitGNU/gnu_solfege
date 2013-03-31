@@ -187,7 +187,7 @@ class Gui(abstract.Gui):
         ##############
         # config_box #
         ##############
-        self.config_box.set_spacing(gu.hig_dlg_vbox.spacing)
+        self.config_box.set_spacing(gu.hig.SPACE_MEDIUM)
         self.g_random = gu.nCheckButton(self.m_exname, 'random_tonic', _("Random transpose"))
         self.config_box.pack_start(self.g_random, False, False, 0)
         self._add_auto_new_question_gui(self.config_box)
