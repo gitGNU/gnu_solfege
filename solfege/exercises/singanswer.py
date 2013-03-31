@@ -42,7 +42,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_music_displayer = mpd.MusicDisplayer()
         self.practise_box.pack_start(self.g_music_displayer, True, True, 0)
         self.g_flashbar = gu.FlashBar()
-        self.practise_box.pack_start(self.g_flashbar, True, True, 0)
+        self.practise_box.pack_start(self.g_flashbar, False, False, 0)
         self.g_music_displayer.clear()
         self.g_new = gu.bButton(self.action_area, _("_New"), self.new_question)
         self.g_repeat = gu.bButton(self.action_area, _("_Repeat"),
