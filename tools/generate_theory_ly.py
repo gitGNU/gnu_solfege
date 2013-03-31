@@ -195,7 +195,7 @@ def set_lang(lang):
     if lang == 'C':
         __builtin__.__dict__['_'] = nop
     else:
-        g = gettext.GNUTranslations(open(os.path.join("po", "%s.mo" % lang), 'r'))
+        g = gettext.GNUTranslations(open(os.path.join("po", "%s.mo" % lang), 'rb'))
         __builtin__.__dict__['_'] = g.ugettext
 
 
