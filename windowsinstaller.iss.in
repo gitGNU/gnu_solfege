@@ -6,7 +6,7 @@ DefaultDirName={pf}\GNU Solfege
 DefaultGroupName=GNU Solfege
 OutputBaseFilename=solfege-win32-@VERSION@
 SolidCompression=yes
-SourceDir=win32
+SourceDir=build
 LicenseFile=COPYING.txt
 
 [Files]
