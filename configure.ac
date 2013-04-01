@@ -45,7 +45,7 @@ AC_PROG_CC
 
 # Remember to update solfege/runtime.py and topdocs/README.texi
 # when we change the requried python version.
-AM_PATH_PYTHON(2.5)
+AM_PATH_PYTHON(2.7)
 AM_CHECK_PYTHON_HEADERS(HAVE_PYTHON_H=yes, HAVE_PYTHON_H=no)
 
 AC_PROG_INSTALL
