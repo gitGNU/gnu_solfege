@@ -137,7 +137,7 @@ install: all mkinstalldirs install-po install-soundcard install-graphics install
 install-program-files: mkinstalldirs
 	$(INSTALL_PROGRAM) run-solfege.py $(DESTDIR)/$(bindir)/solfege
 	$(INSTALL_PROGRAM) run-solfege.py $(DESTDIR)/$(bindir)/solfege
-	$(INSTALL_DATA) solfege.gtkrc $(DESTDIR)/$(datadir)/$(PACKAGE)
+	$(INSTALL_DATA) solfege.css $(DESTDIR)/$(datadir)/$(PACKAGE)
 	$(INSTALL_DATA) default.config $(DESTDIR)/$(datadir)/$(PACKAGE)
 	$(INSTALL_DATA) solfege.1 $(DESTDIR)/$(mandir)/man1
 	
@@ -170,7 +170,7 @@ uninstall: uninstall-po uninstall-soundcard uninstall-graphics
 	rm $(mandir)/man1/solfege.1
 	rmdir $(mandir)/man1 || true
 	rmdir $(mandir) || true
-	rm -f $(datadir)/$(PACKAGE)/solfege.gtkrc
+	rm -f $(datadir)/$(PACKAGE)/solfege.css
 	rm -f $(datadir)/$(PACKAGE)/default.config
 	rm -f $(sysconfdir)/$(PACKAGE)
 	rm -f $(datadir)/applications/solfege.desktop
