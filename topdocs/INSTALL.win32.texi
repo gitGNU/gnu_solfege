@@ -40,6 +40,53 @@ the author of Solfege directly, because when emailing the list,
 other people than me get the chance to help. 
 
 @section Developers
-Building the windows installer requires Special Magic Woodo Skills.
-Please read @url{http://www.solfege.org/Solfege/SolfegeOnWin32}
 
+Solfege 3.23.0 and newer can be checked out and built from the
+git repository after you have installed the dependencies.
+
+@subsection Setup for running from source dir
+
+Install mingw using the installer
+from @uref{http://sourceforge.net/projects/mingw}.
+
+Install Python 2.7 from
+@uref{http://www.python.org/download/releases/2.7.2/}
+
+Download
+@uref{http://osspack32.googlecode.com/files/pygi-aio-3.4.2rev10.7z}
+and unzip to /C/mygi
+
+$ cp -a /C/mygi/py27 /C/Python27/Lib/site-packages/
+$ cp -a /C/mygi/gtk /C/Python27/Lib/site-packages/
+
+@section Setup for creating the binary package
+
+While Python 2.7 is _NOT_ installed, run this:
+
+@command{ msiexec /a python-2.7.2msi TARGETDIR=C:\mypython27}
+
+After that, you can reinstall Python 2.7, if you want.
+
+Install a program that can unpack 7z files. Unpack
+@uref{http://osspack32.googlecode.com/files/pygi-aio-3.4.2rev10.7z}
+to c:\mygi
+
+Checkout solfege with git into c:\solfege
+
+
+@section Building and running from source dir
+
+$ git clone http://git.solfege.org/solfege.git
+$ cd solfege
+$ ./autogen.sh
+$ make
+
+Then you run the program by double-clicking @command{runsrcdir.bat}.
+
+@section Creating the binary package
+
+Build as in the previous section.
+
+$ ./makeinstaller.sh
+
+... TODO
