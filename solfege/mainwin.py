@@ -423,7 +423,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                 return True
             self.g_path_info_dlg.connect('response', f)
             self.g_path_info_dlg.connect('delete-event', f)
-            sc.set_size_request(min(vbox.size_request().width + gu.hig_dlg_vbox.border_width * 2,
+            sc.set_size_request(min(vbox.size_request().width + gu.SPACE_LARGE * 2,
                                     Gdk.Screen.width() * 0.9),
                                 vbox.size_request().height)
     def setup_pyalsa(self, widget):
