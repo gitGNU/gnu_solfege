@@ -14,7 +14,7 @@ aclocal $ACINCLUDE
 autoconf
 
 if [ "$OSTYPE" = "msys" ]; then	
-  PYTHON=/c/python27/python.exe GIT=C:/Programfiler/Git/bin/git.exe ./configure $CONFIGURE_OPTS
+  PYTHON=/c/python27/python.exe GIT=C:/Programfiler/Git/bin/git.exe ./configure --enable-winmidi PYTHONDLL=/C/WINDOWS/system32/python27.dll $CONFIGURE_OPTS
 else
   ./configure $CONFIGURE_OPTS
 fi
