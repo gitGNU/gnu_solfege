@@ -62,6 +62,11 @@ AC_SUBST(LILYPOND)
 AC_PATH_PROG(GIT, git, "notfound")
 AC_SUBST(GIT)
 
+dnl Yes, I know this is incorrect. But it works. Someone that
+dnl knows autoconf should fix this.
+AC_PATH_PROG(PYTHONDLL)
+AC_SUBST(PYTHONDLL)
+
 AC_PATH_PROG(GS, gs)
 AC_SUBST(GS)
 

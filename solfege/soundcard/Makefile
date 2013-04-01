@@ -67,11 +67,10 @@ ifeq ($(ENABLE_WINMIDI),yes)
 TARGETS += solfege/soundcard/winmidi.pyd
 endif
 
-PYDLL=win32/bin/python25.dll
 DLLWRAP=dllwrap
 
 %/winmidi.pyd: %/winmidi.o
-	$(DLLWRAP) --dllname=$@ --def=solfege/soundcard/winmidi.def $< -o $@ -s --entry=_DllMain@12 -L/usr/i586-mingw32msvc/lib/ -lwinmm $(PYDLL)
+	$(DLLWRAP) --dllname=$@ --def=solfege/soundcard/winmidi.def $< -o $@ -s --entry=_DllMain@12 -L/usr/i586-mingw32msvc/lib/ -lwinmm $(PYTHONDLL)
 
 %/winmidi.o: %/winmidi.c
 	$(CC) $(CFLAGS) $(PYTHON_INCLUDES) -c $< -o $@
