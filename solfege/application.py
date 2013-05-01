@@ -73,7 +73,7 @@ def check_rcfile():
     """See default.config for rcfileversion values, meanings and
     a description of how to add config variables.
     """
-    rcfileversion = 20
+    rcfileversion = 21
     if cfg.get_int("app/rcfileversion") > rcfileversion:
         cfg.drop_user_config()
         return
@@ -156,6 +156,12 @@ def check_rcfile():
                 cfg.set_int("%s/maximum_number_of_intervals" % ex, 12)
     if cfg.get_int("app/rcfileversion") < 20:
         cfg.del_key("gui/reserved_vspace")
+    if cfg.get_int("app/rcfileversion") < 21:
+        for ex in ("melodicinterval", "harmonicinterval"):
+            i = cfg.get_int("%s/inputwidget" % ex)
+            if i > 0:
+                cfg.set_int("%s/inputwidget" % ex, i + 1)
+
 
     cfg.set_int("app/rcfileversion", rcfileversion)
     try:
@@ -402,7 +408,7 @@ class SolfegeApp(cfg.ConfigUtils):
         ~/.solfege/exercises/collection/modulename
         and "user:" is just a prefix to show that the module name
         is in the users directory.
-        
+
         If a plain string with not prefix, it is one of the standard modules
         included with Solfege.
 

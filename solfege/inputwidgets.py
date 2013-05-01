@@ -286,17 +286,6 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
 class IntervalButtonsWidget(IntervalButtonsWidgetBase):
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.set_name("IntervalButtonsWidget")
-        self.row(1, 2, 3, 4)
-        self.row(5, 6, 7, 8)
-        self.row(9, 10, 11, 12)
-        self.row(13, 14, 15, 16)
-        self.post_construct(vars_to_watch)
-
-
-class IntervalButtonsWidget4(IntervalButtonsWidgetBase):
-    def __init__(self, exname, callback, sensicallback, vars_to_watch):
-        IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
         g1 = Gtk.Grid()
         for i, (x, y) in enumerate((
                 (0, 0), (1, 0), (2, 0), (3, 0),
@@ -326,41 +315,6 @@ class IntervalButtonsWidget2(IntervalButtonsWidgetBase):
         self.row(17, 18, 19)
         self.row(20, 21, 22, 23)
         self.row(24)
-        self.post_construct(vars_to_watch)
-
-
-class IntervalButtonsWidget3(IntervalButtonsWidgetBase):
-    def __init__(self, exname, callback, sensicallback, vars_to_watch):
-        IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
-        self.set_row_spacing(gu.hig.SPACE_MEDIUM)
-        g1 = Gtk.Grid()
-        g1.set_column_homogeneous(True)
-        for y, row in enumerate([[1, 2, 10, 11], [13, 14, 22, 23]]):
-            for x, i in enumerate(row):
-                g1.attach(self.mk_button(i), x, y, 1, 1)
-        g2 = Gtk.Grid()
-        g2.set_column_homogeneous(True)
-        for y, row in enumerate([[3, 4, 8, 9], [15, 16, 20, 21]]):
-            for x, i in enumerate(row):
-                g2.attach(self.mk_button(i), x, y, 1, 1)
-
-        g3 = Gtk.Grid()
-        g3.set_column_homogeneous(True)
-        for y, row in enumerate([[5, 7, 12], [17, 19, 24]]):
-            for x, i in enumerate(row):
-                g3.attach(self.mk_button(i), x, y, 1, 1)
-
-        g4 = Gtk.Grid()
-        g4.attach(self.mk_button(6), 0, 0, 1, 1)
-        g4.attach(self.mk_button(18), 0, 1, 1, 1)
-
-        self.add(g1)
-        self.add(g2)
-        horiz = Gtk.Grid()
-        horiz.set_column_spacing(gu.hig.SPACE_MEDIUM)
-        self.add(horiz)
-        horiz.add(g3)
-        horiz.add(g4)
         self.post_construct(vars_to_watch)
 
 
@@ -689,44 +643,40 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
 
 
 inputwidget_names = [_("Buttons"),
+                 _("Buttons %i") % 2,
                  _("Piano"), _("Guitar"), _("Bass"),
                  _("5 string bass"), _("6 string bass"),
                  _("Accordion B griff"), _("Accordion C griff"),
                  _("Accordion (system used in Finland)"),
-                 _("Accordion (Belgian Charleroi do2)"),
-                 _("Buttons %i") % 2,
-                 _("Buttons %i") % 3,
-                 _("Buttons %i") % 4,]
+                 _("Accordion (Belgian Charleroi do2)")]
 
 def int_to_inputwidget(i, callback, exname, get_interval_input_list, vars_to_watch):
-    if i in (0, 10, 11, 12):
+    if i in (0, 1):
         w = {0: IntervalButtonsWidget,
-             10: IntervalButtonsWidget2,
-             11: IntervalButtonsWidget3,
-             12: IntervalButtonsWidget4}[i](exname, callback,
-                                            get_interval_input_list,
-                                            vars_to_watch)
-    elif i == 1:
-        w = IntervalPianoWidget(callback)
+             1: IntervalButtonsWidget2}[i](exname, callback,
+                                           get_interval_input_list,
+                                           vars_to_watch)
     elif i == 2:
+        w = IntervalPianoWidget(callback)
+    elif i == 3:
         w = GuitarWidget(callback, ["e'", "b", "g", "d", "a,", "e,"],
                                    (1, 1, 1, 2, 2, 3))
-    elif i == 3:
+    elif i == 4:
         w = AbstractGuitarWidget(callback, ["g,", "d,", "a,,", "e,,"],
                                  (1, 1, 2, 3))
-    elif i == 4:
+    elif i == 5:
         w = AbstractGuitarWidget(callback, ["g,", "d,", "a,,", "e,,", "b,,,"],
                                  (1, 1, 2, 3, 3))
-    elif i == 5:
+    elif i == 6:
         w = AbstractGuitarWidget(callback, ["c", "g,", "d,", "a,,", "e,,", "b,,,"],
                                  (1, 1, 2, 2, 3, 3))
-    elif i == 6:
-        w = AccordionWidget(callback, 'norwegian')
     elif i == 7:
-        w = AccordionWidget(callback, 'swedish')
+        w = AccordionWidget(callback, 'norwegian')
     elif i == 8:
-        w = AccordionWidget(callback, 'finnish')
+        w = AccordionWidget(callback, 'swedish')
     elif i == 9:
+        w = AccordionWidget(callback, 'finnish')
+    elif i == 10:
         w = AccordionWidget(callback, 'belgian')
     return w
 
