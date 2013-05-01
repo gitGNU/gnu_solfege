@@ -64,7 +64,7 @@ var = 3
         else:
             self.fail("UnableToTokenizeException not raised")
     def test_encodings_utf8(self):
-        s = """
+        s = u"""
         name = "øæå" """
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'utf-8')
         f.write(s)
@@ -74,10 +74,10 @@ var = 3
         f.close()
         p = Dataparser()
         p._lexer = Lexer(s, p)
-        self.assertEquals(p._lexer.m_tokens[2][1], "øæå")
+        self.assertEquals(p._lexer.m_tokens[2][1], u"øæå")
     def test_encodings_iso88591(self):
-        s = '#vim: set fileencoding=iso-8859-1 : \n' \
-            'name = "øæå" '
+        s = u'#vim: set fileencoding=iso-8859-1 : \n' \
+            u'name = "øæå" '
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'iso-8859-1')
         f.write(s)
         f.close()
@@ -86,7 +86,7 @@ var = 3
         f.close()
         p = Dataparser()
         p._lexer = Lexer(s, p)
-        self.assertEquals(p._lexer.m_tokens[2][1], "øæå")
+        self.assertEquals(p._lexer.m_tokens[2][1], u"øæå")
     def _test_encodings_delcar_not_first(self):
         """
         FIXME: I disabled this test because people suddenly started
@@ -234,7 +234,7 @@ class TestDataParser(TmpFileBase):
         except CanOnlyTranslateStringsException, e:
             self.assertEquals(e.m_nonwrapped_text,
                u'(line 1): foo[no] = "foo-no", "blabla" \n'
-               +'                    ^') 
+               +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
     def test_i18n_int_fails(self):
@@ -243,7 +243,7 @@ class TestDataParser(TmpFileBase):
         except CanOnlyTranslateStringsException, e:
             self.assertEquals(e.m_nonwrapped_text,
                u'(line 1): foo[no] = 8\n'
-               +'                    ^') 
+               +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
     def test_import(self):
@@ -341,7 +341,6 @@ class TestIstr(I18nSetup):
         self.assert_(isinstance(s, istr))
         self.assert_(not isinstance(s, str))
         self.assert_(isinstance(s, unicode))
-
 
 suite = unittest.makeSuite(TestLexer)
 suite.addTest(unittest.makeSuite(TestDataParser))

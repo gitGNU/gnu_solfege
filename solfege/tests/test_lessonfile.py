@@ -166,21 +166,15 @@ class TestParser(TmpFileBase):
         else:
             self.fail("DataparserSyntaxError not raised")
     def test_addition(self):
-        p = self.do_file("""
+        p = self.do_file(u"""
               a = "en " + "to"
               i = 3 + 5
               tr1 = _("major")
-              tr2 = _(u"«%s» was not found")
-              tr3 = _(u"«%s» was not found") % "x"
-              tr4 = _(u"«%s» was not found") % 4
               title = _("Is the interval flat, in tune or sharp? %s cent wrong") % 10
               """)
         self.assertEquals(p.m_globals['a'], "en to")
         self.assertEquals(p.m_globals['i'], 8)
         self.assertEquals(p.m_globals['tr1'], 'dur')
-        self.assertEquals(p.m_globals['tr2'], u'«%s» ble ikke funnet')
-        self.assertEquals(p.m_globals['tr3'], u'«x» ble ikke funnet')
-        self.assertEquals(p.m_globals['tr4'], u'«4» ble ikke funnet')
     def test_absolute_import(self):
         """
         This test will import progression_elements and will show that

@@ -93,6 +93,17 @@ def iter_suite(suite):
         else:
             yield t
 
+def rmtemp():
+    shutil.rmtree(testlib.outdir)
+    if os.path.exists(testlib.TmpFileBase.tmpdir):
+        os.rmdir(testlib.TmpFileBase.tmpdir)
+
+atexit.register(rmtemp)
+
+testlib.TmpFileBase.tmpdir
+if not os.path.exists(testlib.TmpFileBase.tmpdir):
+    os.makedirs(testlib.TmpFileBase.tmpdir)
+
 args = [x for x in sys.argv[1:] if x not in ('-v', '-q', '-h')]
 if args and '-h' not in sys.argv:
     new_suite = unittest.TestSuite()
@@ -106,17 +117,6 @@ if args and '-h' not in sys.argv:
 
 
 sys.argv.append("suite")
-
-def rmtemp():
-    shutil.rmtree(testlib.outdir)
-    if os.path.exists(testlib.TmpFileBase.tmpdir):
-        os.rmdir(testlib.TmpFileBase.tmpdir)
-
-atexit.register(rmtemp)
-
-testlib.TmpFileBase.tmpdir
-if not os.path.exists(testlib.TmpFileBase.tmpdir):
-    os.makedirs(testlib.TmpFileBase.tmpdir)
 
 MyProg()
 

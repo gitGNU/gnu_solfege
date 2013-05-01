@@ -73,6 +73,9 @@ class Lexer:
     re_key = re.compile(r"\\key\s+([a-z]+)\s*\\(major|minor)", re.UNICODE)
     re_times = re.compile(r"\\times\s+(\d+)\s*/\s*(\d+)\s*{", re.UNICODE)
     def __init__(self, s):
+        if not isinstance(s, unicode):
+            s = s.decode("utf-8")
+        assert isinstance(s, unicode)
         self.m_string = s
         self.m_notelen = Duration(4, 0)
         self.m_idx = 0

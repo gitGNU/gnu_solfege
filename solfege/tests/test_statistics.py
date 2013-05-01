@@ -44,7 +44,6 @@ class TestDB(unittest.TestCase):
             db.set_variable, 'database_version', '3')
         db.set_variable('textvar', u'this is кофе')
         self.assertEquals(db.get_variable('textvar'), u'this is кофе')
-        self.assertEquals(db.get_variable('textvar'), 'this is кофе')
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'textvar', 5)
         self.assertRaises(db.VariableTypeError,

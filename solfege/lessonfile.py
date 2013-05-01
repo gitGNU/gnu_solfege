@@ -1003,6 +1003,9 @@ class LessonfileCommon(object):
         """
         self.m_location = os.path.split(uri_expand(filename))[0]
         self.m_filename = filename
+        # We open and read the file without using the codecs module
+        # because the lexer class will check for a coding tag in
+        # the lesson file before decoding it.
         s = open(uri_expand(filename), 'rU').read()
         self.parse_string(s, really_filename=filename)
     def parse_string(self, s, really_filename=None):
@@ -1268,7 +1271,7 @@ class QuestionsLessonfile(LessonfileCommon):
     def get_score(self, varname='music'):
         """
         Return the elems.Score object of the music in the variable named
-        by VARNAME. 
+        by VARNAME.
         """
         assert self._idx is not None
         musicobj = self.m_questions[self._idx][varname]
@@ -1902,7 +1905,7 @@ class InfoCache(object):
         """
         Put the data from the lesson files below ~/.solfege/exercises/
         in the cache and yield the filename.
-        
+
         If only_user_collection=True it will only iterate the lesson files
         in .solfege/exercises/user/lesson-files
         """
@@ -1947,6 +1950,6 @@ def parse_lesson_file_header(filename):
     except dataparser.DataparserException:
         return None
     finally:
-        pt.Identifier.check_ns = check_ns    
+        pt.Identifier.check_ns = check_ns
     return p
 

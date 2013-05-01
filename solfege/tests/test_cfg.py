@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import
 import unittest
+import codecs
 import doctest
 import os.path
 from solfege.testlib import outdir
@@ -30,7 +31,7 @@ class Test_parse_file_into_dict(unittest.TestCase):
         os.remove(filename)
     def test_parse_utf8(self):
         filename = os.path.join(outdir, 'ok-utf8.ini')
-        outfile = open(filename, 'w')
+        outfile = codecs.open(filename, 'w', 'utf-8')
         outfile.write(u"# This file is in utf8 encoding\n"
                       u"[sound]\n"
                       u"s=/home/Usér/bin/prog\n"

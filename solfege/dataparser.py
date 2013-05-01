@@ -207,6 +207,7 @@ class UnableToTokenizeException(DataparserException):
 
 class Lexer:
     def __init__(self, src, parser):
+        assert isinstance(src, str)
         if parser:
             self.m_parser = weakref.ref(parser)
         else:
@@ -219,6 +220,7 @@ class Lexer:
             src = unicode(src, m.groups()[0], errors="replace")
         else:
             src = unicode(src, "UTF-8", errors="replace")
+        assert isinstance(src, unicode)
         src = src.replace("\r", "\n")
         # Some editors (notepad on win32?) insert the BOM, so we have
         # to check for it and remove it since the lexer don't handle it.
@@ -353,6 +355,7 @@ class Dataparser:
         self.reserved_words = ('_', 'question', 'header')
         self.prog()
     def parse_string(self, s, really_filename=False):
+        assert isinstance(s, str)
         if really_filename:
             self.m_filename = really_filename
         else:
