@@ -647,7 +647,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         except KeyError:
             return
         if (event.type == Gdk.EventType.KEY_PRESS
-            and event.get_state() == Gdk.ModifierType.MOD1_MASK # Alt key
+            and event.get_state() & Gdk.ModifierType.MOD1_MASK == Gdk.ModifierType.MOD1_MASK# Alt key
             and event.keyval in (Gdk.KEY_KP_Left, Gdk.KEY_Left)
             and self.m_history
             and not solfege.app.m_test_mode):
