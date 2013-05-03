@@ -61,7 +61,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
         adj = self.get_vadjustment()
         if a.y + a.height > adj.get_value() + adj.get_page_size():
             if getattr(w, 'm_last', None):
-                adj.set_value(adj.upper - adj.get_page_size())
+                adj.set_value(adj.get_upper() - adj.get_page_size())
             else:
                 adj.set_value(a.y - adj.get_page_size() + a.height)
         elif a.y < adj.get_value():
@@ -104,7 +104,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
                     if btn.is_focus():
                         break
                 for to_btn in self.m_linkbuttons:
-                    if to_btn.get_allocation().y > adj.get_value() - adj.page_increment:
+                    if to_btn.get_allocation().y > adj.get_value() - adj.get_page_increment():
                         self._on_focus_in_blocked = True
                         to_btn.grab_focus()
                         self._on_focus_in_blocked = False
@@ -163,90 +163,70 @@ class ExerciseView(SelectWinBase):
         display_only_tests should be True when we are browsing available tests.
         This will validate statistics for each lesson and display the test result.
         """
+        COLW = 4
         if not is_search_result:
             self.m_page = page
         try:
-            self.g_hbox.destroy()
+            self.g_grid.destroy()
         except AttributeError:
             pass
-        self.g_hbox = gu.bHBox(self.g_box)
-        self.g_hbox.set_spacing(gu.hig.SPACE_MEDIUM)
+        self.g_grid = Gtk.Grid()
+        self.g_box.pack_start(self.g_grid, False, False, 0)
         label = None
-        do_sg = True
-        if len(page[0]) > 0 and isinstance(page[0][0], frontpage.LinkList):
-            count = 0
-            for column in page:
-                assert isinstance(column, frontpage.Column)
-                for linklist in column:
-                    assert isinstance(linklist, (frontpage.LinkList,
-                                                 frontpage.Paragraph))
-                    if isinstance(linklist, frontpage.LinkList):
-                        count += len(linklist)
-            if count > 80:
-                do_sg = False
-        for column in page:
-            sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        for col_idx, column in enumerate(page):
             assert isinstance(column, frontpage.Column)
             first = True
-            vbox = Gtk.VBox(False, 0)
-            vbox.set_spacing(gu.hig.SPACE_MEDIUM)
-            self.g_hbox.pack_start(vbox, False, False, 0)
+            y = 0
             for sect_id, linklist in enumerate(column):
                 if isinstance(linklist, frontpage.Paragraph):
                     label = Gtk.Label(label=linklist.m_text)
                     label.set_use_markup(True)
                     label.set_line_wrap(True)
                     label.set_alignment(0.0, 0.5)
-                    vbox.pack_start(label, False, False, 0)
+                    self.g_grid.attach(label, col_idx * COLW, y, 1, 1)
+                    y += 1
                     continue
                 assert isinstance(linklist, frontpage.LinkList)
                 if (display_only_tests
                     and not frontpage._TreeCommon.tests_in_sub(linklist)):
                         continue
-                linkbox = Gtk.VBox(False, 0)
-                vbox.pack_start(linkbox, False, False, 0)
                 heading = Gtk.Label(label="<b>%s</b>" % _no_xgettext(linklist.m_name))
                 heading.set_alignment(0.0, 0.5)
                 heading.set_use_markup(True)
-                linkbox.pack_start(heading, False, False, 0)
-                sizegroups = dict((k, Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)) for k in self.m_fields)
+                self.g_grid.attach(heading, col_idx * COLW, y, 2, 1)
+                y += 1
                 for idx, link in enumerate(linklist):
                     if isinstance(self, TestsView) and not frontpage._TreeCommon.tests_in_sub(link):
                         continue
                     if isinstance(link, frontpage.Page):
                         label = gu.ClickableLabel(_no_xgettext(link.m_name))
                         label.connect('clicked', self.on_page_link_clicked, link)
+                        self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
                     else:
                         assert isinstance(link, unicode), type(link)
-                        label = Gtk.HBox(False, 0)
-                        label.set_spacing(gu.hig.SPACE_SMALL)
                         if display_only_tests:
                             solfege.db.validate_stored_statistics(link)
                         try:
                             for fieldname in self.m_fields:
                                 if fieldname in (u'link', u'link-with-filename-tooltip'):
                                     labeltxt = lessonfile.infocache.get(link, 'title')
-                                    lbl = gu.ClickableLabel(_no_xgettext(labeltxt))
+                                    label = gu.ClickableLabel(_no_xgettext(labeltxt))
                                     if solfege.app.m_options.debug:
-                                        lbl.set_tooltip_text(u"%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
+                                        label.set_tooltip_text(u"%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
                                     elif fieldname == u'link-with-filename-tooltip':
-                                        lbl.set_tooltip_text(link)
-                                    if do_sg:
-                                        sizegroups[fieldname].add_widget(lbl)
+                                        label.set_tooltip_text(link)
                                     if show_topics:
                                         topic = solfege.app.m_frontpage_data.get_topic_of_lesson_file(link)
                                         if topic and topic not in labeltxt:
-                                            lbl.add_heading(topic)
-                                    lbl.connect('clicked', self.on_link_clicked, link)
+                                            label.add_heading(topic)
+                                    label.connect('clicked', self.on_link_clicked, link)
                                 else:
                                     if fieldname == 'filename':
-                                        lbl = Gtk.Label(label=link)
+                                        label = Gtk.Label(label=link)
                                     else:
-                                        lbl = Gtk.Label(lessonfile.infocache.get(link, fieldname))
-                                    lbl.set_alignment(0.0, 0.5)
-                                    if do_sg:
-                                        sizegroups[fieldname].add_widget(lbl)
-                                label.pack_start(lbl, False, False, 0)
+                                        label = Gtk.Label(lessonfile.infocache.get(link, fieldname))
+                                    label.set_alignment(0.0, 0.5)
+                                self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
                         except lessonfile.InfoCache.FileNotFound:
                             label = gu.ClickableLabel(_(u"«%s» was not found") % link)
                             label.make_warning()
@@ -256,35 +236,30 @@ class ExerciseView(SelectWinBase):
                     if first:
                         label.m_first = True
                         first = False
-                    w = label.size_request().width
-                    if w > self.max_exercise_label_width:
-                        w = self.max_exercise_label_width
-                        if isinstance(link, unicode):
-                            txt = _(lessonfile.infocache.get(link, "title"))
-                        else:
-                            txt = link.m_name
-                        label.set_tooltip_text(txt)
-                        label.set_size_request(w / len(page), -1)
+                    #w = label.size_request().width
+                    #if w > self.max_exercise_label_width:
+                    #    w = self.max_exercise_label_width
+                    #    if isinstance(link, unicode):
+                    #        txt = _(lessonfile.infocache.get(link, "title"))
+                    #    else:
+                    #        txt = link.m_name
+                    #    label.set_tooltip_text(txt)
+                    #    label.set_size_request(w / len(page), -1)
                     self.m_linkbuttons.append(label)
                     label.connect('focus-in-event', self.on_focus_in)
                     if display_only_tests:
-                        box = Gtk.HBox(False, 0)
-                        box.pack_start(label, True, True, 0)
                         if isinstance(link, unicode):
                             passed, result = solfege.db.get_test_status(link)
                             if passed == True:
-                                box.pack_start(Gtk.Label(_("passed, %.1f%%") % (result * 100)))
+                                self.g_grid.attach(Gtk.Label(_("passed, %.1f%%") % (result * 100)),
+                                                   col_idx * COLW + 2, y, 1, 1)
                             if passed == False:
-                                box.pack_start(Gtk.Label(_("failed, %.1f%%") % (result * 100)))
-                            # do nothing if passed == None since
-                        linkbox.pack_start(box, True, False, 0)
-                    else:
-                        linkbox.pack_start(label, True, False, 0)
-                    if do_sg:
-                        sizegroup.add_widget(label)
+                                self.g_grid.attach(Gtk.Label(_("failed, %.1f%%") % (result * 100)),
+                                                   col_idx * COLW + 2, y, 1, 1)
+                    y += 1
             if label:
                 label.m_last = True
-        self.g_hbox.show_all()
+        self.g_grid.show_all()
         self.adjust_scrolledwin_size()
         self.get_vadjustment().set_value(0.0)
     def on_page_link_clicked(self, btn, link):
