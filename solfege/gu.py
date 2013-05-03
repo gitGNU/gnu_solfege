@@ -990,6 +990,7 @@ class ClickableLabel(Gtk.LinkButton):
         So let ut not even pretend to follow its api.
         """
         Gtk.LinkButton.__init__(self, label, label)
+        self.get_children()[0].set_ellipsize(Pango.EllipsizeMode.END)
         self.get_children()[0].set_alignment(0.0, 0.5)
         def f(*w): return True
         self.connect('activate-link', f)

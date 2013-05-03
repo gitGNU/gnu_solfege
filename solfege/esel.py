@@ -45,7 +45,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self._on_focus_in_blocked = False
-        self.m_min_width = 400
+        self.m_min_width = 500
         self.m_min_height = 300
         self.set_size_request(self.m_min_width, self.m_min_height)
         self.m_linkbuttons = []
@@ -142,7 +142,6 @@ class SelectWinBase(Gtk.ScrolledWindow):
 
 
 class ExerciseView(SelectWinBase):
-    max_exercise_label_width = int(Gdk.Screen.width() * 0.90)
     def __init__(self,  fields=('link',)):
         SelectWinBase.__init__(self)
         self.m_fields = fields
@@ -236,15 +235,6 @@ class ExerciseView(SelectWinBase):
                     if first:
                         label.m_first = True
                         first = False
-                    #w = label.size_request().width
-                    #if w > self.max_exercise_label_width:
-                    #    w = self.max_exercise_label_width
-                    #    if isinstance(link, unicode):
-                    #        txt = _(lessonfile.infocache.get(link, "title"))
-                    #    else:
-                    #        txt = link.m_name
-                    #    label.set_tooltip_text(txt)
-                    #    label.set_size_request(w / len(page), -1)
                     self.m_linkbuttons.append(label)
                     label.connect('focus-in-event', self.on_focus_in)
                     if display_only_tests:
