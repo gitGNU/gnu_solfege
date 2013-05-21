@@ -52,5 +52,5 @@ class MidiFileSynth(SynthCommon):
         midieventstream.create_midifile(self.m_tmpfilename)
         soundcard.play_mediafile('midi', self.m_tmpfilename)
     def stop(self):
-        pass
+        self.play_midieventstream(MidiEventStream())
 
