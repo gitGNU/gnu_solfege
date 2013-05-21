@@ -429,16 +429,16 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
     def setup_pyalsa(self, widget):
         download_pyalsa.download()
     def show_about_window(self, widget):
-        trans = _("SOLFEGETRANSLATORS")
-        if trans == 'SOLFEGETRANSLATORS':
-            trans = ""
         pixbuf = self.render_icon('solfege-icon', Gtk.IconSize.DIALOG)
         a = self.g_about_window = Gtk.AboutDialog()
+        a.set_program_name("GNU Solfege")
         a.set_logo(pixbuf)
-        a.set_name("GNU Solfege")
         a.set_website("http://www.solfege.org")
         a.set_version(buildinfo.VERSION_STRING)
-        a.set_copyright("\n".join((solfege.application.solfege_copyright, solfege.application.warranty)))
+        a.set_copyright("Copyright (C) 2013 Tom Cato Amundsen and others")
+        a.set_license("\n".join((solfege.application.solfege_copyright, solfege.application.warranty)))
+        # Using set_license_type causes the app to print warnings.
+        #a.set_license_type(Gtk.License.GPL_3_0)
         a.set_authors(["Tom Cato Amundsen",
               'Giovanni Chierico %s' % _("(some lessonfiles)"),
               'Michael Becker %s' % _("(some lessonfiles)"),
@@ -454,7 +454,10 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         a.set_documenters(["Tom Cato Amundsen",
                 "Tom Eykens",
                 ])
-        a.set_translator_credits(_("SOLFEGETRANSLATORS"))
+        if _("SOLFEGETRANSLATORS") == 'SOLFEGETRANSLATORS':
+            a.set_translator_credits(None)
+        else:
+            a.set_translator_credits(_("SOLFEGETRANSLATORS"))
         self.g_about_window.run()
         self.g_about_window.destroy()
     def do_tree_editor(self, *v):
