@@ -91,7 +91,6 @@ class Teacher(abstract.Teacher):
                 self.m_statistics.add_correct(unicode(bpm))
             self.q_status = self.QSTATUS_SOLVED
             soundcard.synth.stop()
-            solfege.app.play_happy_sound()
             return 1
         else:
             if self.q_status == self.QSTATUS_NEW:

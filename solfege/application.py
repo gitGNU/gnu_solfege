@@ -305,12 +305,6 @@ class SolfegeApp(cfg.ConfigUtils):
                 "the preferences window.\n\n"
                 "It is also possible that the OS sound setup is incorrect."
                 % str(e).decode(locale.getpreferredencoding(), 'replace'))
-    def play_happy_sound(self):
-        utils.play_music(r"\staff\relative c'{c16 e g a}", 180, 8,
-               cfg.get_int('config/preferred_instrument_volume'))
-    def play_sad_sound(self):
-        utils.play_music(r"\staff\relative c'{<c,,8 cis>", 80, 58,
-               cfg.get_int('config/preferred_instrument_volume'))
     def please_help_me(self):
         if isinstance(solfege.win.get_view(), abstract.Gui):
             # If the view visible is an exercise, when we check if the

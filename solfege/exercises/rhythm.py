@@ -48,11 +48,9 @@ class Teacher(abstract.Teacher, abstract.RhythmAddOnClass):
         if not [x for x in v if x == 0]:
             self.q_status = self.QSTATUS_SOLVED
             self.maybe_auto_new_question()
-            solfege.app.play_happy_sound()
             return 1
         else:
             self.q_status = self.QSTATUS_WRONG
-            solfege.app.play_sad_sound()
 
 
 class RhythmViewer(Gtk.Frame):
