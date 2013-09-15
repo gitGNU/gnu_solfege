@@ -928,7 +928,9 @@ class LogWidget(Gtk.ScrolledWindow):
                 tag)
         else:
             self.g_textbuffer.insert(self.g_textbuffer.get_end_iter(), s)
-        self.g_textview.scroll_to_iter(self.g_textbuffer.get_end_iter(), 0)
+        self.g_textview.scroll_to_iter(
+                self.g_textbuffer.get_end_iter(),
+                0.0, False, 0.5, 0.5)
         # This is needed to make the window update:
         while Gtk.events_pending():
             Gtk.main_iteration()

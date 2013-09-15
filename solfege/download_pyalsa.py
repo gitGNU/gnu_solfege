@@ -25,7 +25,7 @@ from gi.repository import Gtk
 import solfege
 from solfege import gu
 
-pyalsa_ver = "1.0.24"
+pyalsa_ver = "1.0.26"
 
 try:
     import pyalsa
@@ -55,6 +55,10 @@ $ python setup.py build</span>
 
 You will be given instructions how to make Solfege find the module after
 it have been built.
+
+If you get an error message about missing alsa/asoundlib.h, then you
+must install the ALSA kernel headers. On Debian or Ubuntu you do this
+by installing the libasound2-dev package.
 ____________________________________________________________________________________________________
 """ % locals())
     # The long ____ in the string above is there to make the dialog wider
@@ -68,7 +72,7 @@ ________________________________________________________________________________
     def progress_callback(count, size, total):
         if total == -1:
             total = 'unknown'
-        logwin.write("Downloading %s of %s\n bytes" % (count * size, total))
+        logwin.write("Downloading %s of %s bytes\n" % (count * size, total))
     try:
         if not os.path.exists(bz2abs):
             urllib.urlretrieve(url, bz2abs, progress_callback)
@@ -112,6 +116,7 @@ ________________________________________________________________________________
     logwin.write("\n$ sudo python setup.py install")
     logwin.write("\n\nOr if you don't have sudo setup:")
     logwin.write('\n$ su -c "python setup.py install"')
+    logwin.write("")
 
     logwin.run_finished()
 
