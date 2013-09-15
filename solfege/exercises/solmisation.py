@@ -240,7 +240,7 @@ class Gui(abstract.Gui, abstract_solmisation_addon.SolmisationAddOnGuiClass):
                                         _("Show the first tone")), False, False, 0)
         hbox.pack_start(gu.nCheckButton(self.m_exname,
                                         "play_cadence",
-                                        _("Spill kadens")), False, False, 0)
+                                        _("Play cadence")), False, False, 0)
         self._add_auto_new_question_gui(self.config_box)
         self.config_box.show_all()
 
