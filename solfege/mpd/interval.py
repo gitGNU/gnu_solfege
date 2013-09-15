@@ -114,7 +114,7 @@ short_name = (
     _i("interval|M3"),
     # translators: 4 is a short string for perfect fourth
     _i("interval|4"),
-    # translators: tt is a short string for tritone
+    # translators: TT is a short string for tritone
     _i("interval|TT"),
     # translators: 5 is a short string for perfect fifth
     _i("interval|P5"),
