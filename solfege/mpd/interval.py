@@ -97,23 +97,63 @@ if 0:
 min_interval = -24
 max_interval = 24
 
-short_name = (_i("interval|u"),
-              _i("interval|m2"), _i("interval|M2"),
-              _i("interval|m3"), _i("interval|M3"),
-              _i("interval|4"), _i("interval|tt"),
-              _i("interval|5"),
-              _i("interval|m6"), _i("interval|M6"),
-              _i("interval|m7"), _i("interval|M7"),
-              _i("interval|8"),
-              _i("interval|m9"), _i("interval|M9"),
-              _i("interval|m10"), _i("interval|M10"),
-              _i("interval|p11"),
-              _i("interval|tt8"),
-              _i("interval|p12"),
-              _i("interval|m13"), _i("interval|M13"),
-              _i("interval|m14"), _i("interval|M14"),
-              _i("interval|P15"),
-              )
+short_name = (
+    # translators: Sorry for changing a few of these interval names.
+    # I want to follow the naming used by wikipedia an others.
+    # See http://www.solfege.org/translate for important details
+    # These strings are used as button labels for the check buttons
+    # selecting which intervals to ask for.
+    _i("interval|P1"),
+    # translators: m2 is a short version of minor second
+    _i("interval|m2"),
+    # translators: M2 is a short string for major second
+    _i("interval|M2"),
+    # translators: m3 is a short string for minor third
+    _i("interval|m3"),
+    # translators: M3 is a short string for major third
+    _i("interval|M3"),
+    # translators: 4 is a short string for perfect fourth
+    _i("interval|4"),
+    # translators: tt is a short string for tritone
+    _i("interval|TT"),
+    # translators: 5 is a short string for perfect fifth
+    _i("interval|P5"),
+    # translators: m6 is a short string for minor sixth
+    _i("interval|m6"),
+    # translators: M6 is a short string for major sixth
+    _i("interval|M6"),
+    # translators: m7 is a short string for minor seventh
+    _i("interval|m7"),
+    # translators: M7 is a short string for major seventh
+    _i("interval|M7"),
+    # translators: 8 is a short string for perfect octave
+    _i("interval|P8"),
+    # translators: m9 is a short string for minor ninth
+    _i("interval|m9"),
+    # translators: M9 is a short string for major ninth
+    _i("interval|M9"),
+    # translators: m10 is a short string for minor tenth
+    _i("interval|m10"),
+    # translators: M10 is a short string for major tenth
+    _i("interval|M10"),
+    # translators: P11 is a short string for perfect 11th (octave + fourth)
+    _i("interval|P11"),
+    # translators: d12 is a short string for octave + tritone
+    # I considered the name TT8 (tritone+octave), but rejected it.
+    _i("interval|d12"),
+    # translators: P12 is a short string for perfect 12th (octave + fifth)
+    _i("interval|P12"),
+    # translators: m13 is a short string for minor 13th (octave + m6)
+    _i("interval|m13"),
+    # translators: M13 is a short string for major 13th (octave + M6)
+    _i("interval|M13"),
+    # translators: m14 is a short string for minor 14th (octave + m7)
+    _i("interval|m14"),
+    # translators: M14 is a short string for major 14th (octave + M7)
+    _i("interval|M14"),
+    # translators: P15 is a short string for perfect double octave
+    _i("interval|P15"),
+    )
 
 def number_name(steps):
     try:
@@ -127,7 +167,12 @@ def number_name(steps):
             7: "Seventh",
             8: "Octave",
             9: "Ninth",
-            10: "Tenth"}[steps]
+            10: "Tenth",
+            11: "Eleventh",
+            12: "Twelfth",
+            13: "Thirteenth",
+            14: "Fourteenth",
+            15: "Double Octave"}[steps]
     except KeyError:
         return "%ith" % steps
 

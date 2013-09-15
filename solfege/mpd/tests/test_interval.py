@@ -58,6 +58,35 @@ class TestInterval(unittest.TestCase):
             a = MusicalPitch.new_from_notename("bisis")
             b = a + i
             self.assertEquals(int(a) + x, int(b))
+    def test_get_cname(self):
+        for i, s in enumerate((
+            "Perfect Unison",
+            "Minor Second",
+            "Major Second",
+            "Minor Third",
+            "Major Third",
+            "Perfect Fourth",
+            "Tritone",
+            "Perfect Fifth",
+            "Minor Sixth",
+            "Major Sixth",
+            "Minor Seventh",
+            "Major Seventh",
+            "Perfect Octave",
+            "Minor Ninth",
+            "Major Ninth",
+            "Minor Tenth",
+            "Major Tenth",
+            "Perfect Eleventh",
+            "Octave + Tritone",
+            "Perfect Twelfth",
+            "Minor Thirteenth",
+            "Major Thirteenth",
+            "Minor Fourteenth",
+            "Major Fourteenth",
+            "Perfect Double Octave",
+        )):
+            self.assertEquals(Interval.new_from_int(i).get_cname(), s, (i, s))
 
 suite = unittest.makeSuite(TestInterval)
 
