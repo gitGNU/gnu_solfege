@@ -678,6 +678,8 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         solfege.app.m_options.profile = prof
         solfege.db.conn.commit()
         solfege.db.conn.close()
+        if prof == None:
+            prof = ''
         solfege.db = statistics.DB(None, profile=prof)
         cfg.set_string("app/last_profile", prof)
         self.display_frontpage()
