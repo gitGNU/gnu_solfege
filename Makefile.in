@@ -31,7 +31,7 @@ export SWIG:=@SWIG@
 export SWIG_VERSION:=@SWIG_VERSION@
 export LILYPOND:=@LILYPOND@
 export LILYPOND_VERSION:=@LILYPOND_VERSION@
-export BZR:="@BZR@"
+export GIT:="@GIT@"
 export GS:=@GS@
 export XGETTEXT:=@XGETTEXT@
 export MAKEINFO:=@MAKEINFO@
@@ -216,7 +216,7 @@ solfege/_version.py:
 check-revision-id:
 ifndef skip_rev_test
 	# We force recreating solfege/_version.py here
-	$(BZR) version-info --check-clean --python > solfege/_version.py
+	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_versions_file('@GIT@')"
 	$(PYTHON) tools/test-revision-id.py
 endif
 
