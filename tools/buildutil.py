@@ -61,8 +61,6 @@ def create_manpage():
 
 def get_last_git_sha(git=None):
     import os
-    print ":%s:"%git
-    print os.path.exists(git)
     if git:
         gitcmd = git
     else:
@@ -76,7 +74,6 @@ def get_last_git_sha(git=None):
             break
         while True:
             s = p.stdout.readline()
-            print "s:", (s,)
             if s.startswith("commit"):
                 return s.split(" ")[1].strip()
             if not s:
