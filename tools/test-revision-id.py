@@ -19,7 +19,7 @@ from solfege import buildinfo
 from solfege._version import version_info
 from textwrap import wrap
 
-if version_info['revision_id'] != buildinfo.REVISION_ID:
+if version_info['git_sha'] != buildinfo.REVISION_ID:
     print "\n", "\n".join(wrap("Set the revision-id in configure.ac, run autoconf and ./configure before re-running the test.")), "\n"
     sys.exit(1)
 sys.exit(0)

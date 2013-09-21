@@ -53,7 +53,7 @@ buildbranch = "build-branch"
 version_number = args[0]
 
 def get_last_revision_id():
-    p = subprocess.Popen(["bzr", "log", "-r", "-1", "--show-ids"],
+    p = subprocess.Popen(["git", "rev-parse", "HEAD"],
         cwd=buildbranch,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
@@ -61,13 +61,7 @@ def get_last_revision_id():
         p.poll()
         if p.returncode != None:
             break
-        while True:
-            s = p.stdout.readline()
-            if s.startswith("revision-id:"):
-                retval = s.split()[1]
-                break
-            if not s:
-                break
+        return p.stdout.readline().strip()
     p.wait()
     return retval
 
@@ -122,13 +116,13 @@ if options.docbooktest:
 
 bl = Logger("build.log")
 if options.code_update:
-    bl.call(["bzr pull"], shell=True, cwd=buildbranch)
+    bl.call(["git pull"], shell=True, cwd=buildbranch)
 else:
     if os.path.exists(buildbranch):
         print "«%s» exists" % buildbranch
         sys.exit(1)
-    print "bzr branch .", buildbranch
-    bl.call(["bzr", "branch", ".", buildbranch])
+    print "git clone . branch", buildbranch
+    bl.call(["git", "clone", ".", buildbranch])
 
 if options.translated_branch and not options.code_update:
     bl.call(["make", "check-for-new-po-files"])
