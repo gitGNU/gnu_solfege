@@ -86,10 +86,10 @@ check-for-new-po-files:
 ifneq "$(skip_new_po_test)" "yes"
 	@echo "Run with 'skip_new_po_test=yes' to drop the following check."
 	rsync -Lrtvz  translationproject.org::tp/latest/solfege/  po
-	bzr st po > po-diff.tmp
+	$(GIT) status --porcelain po > po-diff.tmp
 	@echo
 	@if test -s "po-diff.tmp" ; then \
-		bzr st po ; \
+		$(GIT) status po ; \
 		echo "There are new translations in po/ that need to be committed."; \
 		echo "Exiting..."; \
 		exit 10; \
