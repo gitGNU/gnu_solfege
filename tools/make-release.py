@@ -11,8 +11,8 @@ import textwrap
 op = optparse.OptionParser(usage="%prog [options] VERSION")
 op.add_option("--code-update", action='store_true', dest='code_update',
     default=False,
-    help="Reuse the build-branch dir and generated files. Use ONLY if "
-         "the changes since the last build is in the Python code.")
+    help="Reuse the build-branch dir and generated files. Will not "
+         "rebuild the user manual.")
 op.add_option("--not-translated",
     action='store_false', dest='translated_branch', default=True,
     help="Don't check for translation updates. This is a devel branch "
@@ -121,17 +121,15 @@ else:
     if os.path.exists(buildbranch):
         print "«%s» exists" % buildbranch
         sys.exit(1)
-    print "git clone . branch", buildbranch
+    print "git clone . ", buildbranch
     bl.call(["git", "clone", ".", buildbranch])
 
 if options.translated_branch and not options.code_update:
     bl.call(["make", "check-for-new-po-files"])
     bl.call(["make", "check-for-new-manual-po-files"])
 
-if not options.code_update:
-    update_configure_ac(get_last_revision_id(), version_number)
-    env = os.environ
-    bl.call(["./autogen.sh"], cwd=buildbranch, env=env)
+update_configure_ac(get_last_revision_id(), version_number)
+bl.call(["./autogen.sh"], cwd=buildbranch, env=os.environ)
 
 # I think we should call "update-manual" even for devel branches
 # that are not translated since it will update the .xml files if
@@ -140,10 +138,6 @@ if not options.code_update:
 if not options.code_update:
     bl.call(["make", "update-manual"], cwd=buildbranch)
 bl.call(["make"], cwd=buildbranch)
-
-# This test should not be necessary since we set the id with
-# the get_last_revision_id() call in this file.
-bl.call(["make", "check-revision-id"], cwd=buildbranch)
 
 if options.run_make_test:
     bl.call(["make", "test"], cwd=buildbranch)
