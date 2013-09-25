@@ -86,21 +86,13 @@ MY_PATH_PROG(MAKEINFO, makeinfo [You need to install the texinfo package.])
 MY_PATH_PROG(SED, sed)
 MY_PATH_PROG(CAT, cat)
 
-AC_ARG_ENABLE(pygtk-test, AC_HELP_STRING([--disable-pygtk-test],
-    [Don't test for PyGTK, assume it is installed]),
-    run_pygtk_test=$enableval,
-    run_pygtk_test=yes)
 
-
-# PKG_PROG_PKG_CONFIG(0.17.0)
+PKG_PROG_PKG_CONFIG(0.17.0)
 
 # Remember to update solfege/runtime.py and topdocs/README.texi when
 # we change the minimum version of pygtk.
-#if test "x$run_pygtk_test" = xyes; then
-#  PKG_CHECK_MODULES(PYGTK, pygtk-2.0 >= 2.12.0)
-#fi
 
-#PKG_CHECK_MODULES(XML2PO, xml2po >= 0.4)
+PKG_CHECK_MODULES(XML2PO, xml2po >= 0.4)
 AC_PATH_PROG(XML2PO, xml2po)
 AC_SUBST(XML2PO)
 
