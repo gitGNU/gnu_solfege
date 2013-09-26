@@ -33,6 +33,7 @@ export LILYPOND:=@LILYPOND@
 export LILYPOND_VERSION:=@LILYPOND_VERSION@
 export GIT:="@GIT@"
 export GS:=@GS@
+export TXT2MAN:=@TXT2MAN@
 export XGETTEXT:=@XGETTEXT@
 export MAKEINFO:=@MAKEINFO@
 export MSGFMT:=@MSGFMT@
@@ -107,12 +108,11 @@ include $(patsubst %,%/Makefile,$(SUBDIRS))
 -include debian-dir/Makefile
 -include debian/Makefile
 
-%.1: %.1.txt
-	txt2man -r "GNU Solfege @VERSION@" -t Solfege -s 1 $< > $@
-
 # We need solfege/_version.py because solfege imports it at runtime.
 solfege.1: solfege.1.txt solfege/_version.py
-	LANGUAGE=C $(PYTHON) -c "import tools.buildutil; tools.buildutil.create_manpage()" | txt2man -t Solfege -s 1 > $@
+ifneq ($(TXT2MAN),notfound)
+	LANGUAGE=C $(PYTHON) -c "import tools.buildutil; tools.buildutil.create_manpage()" | $(TXT2MAN) -t Solfege -r "GNU Solfege @VERSION@" -s 1 > $@
+endif
 
 rsync-manual: $(foreach lang,$(USER_MANUAL_LANGUAGES),help/$(lang)/one-big-page.html) help/C/one-big-page.html
 	rm -rf tmp-build
@@ -140,8 +140,9 @@ install-program-files: mkinstalldirs
 	$(INSTALL_PROGRAM) run-solfege.py $(DESTDIR)/$(bindir)/solfege
 	$(INSTALL_DATA) solfege.css $(DESTDIR)/$(datadir)/$(PACKAGE)
 	$(INSTALL_DATA) default.config $(DESTDIR)/$(datadir)/$(PACKAGE)
+ifneq ($(TXT2MAN),notfound)
 	$(INSTALL_DATA) solfege.1 $(DESTDIR)/$(mandir)/man1
-	
+endif
 	$(INSTALL_DATA) system.rc $(DESTDIR)/$(sysconfdir)/$(PACKAGE)
 	$(INSTALL_DATA) solfege.desktop $(DESTDIR)/$(datadir)/applications/
 	for ifile in $(installfiles); do \
