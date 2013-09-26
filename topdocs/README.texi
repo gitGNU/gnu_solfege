@@ -43,9 +43,9 @@ is installed:
 
 @subsubsection Runtime
 @itemize @bullet
-@item Python >= 2.5
-@item Gtk+ >= 2.12
-@item PyGTK >= 2.12 (Debian: python-gtk2)
+@item Python >= 2.7
+@item Gtk+ >= 3.4
+@item pygobject >= 3.2.2
 
 @item Midi working on /dev/music or /dev/sequencer (for example using
 OSS or ALSA with OSS emulation). Or at least possible
