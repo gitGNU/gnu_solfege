@@ -40,7 +40,6 @@ run-from-srcdir: $(MOFILES)
 	done
 
 install-po:
-	echo $(POLANGUAGES)
 	for lang in $(POLANGUAGES); do \
 	  mkdir -p $(DESTDIR)/$(datadir)/locale/$$lang/LC_MESSAGES; \
 	  $(INSTALL_DATA) po/$$lang.mo $(DESTDIR)/$(datadir)/locale/$$lang/LC_MESSAGES/$(PACKAGE).mo; \
