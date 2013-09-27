@@ -234,6 +234,13 @@ dist: po/solfege.pot help/C/solfege.pot
 	@echo " * make prepare-release"
 	@echo " * make dist"
 
+# Run this from inside build-branch after creating the release with
+# tools/make-release.py
+binary-tarball:
+	$(MAKE) update-manual
+	$(MAKE)
+	cd .. && mv build-branch solfege-$(VERSION) && tar --gzip --create --file=solfege-bin-$(VERSION).tar.gz solfege-$(VERSION)
+	
 dist_workhorse: all AUTHORS INSTALL README FAQ INSTALL.win32
 	rm -rf $(DISTNAME)
 ifdef BZR
