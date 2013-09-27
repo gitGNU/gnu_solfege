@@ -137,7 +137,6 @@ install: all mkinstalldirs install-po install-soundcard install-graphics install
 
 install-program-files: mkinstalldirs
 	$(INSTALL_PROGRAM) run-solfege.py $(DESTDIR)/$(bindir)/solfege
-	$(INSTALL_PROGRAM) run-solfege.py $(DESTDIR)/$(bindir)/solfege
 	$(INSTALL_DATA) solfege.css $(DESTDIR)/$(datadir)/$(PACKAGE)
 	$(INSTALL_DATA) default.config $(DESTDIR)/$(datadir)/$(PACKAGE)
 ifneq ($(TXT2MAN),notfound)
