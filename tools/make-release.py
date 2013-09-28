@@ -3,16 +3,12 @@
 
 import optparse
 import os
+import shutil
 import re
 import subprocess
 import sys
-import textwrap
 
 op = optparse.OptionParser(usage="%prog [options] VERSION")
-op.add_option("--code-update", action='store_true', dest='code_update',
-    default=False,
-    help="Reuse the build-branch dir and generated files. Will not "
-         "rebuild the user manual.")
 op.add_option("--not-translated",
     action='store_false', dest='translated_branch', default=True,
     help="Don't check for translation updates. This is a devel branch "
@@ -51,10 +47,13 @@ def parse_build_log():
 
 buildbranch = "build-branch"
 version_number = args[0]
+buildbranch_versioned = "buildbranch-%s" % version_number
+distdir = "solfege-%s" % version_number
+bindistdir = "solfege-bin-%s" % version_number
 
 def get_last_revision_id():
     p = subprocess.Popen(["git", "rev-parse", "HEAD"],
-        cwd=buildbranch,
+        cwd=distdir,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT)
     while 1:
@@ -90,7 +89,7 @@ class Logger(object):
         return p.returncode
 
 def update_configure_ac(new_revid, version):
-    f = open(os.path.join(buildbranch, "configure.ac"), "r")
+    f = open(os.path.join(distdir, "configure.ac"), "r")
     s = f.read()
     f.close()
     m = re.search("REVISION_ID=\"(.*?)\"", s)
@@ -105,7 +104,7 @@ def update_configure_ac(new_revid, version):
     m = re.search("AC_INIT\(\[GNU Solfege\],\[.*?\]", s, re.MULTILINE)
     s = s[:m.start()+len("AC_INIT([GNU Solfege],[")] + version + s[m.end()-1:]
 
-    f = open(os.path.join(buildbranch, "configure.ac"), "w")
+    f = open(os.path.join(distdir, "configure.ac"), "w")
     f.write(s)
     f.close()
 
@@ -115,29 +114,38 @@ if options.docbooktest:
     sys.exit()
 
 bl = Logger("build.log")
-if options.code_update:
-    bl.call(["git pull"], shell=True, cwd=buildbranch)
-else:
-    if os.path.exists(buildbranch):
-        print "«%s» exists" % buildbranch
-        sys.exit(1)
-    print "git clone . ", buildbranch
-    bl.call(["git", "clone", ".", buildbranch])
+for b in distdir, bindistdir:
+    if os.path.exists(b):
+        s = raw_input("«%s» exists. Delete (Y/N)? " % b)
+        if s in ('y', 'Y'):
+            shutil.rmtree(b)
+        else:
+            sys.exit(1)
+print "git clone . ", distdir
+bl.call(["git", "clone", ".", distdir])
 
-if options.translated_branch and not options.code_update:
+if options.translated_branch:
     bl.call(["make", "check-for-new-po-files"])
     bl.call(["make", "check-for-new-manual-po-files"])
 
 update_configure_ac(get_last_revision_id(), version_number)
-bl.call(["./autogen.sh"], cwd=buildbranch, env=os.environ)
+bl.call(["./autogen.sh"], cwd=distdir, env=os.environ)
 
-# I think we should call "update-manual" even for devel branches
-# that are not translated since it will update the .xml files if
-# they change in the C version. We want the new english text if
-# we don't have a translation.
-if not options.code_update:
-    bl.call(["make", "update-manual"], cwd=buildbranch)
-bl.call(["make"], cwd=buildbranch)
+bl.call(["tar", "--gzip", "--create",
+         "--file=%s.tar.gz" % distdir,
+         distdir],
+        env=os.environ)
+
+os.rename(distdir, bindistdir)
+bl.call(["./configure"], cwd=bindistdir, env=os.environ)
+
+bl.call(["make", "update-manual"], cwd=bindistdir, env=os.environ)
+bl.call(["make"], cwd=bindistdir, env=os.environ)
+
+
+bl.call(["tar", "--gzip", "--create",
+            "--file=%s.tar.gz" % bindistdir,
+             bindistdir])
 
 if options.run_make_test:
     bl.call(["make", "test"], cwd=buildbranch)
