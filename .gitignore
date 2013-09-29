@@ -57,6 +57,13 @@ erase.png
 /lessonfile_editor.1
 /po/solfege.pot
 /README
+/AUTHORS.txt
+/COPYING.txt
+/FAQ.txt
+/INSTALL.txt
+/INSTALL.win32.txt
+/README.txt
+/win32
 /share
 /solfegedebug.bat
 /exercises/standard/regression-lesson-files/xx-chord-exceptions
