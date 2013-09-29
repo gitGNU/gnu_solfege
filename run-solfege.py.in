@@ -29,7 +29,7 @@ import os
 prefix =  os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))[0]
 if sys.platform == 'win32':
     s = os.path.normpath(prefix)
-    os.environ['PATH']=r"%s\Lib\site-packages\gtk" % s
+    os.environ['PATH']=r"%s\python\Lib\site-packages\gtk" % s
     # Had to add this to make it work for people running solfege
     # from within directories with non-ascii file names.
     # Also, this had to be done after we set the environment
