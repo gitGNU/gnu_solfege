@@ -27,41 +27,6 @@ $2])
 CPPFLAGS="$save_CPPFLAGS"
 ])
 
-AC_DEFUN([BUGGY_DISTRO_CHECK_PYGNOME2],
- [
-   dnl We have to write this extra test because redhat 8.0 don't
-   dnl include gnome-python-2.0.pc in the gnome-python2 package.
-   dnl
-   dnl Since there are not gnome.pygnome_version variable, we import
-   dnl gtk and gnome, and test only gtk.pygtk_version.
-   dnl Yes, I know this is stupid!
-   AC_MSG_CHECKING(extra test for pygnome >= 1.99.11)
-   changequote(<<, >>)dnl
-   prog="
-import sys
-try:
-    import pygtk
-    pygtk.require('2.0')
-except:
-    pass
-try:
-    import gtk, gnome
-except:
-    sys.exit(1)
-if gtk.pygtk_version < (1, 99, 11):
-    sys.exit(1)
-sys.exit(0)"
-    changequote([, ])dnl
-    if $PYTHON -c "$prog" 0>&AC_FD_CC 2>&AC_FD_CC
-then
-AC_MSG_RESULT([[okay. (At least pygtk look ok.)]])
-$1
-    else
-AC_MSG_ERROR(cannot find usable gnome-python)
-$2
-    fi
-  ])
-
 AC_DEFUN([MY_SWIG_TEST],
   [
   $SWIG -version > tmpswig 2&>tmpswig
