@@ -62,11 +62,6 @@ AC_SUBST(LILYPOND)
 AC_PATH_PROG(GIT, git, "notfound")
 AC_SUBST(GIT)
 
-dnl Yes, I know this is incorrect. But it works. Someone that
-dnl knows autoconf should fix this.
-AC_PATH_PROG(PYTHONDLL)
-AC_SUBST(PYTHONDLL)
-
 AC_PATH_PROG(GS, gs)
 AC_SUBST(GS)
 
@@ -89,13 +84,14 @@ MY_PATH_PROG(MAKEINFO, makeinfo [You need to install the texinfo package.])
 MY_PATH_PROG(SED, sed)
 MY_PATH_PROG(CAT, cat)
 
-
-PKG_PROG_PKG_CONFIG(0.17.0)
+# FIXME we had to comment out this to run on win32
+# PKG_PROG_PKG_CONFIG(0.17.0)
 
 # Remember to update solfege/runtime.py and topdocs/README.texi when
 # we change the minimum version of pygtk.
 
-PKG_CHECK_MODULES(XML2PO, xml2po >= 0.4)
+# FIXME we had to comment out this to run on win32
+# PKG_CHECK_MODULES(XML2PO, xml2po >= 0.4)
 AC_PATH_PROG(XML2PO, xml2po)
 AC_SUBST(XML2PO)
 
