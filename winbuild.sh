@@ -177,6 +177,7 @@ if test "x$1" = "x-h"; then
   echo "   build         Build the package. After this we can run from"
   echo "                 the source directory."
   echo "   install       Install into win32/ directory."
+  echo "   clean         remove unnecessary stuff from win32/"
   echo "   go            run setup-build-install."
 fi
 
