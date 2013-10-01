@@ -3,6 +3,7 @@ set -e
 
 if [ "$OSTYPE" = "msys" ]; then
 	export GIT=C:/Programfiler/Git/bin/git.exe
+	export GIT="C:/Program Files (x86)/Git/bin/git.exe"
 	export PYTHON=/c/python27/python.exe
 	export PYTHON=../mypython/python.exe
 	aclocal-1.11

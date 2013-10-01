@@ -1,8 +1,61 @@
 #!/bin/sh
-PYVER=25
-# This is used to select the prepackaged python tarball
-MYPYVER=25
-PYTHON=win32/bin/python.exe
+set -e
+
+echo "Make sure that there are no whitespace in any directory"
+echo "containing the build directory of GNU Solfege. Whitespace"
+echo "WILL make things fail"
+
+PYTHON=win32/python/python.exe
+
+
+buildenv() {
+	echo "Running buildenv..."
+	if [ ! -f "solfege/solfege.py" ]; then
+		echo "Run from the directory below script location."
+		exit 10
+	fi
+
+	DEPS="deps-dl"
+	PYVER="2.7.5"
+	PYTHONMSI="python-$PYVER.msi"
+	PYGI="pygi-aio-3.4.2rev11.7z"
+	PYGIn7="pygi-aio-3.4.2rev11"
+
+	ENVDIR="mypython"
+
+	if [ ! -d "$DEPS" ]; then
+	  # Control will enter here if $DIRECTORY doesn't exist.
+	  mkdir $DEPS
+	fi
+
+	if [ -f "$DEPS/$PYTHONMSI" ]; then
+	  echo "Python found."
+	else
+	  wget http://www.python.org/ftp/python/$PYVER/python-$PYVER.msi -O "$DEPS/$PYTHONMSI"
+	fi
+
+	if [ -f "$DEPS/$PYGI" ]; then
+	  echo "Pygi-aio found."
+	else
+	  wget https://osspack32.googlecode.com/files/$PYGI -O "$DEPS/$PYGI" --no-check-certificate 
+	fi
+
+	if [ ! -d "$DEPS/$PYGIn7" ]; then
+	  echo "Please unpack $PYGI to $DEPS/$PYGIn7/"
+	  exit 10
+	else
+	  echo "$DEPS/$PYGIn7/ is unpacked"
+	fi
+
+	echo "Recreating $ENVDIR"
+	rm -rf $ENVDIR
+	mkdir $ENVDIR
+
+	PDIR="C:\\MinGW\\msys\\1.0\\home\\"$(basename `pwd`)"\\mypython"
+	msiexec -a deps-dl\\python-2.7.5.msi TARGETDIR="$PDIR"
+	cp -a deps-dl/pygi-aio-3.4.2rev11/py27/* mypython/lib/site-packages/
+	cp -a deps-dl/pygi-aio-3.4.2rev11/gtk mypython/lib/site-packages/
+}
 
 setup() {
   # Step 1: Prepare the win32 directory. This is required both for
@@ -10,26 +63,6 @@ setup() {
   rm win32 -rf
   mkdir win32
   cp -a ../mypython win32/python
-  #mkdir win32/python
-  #(cd win32/python && tar zxf ../../../my-python-$MYPYVER.tgz)
-  #mv win32/python/DLLs win32/bin
-  #mv win32/python/Lib win32/bin
-  #mv win32/python/libs win32/bin
-  #mv win32/python/LICENSE.txt win32/LICENSE.python.txt
-  #mv win32/python/NEWS.txt win32/NEWS.python.txt
-  #mv win32/python/README.txt win32/README.python.txt
-  #mv win32/python/python.exe win32/bin
-  #mv win32/python/pythonw.exe win32/bin
-  #mv win32/python/w9xpopen.exe win32/bin
-  #mv win32/python/python25.dll win32/bin
-  #mv win32/python/msvcr71.dll win32/bin
-  #$PYTHON tools/get-gtk-files.py get-bundle
-  #$PYTHON tools/get-gtk-files.py unpack-bundle
-  #$PYTHON tools/get-gtk-files.py bin
-  #$PYTHON tools/get-gtk-files.py unpack
-  #mv win32/bin/libxml2.dll win32/bin/libxml2-2.dll
-  #mv win32/bin/libiconv2.dll win32/bin/iconv.dll
-
   #echo '"lib/gtk-2.0/2.10.0/loaders/svg_loader.dll"' > win32/etc/gtk-2.0/gdk-pixbuf.loaders
   #echo '"svg" 2 "gdk-pixbuf" "Scalable Vector Graphics" "LGPL"' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
   #echo '"image/svg+xml" "image/svg" "image/svg-xml" "image/vnd.adobe.svg+xml" "text/xml-svg" "image/svg+xml-compressed" ""' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
@@ -47,10 +80,10 @@ setup() {
 
   #cp testgtkenv.bat testgtkenv.py win32/bin/
   #echo "gtk-theme-name = \"MS-Windows\""  > win32/etc/gtk-2.0/gtkrc
-  find win32 -name "*.def" | xargs rm
-  find win32 -name "*.a" | xargs rm
-  find win32 -name "*.lib" | xargs rm
-  (cd win32 && find -name *.pyc | xargs rm)
+  #find win32 -name "*.def" | xargs rm
+  #find win32 -name "*.a" | xargs rm
+  #find win32 -name "*.lib" | xargs rm
+  #(cd win32 && find -name *.pyc | xargs rm)
 }
 
 build() {
@@ -76,16 +109,9 @@ install() {
   cp solfegedebug.bat win32/bin/
 }
 
-
-mk_pygtk_stuff() {
-  rm -rf ../pygtk-stuff
-  mkdir ../pygtk-stuff
-  cp /C/Python$PYVER/Lib/site-packages/pygtk.* ../pygtk-stuff/
-  cp -a /C/Python$PYVER/Lib/site-packages/cairo/ ../pygtk-stuff/
-  cp -a /C/Python$PYVER/Lib/site-packages/gtk-2.0/ ../pygtk-stuff/
-}
- 
-
+if test "x$1" = "xbuildenv"; then
+  buildenv
+fi
 if test "x$1" = "xsetup"; then
   setup
 fi
@@ -95,9 +121,6 @@ fi
 if test "x$1" = "xinstall"; then
   install
 fi
-if test "x$1" = "xbuildenv"; then
-  mk_pygtk_stuff
-fi
 if test "x$1" = "xgo"; then
   setup
   build
@@ -105,8 +128,7 @@ if test "x$1" = "xgo"; then
 fi
 if test "x$1" = "x-h"; then
   echo "sub commands:"
-  echo "   buildenv      create ../pygtk-stuff/  This has to be done once with"
-  echo "                 the pygtk binary installer package installed."
+  echo "   buildenv      create ../mypython/  This has to be done once with"
   echo "   setup         Create the win32/ directory that includes all deps."
   echo "   build         Build the package. After this we can run from"
   echo "                 the source directory."
