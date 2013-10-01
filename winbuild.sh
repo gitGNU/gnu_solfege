@@ -108,7 +108,48 @@ install() {
   cp win32-start-solfege.pyw win32/bin
   cp solfegedebug.bat win32/bin/
 }
+cleanup_win32() {
+  # 185MB
+  cd win32/python
+  rm -rf include
+  rm -rf Tools
+  rm -rf tcl
+  rm -rf Doc
+  cd DLLs
+  rm -rf _tkinter.pyd tcl85.dll tclpip85.dll tk85.dll
+  cd ..
+  cd Lib # python/lib
+  rm -rf bsddb compiler curses hotshot idlelib importlib # ctypes distutils
+  rm -rf json lib2to3 lib-tk msilib pydoc_data test unittest wsgiref
+  #154 MB
+  cd site-packages/gtk
+  rm -rf glade-previewer.exe glade.exe
+  rm -rf lib/glade
+  rm -rf libgladeui-2-4.dll
+  rm -rf share/glade
+  rm -rf share/icons
+  find | grep gda | xargs rm -rf
 
+  rm -rf share/glib-2.0
+  rm -rf share/gtranslator lib/gtranslator libgtranslator-3.0-0.dll gtranslator.exe
+  find | grep dbus | xargs rm -rf
+  find | grep telepath | xargs rm -rf
+  find | grep aspell | xargs rm -rf
+  find | grep enchant | xargs rm -rf
+  find | grep gedit | xargs rm -rf
+  find | grep goffice | xargs rm -rf
+  find | grep gstreamer | xargs rm -rf
+  rm -f libwebkitgtk-3.0-0.dll
+  rm -f libgucharmap*
+  rm -f libgexiv*
+  rm -f libpoppler*
+  find | grep devhelp | xargs rm -rf
+  find | grep geoclue | xargs rm -rf
+  rm -f ghex.exe
+  rm -f zenity.exe
+  find | grep charmap | xargs rm -rf
+
+}
 if test "x$1" = "xbuildenv"; then
   buildenv
 fi
@@ -120,6 +161,9 @@ if test "x$1" = "xbuild"; then
 fi
 if test "x$1" = "xinstall"; then
   install
+fi
+if test "x$1" = "xclean"; then
+  cleanup_win32
 fi
 if test "x$1" = "xgo"; then
   setup
