@@ -96,12 +96,11 @@ build() {
   ./configure PYTHON=win32/python/python.exe --enable-winmidi
   make
   make winbuild
-  cp README.txt INSTALL.win32.txt INSTALL.txt AUTHORS.txt COPYING.txt win32
 }
 install() {
   # Step 3: Install solfege into win32/ so that we can run from inside
   # it, or create the installer.
-  #$PYTHON tools/trim_win32_installer.py
+  cp README.txt INSTALL.win32.txt INSTALL.txt AUTHORS.txt COPYING.txt win32
   make DESTDIR=win32 prefix="" install skipmanual=yes
 
   cp solfege/soundcard/winmidi.pyd win32/share/solfege/solfege/soundcard
