@@ -45,9 +45,7 @@ def parse_build_log():
             print "\t", line
     f.close()
 
-buildbranch = "build-branch"
 version_number = args[0]
-buildbranch_versioned = "buildbranch-%s" % version_number
 distdir = "solfege-%s" % version_number
 bindistdir = "solfege-bin-%s" % version_number
 
@@ -131,6 +129,8 @@ if options.translated_branch:
 update_configure_ac(get_last_revision_id(), version_number)
 bl.call(["./autogen.sh"], cwd=distdir, env=os.environ)
 
+shutil.rmtree(os.path.join(distdir, ".git"))
+
 bl.call(["tar", "--gzip", "--create",
          "--file=%s.tar.gz" % distdir,
          distdir],
@@ -148,8 +148,8 @@ bl.call(["tar", "--gzip", "--create",
              bindistdir])
 
 if options.run_make_test:
-    bl.call(["make", "test"], cwd=buildbranch)
-bl.call(["make", "dist"], cwd=buildbranch)
+    bl.call(["make", "test"], cwd=bindistdir)
+bl.call(["make", "dist"], cwd=bindistdir)
 bl.close()
 print "Remember to check that the translation of the user manual does"
 print "not mess with the docbook format of the file."
