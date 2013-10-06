@@ -21,6 +21,9 @@ installfiles += $(wildcard solfege/*.py) \
 dist_files += $(wildcard solfege/*.py) \
 	$(wildcard solfege/exercises/*.py) \
 	$(wildcard solfege/tests/*.py) \
+	$(wildcard solfege/tests/lesson-files/*) \
+	$(wildcard solfege/tests/lib/*) \
+	$(wildcard solfege/tests/include/*) \
 	solfege/Makefile solfege/buildinfo.py.in
 
 clean-files += $(wildcard solfege/*.py[co] \
