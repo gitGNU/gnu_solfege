@@ -34,7 +34,7 @@ from solfege import cfg, lessonfile, osutils, const
 
 import solfege
 
-class QstatusDefs:
+class QstatusDefs(object):
     QSTATUS_NO = 0
     QSTATUS_NEW = 1
     QSTATUS_WRONG = 2
