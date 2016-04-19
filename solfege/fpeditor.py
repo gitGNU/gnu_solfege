@@ -248,6 +248,20 @@ class Section(Gtk.VBox):
         # The button to click to add a new link
         hbox = Gtk.HBox()
         self.pack_start(hbox, True, True, 0)
+
+	# The popup menu that will popup from the STOCK_ADD button
+	self.g_add_popup = menu = Gtk.Menu()
+        menu.show()
+        item = Gtk.MenuItem(_("Add link to new page"))
+        item.connect('activate', self.on_add_link_to_new_page)
+        menu.append(item)
+        item = Gtk.MenuItem(_("Add link to exercise"))
+        item.connect('activate', self.on_add_link)
+        menu.append(item)
+        item = Gtk.MenuItem(_("Add link by searching for exercises"))
+        item.connect('activate', self.on_add_link_by_search)
+        menu.append(item)
+        menu.show_all()
     def on_edit_heading(self, btn):
         self.g_heading_entry.set_text(self.m_model.m_name)
         self.g_heading_entry.show()
@@ -275,18 +289,7 @@ class Section(Gtk.VBox):
                 return True
         keyup_id = self.g_heading_entry.connect('key-release-event', keyup)
     def on_add(self, btn, event):
-        menu = Gtk.Menu()
-        item = Gtk.MenuItem(_("Add link to new page"))
-        item.connect('activate', self.on_add_link_to_new_page)
-        menu.append(item)
-        item = Gtk.MenuItem(_("Add link to exercise"))
-        item.connect('activate', self.on_add_link)
-        menu.append(item)
-        item = Gtk.MenuItem(_("Add link by searching for exercises"))
-        item.connect('activate', self.on_add_link_by_search)
-        menu.append(item)
-        menu.show_all()
-        menu.popup(None, None, None, None, event.button, event.time)
+        self.g_add_popup.popup(None, None, None, None, event.button, event.time)
     def on_remove(self, btn, event):
         self.m_parent.remove_section(self)
     def on_add_link_by_search(self, btn):
@@ -329,11 +332,11 @@ class Section(Gtk.VBox):
             except lessonfile.infocache.FileNotLessonfile:
                 continue
             self.m_model.append(fn)
-            self.g_link_box.pack_start(self.create_linkrow(fn, True, True, 0), False)
+            self.g_link_box.pack_start(self.create_linkrow(fn), True, True, 0)
     def on_add_link_to_new_page(self, menuitem):
         page = pd.Page(_("Untitled%s") % "", [pd.Column()])
         self.m_model.append(page)
-        self.g_link_box.pack_start(self.create_linkrow(page, True, True, 0))
+        self.g_link_box.pack_start(self.create_linkrow(page), True, True, 0)
     def create_linkrow(self, link_this):
         hbox = Gtk.HBox()
         def ff(btn, page):
