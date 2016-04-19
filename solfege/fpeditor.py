@@ -111,8 +111,8 @@ class SelectLessonFileDialog(Gtk.FileChooserDialog):
 
 
 class SelectLessonfileBySearchDialog(Gtk.Dialog):
-    def __init__(self):
-        Gtk.Dialog.__init__(self, buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.ACCEPT))
+    def __init__(self, w):
+        Gtk.Dialog.__init__(self, buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.ACCEPT), parent=w)
         view = SearchView(_('Search for exercises. Each exercise you click will be added to the section of the front page.'),
             fields=['link-with-filename-tooltip', 'module'])
         view.on_link_clicked = self.on_link_clicked
@@ -293,7 +293,7 @@ class Section(Gtk.VBox):
     def on_remove(self, btn, event):
         self.m_parent.remove_section(self)
     def on_add_link_by_search(self, btn):
-        dlg = SelectLessonfileBySearchDialog()
+        dlg = SelectLessonfileBySearchDialog(editor_of(self))
         while True:
             ret = dlg.run()
             if ret == Gtk.ResponseType.OK:
