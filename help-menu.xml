@@ -9,7 +9,7 @@
       </menu>
       <menuitem action='SetupPyAlsa'/>
       <separator />
-      <menuitem action='HelpDonate' />
+<!--      <menuitem action='HelpDonate' /> -->
       <separator />
       <menuitem action='HelpOnline' />
       <menuitem action='HelpReportingBugs' />

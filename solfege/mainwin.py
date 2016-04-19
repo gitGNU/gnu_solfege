@@ -247,7 +247,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
           ('HelpOnline', None, _('_Mailing lists, web page etc.'), None, None,
             lambda o: solfege.app.handle_href('online-resources.html')),
           ('HelpDonate', None, _('_Donate'), None, None,
-            lambda o: solfege.app.handle_href('http://www.solfege.org/donate/')),
+            lambda o: solfege.app.handle_href('http://solfege.tcamundsen.net/donate/')),
           ('HelpReportingBugs', None, _('Reporting _bugs'), None, None,
             lambda o: solfege.app.handle_href('bug-reporting.html')),
           ('HelpAbout', 'gtk-about', None, None, None, self.show_about_window),
