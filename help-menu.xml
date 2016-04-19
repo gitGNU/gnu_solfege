@@ -13,7 +13,6 @@
       <separator />
       <menuitem action='HelpOnline' />
       <menuitem action='HelpReportingBugs' />
-      <menuitem action='ShowBugReports' />
       <menuitem action='HelpAbout' />
     </menu>
   </menubar>

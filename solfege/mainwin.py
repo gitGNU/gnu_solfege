@@ -251,8 +251,6 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
           ('HelpReportingBugs', None, _('Reporting _bugs'), None, None,
             lambda o: solfege.app.handle_href('bug-reporting.html')),
           ('HelpAbout', 'gtk-about', None, None, None, self.show_about_window),
-          ('ShowBugReports', None, _('_See your bug reports'), None, None,
-            self.show_bug_reports),
         ])
 
         self.g_ui_manager.add_ui_from_file("ui.xml")
@@ -321,32 +319,6 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             return
         self.g_ui_manager.remove_ui(self.m_help_on_current_merge_id)
         self.m_help_on_current_merge_id = None
-    def show_bug_reports(self, *v):
-        m = Gtk.Dialog(_("Question"), self, 0)
-        m.add_button(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL)
-        m.add_button(Gtk.STOCK_OK, Gtk.ResponseType.OK)
-        vbox = Gtk.VBox()
-        m.vbox.pack_start(vbox, False, False, 0)
-        vbox.set_spacing(18)
-        vbox.set_border_width(12)
-        l = Gtk.Label(label=_("Please enter the email used when you submitted the bugs:"))
-        vbox.pack_start(l, False, False, 0)
-        self.g_email = Gtk.Entry()
-        m.action_area.get_children()[0].grab_default()
-        self.g_email.set_activates_default(True)
-        vbox.pack_start(self.g_email, False, False, 0)
-        m.show_all()
-        ret = m.run()
-        m.destroy()
-        if ret == Gtk.ResponseType.OK:
-            params = urllib.urlencode({
-                    'pagename': 'SITS-Incoming/SearchBugs',
-                    'q': 'SITS-Incoming/"Submitter: %s"' % utils.mangle_email(self.g_email.get_text().decode("utf-8")()),
-                })
-            try:
-                webbrowser.open_new("http://www.solfege.org?%s" % params)
-            except Exception, e:
-                self.display_error_message2(_("Error opening web browser"), str(e))
     def display_error_message2(self, text, secondary_text):
         """
         This is the new version of display_error_message, and it will
