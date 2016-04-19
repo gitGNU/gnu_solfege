@@ -168,7 +168,6 @@ class Gui(abstract.IntervalGui):
     lesson_heading = _("Identify the interval")
     def __init__(self, teacher):
         abstract.IntervalGui.__init__(self, teacher)
-        self.g_test_stat_dlg = None
         ################
         # practice_box #
         ################
