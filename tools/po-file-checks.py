@@ -25,7 +25,7 @@ class Entry(object):
         for line in s.split("\n"):
             msgid_m = msgid_re.match(line)
             msgstr_m = msgstr_re.match(line)
-            if line.startswith("#:") or line.startswith("#.") or line.startswith("#, python-format") or line.startswith("#, no-python-format") or line.startswith("# ") or line == '#':
+            if line.startswith("#:") or line.startswith("#.") or line.startswith("#, python-format") or line.startswith("#, no-python-format") or line.startswith("# ") or line.startswith("#|") or line == '#':
                 assert mode in ('comment', None)
                 mode = 'comment'
                 data[mode].append(line)
