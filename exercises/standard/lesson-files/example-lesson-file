@@ -1,0 +1,9 @@
+# GNU Solfege
+# Copyright (C) 2016 Tom Cato Amundsen
+
+header {
+    module=exampleexercise
+    title = _("Example exercise")
+    test = "2x"
+    test_requirement = "100%"
+}
