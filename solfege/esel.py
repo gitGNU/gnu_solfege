@@ -206,7 +206,7 @@ class ExerciseView(SelectWinBase):
                         if display_only_tests:
                             solfege.db.validate_stored_statistics(link)
                         try:
-                            for fieldname in self.m_fields:
+                            for field_idx, fieldname in enumerate(self.m_fields):
                                 if fieldname in (u'link', u'link-with-filename-tooltip'):
                                     labeltxt = lessonfile.infocache.get(link, 'title')
                                     label = gu.ClickableLabel(_no_xgettext(labeltxt))
@@ -225,7 +225,7 @@ class ExerciseView(SelectWinBase):
                                     else:
                                         label = Gtk.Label(lessonfile.infocache.get(link, fieldname))
                                     label.set_alignment(0.0, 0.5)
-                                self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
+                                self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
                         except lessonfile.InfoCache.FileNotFound:
                             label = gu.ClickableLabel(_(u"«%s» was not found") % link)
                             label.make_warning()
