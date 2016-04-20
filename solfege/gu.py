@@ -25,7 +25,7 @@ import sys
 import time
 import traceback
 
-from gi.repository import GObject
+from gi.repository import GLib
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Pango
@@ -302,7 +302,7 @@ class FlashBar(Gtk.Frame):
             self.display(s)
         self.empty()
     def delayed_flash(self, milliseconds, msg):
-        GObject.timeout_add(milliseconds, lambda: self.flash(msg))
+        GLib.timeout_add(milliseconds, lambda: self.flash(msg))
     def empty(self):
         for child in self.__content.get_children():
             child.destroy()
@@ -312,7 +312,8 @@ class FlashBar(Gtk.Frame):
         we old flashed message are removed.
         """
         if self.__timeout:
-            GObject.source_remove(self.__timeout)
+            if GLib.source_remove(self.__timeout):
+                self.__timeout = None
         self.display(txt, **kwargs)
         def f(self=self):
             self.__timeout = None
@@ -320,7 +321,8 @@ class FlashBar(Gtk.Frame):
                 self.display(self.__stack[-1][0], **self.__stack[-1][1])
             else:
                 self.empty()
-        self.__timeout = GObject.timeout_add(2000, f)
+            return False
+        self.__timeout = GLib.timeout_add(2000, f)
     def push(self, txt, **kwargs):
         # stop any flashing before we push
         self.display(txt, **kwargs)
@@ -348,8 +350,8 @@ class FlashBar(Gtk.Frame):
         self.m_sy = max(self.size_request().height, self.m_sy)
         self.set_size_request(self.m_sx, self.m_sy)
         if self.__timeout:
-            GObject.source_remove(self.__timeout)
-            self.__timeout = None
+            if GLib.source_remove(self.__timeout):
+                self.__timeout = None
     def pop(self):
         """If a message is being flashed right now, that flashing is
         not affected, but the message below the flashed message is removed.
