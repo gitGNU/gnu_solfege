@@ -151,7 +151,6 @@ class Gui(abstract.LessonbasedGui):
         label.set_alignment(1.0, 0.5)
         spin = gu.nSpinButton(self.m_exname, 'accuracy',
                               Gtk.Adjustment(0, 0, 2, 0.01, 0.05))
-        spin.set_tooltip_text("See bug report #93 (http://bugs.solfege.org/93) and add suggested values to the bug report.")
         spin.set_digits(2)
         hbox = Gtk.HBox()
         hbox.set_spacing(gu.hig.SPACE_SMALL)

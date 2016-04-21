@@ -61,7 +61,7 @@ class TracebackWindow(Gtk.Dialog):
             "about what happened. Fixing bugs is difficult if we "
             "cannot contact you and ask for more information.\n\n"
             "I would prefer if you open a web browser and report your "
-            "bug to the bug tracker at http://bugs.solfege.org.\n\n"
+            "bug to the bug tracker at https://savannah.gnu.org/bugs/?group=solfege.\n\n"
             "This will give your bug report higher priority and it "
             "will be fixed faster.\n\nAre you willing to do that?"))
         if yesno:

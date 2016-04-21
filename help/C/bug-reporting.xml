@@ -1,7 +1,7 @@
 <sect1 id='bug-reporting'>
 <title>Bugs</title>
 <para>Report bugs to the bug tracker at <ulink
-url="http://bugs.solfege.org/">http://bugs.solfege.org</ulink>.
+url="https://savannah.gnu.org/bugs/?group=solfege">http://savannah.gnu.org</ulink>.
 Alternately, you can send an email to <email>bug-solfege@gnu.org</email>.
 General questions and patches should be sent to
 <email>solfege-devel@lists.sourceforge.net</email>.</para>
