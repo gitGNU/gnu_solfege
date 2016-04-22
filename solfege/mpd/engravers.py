@@ -118,6 +118,7 @@ class TimeSignatureEngraver(Engraver):
                 fetadir + '/feta%i-number-%s.png' % (self.m_fontsize, n))
             ct.set_source_surface(ims, self.m_xpos + x, staff_yoffset - 12)
             x += 10
+            ct.paint()
         x = 0
         for idx in range(len(str(self.m_timesig.m_den))):
             n = str(self.m_timesig.m_den)[idx]
@@ -125,6 +126,7 @@ class TimeSignatureEngraver(Engraver):
                 fetadir + '/feta%i-number-%s.png' % (self.m_fontsize, n))
             ct.set_source_surface(ims, self.m_xpos + x, staff_yoffset + 3)
             x += 10
+            ct.paint()
     def __str__(self):
         return '(TimeSignatureEngraver:%i/%i)' % (self.m_timesig.m_den,
             self.m_timesig.m_num)
