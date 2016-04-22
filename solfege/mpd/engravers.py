@@ -507,6 +507,9 @@ class StemEngraver(Engraver):
         if self.m_duration.m_nh < 2:
             return
         # draw flags
+        # we must save the context state because set_source_surface
+        # makes the line we draw for stems invisible
+        ct.save()
         if not self.m_is_beamed and self.m_duration.m_nh > 4:
             if self.m_stemdir == const.UP:
                 ims = cairo.ImageSurface.create_from_png(
@@ -520,6 +523,8 @@ class StemEngraver(Engraver):
                     % (self.m_fontsize, self.get_flag(const.DOWN)))
                 ct.set_source_surface(ims, self.m_xpos,
                     int(staff_yoffset + 4 + self.m_yposes[-1] * dim.linespacing/2))
+            ct.paint()
+        ct.restore()
         # draw stem
         if self.m_stemdir == const.DOWN:
             if self.m_is_beamed:
@@ -533,8 +538,9 @@ class StemEngraver(Engraver):
             else:
                 yroot = self.m_yposes[0] - 6
             ytop = self.m_yposes[-1]
-        ct.move_to(self.m_xpos, ytop * dim.linespacing / 2 + staff_yoffset)
-        ct.line_to(self.m_xpos, yroot * dim.linespacing / 2 + staff_yoffset)
+        ct.move_to(self.m_xpos + 0.5, ytop * dim.linespacing / 2 + staff_yoffset)
+        ct.line_to(self.m_xpos + 0.5, yroot * dim.linespacing / 2 + staff_yoffset)
+        ct.stroke()
     def get_flag(self, stemdir):
         assert self.m_duration.m_nh > 4
         return {8:{const.UP: FLAG_8UP,
