@@ -28,12 +28,12 @@ class NotenameSpinButton(Gtk.Box):
     def __init__(self, default_value):
         Gtk.Box.__init__(self)
         self.m_value = mpd.notename_to_int(default_value)
-        self.g_entry = Gtk.Label()
-        self.g_entry.set_width_chars(6)
-        self.g_entry.set_use_markup(True)
-        self.g_entry.set_markup(mpd.int_to_user_octave_notename(self.m_value))
-        self.g_entry.props.xalign = 1.0
-        self.pack_start(self.g_entry, False, False, 6)
+        self.g_label = Gtk.Label()
+        self.g_label.set_width_chars(6)
+        self.g_label.set_use_markup(True)
+        self.g_label.set_markup(mpd.int_to_user_octave_notename(self.m_value))
+        self.g_label.props.xalign = 1.0
+        self.pack_start(self.g_label, False, False, 6)
         # up
         eb1 = Gtk.Button()
         eb1.add(Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.OUT))
@@ -91,7 +91,7 @@ class NotenameSpinButton(Gtk.Box):
         return self.m_value
     def set_value(self, val):
         self.m_value = val
-        self.g_entry.set_markup(mpd.int_to_user_octave_notename(val))
+        self.g_label.set_markup(mpd.int_to_user_octave_notename(val))
 
 GObject.signal_new('value-changed', NotenameSpinButton,
                    GObject.SignalFlags.RUN_FIRST,
