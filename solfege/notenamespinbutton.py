@@ -28,22 +28,24 @@ class NotenameSpinButton(Gtk.Box):
     def __init__(self, default_value):
         Gtk.Box.__init__(self)
         self.m_value = mpd.notename_to_int(default_value)
-        self.g_entry = Gtk.Entry()
-        self.g_entry.set_editable(False)
-        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
-        self.pack_start(self.g_entry, False, False, 0)
+        self.g_entry = Gtk.Label()
+        self.g_entry.set_width_chars(6)
+        self.g_entry.set_use_markup(True)
+        self.g_entry.set_markup(mpd.int_to_user_octave_notename(self.m_value))
+        self.g_entry.props.xalign = 1.0
+        self.pack_start(self.g_entry, False, False, 6)
         # up
         eb1 = Gtk.Button()
         eb1.add(Gtk.Arrow(Gtk.ArrowType.UP, Gtk.ShadowType.OUT))
         eb1.connect('button-press-event', self.on_up_press)
         eb1.connect('button-release-event', self.on_up_release)
-        self.pack_start(eb1, True, True, 0)
+        self.pack_start(eb1, False, False, 0)
         # down
         eb2 = Gtk.Button()
         eb2.add(Gtk.Arrow(Gtk.ArrowType.DOWN, Gtk.ShadowType.IN))
         eb2.connect('button-press-event', self.on_down_press)
         eb2.connect('button-release-event', self.on_down_release)
-        self.pack_start(eb2, True, True, 0)
+        self.pack_start(eb2, False, False, 0)
         self.m_timeout = None
     def on_up_press(self, eb, ev):
         if self.m_timeout:
@@ -63,8 +65,7 @@ class NotenameSpinButton(Gtk.Box):
             self.up()
             self.m_timeout = GObject.timeout_add(DELAY2, self.on_up_timeout)
     def up(self):
-        self.m_value += 1
-        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
+        self.set_value(self.get_value() + 1)
         self.emit('value-changed', self.m_value)
     def on_down_press(self, eb, ev):
         if self.m_timeout:
@@ -84,14 +85,13 @@ class NotenameSpinButton(Gtk.Box):
             self.down()
             self.m_timeout = GObject.timeout_add(DELAY2, self.on_down_timeout)
     def down(self):
-        self.m_value -= 1
-        self.g_entry.set_text(mpd.int_to_user_octave_notename(self.m_value))
+        self.set_value(self.get_value() - 1)
         self.emit('value-changed', self.m_value)
     def get_value(self):
         return self.m_value
     def set_value(self, val):
         self.m_value = val
-        self.g_entry.set_text(mpd.int_to_user_octave_notename(val))
+        self.g_entry.set_markup(mpd.int_to_user_octave_notename(val))
 
 GObject.signal_new('value-changed', NotenameSpinButton,
                    GObject.SignalFlags.RUN_FIRST,
