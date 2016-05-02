@@ -26,8 +26,6 @@ from solfege import const
 from solfege import gu
 from solfege import lessonfile
 
-import solfege
-
 class Teacher(abstract.Teacher, abstract.RhythmAddOnClass):
     OK = 0
     ERR_PICKY = 1
