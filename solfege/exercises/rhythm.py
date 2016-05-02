@@ -80,6 +80,7 @@ class RhythmViewer(Gtk.Frame):
         """
         if self.__timeout:
             GObject.source_remove(self.__timeout)
+            self.__timeout = None
         self.clear()
         for x in range(self.m_num_beats):
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
