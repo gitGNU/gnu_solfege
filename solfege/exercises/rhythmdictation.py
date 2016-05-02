@@ -99,11 +99,11 @@ class Gui(abstract.LessonbasedGui):
         abstract.LessonbasedGui.__init__(self, teacher)
         self.g_w = mpd.RhythmWidget()
         self.g_w.connect('score-updated', self.on_score_updated)
-        self.practise_box.pack_start(self.g_w, False)
+        self.practise_box.pack_start(self.g_w, False, False, 0)
         self.g_c = mpd.RhythmWidgetController(self.g_w)
-        self.practise_box.pack_start(self.g_c, False)
+        self.practise_box.pack_start(self.g_c, False, False, 0)
         self.g_flashbar = gu.FlashBar()
-        self.practise_box.pack_start(self.g_flashbar, False)
+        self.practise_box.pack_start(self.g_flashbar, False, False, 0)
         self.g_flashbar.show()
         self.std_buttons_add(
             ('new', self.new_question),
