@@ -401,6 +401,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
     def show_about_window(self, widget):
         pixbuf = self.render_icon('solfege-icon', Gtk.IconSize.DIALOG)
         a = self.g_about_window = Gtk.AboutDialog()
+        a.set_transient_for(self)
         a.set_program_name("GNU Solfege")
         a.set_logo(pixbuf)
         a.set_website("https://savannah.gnu.org/projects/solfege")
