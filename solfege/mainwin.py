@@ -36,7 +36,6 @@ import sys
 import traceback
 import locale
 import os
-import urllib
 import shutil
 
 try:
@@ -51,7 +50,6 @@ from solfege.esel import FrontPage, TestsView, SearchView
 from gi.repository import Gtk
 from gi.repository import Gdk
 
-from solfege import utils
 from solfege import i18n
 
 class SplashWin(Gtk.Window):
