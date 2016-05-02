@@ -16,7 +16,7 @@
 
 from __future__ import absolute_import
 
-from gi.repository import GObject, Gdk, Gtk
+from gi.repository import GObject, Gdk, Gtk, GLib
 
 from solfege import cfg
 from solfege import mpd
@@ -49,13 +49,13 @@ class NotenameSpinButton(Gtk.Box):
         self.m_timeout = None
     def on_up_press(self, eb, ev):
         if self.m_timeout:
-            GObject.source_remove(self.m_timeout)
+            GLib.source_remove(self.m_timeout)
             self.m_timeout = None
         if ev.type == Gdk.EventType.BUTTON_PRESS:
             if self.m_value < 127:
                 self.up()
             if self.m_value < 127:
-                self.m_timeout = GObject.timeout_add(DELAY1, self.on_up_timeout)
+                self.m_timeout = GLib.timeout_add(DELAY1, self.on_up_timeout)
     def on_up_release(self, eb, ev):
         if self.m_timeout:
             GObject.source_remove(self.m_timeout)
@@ -63,7 +63,14 @@ class NotenameSpinButton(Gtk.Box):
     def on_up_timeout(self, *v):
         if self.m_value < 127:
             self.up()
-            self.m_timeout = GObject.timeout_add(DELAY2, self.on_up_timeout)
+            # DELAY2 since we want the value to increase faster if
+            # the used continues pressing the button.
+            self.m_timeout = GLib.timeout_add(DELAY2, self.on_up_timeout)
+        else:
+            self.m_timeout = None
+        # Return False to make GLib remove the timeout that called
+        # this method.
+        return False
     def up(self):
         self.set_value(self.get_value() + 1)
         self.emit('value-changed', self.m_value)
@@ -84,6 +91,11 @@ class NotenameSpinButton(Gtk.Box):
         if self.m_value > 0:
             self.down()
             self.m_timeout = GObject.timeout_add(DELAY2, self.on_down_timeout)
+        else:
+            self.m_timeout = None
+        # Return False to make GLib remove the timeout that called
+        # this method
+        return False
     def down(self):
         self.set_value(self.get_value() - 1)
         self.emit('value-changed', self.m_value)
