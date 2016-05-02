@@ -563,17 +563,20 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
     def popup_alsa_connection_list(self, widget):
         connection_list = soundcard.alsa_sequencer.get_connection_list()
         if connection_list:
-            menu = Gtk.Menu()
+            # We recreate the list every time the button is clicked
+            # because the used might have connected a new device
+            for m in self.g_alsa_popupmenu:
+                m.destroy()
             for clientid, portid, clientname, portname, labeltext in connection_list:
                 item = Gtk.MenuItem(labeltext)
-                menu.append(item)
+                self.g_alsa_popupmenu.append(item)
                 def ff(widget, clientid, portid):
                     self.g_alsa_device.set_label(widget.get_child().get_text())
                     self.m_gui_client_port = (clientid, portid)
                     self.g_alsa_radio.set_active(True)
                 item.connect('activate', ff, clientid, portid)
-            menu.show_all()
-            menu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
+            self.g_alsa_popupmenu.show_all()
+            self.g_alsa_popupmenu.popup(None, None, None, None, 0, Gtk.get_current_event_time())
     def create_linux_sound_page(self):
         it, page_vbox = self.new_page_box(None, _("Sound Setup"))
         #############
@@ -612,6 +615,9 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             label = Gtk.Label(label="Disabled because the pyalsa Python module was not found.")
             label.show()
             hbox.pack_start(label, False, False, 0)
+        # We need to create the menu outside the popup. If not it
+        # will be garbagecollecte before we can show it.
+        self.g_alsa_popupmenu = Gtk.Menu()
         ### OSS
         hbox = gu.bHBox(page_vbox, False)
         self.g_device_radio = gu.RadioButton(self.g_fakesynth_radio,
