@@ -28,6 +28,8 @@ locale.setlocale(locale.LC_NUMERIC, "C")
 
 
 import solfege
+solfege.db = None
+
 solfege.app_running = True
 from solfege import application
 from solfege import buildinfo
@@ -113,24 +115,6 @@ def do_profiles():
 
 
 def start_gui(datadir):
-    if not options.profile:
-        if cfg.get_bool("app/noprofilemanager"):
-            options.profile = cfg.get_string("app/last_profile")
-        elif do_profiles():
-            if solfege.splash_win:
-                solfege.splash_win.hide()
-            p = ProfileManager(cfg.get_string("app/last_profile"))
-            ret = p.run()
-            if ret == Gtk.ResponseType.ACCEPT:
-                options.profile = p.get_profile()
-                cfg.set_string("app/last_profile", "" if not options.profile else options.profile)
-            elif ret in (Gtk.ResponseType.CLOSE, Gtk.ResponseType.DELETE_EVENT):
-                Gtk.main_quit()
-                return
-            p.destroy()
-            if solfege.splash_win:
-                solfege.splash_win.show()
-
     cfg.set_bool('config/no_random', bool(options.no_random))
 
     lessonfile.infocache = lessonfile.InfoCache()
@@ -138,15 +122,6 @@ def start_gui(datadir):
     def f(s):
         if solfege.splash_win:
             solfege.splash_win.show_progress(s)
-    if solfege.splash_win:
-        solfege.splash_win.show_progress(_("Opening statistics database"))
-    try:
-        solfege.db = statistics.DB(f, profile=options.profile)
-    except sqlite3.OperationalError, e:
-        solfege.splash_win.hide()
-        gu.dialog_ok(_(u"Failed to open the statistics database:\n«%s»") % str(e).decode(sys.getfilesystemencoding(), 'replace'), secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
-        sys.exit()
-
     if solfege.splash_win:
         solfege.splash_win.show_progress(_("Creating application window"))
 
@@ -159,6 +134,24 @@ def start_gui(datadir):
     if solfege.splash_win:
         solfege.splash_win.destroy()
         solfege.splash_win = None
+
+    if not options.profile:
+        if cfg.get_bool("app/noprofilemanager"):
+            options.profile = cfg.get_string("app/last_profile")
+        elif do_profiles():
+            if solfege.splash_win:
+                solfege.splash_win.hide()
+            options.profile = solfege.win.run_startup_profile_manager()
+            if solfege.splash_win:
+                solfege.splash_win.show()
+    if solfege.splash_win:
+        solfege.splash_win.show_progress(_("Opening statistics database"))
+    try:
+        solfege.db = statistics.DB(f, profile=options.profile)
+    except sqlite3.OperationalError, e:
+        solfege.splash_win.hide()
+        gu.dialog_ok(_(u"Failed to open the statistics database:\n«%s»") % str(e).decode(sys.getfilesystemencoding(), 'replace'), secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
+        sys.exit()
 
     def ef(t, value, traceback):
         if options.debug:

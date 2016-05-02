@@ -117,13 +117,16 @@ class RenameProfileDialog(Gtk.Dialog):
 
 
 class ProfileManagerBase(Gtk.Dialog):
-    def __init__(self, default_profile):
-        Gtk.Dialog.__init__(self, _("GNU Solfege - Choose User Profile"))
+    def __init__(self, parent, default_profile):
+        Gtk.Dialog.__init__(self, _("GNU Solfege - Choose User Profile"),
+                            parent)
+        # Set a small size, and let the widgets expand the dialog
+        self.set_default_size(100, 100)
         # We save the initially selected profile, because we need to keep
         # track of it if the user renames it and then presses cancel.
         self.m_default_profile = default_profile
         vbox = gu.hig_dlg_vbox()
-        self.vbox.pack_start(vbox, False, False, 0)
+        self.get_content_area().pack_start(vbox, False, False, 0)
         l = Gtk.Label(_("Solfege will save your statistics and test results in the user profile. By adding additional user profiles to Solfege, multiple users can share a user account on the operating system."))
         l.set_alignment(0.0, 0.5)
         l.set_line_wrap(True)
@@ -243,8 +246,8 @@ class ProfileManagerBase(Gtk.Dialog):
 
 
 class ProfileManager(ProfileManagerBase):
-    def __init__(self, default_profile):
-        ProfileManagerBase.__init__(self, default_profile)
+    def __init__(self, parent, default_profile):
+        ProfileManagerBase.__init__(self, parent, default_profile)
         self.add_button(Gtk.STOCK_QUIT, Gtk.ResponseType.CLOSE)
         b = self.add_button(_("_Start GNU Solfege"), Gtk.ResponseType.ACCEPT)
         b.grab_focus()
@@ -252,7 +255,7 @@ class ProfileManager(ProfileManagerBase):
 
 
 class ChangeProfileDialog(ProfileManagerBase):
-    def __init__(self, default_profile):
-        ProfileManagerBase.__init__(self, default_profile)
+    def __init__(self, parent, default_profile):
+        ProfileManagerBase.__init__(self, parent, default_profile)
         self.add_button(Gtk.STOCK_APPLY, Gtk.ResponseType.ACCEPT)
 

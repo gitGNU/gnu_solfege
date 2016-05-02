@@ -441,11 +441,9 @@ class SolfegeApp(cfg.ConfigUtils):
         except IOError, e:
             gu.display_exception_message(e)
         try:
-            solfege.db.conn.commit()
-        except sqlite3.ProgrammingError, e:
-            gu.display_exception_message(e)
-        try:
-            solfege.db.conn.close()
+            if solfege.db:
+                solfege.db.conn.commit()
+                solfege.db.conn.close()
         except sqlite3.ProgrammingError, e:
             gu.display_exception_message(e)
         if soundcard.synth:

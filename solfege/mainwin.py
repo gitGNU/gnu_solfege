@@ -77,7 +77,7 @@ class SplashWin(Gtk.Window):
             Gtk.main_iteration()
 
 from solfege.configwindow import ConfigWindow
-from solfege.profilemanager import ChangeProfileDialog
+from solfege.profilemanager import ChangeProfileDialog, ProfileManager
 from solfege import gu
 from solfege import cfg
 from solfege import mpd
@@ -634,8 +634,22 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                     break
             return True
         view.on_key_press_event(widget, event)
+    def run_startup_profile_manager(self):
+        """
+        Select a user profile to use. Return its name.
+        Quit program if user selects that.
+        """
+        p = ProfileManager(self, cfg.get_string("app/last_profile"))
+        ret = p.run()
+        if ret == Gtk.ResponseType.ACCEPT:
+            profile = p.get_profile()
+            cfg.set_string("app/last_profile", "" if not profile else profile)
+            p.destroy()
+            return profile
+        else:
+            self.quit_program()
     def open_profile_manager(self, widget=None):
-        p = ChangeProfileDialog(solfege.app.m_options.profile)
+        p = ChangeProfileDialog(self, solfege.app.m_options.profile)
         if p.run() == Gtk.ResponseType.ACCEPT:
             prof = p.get_profile()
         else:
@@ -643,7 +657,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             # before, but if the user has renamed the active profile, then
             # we need to use the new name.
             prof = p.m_default_profile
-
+        p.destroy()
         solfege.app.reset_exercise()
         solfege.app.m_options.profile = prof
         solfege.db.conn.commit()
@@ -653,7 +667,6 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         solfege.db = statistics.DB(None, profile=prof)
         cfg.set_string("app/last_profile", prof)
         self.display_frontpage()
-        p.destroy()
     def open_preferences_window(self, widget=None):
         if not self.g_config_window:
             self.g_config_window = ConfigWindow()
