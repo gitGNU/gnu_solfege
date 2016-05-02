@@ -169,6 +169,7 @@ class RandomTransposeDialog(Gtk.Dialog):
            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
             Gtk.STOCK_OK, Gtk.ResponseType.OK,
             ))
+        self.set_default_size(100, 100)
         dlg_vbox = gu.hig_dlg_vbox()
         self.vbox.pack_start(dlg_vbox, True, True, 0)
         xbox, vbox = gu.hig_category_vbox(_("Select how to do random transposition"))
