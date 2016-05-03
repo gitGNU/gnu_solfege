@@ -7,7 +7,7 @@ header {
     module = rhythmtapping2
     #have_music_displayer = yes
     title = _("Rhythm tapping, ternary")
-    configurable_rhythm_elements = 22, 23, 24, 25, newline, 26, 27, 28, 29, 30, newline, 31, 32, 33, 34
+    configurable_rhythm_elements = 22, 23, 24, 25, "newline", 26, 27, 28, 29, 30, "newline", 31, 32, 33, 34
     bpm = 66
     count_in_notelen="4."
 }
