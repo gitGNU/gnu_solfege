@@ -170,6 +170,7 @@ class ExerciseView(SelectWinBase):
         except AttributeError:
             pass
         self.g_grid = Gtk.Grid()
+        self.g_grid.set_column_spacing(12)
         self.g_box.pack_start(self.g_grid, False, False, 0)
         label = None
         for col_idx, column in enumerate(page):
