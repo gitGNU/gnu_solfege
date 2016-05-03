@@ -619,6 +619,7 @@ class NewLineBox(Gtk.VBox):
             else:
                 hbox.pack_start(n, False, False, 0)
                 sizegroup.add_widget(n)
+        self.show_all()
     def _flow_show_widgets(self):
         w = 8
         num_lines = len(self.m_todo_widgets) // w + 1
