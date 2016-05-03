@@ -183,7 +183,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         self.g_answer_box = gu.NewLineBox()
         self.practise_box.pack_start(self.g_answer_box, False, False, 0)
         #-------
-        hbox = gu.bHBox(self.practise_box)
+        hbox = gu.bHBox(self.practise_box, False)
         b = Gtk.Button(_("Play"))
         b.show()
         b.connect('clicked', self.play_users_answer)
