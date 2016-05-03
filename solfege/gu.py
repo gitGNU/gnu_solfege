@@ -1019,7 +1019,8 @@ class ClickableLabel(Gtk.LinkButton):
 
 class ExceptionDialog(Gtk.Dialog):
     def __init__(self, exception):
-        Gtk.Dialog.__init__(self, sys.exc_info()[0].__name__)
+        Gtk.Dialog.__init__(self, sys.exc_info()[0].__name__,
+                            solfege.win)
         self.set_resizable(True)
         self.set_border_width(6)
         self.vbox.set_spacing(0)
@@ -1118,13 +1119,6 @@ class ExceptionDialog(Gtk.Dialog):
         else:
             sc.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sc.set_size_request(-1, int(h * max_lines / lines))
-        adj = sc.get_hscrollbar().get_adjustment()
-        def f(scrollbar, event):
-            sc.set_size_request(-1, int(h * max_lines / lines) + scrollbar_height)
-            scrollbar.disconnect(self._hscroll_expose_id)
-        # f is called if the horizontal scrollbar is visible. This because we
-        # need to allocate space for the scrollbar too.
-        self._hscroll_expose_id = sc.get_hscrollbar().connect('expose-event', f)
 
 def display_exception_message(exception, lessonfile=None):
         """Call this function only inside an except clause."""
