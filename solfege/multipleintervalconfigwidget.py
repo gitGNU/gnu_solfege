@@ -37,6 +37,7 @@ class IntervalCheckBox(Gtk.HBox):
         for x in range(1, mpd.interval.max_interval + 1):
             self.checkbox_dict[x] = c \
                 = Gtk.ToggleButton(mpd.interval.short_name[x])
+            c.set_name("intervalToggleButton")
             c.connect('toggled', self.on_toggle)
             c.show()
             self.pack_start(c, True, True, 0)
@@ -128,6 +129,7 @@ class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
                   % (self.g_int_sel_spin.get_value_as_int()-1))
         for x in range(1, mpd.interval.max_interval + 1):
             self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[x])
+            c.set_name("intervalToggleButton")
             if x in V:
                 c.set_active(True)
             c.show()
@@ -142,6 +144,7 @@ class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
         v.reverse()
         for x in v:
             self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[-x])
+            c.set_name("intervalToggleButton")
             if x in V:
                 c.set_active(True)
             c.show()
