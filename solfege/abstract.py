@@ -384,6 +384,11 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.g_cancel_test = Gtk.Button(_("_Cancel test"))
         self.g_cancel_test.connect('clicked', self.on_cancel_test)
         self.action_area.pack_end(self.g_cancel_test, False, False, 0)
+        self.g_config_grid = Gtk.Grid()
+        self.g_config_grid.set_column_spacing(gu.hig.SPACE_SMALL)
+        self.g_config_grid.set_row_spacing(gu.hig.SPACE_SMALL)
+        self.config_box.pack_start(self.g_config_grid, False, False, 0)
+        self.config_box.show()
     def add_module_is_deprecated_label(self):
         """
         The deprecated module must set a message in self.g_deprecated_label
@@ -639,25 +644,26 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 self.g_statview.update()
             else:
                 self.g_statview.clear()
-    def _add_auto_new_question_gui(self, box):
-        hbox = gu.bHBox(box, False)
-        hbox.set_spacing(gu.PAD_SMALL)
+    def _add_auto_new_question_gui(self, grid, x, y):
+        """
+        add to grid, starting at position x, y
+        """
         adj = Gtk.Adjustment(0, 0, 10, 0.1, 1)
         spin = gu.nSpinButton(self.m_exname, 'seconds_before_new_question',
                        adj)
         spin.set_digits(1)
-        label = Gtk.Label(label=_("Delay (seconds):"))
-        label.show()
+        label = Gtk.Label(label=_("seconds delay"))
+        label.props.halign = Gtk.Align.START
         def f(button, spin=spin, label=label):
             spin.set_sensitive(button.get_active())
             label.set_sensitive(button.get_active())
         b = gu.nCheckButton(self.m_exname, 'new_question_automatically',
-                            _("_New question automatically."), callback=f)
-        hbox.pack_start(b, False, False, 0)
+                            _("_New question automatically"), callback=f)
         label.set_sensitive(b.get_active())
-        hbox.pack_start(label, False, False, 0)
         spin.set_sensitive(b.get_active())
-        hbox.pack_start(spin, False, False, 0)
+        grid.attach(b, x, y, 1, 1)
+        grid.attach(spin, x + 1, y, 1, 1)
+        grid.attach(label, x + 2, y, 1, 1)
     def _lessonfile_exception(self, exception, sourcefile, lineno):
         m = gu.ExceptionDialog(exception)
         idx = self.m_t.m_P._idx
@@ -830,15 +836,13 @@ class IntervalGui(Gui):
         self.std_buttons_add(('new-interval', self.new_question),
             ('repeat', self.repeat_question))
         self.setup_key_bindings()
-    def _create_select_inputwidget_gui(self):
+    def _create_select_inputwidget_gui(self, grid, x, y):
         """
         This will be called by HarmonicInterval and MelodicInterval
         constructor
         """
-        hbox = gu.bHBox(self.config_box, False)
-        hbox.set_spacing(gu.PAD_SMALL)
-        gu.bLabel(hbox, _("Input interface:"), False)
-
+        label = Gtk.Label(_("Input interface"))
+        label.props.halign = Gtk.Align.END
         combo = Gtk.ComboBoxText()
         for i in range(len(inputwidgets.inputwidget_names)):
             combo.append_text(inputwidgets.inputwidget_names[i])
@@ -847,30 +851,31 @@ class IntervalGui(Gui):
         else:
             combo.set_active(0)
         combo.connect('changed', lambda w: self.use_inputwidget(w.get_active()))
-        hbox.pack_start(combo, False, False, 0)
 
         self.g_disable_unused_buttons = gu.nCheckButton(self.m_exname,
                     'disable_unused_intervals', _("_Disable unused buttons"))
-        hbox.pack_start(self.g_disable_unused_buttons, True, True, 0)
-    def add_lock_to_key_gui(self):
+        grid.attach(label, x, y, 1, 1)
+        grid.attach(combo, x + 1, y, 1, 1)
+        grid.attach(self.g_disable_unused_buttons, x + 2, y, 1, 1)
+
+
+    def add_lock_to_key_gui(self, grid, x, y):
         # gui to lock to a key
         def toggle_lock_to_key_sensitivity(checkbutton):
             self.g_notename.set_sensitive(checkbutton.get_active())
             self.g_scaletype.set_sensitive(checkbutton.get_active())
-        self.g_lock_to_key_hbox = Gtk.HBox(False, gu.hig.SPACE_SMALL)
-        self.config_box.pack_start(self.g_lock_to_key_hbox, False, False, 0)
         check = gu.nCheckButton(self.m_exname, 'lock-to-key',
-            _("Lock intervals to key:"),
+            _("Lock intervals to key"),
             callback = toggle_lock_to_key_sensitivity)
-        self.g_lock_to_key_hbox.pack_start(check, False, False, 0)
         self.g_notename = gu.nComboBox(self.m_exname, 'lock-to-key-note',
             mpd.MusicalPitch.new_from_int(60).get_user_notename(),
-            [mpd.MusicalPitch.new_from_int(60 + x).get_user_notename() for x in range(12)])
+            [mpd.MusicalPitch.new_from_int(60 + i).get_user_notename() for i in range(12)])
         self.g_notename.show()
-        self.g_lock_to_key_hbox.pack_start(self.g_notename, False, False, 0)
         self.g_scaletype = gu.nComboBox(self.m_exname, 'lock-to-key-scaletype', _("Major"), [n['name'] for n in utils.key_data.values()])
         self.g_scaletype.show()
-        self.g_lock_to_key_hbox.pack_start(self.g_scaletype, False, False, 0)
+        grid.attach(check, x, y, 1, 1)
+        grid.attach(self.g_notename, x + 1, y, 1, 1)
+        grid.attach(self.g_scaletype, x + 2, y, 1, 1)
         toggle_lock_to_key_sensitivity(check)
     def select_inputwidget(self):
         """

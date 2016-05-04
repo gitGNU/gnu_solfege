@@ -194,17 +194,18 @@ class Gui(abstract.IntervalGui):
         self.g_interval_selector.set_border_width(gu.PAD)
         frame.add(self.g_interval_selector)
 
-        self.add_lock_to_key_gui()
+        self.add_lock_to_key_gui(self.g_config_grid, 0, 0)
         #------we need some space
         self.config_box.pack_start(Gtk.HBox(), False, False,
                                    padding=gu.PAD_SMALL)
         # ------------------------------------------
-        self._add_auto_new_question_gui(self.config_box)
+        self._add_auto_new_question_gui(self.g_config_grid, 0, 1)
         # ----------------------------------------------
-        self._create_select_inputwidget_gui()
+        self._create_select_inputwidget_gui(self.g_config_grid, 0, 2)
         # ------------ frame -------------------
         self.config_box.set_spacing(0)
         self.config_box.show_all()
+        self.g_config_grid.show_all()
         ##############
         # statistics #
         ##############
