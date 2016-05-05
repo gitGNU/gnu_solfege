@@ -659,6 +659,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             label.set_sensitive(button.get_active())
         b = gu.nCheckButton(self.m_exname, 'new_question_automatically',
                             _("_New question automatically"), callback=f)
+        b.props.halign = Gtk.Align.END
         label.set_sensitive(b.get_active())
         spin.set_sensitive(b.get_active())
         grid.attach(b, x, y, 1, 1)
@@ -867,6 +868,7 @@ class IntervalGui(Gui):
         check = gu.nCheckButton(self.m_exname, 'lock-to-key',
             _("Lock intervals to key"),
             callback = toggle_lock_to_key_sensitivity)
+        check.props.halign = Gtk.Align.END
         self.g_notename = gu.nComboBox(self.m_exname, 'lock-to-key-note',
             mpd.MusicalPitch.new_from_int(60).get_user_notename(),
             [mpd.MusicalPitch.new_from_int(60 + i).get_user_notename() for i in range(12)])
