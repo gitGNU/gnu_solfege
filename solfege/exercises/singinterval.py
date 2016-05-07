@@ -124,9 +124,7 @@ class Gui(abstract.Gui):
         ##############
         # config_box #
         ##############
-        self.g_mici = MultipleIntervalConfigWidget(self.m_exname)
-        self.config_box.pack_start(self.g_mici, False, False, 0)
-        self.config_box.show_all()
+        self.g_mici = MultipleIntervalConfigWidget(self.m_exname, self.g_config_grid, 0, 0)
         ###############
         # statistics
         ###############
