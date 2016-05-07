@@ -170,7 +170,7 @@ class Gui(abstract.Gui):
         ##############
         # config_box #
         ##############
-        self._add_auto_new_question_gui(self.config_box)
+        self._add_auto_new_question_gui(self.g_config_grid, 0, 0)
         # ----------------------------------------------
 
         def pack_rdbs(box, callback):
@@ -183,7 +183,8 @@ class Gui(abstract.Gui):
             box.pack_start(b, False, False, 0)
             return D
         #---------
-        self.g_intervalconfig_box = gu.bVBox(self.config_box, False)
+        self.g_intervalconfig_box = Gtk.VBox()
+        self.g_config_grid.attach(self.g_intervalconfig_box, 0, 1, 3, 1)
         hbox = gu.bHBox(self.g_intervalconfig_box, False)
         hbox.pack_start(Gtk.Label(_("First interval:")), False, False,
                         padding=gu.PAD_SMALL)
@@ -216,7 +217,7 @@ class Gui(abstract.Gui):
             self.set_string('last_interval_type', 'harmonic')
         self.g_rdbs[1][self.get_string('last_interval_type')].set_active(True)
         self.update_last(self.g_rdbs[1][self.get_string('last_interval_type')])
-        self.config_box.show_all()
+        self.g_config_grid.show_all()
         self.add_watch('first_interval_type', self._watch_1_cb)
         self.add_watch('last_interval_type', self._watch_2_cb)
     def _watch_1_cb(self, name):
