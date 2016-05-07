@@ -147,7 +147,6 @@ class Gui(abstract.LessonbasedGui):
         self.practise_box.pack_start(self.g_flashbar, False, False, 0)
         # Config box
         label = Gtk.Label(label=_("Accuracy required:"))
-        self.config_box_sizegroup.add_widget(label)
         label.set_alignment(1.0, 0.5)
         spin = gu.nSpinButton(self.m_exname, 'accuracy',
                               Gtk.Adjustment(0, 0, 2, 0.01, 0.05))

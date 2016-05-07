@@ -369,26 +369,24 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.config_box = Gtk.VBox()
         self.config_box.set_border_width(gu.PAD)
         self.config_box.show()
-        self.config_box_sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
+        self.g_config_grid = Gtk.Grid()
+        self.g_config_grid.set_column_spacing(gu.hig.SPACE_SMALL)
+        self.g_config_grid.set_row_spacing(gu.hig.SPACE_SMALL)
+        self.g_config_grid.props.margin = gu.hig.SPACE_SMALL
         if no_notebook:
-            self.pack_start(vbox, True, True, 0)
-            self.pack_start(self.config_box, False, False, 0)
+            self.pack_start(self.g_config_grid, True, True, 0)
             self.g_notebook = None
         else:
             self.g_notebook = Gtk.Notebook()
             self.pack_start(self.g_notebook, True, True, 0)
 
             self.g_notebook.append_page(vbox, Gtk.Label(label=_("Practise")))
-            self.g_notebook.append_page(self.config_box, Gtk.Label(label=_("Config")))
+            self.g_notebook.append_page(self.g_config_grid, Gtk.Label(label=_("Config")))
             self.g_notebook.show()
+        self.g_config_grid.attach(self.config_box, 0, 10, 0, 0)
         self.g_cancel_test = Gtk.Button(_("_Cancel test"))
         self.g_cancel_test.connect('clicked', self.on_cancel_test)
         self.action_area.pack_end(self.g_cancel_test, False, False, 0)
-        self.g_config_grid = Gtk.Grid()
-        self.g_config_grid.set_column_spacing(gu.hig.SPACE_SMALL)
-        self.g_config_grid.set_row_spacing(gu.hig.SPACE_SMALL)
-        self.config_box.pack_start(self.g_config_grid, False, False, 0)
-        self.config_box.show()
     def add_module_is_deprecated_label(self):
         """
         The deprecated module must set a message in self.g_deprecated_label
@@ -608,11 +606,11 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         Show self.config_box if it has any visible children, otherwise
         hide it.
         """
-        if [c for c in self.config_box.get_children() \
+        if [c for c in self.g_config_grid.get_children() \
             if c.get_property('visible')]:
-            self.config_box.show()
+            self.g_config_grid.show()
         else:
-            self.config_box.hide()
+            self.g_config_grid.hide()
     def handle_statistics_page_sensibility(self):
         try:
             if self.m_t.m_custom_mode:
@@ -758,7 +756,6 @@ class RhythmAddOnGuiClass(object):
         hbox.set_spacing(gu.hig.SPACE_SMALL)
         label = Gtk.Label(label=_("Number of beats in question:"))
         hbox.pack_start(label, False, False, 0)
-        self.config_box_sizegroup.add_widget(label)
         label.set_alignment(1.0, 0.5)
         hbox.pack_start(gu.nSpinButton(self.m_exname, "num_beats",
                      Gtk.Adjustment(4, 1, 100, 1, 10)), False, False, 0)
@@ -769,7 +766,6 @@ class RhythmAddOnGuiClass(object):
         hbox.set_spacing(gu.hig.SPACE_SMALL)
         label = Gtk.Label(label=_("Count in before question:"))
         hbox.pack_start(label, False, False, 0)
-        self.config_box_sizegroup.add_widget(label)
         label.set_alignment(1.0, 0.5)
         hbox.pack_start(gu.nSpinButton(self.m_exname, "count_in",
                      Gtk.Adjustment(2, 0, 10, 1, 10)), False, False, 0)

@@ -150,7 +150,6 @@ class SolmisationAddOnGuiClass(object):
         hbox.set_spacing(gu.hig.SPACE_SMALL)
         label = Gtk.Label(label=_("Number of tones:"))
         hbox.pack_start(label, False, False, 0)
-        self.config_box_sizegroup.add_widget(label)
         label.set_alignment(1.0, 0.5)
         hbox.pack_start(gu.nSpinButton(self.m_exname, "num_notes",
                                        Gtk.Adjustment(4, 1, 100, 1, 10)), False, False, 0)

@@ -79,83 +79,99 @@ class nIntervalCheckBox(IntervalCheckBox, cfg.ConfigUtils):
         self.set_list(self.m_varname, self.get_value())
 
 
-class MultipleIntervalConfigWidget(Gtk.VBox, cfg.ConfigUtils):
+class MultipleIntervalConfigWidget(cfg.ConfigUtils):
     """
     This class gives  you some spin buttons and two rows of buttons
     where you select what intervals to use for exercises where you
     select one or more intervals.
     """
-    def __init__(self, exname):
-        Gtk.VBox.__init__(self)
+    def __init__(self, exname, grid, x, y):
         cfg.ConfigUtils.__init__(self, exname)
         self.MAX_INT = self.get_int('maximum_number_of_intervals')
         if self.MAX_INT == 0:
             self.MAX_INT = 12
         self._watched_interval_id = None
         self._watched_interval = None
+        self._children = []
         self.m_ignore_iclick = 0
-        box = gu.bHBox(self, expand=False)
-        box.set_spacing(gu.PAD_SMALL)
-        box.pack_start(Gtk.Label(_("Number of intervals:")), False, False, 0)
+        #####
+        l = Gtk.Label(_("Number of intervals:"))
+        self._children.append(l)
+        l.props.halign = Gtk.Align.END
+        grid.attach(l, x, y, 1, 1)
+        #####
         self.g_num_int_spin = gu.nSpinButton(self.m_exname,
                        'number_of_intervals',
                        Gtk.Adjustment(1, 1, self.MAX_INT, 1, self.MAX_INT))
+        self._children.append(self.g_num_int_spin)
         self.add_watch('number_of_intervals', self.on_num_int_spin)
-        box.pack_start(self.g_num_int_spin, False, False, 0)
-        self.g_all_int_button = gu.bButton(box,
-                  _("Configure all intervals in this exercise like this"),
-                  self.configure_all_like_active_interval, expand=False)
+        grid.attach(self.g_num_int_spin, x + 1, y, 1, 1)
+        #####
+        self.g_all_int_button = Gtk.Button(
+            _("Configure all intervals like this"))
+        self._children.append(self.g_all_int_button)
+        self.g_all_int_button.connect('clicked',
+            self.configure_all_like_active_interval)
+        grid.attach(self.g_all_int_button, x + 2, y, 1, 1)
         self.add_watch('number_of_intervals', lambda n, self=self: \
                self.g_all_int_button.set_sensitive(self.get_int(n)!=1))
-
-        box = gu.bHBox(self, expand=False)
-        box.set_spacing(gu.PAD_SMALL)
-        box.pack_start(Gtk.Label(
-                _("Toggle buttons are for interval number:")), False, False, 0)
+        #####
+        l = Gtk.Label(_("Toggle buttons are for interval number:"))
+        self._children.append(l)
+        l.props.halign = Gtk.Align.END
+        grid.attach(l, x, y + 1, 1, 1)
+        #####
         self.m_int_sel_adjustment \
              = Gtk.Adjustment(1, 1, self.get_int('number_of_intervals'), 1)
         self.g_int_sel_spin = gu.nSpinButton(self.m_exname,
                   'cur_edit_interval', self.m_int_sel_adjustment, digits=0)
+        self._children.append(self.g_int_sel_spin)
         self.g_int_sel_spin.connect('changed', self.on_int_sel_spin)
-        box.pack_start(self.g_int_sel_spin, False, False, 0)
-        table = Gtk.Table()
-        self.pack_start(table, False, False, 0)
+        grid.attach(self.g_int_sel_spin, x + 1, y + 1, 1, 1)
+        #####
+        g = Gtk.Grid()
+        self._children.append(g)
+        grid.attach(g, x, y + 2, 3, 1)
 
-        label = Gtk.Label(label=_("Up:"))
-        label.set_alignment(1.0, 0.5)
-        table.attach(label, 0, 1, 0, 1, xpadding=gu.PAD_SMALL)
+        label = Gtk.Label(_("Up:"))
+        label.props.halign = Gtk.Align.END
+        g.attach(label, 0, 0, 1, 1)
         self.g_interval_chk = {}
         V = self.get_list("ask_for_intervals_%i"
                   % (self.g_int_sel_spin.get_value_as_int()-1))
-        for x in range(1, mpd.interval.max_interval + 1):
-            self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[x])
+        for i in range(1, mpd.interval.max_interval + 1):
+            self.g_interval_chk[i] = c = Gtk.ToggleButton(mpd.interval.short_name[i])
             c.set_name("intervalToggleButton")
-            if x in V:
-                c.set_active(True)
-            c.show()
-            c.connect('clicked', self.on_interval_chk_clicked, x)
-            table.attach(c, x, x+1, 0, 1)
+            c.set_active(True)
+            c.connect('clicked', self.on_interval_chk_clicked, i)
+            g.attach(c, i, 0, 1, 1)
 
-        box = gu.bHBox(self, expand=False)
-        label = Gtk.Label(label=_("Down:"))
-        label.set_alignment(1.0, 0.5)
-        table.attach(label, 0, 1, 1, 2, xpadding=gu.PAD_SMALL)
+        label = Gtk.Label(_("Down:"))
+        label.props.halign = Gtk.Align.END
+        g.attach(label, 0, 1, 1, 1)
         v = range(mpd.interval.min_interval, 0)
         v.reverse()
-        for x in v:
-            self.g_interval_chk[x] = c = Gtk.ToggleButton(mpd.interval.short_name[-x])
+        for i in v:
+            self.g_interval_chk[i] = c = Gtk.ToggleButton(mpd.interval.short_name[-i])
             c.set_name("intervalToggleButton")
-            if x in V:
-                c.set_active(True)
-            c.show()
-            c.connect('clicked', self.on_interval_chk_clicked, x)
-            table.attach(c, -x, -x+1, 1, 2)
-        table.show_all()
+            c.set_active(True)
+            c.connect('clicked', self.on_interval_chk_clicked, i)
+            g.attach(c, -i, 1, 1, 1)
+        self.show()
         if self.g_num_int_spin.get_value_as_int() == 1:
             self.g_all_int_button.set_sensitive(False)
-        gu.bButton(self, _("Reset to default values"), self.reset_to_default,
-                  False, False)
+        ######
+        b = Gtk.Button(_("Reset to default values"))
+        self._children.append(b)
+        grid.attach(b, x, y + 3, 4, 1)
+        b.connect('clicked', self.reset_to_default)
         self._watch_interval(self.get_int('cur_edit_interval')-1)
+    def show(self):
+        for c in self._children:
+            c.show_all()
+    def hide(self):
+        for c in self._children:
+            c.hide()
     def reset_to_default(self, _o):
         self.set_int('cur_edit_interval', 1)
         self.set_int('number_of_intervals', 1)

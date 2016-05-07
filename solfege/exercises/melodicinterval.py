@@ -104,16 +104,14 @@ class Gui(abstract.IntervalGui):
         ##############
         # config_box #
         ##############
-        self.g_mici = MultipleIntervalConfigWidget(self.m_exname)
-        self.config_box.pack_start(self.g_mici, False, False, 0)
-        box = Gtk.HBox(False, 0)
-        self.config_box.pack_start(box, False, False,
-                                   padding=gu.PAD_SMALL)
-        self._add_auto_new_question_gui(self.config_box)
+        self.g_mici = MultipleIntervalConfigWidget(self.m_exname,
+                self.g_config_grid, 0, 0)
+
+        self.add_lock_to_key_gui(self.g_config_grid, 0, 4)
+        self._add_auto_new_question_gui(self.g_config_grid, 0, 5)
         # ----------------------------------
-        self._create_select_inputwidget_gui()
-        self.add_lock_to_key_gui()
-        self.config_box.show_all()
+        self._create_select_inputwidget_gui(self.g_config_grid, 0, 6)
+        self.g_config_grid.show_all()
         ##############
         # statistics #
         ##############
@@ -273,7 +271,6 @@ class Gui(abstract.IntervalGui):
         else:
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New interval' to begin."))
-        self.g_lock_to_key_hbox.set_sensitive(self.get_int('number_of_intervals') == 1)
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()

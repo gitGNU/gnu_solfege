@@ -366,7 +366,7 @@ class SolfegeApp(cfg.ConfigUtils):
             for msg in self.m_teachers[module].m_P.m_discards:
                 print >> sys.stderr, msg
         solfege.win.box_dict[module].practise_box.set_sensitive(True)
-        solfege.win.box_dict[module].config_box.set_sensitive(True)
+        solfege.win.box_dict[module].g_config_grid.set_sensitive(True)
         solfege.win.box_dict[module].action_area.set_sensitive(True)
         solfege.win.box_dict[module].on_start_practise()
         w = solfege.win.g_ui_manager.get_widget("/Menubar/HelpMenu/PerExerciseHelp/HelpTheory")
