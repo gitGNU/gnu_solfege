@@ -745,33 +745,27 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         return False
 
 class RhythmAddOnGuiClass(object):
-    def add_select_elements_gui(self):
+    def add_select_elements_gui(self, grid, x, y):
         self.g_element_frame = frame = Gtk.Frame(label=_("Rhythms to use in question"))
-        self.config_box.pack_start(frame, False, False, 0)
+        grid.attach(frame, x, y, 3, 1)
         self.g_select_rhythms_box = gu.NewLineBox()
         self.g_select_rhythms_box.set_border_width(gu.PAD_SMALL)
         frame.add(self.g_select_rhythms_box)
-    def add_select_num_beats_gui(self):
+    def add_select_num_beats_gui(self, grid, x, y):
         ###
-        hbox = Gtk.HBox()
-        hbox.set_spacing(gu.hig.SPACE_SMALL)
         label = Gtk.Label(label=_("Number of beats in question:"))
-        hbox.pack_start(label, False, False, 0)
-        label.set_alignment(1.0, 0.5)
-        hbox.pack_start(gu.nSpinButton(self.m_exname, "num_beats",
-                     Gtk.Adjustment(4, 1, 100, 1, 10)), False, False, 0)
-        self.config_box.pack_start(hbox, False, False, 0)
-        hbox.show_all()
+        label.props.halign = Gtk.Align.END
+        grid.attach(label, x, y, 1, 1)
+        grid.attach(gu.nSpinButton(self.m_exname, "num_beats",
+                                   Gtk.Adjustment(4, 1, 100, 1, 10)),
+                    x + 1, y, 1, 1)
         #
-        hbox = Gtk.HBox()
-        hbox.set_spacing(gu.hig.SPACE_SMALL)
         label = Gtk.Label(label=_("Count in before question:"))
-        hbox.pack_start(label, False, False, 0)
-        label.set_alignment(1.0, 0.5)
-        hbox.pack_start(gu.nSpinButton(self.m_exname, "count_in",
-                     Gtk.Adjustment(2, 0, 10, 1, 10)), False, False, 0)
-        hbox.show_all()
-        self.config_box.pack_start(hbox, False, False, 0)
+        label.props.halign = Gtk.Align.END
+        grid.attach(label, x, y + 1, 1, 1)
+        grid.attach(gu.nSpinButton(self.m_exname, "count_in",
+                                   Gtk.Adjustment(2, 0, 10, 1, 10)),
+                    x +1, y+ 1, 1, 1)
     def pngcheckbutton(self, i):
         btn = Gtk.CheckButton()
         btn.add(gu.create_rhythm_image(const.RHYTHMS[i]))
