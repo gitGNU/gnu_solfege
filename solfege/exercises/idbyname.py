@@ -126,19 +126,18 @@ class Gui(abstract.LessonbasedGui):
         ##############
         # config_box #
         ##############
-        self.config_box.set_border_width(12)
-        self.config_box.set_spacing(18)
-        self.add_random_transpose_gui()
+        self.add_random_transpose_gui(0)
         # -----------------------------------------
         self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
             _("Questions to ask"))
-        self.config_box.pack_start(self.g_select_questions_category_box, False, False, 0)
+        self.g_config_grid.attach(self.g_select_questions_category_box,
+                                  0, 1, 3, 1)
         self.g_select_questions = QuestionNameCheckButtonTable(self.m_t)
         self.g_select_questions.initialize(4, 0)
         category_box.pack_start(self.g_select_questions, False, False, 0)
         self.g_select_questions.show()
         # ------------------------------------------
-        self._add_auto_new_question_gui(self.config_box)
+        self._add_auto_new_question_gui(self.g_config_grid, 0, 2)
         # ----------------------------------------------
         ##############
         # statistics #

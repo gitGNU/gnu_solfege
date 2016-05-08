@@ -919,20 +919,21 @@ class IntervalGui(Gui):
 class LessonbasedGui(Gui):
     def __init__(self, teacher, no_notebook=False):
         Gui.__init__(self, teacher, no_notebook)
-    def add_random_transpose_gui(self):
+    def add_random_transpose_gui(self, row):
         self.g_random_transpose_box = hbox = gu.bHBox(self.config_box, False, False)
+        ###
         label = Gtk.Label(label=_("Random transpose:"))
         label.show()
-        hbox.pack_start(label, False, False, 0)
-        hbox.set_spacing(6)
+        self.g_config_grid.attach(label, 0, row, 1, 1)
+        ###
         self.g_random_transpose = Gtk.Label()
         self.g_random_transpose.show()
-        hbox.pack_start(self.g_random_transpose, True, True, 0)
-
+        self.g_config_grid.attach(self.g_random_transpose, 1, row, 1, 1)
+        ###
         button = Gtk.Button(_("Change ..."))
         button.show()
         button.connect('clicked', self.run_random_transpose_dialog)
-        hbox.pack_start(button, True, True, 0)
+        self.g_config_grid.attach(button, 2, row, 1, 1)
     def run_random_transpose_dialog(self, widget):
         dlg = RandomTransposeDialog(self.m_t.m_P.header.random_transpose, solfege.win)
         response = dlg.run()
