@@ -207,28 +207,23 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         ##############
         # config_box #
         ##############
-        self.add_select_elements_gui()
+        self.add_select_elements_gui(self.g_config_grid, 0, 0)
         #--------
-        self.config_box.pack_start(Gtk.HBox(False, 0), False, False,
-                                   padding=gu.PAD_SMALL)
-        self.add_select_num_beats_gui()
+        self.add_select_num_beats_gui(self.g_config_grid, 0, 1)
         #-----
-        self.config_box.pack_start(Gtk.HBox(False, 0), False, False,
-                                   padding=gu.PAD_SMALL)
-        #------
-        hbox = gu.bHBox(self.config_box, False)
-        hbox.set_spacing(gu.PAD_SMALL)
-        hbox.pack_start(gu.nCheckButton(self.m_exname,
+        self.g_config_grid.attach(
+                gu.nCheckButton(self.m_exname,
                  "not_start_with_rest",
-                 _("Don't start the question with a rest")), False, False, 0)
-        sep = Gtk.VSeparator()
-        hbox.pack_start(sep, False, False, 0)
-        hbox.pack_start(Gtk.Label(_("Beats per minute:")), False, False, 0)
+                 _("Don't start the question with a rest")),
+                0, 3, 1, 1)
+        label = Gtk.Label(_("Beats per minute:"))
+        label.props.halign = Gtk.Align.END
+        self.g_config_grid.attach(label, 0, 4, 1, 1)
         spin = gu.nSpinButton(self.m_exname, 'bpm',
                  Gtk.Adjustment(60, 20, 240, 1, 10))
-        hbox.pack_start(spin, False, False, 0)
-        self._add_auto_new_question_gui(self.config_box)
-        self.config_box.show_all()
+        self.g_config_grid.attach(spin, 1, 4, 1, 1)
+        self._add_auto_new_question_gui(self.g_config_grid, 0, 5)
+        self.g_config_grid.show_all()
     def pngbutton(self, i):
         "used by the constructor"
         btn = Gtk.Button()
