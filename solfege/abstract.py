@@ -374,6 +374,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.g_config_grid.set_row_spacing(gu.hig.SPACE_SMALL)
         self.g_config_grid.props.margin = gu.hig.SPACE_SMALL
         if no_notebook:
+            self.pack_start(vbox)
             self.pack_start(self.g_config_grid, True, True, 0)
             self.g_notebook = None
         else:
