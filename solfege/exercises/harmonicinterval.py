@@ -175,11 +175,11 @@ class Gui(abstract.IntervalGui):
             ('repeat_melodic', self.repeat_melodic),
             ('give_up', self.give_up),
         )
-        ##############
-        # config_box #
-        ##############
+        ###############
+        # config_grid #
+        ###############
         self.g_ask_for_frame = frame = Gtk.Frame(label=_("Ask for these intervals"))
-        self.config_box.pack_start(frame, False, False, 0)
+        self.g_config_grid.attach(frame, 0, 0, 3, 1)
 
         self.g_interval_selector = nIntervalCheckBox(self.m_exname, 'intervals')
 
@@ -194,17 +194,9 @@ class Gui(abstract.IntervalGui):
         self.g_interval_selector.set_border_width(gu.PAD)
         frame.add(self.g_interval_selector)
 
-        self.add_lock_to_key_gui(self.g_config_grid, 0, 0)
-        #------we need some space
-        self.config_box.pack_start(Gtk.HBox(), False, False,
-                                   padding=gu.PAD_SMALL)
-        # ------------------------------------------
-        self._add_auto_new_question_gui(self.g_config_grid, 0, 1)
-        # ----------------------------------------------
-        self._create_select_inputwidget_gui(self.g_config_grid, 0, 2)
-        # ------------ frame -------------------
-        self.config_box.set_spacing(0)
-        self.config_box.show_all()
+        self.add_lock_to_key_gui(row=1)
+        self._add_auto_new_question_gui(row=2)
+        self._create_select_inputwidget_gui(row=3)
         self.g_config_grid.show_all()
         ##############
         # statistics #

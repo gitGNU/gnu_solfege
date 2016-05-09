@@ -643,9 +643,11 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 self.g_statview.update()
             else:
                 self.g_statview.clear()
-    def _add_auto_new_question_gui(self, grid, x, y):
+    def _add_auto_new_question_gui(self, row):
         """
-        add to grid, starting at position x, y
+        Add the user interface used to configure if we should get a new
+        question automatically. The GUI is added to self.g_config_grid
+        at the row set by the ROW variable.
         """
         adj = Gtk.Adjustment(0, 0, 10, 0.1, 1)
         spin = gu.nSpinButton(self.m_exname, 'seconds_before_new_question',
@@ -661,9 +663,9 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         b.props.halign = Gtk.Align.END
         label.set_sensitive(b.get_active())
         spin.set_sensitive(b.get_active())
-        grid.attach(b, x, y, 1, 1)
-        grid.attach(spin, x + 1, y, 1, 1)
-        grid.attach(label, x + 2, y, 1, 1)
+        self.g_config_grid.attach(b, 0, row, 1, 1)
+        self.g_config_grid.attach(spin, 1, row, 1, 1)
+        self.g_config_grid.attach(label, 2, row, 1, 1)
     def _lessonfile_exception(self, exception, sourcefile, lineno):
         m = gu.ExceptionDialog(exception)
         idx = self.m_t.m_P._idx
@@ -745,27 +747,27 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         return False
 
 class RhythmAddOnGuiClass(object):
-    def add_select_elements_gui(self, grid, x, y):
+    def add_select_elements_gui(self, grid, row):
         self.g_element_frame = frame = Gtk.Frame(label=_("Rhythms to use in question"))
-        grid.attach(frame, x, y, 3, 1)
+        grid.attach(frame, 0, row, 3, 1)
         self.g_select_rhythms_box = gu.NewLineBox()
         self.g_select_rhythms_box.set_border_width(gu.PAD_SMALL)
         frame.add(self.g_select_rhythms_box)
-    def add_select_num_beats_gui(self, grid, x, y):
+    def add_select_num_beats_gui(self, grid, row):
         ###
         label = Gtk.Label(label=_("Number of beats in question:"))
         label.props.halign = Gtk.Align.END
-        grid.attach(label, x, y, 1, 1)
+        grid.attach(label, 0, row, 1, 1)
         grid.attach(gu.nSpinButton(self.m_exname, "num_beats",
                                    Gtk.Adjustment(4, 1, 100, 1, 10)),
-                    x + 1, y, 1, 1)
+                    1, row, 1, 1)
         #
         label = Gtk.Label(label=_("Count in before question:"))
         label.props.halign = Gtk.Align.END
-        grid.attach(label, x, y + 1, 1, 1)
+        grid.attach(label, 0, row + 1, 1, 1)
         grid.attach(gu.nSpinButton(self.m_exname, "count_in",
                                    Gtk.Adjustment(2, 0, 10, 1, 10)),
-                    x +1, y+ 1, 1, 1)
+                    1, row + 1, 1, 1)
     def pngcheckbutton(self, i):
         btn = Gtk.CheckButton()
         btn.add(gu.create_rhythm_image(const.RHYTHMS[i]))
@@ -828,7 +830,7 @@ class IntervalGui(Gui):
         self.std_buttons_add(('new-interval', self.new_question),
             ('repeat', self.repeat_question))
         self.setup_key_bindings()
-    def _create_select_inputwidget_gui(self, grid, x, y):
+    def _create_select_inputwidget_gui(self, row):
         """
         This will be called by HarmonicInterval and MelodicInterval
         constructor
@@ -846,12 +848,12 @@ class IntervalGui(Gui):
 
         self.g_disable_unused_buttons = gu.nCheckButton(self.m_exname,
                     'disable_unused_intervals', _("_Disable unused buttons"))
-        grid.attach(label, x, y, 1, 1)
-        grid.attach(combo, x + 1, y, 1, 1)
-        grid.attach(self.g_disable_unused_buttons, x + 2, y, 1, 1)
+        self.g_config_grid.attach(label, 0, row, 1, 1)
+        self.g_config_grid.attach(combo, 1, row, 1, 1)
+        self.g_config_grid.attach(self.g_disable_unused_buttons, 2, row, 1, 1)
 
 
-    def add_lock_to_key_gui(self, grid, x, y):
+    def add_lock_to_key_gui(self, row):
         # gui to lock to a key
         def toggle_lock_to_key_sensitivity(checkbutton):
             self.g_notename.set_sensitive(checkbutton.get_active())
@@ -866,9 +868,9 @@ class IntervalGui(Gui):
         self.g_notename.show()
         self.g_scaletype = gu.nComboBox(self.m_exname, 'lock-to-key-scaletype', _("Major"), [n['name'] for n in utils.key_data.values()])
         self.g_scaletype.show()
-        grid.attach(check, x, y, 1, 1)
-        grid.attach(self.g_notename, x + 1, y, 1, 1)
-        grid.attach(self.g_scaletype, x + 2, y, 1, 1)
+        self.g_config_grid.attach(check, 0, row, 1, 1)
+        self.g_config_grid.attach(self.g_notename, 1, row, 1, 1)
+        self.g_config_grid.attach(self.g_scaletype, 2, row, 1, 1)
         toggle_lock_to_key_sensitivity(check)
     def select_inputwidget(self):
         """

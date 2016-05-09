@@ -204,12 +204,12 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
             ('backspace', self.on_backspace))
 
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.add_select_elements_gui(self.g_config_grid, 0, 0)
+        ###############
+        # config_grid #
+        ###############
+        self.add_select_elements_gui(self.g_config_grid, 0)
         #--------
-        self.add_select_num_beats_gui(self.g_config_grid, 0, 1)
+        self.add_select_num_beats_gui(self.g_config_grid, 1)
         #-----
         self.g_config_grid.attach(
                 gu.nCheckButton(self.m_exname,
@@ -222,7 +222,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         spin = gu.nSpinButton(self.m_exname, 'bpm',
                  Gtk.Adjustment(60, 20, 240, 1, 10))
         self.g_config_grid.attach(spin, 1, 4, 1, 1)
-        self._add_auto_new_question_gui(self.g_config_grid, 0, 5)
+        self._add_auto_new_question_gui(row=5)
         self.g_config_grid.show_all()
     def pngbutton(self, i):
         "used by the constructor"

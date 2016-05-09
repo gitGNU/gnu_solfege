@@ -167,10 +167,10 @@ class Gui(abstract.Gui):
         )
         self.action_area.set_homogeneous(True)
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self._add_auto_new_question_gui(self.g_config_grid, 0, 0)
+        ###############
+        # config_grid #
+        ###############
+        self._add_auto_new_question_gui(row=0)
         # ----------------------------------------------
 
         def pack_rdbs(box, callback):

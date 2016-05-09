@@ -101,16 +101,15 @@ class Gui(abstract.IntervalGui):
     def __init__(self, teacher):
         abstract.IntervalGui.__init__(self, teacher)
         self.std_buttons_add(('give_up', self.give_up))
-        ##############
-        # config_box #
-        ##############
+        ###############
+        # config_grid #
+        ###############
         self.g_mici = MultipleIntervalConfigWidget(self.m_exname,
                 self.g_config_grid, 0, 0)
 
-        self.add_lock_to_key_gui(self.g_config_grid, 0, 4)
-        self._add_auto_new_question_gui(self.g_config_grid, 0, 5)
-        # ----------------------------------
-        self._create_select_inputwidget_gui(self.g_config_grid, 0, 6)
+        self.add_lock_to_key_gui(row=4)
+        self._add_auto_new_question_gui(row=5)
+        self._create_select_inputwidget_gui(row=6)
         self.g_config_grid.show_all()
         ##############
         # statistics #

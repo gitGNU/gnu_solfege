@@ -137,7 +137,7 @@ class Gui(abstract.LessonbasedGui):
         category_box.pack_start(self.g_select_questions, False, False, 0)
         self.g_select_questions.show()
         # ------------------------------------------
-        self._add_auto_new_question_gui(self.g_config_grid, 0, 2)
+        self._add_auto_new_question_gui(2)
         # ----------------------------------------------
         ##############
         # statistics #

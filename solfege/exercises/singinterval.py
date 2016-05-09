@@ -121,9 +121,9 @@ class Gui(abstract.Gui):
         self.practise_box.show_all()
         self.g_new_interval_correct.hide()
         self.g_new_interval_wrong.hide()
-        ##############
-        # config_box #
-        ##############
+        ###############
+        # config_grid #
+        ###############
         self.g_mici = MultipleIntervalConfigWidget(self.m_exname, self.g_config_grid, 0, 0)
         ###############
         # statistics
