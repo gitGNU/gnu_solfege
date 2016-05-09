@@ -329,7 +329,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             text = text.decode(locale.getpreferredencoding(), 'replace')
         if not isinstance(secondary_text, unicode):
             secondary_text = secondary_text.decode(locale.getpreferredencoding(), 'replace')
-        m = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
+        m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                               Gtk.ButtonsType.CLOSE, text)
         if secondary_text:
             m.format_secondary_text(secondary_text)
@@ -347,7 +347,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             reshow_splash = False
         if not isinstance(msg, unicode):
             msg = msg.decode(locale.getpreferredencoding(), 'replace')
-        m = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
+        m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                               Gtk.ButtonsType.CLOSE, None)
         m.set_markup(gu.escape(msg))
         if title:
