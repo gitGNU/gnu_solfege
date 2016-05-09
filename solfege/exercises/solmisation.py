@@ -215,35 +215,29 @@ class Gui(abstract.Gui, abstract_solmisation_addon.SolmisationAddOnGuiClass):
             ('backspace', self.on_backspace))
 
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.add_select_elements_gui()
+        ###############
+        # config_grid #
+        ###############
+        self.add_select_elements_gui(row=0)
         #--------
-        self.config_box.pack_start(Gtk.HBox(), False, False,
-                                   padding=gu.PAD_SMALL)
-        self.add_select_num_notes_gui()
+        self.add_select_num_notes_gui(row=1)
         #-----
-        self.config_box.pack_start(Gtk.HBox(), False, False,
-                                   padding=gu.PAD_SMALL)
-        #------
-        hbox = gu.bHBox(self.config_box, False)
-        hbox.set_spacing(gu.PAD_SMALL)
-        hbox.pack_start(Gtk.Label(_("Beats per minute:")), False, False, 0)
+        self.g_config_grid.attach(Gtk.Label(_("Beats per minute:")),
+            0, 2, 1, 1)
         spin = gu.nSpinButton(self.m_exname, 'bpm',
                  Gtk.Adjustment(60, 20, 240, 1, 10))
-        hbox.pack_start(spin, False, False, 0)
-        hbox = gu.bHBox(self.config_box, False)
-        hbox.set_spacing(gu.PAD_SMALL)
-        hbox.pack_start(gu.nCheckButton(self.m_exname,
-                                        "show_first_note",
-                                        _("Show the first tone")), False, False, 0)
-        hbox.pack_start(gu.nCheckButton(self.m_exname,
+        self.g_config_grid.attach(spin, 1, 2, 1, 1)
+        self.g_config_grid.attach(
+           gu.nCheckButton(self.m_exname,
+                           "show_first_note",
+                           _("Show the first tone")),
+           0, 3, 1, 1)
+        self.g_config_grid.attach(gu.nCheckButton(self.m_exname,
                                         "play_cadence",
-                                        _("Play cadence")), False, False, 0)
-        self._add_auto_new_question_gui(self.config_box)
-        self.config_box.show_all()
-
+                                        _("Play cadence")),
+                                  0, 4, 1, 1)
+        self._add_auto_new_question_gui(row=5)
+        self.g_config_grid.show_all()
     def solbutton(self, i, connect):
         if i > len(solmisation_syllables) or i < 0:
             btn = Gtk.Button()

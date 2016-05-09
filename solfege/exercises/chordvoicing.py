@@ -141,11 +141,10 @@ class Gui(abstract.LessonbasedGui):
             ('repeat_arpeggio', lambda _o: self.m_t.m_P.play_question_arpeggio()),
             ('give_up', lambda _o, self=self: self.give_up()))
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.config_box.set_spacing(gu.PAD_SMALL)
-        self.add_random_transpose_gui()
+        ###############
+        # config_grid #
+        ###############
+        self.add_random_transpose_gui(row=0)
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()

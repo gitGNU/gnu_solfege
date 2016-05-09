@@ -49,10 +49,10 @@ class Gui(abstract.LessonbasedGui):
         self.g_play_answer = gu.bButton(self.action_area, _("_Play answer"),
             lambda w: self.run_exception_handled(self.m_t.m_P.play_question_arpeggio))
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.add_random_transpose_gui()
+        ###############
+        # config_grid #
+        ###############
+        self.add_random_transpose_gui(row=0)
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()

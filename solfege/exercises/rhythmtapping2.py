@@ -48,8 +48,8 @@ class Gui(rhythmtapping.Gui, abstract.RhythmAddOnGuiClass):
     please_tap_str = _("Please tap the rhythm.")
     def __init__(self, teacher):
         rhythmtapping.Gui.__init__(self, teacher)
-        self.add_select_elements_gui()
-        self.add_select_num_beats_gui()
+        self.add_select_elements_gui(self.g_config_grid, row=0)
+        self.add_select_num_beats_gui(self.g_config_grid, row=1)
     def do_at_question_start_show_play(self):
         """
         It will show and/or play music based on

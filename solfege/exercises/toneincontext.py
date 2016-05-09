@@ -184,23 +184,22 @@ class Gui(abstract.Gui):
             ('repeat', lambda _o, self=self: self.m_t.play_question()),
             ('give_up', self.give_up))
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.config_box.set_spacing(gu.hig.SPACE_MEDIUM)
+        ###############
+        # config_grid #
+        ###############
         self.g_random = gu.nCheckButton(self.m_exname, 'random_tonic', _("Random transpose"))
-        self.config_box.pack_start(self.g_random, False, False, 0)
-        self._add_auto_new_question_gui(self.config_box)
+        self.g_config_grid.attach(self.g_random, 0, 0, 1, 1)
+        self._add_auto_new_question_gui(row=1)
         #
         self.g_tones_category, box = gu.hig_category_vbox(_("Tones"))
-        self.config_box.pack_start(self.g_tones_category, False, False, 0)
+        self.g_config_grid.attach(self.g_tones_category, 0, 2, 3, 1)
         self.g_tone_selector = nConfigButtons(self.m_exname, 'tones')
         self.g_tone_selector.show_all()
         box.pack_start(self.g_tone_selector, False, False, 0)
         # Cadences
         self.g_cadences_category, self.g_cadences = gu.hig_category_vbox(_("Cadences"))
         self.g_cadences.show()
-        self.config_box.pack_start(self.g_cadences_category, False, False, 0)
+        self.g_config_grid.attach(self.g_cadences_category, 0, 3, 1, 1)
         #
         def _ff(var):
             if self.m_t.m_custom_mode:

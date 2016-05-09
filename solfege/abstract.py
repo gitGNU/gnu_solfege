@@ -332,7 +332,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
     """Important members:
          - practise_box
          - action_area
-         - config_box
+         - g_config_grid
     """
     short_delay = 700
     def __init__(self, teacher, no_notebook=False):
@@ -366,15 +366,12 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.action_area.show()
         vbox.pack_start(self.action_area, False, False, 0)
 
-        self.config_box = Gtk.VBox()
-        self.config_box.set_border_width(gu.PAD)
-        self.config_box.show()
         self.g_config_grid = Gtk.Grid()
         self.g_config_grid.set_column_spacing(gu.hig.SPACE_SMALL)
         self.g_config_grid.set_row_spacing(gu.hig.SPACE_SMALL)
         self.g_config_grid.props.margin = gu.hig.SPACE_SMALL
         if no_notebook:
-            self.pack_start(vbox)
+            self.pack_start(vbox, False, False, 0)
             self.pack_start(self.g_config_grid, True, True, 0)
             self.g_notebook = None
         else:
@@ -384,7 +381,6 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_notebook.append_page(vbox, Gtk.Label(label=_("Practise")))
             self.g_notebook.append_page(self.g_config_grid, Gtk.Label(label=_("Config")))
             self.g_notebook.show()
-        self.g_config_grid.attach(self.config_box, 0, 10, 0, 0)
         self.g_cancel_test = Gtk.Button(_("_Cancel test"))
         self.g_cancel_test.connect('clicked', self.on_cancel_test)
         self.action_area.pack_end(self.g_cancel_test, False, False, 0)
@@ -586,7 +582,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         Code that are common for all exercises. Not used by many now,
         but lets see if that can improve.
         """
-        self.handle_config_box_visibility()
+        self.handle_config_grid_visibility()
         self.handle_statistics_page_sensibility()
         if self.get_bool("lock-to-key"):
             self.set_bool("lock-to-key", False)
@@ -602,9 +598,9 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.set_lesson_description(getattr(self, "lesson_description", None))
     def on_end_practise(self):
         pass
-    def handle_config_box_visibility(self):
+    def handle_config_grid_visibility(self):
         """
-        Show self.config_box if it has any visible children, otherwise
+        Show self.config_grid if it has any visible children, otherwise
         hide it.
         """
         if [c for c in self.g_config_grid.get_children() \
@@ -757,6 +753,7 @@ class RhythmAddOnGuiClass(object):
         ###
         label = Gtk.Label(label=_("Number of beats in question:"))
         label.props.halign = Gtk.Align.END
+        label.show()
         grid.attach(label, 0, row, 1, 1)
         grid.attach(gu.nSpinButton(self.m_exname, "num_beats",
                                    Gtk.Adjustment(4, 1, 100, 1, 10)),
@@ -764,6 +761,7 @@ class RhythmAddOnGuiClass(object):
         #
         label = Gtk.Label(label=_("Count in before question:"))
         label.props.halign = Gtk.Align.END
+        label.show()
         grid.attach(label, 0, row + 1, 1, 1)
         grid.attach(gu.nSpinButton(self.m_exname, "count_in",
                                    Gtk.Adjustment(2, 0, 10, 1, 10)),
@@ -922,9 +920,12 @@ class LessonbasedGui(Gui):
     def __init__(self, teacher, no_notebook=False):
         Gui.__init__(self, teacher, no_notebook)
     def add_random_transpose_gui(self, row):
-        self.g_random_transpose_box = hbox = gu.bHBox(self.config_box, False, False)
+        """
+        All widgets need an instance variable because we will hide
+        and show the widgets.
+        """
         ###
-        label = Gtk.Label(label=_("Random transpose:"))
+        self.g_random_transpose_label = label = Gtk.Label(label=_("Random transpose:"))
         label.show()
         self.g_config_grid.attach(label, 0, row, 1, 1)
         ###
@@ -932,7 +933,7 @@ class LessonbasedGui(Gui):
         self.g_random_transpose.show()
         self.g_config_grid.attach(self.g_random_transpose, 1, row, 1, 1)
         ###
-        button = Gtk.Button(_("Change ..."))
+        self.g_random_transpose_button = button = Gtk.Button(_("Change ..."))
         button.show()
         button.connect('clicked', self.run_random_transpose_dialog)
         self.g_config_grid.attach(button, 2, row, 1, 1)

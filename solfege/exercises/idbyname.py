@@ -123,9 +123,9 @@ class Gui(abstract.LessonbasedGui):
         )
 
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
+        ###############
+        # config_grid #
+        ###############
         self.add_random_transpose_gui(0)
         # -----------------------------------------
         self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
@@ -175,9 +175,13 @@ class Gui(abstract.LessonbasedGui):
         """
         self.std_buttons_start_practise()
         if [q for q in self.m_t.m_P.m_questions if isinstance(q.music, lessonfile.MpdTransposable)]:
-            self.g_random_transpose_box.show()
+            self.g_random_transpose_label.show()
+            self.g_random_transpose.show()
+            self.g_random_transpose_button.show()
         else:
-            self.g_random_transpose_box.hide()
+            self.g_random_transpose_label.hide()
+            self.g_random_transpose.hide()
+            self.g_random_transpose_button.hide()
         self.show_hide_at_question_start_buttons()
         if self.m_t.m_P.header.have_music_displayer:
             self.g_music_displayer.show()

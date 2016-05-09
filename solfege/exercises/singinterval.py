@@ -179,7 +179,7 @@ class Gui(abstract.Gui):
             self.g_mici.hide()
             self.m_t.m_statistics.reset_session()
         self.g_statview.g_heading.set_text("%s - %s" % (_("Sing interval"), self.m_t.m_P.header.title))
-        self.handle_config_box_visibility()
+        self.handle_config_grid_visibility()
         self.g_new_interval.grab_focus()
         self.g_new_interval_correct.hide()
         self.g_new_interval_wrong.hide()

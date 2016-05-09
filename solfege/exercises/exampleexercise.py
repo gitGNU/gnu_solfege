@@ -91,13 +91,12 @@ class Gui(abstract.Gui):
         self.g_flashbar.show()
         self.practise_box.pack_start(self.g_flashbar, False, False, 0)
         self.practise_box.set_spacing(gu.PAD)
-        ##############
-        # config_box #
-        ##############
-        self._add_auto_new_question_gui(self.config_box)
+        ###############
+        # config_grid #
+        ###############
+        self._add_auto_new_question_gui(row=0)
         # ----------------------------------------------
-        self.config_box.set_spacing(0)
-        self.config_box.show_all()
+        self.config_grid.show_all()
         ##############
         # statistics #
         ##############

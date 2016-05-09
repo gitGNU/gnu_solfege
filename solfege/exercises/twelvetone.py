@@ -98,7 +98,7 @@ class Gui(abstract.Gui):
         super(Gui, self).on_start_practise()
         self.g_new.grab_focus()
         self.g_music_displayer.clear()
-        self.handle_config_box_visibility()
+        self.handle_config_grid_visibility()
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_play_first_note.set_sensitive(False)

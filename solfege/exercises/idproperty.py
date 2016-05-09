@@ -104,15 +104,15 @@ class Gui(abstract.LessonbasedGui):
             ('repeat_arpeggio', lambda w: self.run_exception_handled(self.m_t.m_P.play_question_arpeggio)),
             ('give_up', self.give_up))
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.config_box.set_spacing(gu.PAD_SMALL)
-        self.add_random_transpose_gui()
+        ###############
+        # config_grid #
+        ###############
+        self.add_random_transpose_gui(row=0)
         # -----------------------------------------
         self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
             _("Chord types to ask"))
-        self.config_box.pack_start(self.g_select_questions_category_box, True, True, 0)
+        self.g_config_grid.attach(self.g_select_questions_category_box,
+                0, 1, 3, 1)
         self.g_select_questions = QuestionNameCheckButtonTable(self.m_t)
         self.g_select_questions.initialize(4, 0)
         category_box.pack_start(self.g_select_questions, False, False, 0)

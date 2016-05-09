@@ -133,15 +133,13 @@ class Gui(abstract.Gui):
             ('repeat', lambda _o, self=self: self.m_t.play_question()),
             ('give_up', self.give_up))
         self.practise_box.show_all()
-        ##############
-        # config_box #
-        ##############
-        self.config_box.set_spacing(gu.PAD_SMALL)
-        self.g_config_elems = gu.bVBox(self.config_box, False)
+        ###############
+        # config_grid #
+        ###############
         table = Gtk.Table()
         table.set_border_width(gu.PAD_SMALL)
-        frame = Gtk.Frame(label=_("Weight"))
-        self.g_config_elems.pack_start(frame, False, False, 0)
+        self.g_tones_frame = frame = Gtk.Frame(label=_("Weight"))
+        self.g_config_grid.attach(frame, 0, 0, 3, 1)
         frame.add(table)
         for x, n in [(1, 'cis'), (3, 'dis'), (7, 'fis'),
                      (9, 'gis'), (11, 'ais')]:
@@ -162,29 +160,27 @@ class Gui(abstract.Gui):
                    Gtk.Adjustment(1, 0, 1000, 1, 10), digits=0)
             table.attach(b, x, x+2, 3, 4, xoptions=Gtk.AttachOptions.FILL)
 
-        hbox = gu.bHBox(self.g_config_elems, False)
+        self.g_octaves_select = hbox = Gtk.HBox()
+        self.g_config_grid.attach(hbox, 0, 1, 3, 1)
         hbox.pack_start(Gtk.Label(_("Octave:")), False, False, padding=4)
         for oct in self.m_t.OCTAVES:
             b = gu.nCheckButton(self.m_exname, "octave"+str(oct), str(oct),
                                 default_value=1)
             hbox.pack_start(b, False, False, 0)
         #############
-        self._add_auto_new_question_gui(self.config_box)
+        self._add_auto_new_question_gui(row=4)
         #############
         b = gu.nCheckButton('idtone', 'hide_piano_accels', _("Hide _piano keyboard shortcuts"), False)
         def show_hide_accels(checkbutton):
             self.g_piano.m_visible_accels = not b.get_active()
         b.connect('clicked', show_hide_accels)
-        self.config_box.pack_start(b, False, False, 0)
+        self.g_config_grid.attach(b, 0, 2, 1, 1)
         #
-        frame = Gtk.Frame(label=_("When you guess wrong"))
-        vbox = Gtk.VBox()
-        vbox.set_border_width(gu.PAD_SMALL)
-        frame.add(vbox)
-        vbox.pack_start(gu.nCheckButton(self.m_exname,
-                    "warning_sound", _("Play warning sound")), False, False, 0)
-        self.config_box.pack_start(frame, False, False, 0)
-        self.config_box.show_all()
+        self.g_config_grid.attach(gu.nCheckButton(self.m_exname,
+                    "warning_sound",
+                    _("Play warning sound when you guess wrong")),
+                0, 3, 1, 1)
+        self.g_config_grid.show_all()
         ##############
         # statistics #
         ##############
@@ -309,10 +305,12 @@ _("""You have to select some tones practise. Do this on the config page by setti
                 for idx, n in enumerate(('cis', 'dis', 'fis', 'gis', 'ais')):
                     self.set_float('%s_weight' % n, 0.0)
         if self.m_t.m_custom_mode:
-            self.g_config_elems.show()
+            self.g_tones_frame.show()
+            self.g_octaves_select.show()
             self.m_t.m_statistics.reset_custom_mode_session(self.m_t.m_P.m_filename)
         else:
-            self.g_config_elems.hide()
+            self.g_tones_frame.hide()
+            self.g_octaves_select.hide()
             self.m_t.m_statistics.reset_session()
         self.g_statview.g_heading.set_text("%s - %s" % (_("Identify tone"), self.m_t.m_P.header.title))
         self.set_percentage_label()

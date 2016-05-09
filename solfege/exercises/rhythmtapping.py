@@ -145,18 +145,17 @@ class Gui(abstract.LessonbasedGui):
         self.g_flashbar = gu.FlashBar()
         self.g_flashbar.show()
         self.practise_box.pack_start(self.g_flashbar, False, False, 0)
-        # Config box
+        ###############
+        # Config grid #
+        ###############
         label = Gtk.Label(label=_("Accuracy required:"))
-        label.set_alignment(1.0, 0.5)
+        label.props.halign = Gtk.Align.END
+        label.show()
+        self.g_config_grid.attach(label, 0, 0, 1, 1)
         spin = gu.nSpinButton(self.m_exname, 'accuracy',
                               Gtk.Adjustment(0, 0, 2, 0.01, 0.05))
         spin.set_digits(2)
-        hbox = Gtk.HBox()
-        hbox.set_spacing(gu.hig.SPACE_SMALL)
-        hbox.pack_start(label, False, False, 0)
-        hbox.pack_start(spin, False, False, 0)
-        self.config_box.pack_start(hbox, False, False, 0)
-        hbox.show_all()
+        self.g_config_grid.attach(spin, 1, 0, 1, 1)
     def on_new_question(self, widget=None):
         def exception_cleanup():
             self.m_t.end_practise()

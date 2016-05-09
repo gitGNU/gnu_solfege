@@ -137,25 +137,22 @@ class SolmisationAddOnClass:
 
 
 class SolmisationAddOnGuiClass(object):
-    def add_select_elements_gui(self):
+    def add_select_elements_gui(self, row):
         self.g_element_frame = frame = Gtk.Frame(label=_("Choose tones"))
-        self.config_box.pack_start(frame, False, False, 0)
+        self.g_config_grid.attach(frame, 0, row, 3, 1)
         self.g_select_rhythms_box = Gtk.VBox()
         self.g_select_rhythms_box.set_border_width(gu.hig.SPACE_SMALL)
         frame.add(self.g_select_rhythms_box)
         self.soltogglebuttons = []
 
-    def add_select_num_notes_gui(self):
-        hbox = Gtk.HBox()
-        hbox.set_spacing(gu.hig.SPACE_SMALL)
+    def add_select_num_notes_gui(self, row):
         label = Gtk.Label(label=_("Number of tones:"))
-        hbox.pack_start(label, False, False, 0)
         label.set_alignment(1.0, 0.5)
-        hbox.pack_start(gu.nSpinButton(self.m_exname, "num_notes",
-                                       Gtk.Adjustment(4, 1, 100, 1, 10)), False, False, 0)
-        self.config_box.pack_start(hbox, False, False, 0)
-        hbox.show_all()
-        self.config_box.pack_start(hbox, False, False, 0)
+        self.g_config_grid.attach(label, 0, row, 1, 1)
+        self.g_config_grid.attach(
+            gu.nSpinButton(self.m_exname, "num_notes",
+                           Gtk.Adjustment(4, 1, 100, 1, 10)),
+            1, row, 1, 1)
 
     def soltogglebutton(self, i):
         if i >= 0:
