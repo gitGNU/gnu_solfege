@@ -2,7 +2,7 @@
 # Copyright (C) 2004, 2007, 2008, 2011  Tom Cato Amundsen
 # License is GPL, see file COPYING
 
-from __future__ import absolute_import
+
 class MpdException(Exception):
     """
 	I think all exceptions that are raised from

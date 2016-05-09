@@ -16,11 +16,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 
 import logging
 import os
-import StringIO
+import io
 import subprocess
 
 from gi.repository import Gtk
@@ -84,13 +84,13 @@ class LessonFilePreviewWidget(Gtk.VBox):
                     l.set_alignment(0.0, 0.5)
                     self.g_topic_box.pack_start(l, False, False, 0)
                 if not self.g_topic_box.get_children():
-                    l = Gtk.Label(label=u"-")
+                    l = Gtk.Label(label="-")
                     l.set_alignment(0.0, 0.5)
                     self.g_topic_box.pack_start(l, False, False, 0)
             except (lessonfile.InfoCache.FileNotFound,
-                    lessonfile.InfoCache.FileNotLessonfile), e:
-                self.g_title.set_text(u'')
-                self.g_module.set_text(u'')
+                    lessonfile.InfoCache.FileNotLessonfile) as e:
+                self.g_title.set_text('')
+                self.g_module.set_text('')
                 self.g_ok_button.set_sensitive(False)
                 self.set_sensitive(False)
         self.show_all()
@@ -206,7 +206,7 @@ class Section(Gtk.VBox):
         b = Gtk.Button()
         b.add(im)
         b.connect('clicked', self.on_paste, -1)
-        Editor.clipboard.register_paste_button(b, (pd.LinkList, pd.Page, unicode))
+        Editor.clipboard.register_paste_button(b, (pd.LinkList, pd.Page, str))
         button_hbox.pack_start(b, False, False, 0)
         #
         im = Gtk.Image()
@@ -249,8 +249,8 @@ class Section(Gtk.VBox):
         hbox = Gtk.HBox()
         self.pack_start(hbox, True, True, 0)
 
-	# The popup menu that will popup from the STOCK_ADD button
-	self.g_add_popup = menu = Gtk.Menu()
+        # The popup menu that will popup from the STOCK_ADD button
+        self.g_add_popup = menu = Gtk.Menu()
         menu.show()
         item = Gtk.MenuItem(_("Add link to new page"))
         item.connect('activate', self.on_add_link_to_new_page)
@@ -272,7 +272,7 @@ class Section(Gtk.VBox):
             self.g_heading_entry.disconnect(keyup_id)
             self.g_heading_entry.disconnect(keydown_sid)
             self.m_model.m_name = entry.get_text()
-            self.g_heading.set_markup(u"<b>%s</b>" % entry.get_text())
+            self.g_heading.set_markup("<b>%s</b>" % entry.get_text())
             self.g_heading_entry.hide()
             self.g_heading.show()
         sid = self.g_heading_entry.connect('activate', finish_edit)
@@ -356,7 +356,7 @@ class Section(Gtk.VBox):
                 linkbutton = gu.ClickableLabel(lessonfile.infocache.get(link_this, 'title'))
                 linkbutton.set_tooltip_text(link_this)
             except lessonfile.InfoCache.FileNotFound:
-                linkbutton = gu.ClickableLabel(_(u"«%s» was not found") % link_this)
+                linkbutton = gu.ClickableLabel(_("«%s» was not found") % link_this)
                 linkbutton.make_warning()
 
         hbox.pack_start(linkbutton, True, True, 0)
@@ -379,7 +379,7 @@ class Section(Gtk.VBox):
             m.append(item)
             item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
             item.connect('activate', self.on_edit_linktext, linked)
-            item.set_sensitive(bool(not isinstance(linked, basestring)))
+            item.set_sensitive(bool(not isinstance(linked, str)))
             m.append(item)
             item = Gtk.ImageMenuItem(Gtk.STOCK_GO_UP)
             item.connect('activate', self.on_move_link_up, idx)
@@ -390,7 +390,7 @@ class Section(Gtk.VBox):
             item.set_sensitive(bool(idx < len(self.m_model) - 1))
             m.append(item)
             item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
-            item.set_sensitive(isinstance(linked, unicode))
+            item.set_sensitive(isinstance(linked, str))
             item.connect('activate', self.on_edit_file, idx)
             m.append(item)
             m.show_all()
@@ -436,9 +436,9 @@ class Section(Gtk.VBox):
             try:
                 subprocess.call((cfg.get_string("programs/text-editor"),
                              lessonfile.uri_expand(self.m_model[linked])))
-            except OSError, e:
+            except OSError as e:
                  raise osutils.BinaryForProgramException("Text editor", cfg.get_string("programs/text-editor"), e)
-        except osutils.BinaryForProgramException, e:
+        except osutils.BinaryForProgramException as e:
             solfege.win.display_error_message2(e.msg1, e.msg2)
     def on_cut(self, btn):
         self.m_parent.cut_section(self)
@@ -641,7 +641,7 @@ class Clipboard(list):
 
 
 class Editor(Gtk.Window, gu.EditorDialogBase):
-    savedir = os.path.join(filesystem.user_data(), u'exercises', u'user')
+    savedir = os.path.join(filesystem.user_data(), 'exercises', 'user')
     # The clipboard will be shared between all Editor instances
     clipboard = Clipboard()
     def __init__(self, filename=None):
@@ -659,7 +659,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         self.g_title_hbox.set_spacing(gu.hig.SPACE_SMALL)
         self.g_title_hbox.set_border_width(gu.hig.SPACE_SMALL)
         label = Gtk.Label()
-        label.set_markup(u"<b>%s</b>" % _("Front page title:"))
+        label.set_markup("<b>%s</b>" % _("Front page title:"))
         self.g_title_hbox.pack_start(label, False, False, 0)
         self.g_fptitle = Gtk.Entry()
         self.g_title_hbox.pack_start(self.g_fptitle, True, True, 0)
@@ -755,7 +755,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
             try:
                 win = Editor(fn)
                 win.show()
-            except IOError, e:
+            except IOError as e:
                 gu.dialog_ok(_("Loading file '%(filename)s' failed: %(msg)s") %
                         {'filename': fn, 'msg': str(e).decode('utf8', 'replace')})
     def load_file(self, filename):
@@ -779,7 +779,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         Store the current state of the data in self.m_orig_dump so that
         is_modified() will return False until we make new changes.
         """
-        io = StringIO.StringIO()
+        io = io.StringIO()
         self.m_model.dump(io)
         self.m_orig_dump = io.getvalue()
     def is_modified(self):
@@ -787,7 +787,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         Return True if the data has changed since the last call to
         set_not_modified()
         """
-        io = StringIO.StringIO()
+        io = io.StringIO()
         self.m_model.dump(io)
         s = io.getvalue()
         return s != self.m_orig_dump

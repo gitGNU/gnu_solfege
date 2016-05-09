@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 import logging
 import random
@@ -34,8 +34,8 @@ from solfege import statistics
 from solfege import statisticsviewer
 from solfege.mpd import elems
 
-labels = [u'1', u'♯1/♭2', u'2', u'♯2/♭3', u'3', u'4', u'♯4/♭5',
-          u'5', u'♯5/6♭', u'6', u'♯6/♭7', u'7', u'1']
+labels = ['1', '♯1/♭2', '2', '♯2/♭3', '3', '4', '♯4/♭5',
+          '5', '♯5/6♭', '6', '♯6/♭7', '7', '1']
 
 class ToneInKeyStatistics(statistics.LessonStatistics):
     def key_to_pretty_name(self, key):
@@ -60,7 +60,7 @@ class Teacher(abstract.Teacher):
         if self.get_bool('random_tonic'):
             self.m_transpose.randomize("c", "b")
         if self.m_custom_mode:
-            cadence_list = [k for k in self.m_cadences.keys() if self.m_cadences[k]]
+            cadence_list = [k for k in list(self.m_cadences.keys()) if self.m_cadences[k]]
             if not cadence_list:
                 return self.ERR_NO_CADENCES
             self.m_cadence = self.m_P.blocklists['cadence'][random.choice(cadence_list)]
@@ -158,13 +158,13 @@ class nConfigButtons(Gtk.Table, cfg.ConfigUtils):
         cfg.ConfigUtils.__init__(self, exname)
         self.m_varname = name
         self.g_buttons = fill_table(Gtk.CheckButton, self)
-        for key, button in self.g_buttons.items():
+        for key, button in list(self.g_buttons.items()):
             button.connect('toggled', self.on_toggled)
         for key in self.get_list('tones'):
             self.g_buttons[key].set_active(True)
     def on_toggled(self, *w):
         self.set_list(self.m_varname,
-            [k for k in self.g_buttons.keys() if self.g_buttons[k].get_active()])
+            [k for k in list(self.g_buttons.keys()) if self.g_buttons[k].get_active()])
 
 
 class Gui(abstract.Gui):
@@ -173,7 +173,7 @@ class Gui(abstract.Gui):
         abstract.Gui.__init__(self, teacher)
         t = Gtk.Table()
         self.g_buttons = fill_table(Gtk.Button, t)
-        for key, button in self.g_buttons.items():
+        for key, button in list(self.g_buttons.items()):
             button.connect('clicked', self.on_left_click, key)
         self.practise_box.pack_start(t, False, False, 0)
         self.g_flashbar = gu.FlashBar()
@@ -220,7 +220,7 @@ class Gui(abstract.Gui):
         if i == Teacher.OK:
             self.std_buttons_new_question()
             self.m_t.play_question()
-            for key, button in self.g_buttons.items():
+            for key, button in list(self.g_buttons.items()):
                 button.set_sensitive(key in self.get_list("tones"))
         elif i == Teacher.ERR_NO_CADENCES:
             self.g_flashbar.flash(_("No cadences selected"))
@@ -274,7 +274,7 @@ class Gui(abstract.Gui):
             self.g_tones_category.hide()
             self.g_cadences_category.hide()
             #self.g_random.hide()
-        for key, button in self.g_buttons.items():
+        for key, button in list(self.g_buttons.items()):
             button.set_sensitive(False)
         self.set_bool('tone_in_cadence', self.m_t.m_P.header.tone_in_cadence)
         self.std_buttons_start_practise()

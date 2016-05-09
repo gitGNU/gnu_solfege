@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 """
 >>> d1=Duration(4, 0, Rat(1, 1))
 >>> d2=Duration(4, 1, Rat(1, 1))

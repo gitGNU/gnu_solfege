@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -30,11 +30,11 @@ def win32_put_langenviron(lang):
     win32 only.
     """
     langfile = open(os.path.join(filesystem.app_data(), "langenviron.txt"), 'w')
-    print >> langfile, "# rem Created by GNU Solfege %s" % buildinfo.VERSION_STRING
+    print("# rem Created by GNU Solfege %s" % buildinfo.VERSION_STRING, file=langfile)
     if lang:
-        print >> langfile, lang
+        print(lang, file=langfile)
     else:
-        print >> langfile, "# System default language. Not setting variable."
+        print("# System default language. Not setting variable.", file=langfile)
     langfile.close()
 
 
@@ -51,11 +51,11 @@ def win32_get_langenviron():
             for line in open(fn, 'r').readlines():
                 if not line.startswith("#"):
                     lang = line.strip()
-        except IOError, e:
+        except IOError as e:
             # Try here too, just to be sure no unicode shit bothers us.
 
             try:
-                print "IOError reading %s:" % fn, e
+                print("IOError reading %s:" % fn, e)
             except Exception:
                 pass
     else:
@@ -78,7 +78,7 @@ def _pre_3_11_win32_get_langenviron():
         langfile = open(os.path.join(filesystem.app_data(), "langenviron.bat"), 'rU')
         s = langfile.read()
         langfile.close()
-    except IOError, e:
+    except IOError as e:
         # we get here for example when the file does not exist
         return None
     if s:

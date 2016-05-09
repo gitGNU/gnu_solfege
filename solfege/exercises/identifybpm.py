@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import logging
 import random
@@ -60,7 +60,7 @@ class Teacher(abstract.Teacher):
         v = [bpm for bpm in self.m_practise_these if self.m_practise_these[bpm]]
         self.set_string('active_bpms', str(v))
     def get_possible_bpms(self):
-        return [n for n in self.m_practise_these.keys() \
+        return [n for n in list(self.m_practise_these.keys()) \
             if self.m_practise_these[n]]
     def get_number_of_levels(self):
         return len(self.m_ped)
@@ -88,13 +88,13 @@ class Teacher(abstract.Teacher):
         assert self.q_status != self.QSTATUS_NO
         if self.m_question == bpm:
             if self.q_status == self.QSTATUS_NEW:
-                self.m_statistics.add_correct(unicode(bpm))
+                self.m_statistics.add_correct(str(bpm))
             self.q_status = self.QSTATUS_SOLVED
             soundcard.synth.stop()
             return 1
         else:
             if self.q_status == self.QSTATUS_NEW:
-                self.m_statistics.add_wrong(str(self.m_question), unicode(bpm))
+                self.m_statistics.add_wrong(str(self.m_question), str(bpm))
             self.q_status = self.QSTATUS_WRONG
     def end_practise(self):
         super(Teacher, self).end_practise()
@@ -159,7 +159,7 @@ class Gui(abstract.Gui):
     def on_new(self, _o=None):
         try:
             n = self.m_t.new_question()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
             return

@@ -32,17 +32,17 @@ def presetup(app_defaults_filename, system_filename, user_filename):
         os.makedirs(filesystem.user_data())
     try:
         cfg.initialise(app_defaults_filename, system_filename, user_filename)
-    except UnicodeDecodeError, e:
+    except UnicodeDecodeError as e:
         traceback.print_exc()
-        print >> sys.stderr
-        print >> sys.stderr, "\n".join(textwrap.wrap(
+        print(file=sys.stderr)
+        print("\n".join(textwrap.wrap(
               "Your %s file is not properly utf8 encoded. Most likely"
               " it is the path to some external program that contain non-ascii"
               " characters. Please edit or delete the file. Or email it to"
-              " tca@gnu.org, and he will tell you what the problem is." % filesystem.rcfile().encode("ascii", "backslashreplace")))
-        print >> sys.stderr
+              " tca@gnu.org, and he will tell you what the problem is." % filesystem.rcfile().encode("ascii", "backslashreplace"))), file=sys.stderr)
+        print(file=sys.stderr)
         sys.exit("I give up (solfege.py)")
-    except cfg.CfgParseException, e:
+    except cfg.CfgParseException as e:
         i18n.setup(".")
         a, b = os.path.split(user_filename)
         renamed_fn = os.path.join(a, "BAD-"+b)

@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 """
 >>> import locale, gettext
 >>> gettext.NullTranslations().install()
@@ -140,7 +140,7 @@ class MusicalPitch:
         r.m_accidental_i = self.m_accidental_i
         return r
     def new_from_notename(n):
-        assert isinstance(n, basestring)
+        assert isinstance(n, str)
         r = MusicalPitch()
         r.set_from_notename(n)
         return r
@@ -278,9 +278,9 @@ class MusicalPitch:
         lowest and highest can be an integer, string or a MusicalPitch instance
         """
         assert type(lowest) == type(highest)
-        if isinstance(lowest, basestring):
+        if isinstance(lowest, str):
             lowest = MusicalPitch.new_from_notename(lowest).semitone_pitch()
-        if isinstance(highest, basestring):
+        if isinstance(highest, str):
             highest = MusicalPitch.new_from_notename(highest).semitone_pitch()
         self.set_from_int(random.randint(int(lowest), int(highest)))
         return self

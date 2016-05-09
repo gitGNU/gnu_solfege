@@ -41,7 +41,7 @@
 ###
 ################################################################################
 
-from __future__ import absolute_import
+
 """\
 This module provides functions to generate universally unique identifiers
 (UUID).  It is provides an implementation in pure python that follows closely
@@ -82,7 +82,7 @@ from time import mktime as _mktime
 from random import randint as _randint
 from struct import pack as _pack
 from struct import unpack as _unpack
-from sys import maxint as _maxint
+from sys import maxsize as _maxint
 
 _now = datetime.datetime.now
 
@@ -189,16 +189,16 @@ def _get_mac_address():
     m = r.search(_backtick("/sbin/ifconfig"))
     if m:
         s = m.group(1)
-        return map(_decode_hex,s.split(":"))
+        return list(map(_decode_hex,s.split(":")))
     m = r.search(_backtick("ifconfig"))
     if m:
         s = m.group(1)
-        return map(_decode_hex,s.split(":"))
+        return list(map(_decode_hex,s.split(":")))
     r = re.compile("Physical Address.*: (..:..:..:..:..:..)")
     m = r.search(_backtick("ipconfig /all"))
     if m:
         s = m.group(1)
-        return map(_decode_hex,s.split(":"))
+        return list(map(_decode_hex,s.split(":")))
     return None
 
 def _get_6bytes(mac=None):
@@ -211,7 +211,7 @@ def _get_6bytes(mac=None):
         buf.update("@%s" % socket.gethostname())
         buf.update(" %s" % os.getpid())
         buf.update(" %s" % time.strftime("%Y-%m-%d %H:%M:%S %Z"))
-        return map(ord,buf.digest()[0:6])
+        return list(map(ord,buf.digest()[0:6]))
     except:
         return None
 
@@ -294,9 +294,9 @@ def _get_clock():
             _static_last_sec = sec
             _static_last_msec = msec
     clock_reg = msec*10 + _static_adjustment
-    clock_reg = (clock_reg + sec*10000000) & 0xFFFFFFFFFFFFFFFFL
-    clock_reg = (clock_reg + (((0x01B21DD2L) << 32) + 0x13814000L)) & 0xFFFFFFFFFFFFFFFFL
-    return (clock_reg >> 32),(clock_reg & 0xFFFFFFFFL),_static_clock_seq
+    clock_reg = (clock_reg + sec*10000000) & 0xFFFFFFFFFFFFFFFF
+    clock_reg = (clock_reg + (((0x01B21DD2) << 32) + 0x13814000)) & 0xFFFFFFFFFFFFFFFF
+    return (clock_reg >> 32),(clock_reg & 0xFFFFFFFF),_static_clock_seq
 
 def _uuid_generate():
     if _get_random_reader():
@@ -410,7 +410,7 @@ if __name__ == '__main__':
         elif o == "-r":
             gen = generate_random
         else:
-            print "usage: uuid.py [-r|-t]"
-            print "generate a random-based UUID (-r, default), or a time-based one (-t)"
+            print("usage: uuid.py [-r|-t]")
+            print("generate a random-based UUID (-r, default), or a time-based one (-t)")
             sys.exit(0)
-    print gen()
+    print(gen())

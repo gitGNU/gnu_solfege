@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import sys
 sys.path.append(".")
@@ -34,11 +34,11 @@ class LfMod(object):
         self.m_blocklists = {}
     def dump(self):
         import pprint
-        print "Globals:"
+        print("Globals:")
         pprint.pprint(self.m_globals)
-        print "Blocks:"
+        print("Blocks:")
         pprint.pprint(self.m_blocklists)
-        print "--------"
+        print("--------")
 
 translation_re = re.compile("(?P<varname>\w+)\[(?P<lang>[\w_+]+)\]")
 def do_assignment(mod, statement, local_namespace, global_namespace, in_header,
@@ -50,12 +50,12 @@ def do_assignment(mod, statement, local_namespace, global_namespace, in_header,
     and functions.
     """
     if isinstance(statement.right, pt.Program):
-        local_namespace[unicode(statement.left)] = parse_tree_interpreter(statement.right, mod.m_builtins)
+        local_namespace[str(statement.left)] = parse_tree_interpreter(statement.right, mod.m_builtins)
     else:
-        m = translation_re.match(unicode(statement.left))
+        m = translation_re.match(str(statement.left))
         if m:
             if m.group('varname') not in local_namespace:
-                print "FIXME: correct exception aka LessonfileException"
+                print("FIXME: correct exception aka LessonfileException")
                 raise Exception("Define the C-locale variable before adding translations")
             if in_header and included:
                 if m.group('varname') in local_namespace:
@@ -67,12 +67,12 @@ def do_assignment(mod, statement, local_namespace, global_namespace, in_header,
         else:
             if in_header:
                 if included:
-                    if unicode(statement.left) in local_namespace:
+                    if str(statement.left) in local_namespace:
                         return
                 if in_header and statement.left == 'module':
-                    local_namespace[unicode(statement.left)] = unicode(statement.right)
+                    local_namespace[str(statement.left)] = str(statement.right)
                     return
-            local_namespace[unicode(statement.left)] = statement.right.evaluate(local_namespace, global_namespace) 
+            local_namespace[str(statement.left)] = statement.right.evaluate(local_namespace, global_namespace) 
 
 
 def do_module(block, mod, included=False):
@@ -84,7 +84,7 @@ def do_module(block, mod, included=False):
             # global namespace
             try:
                 do_assignment(mod, statement, mod.m_globals, mod.m_globals, False, included)
-            except pt.ParseTreeException, e:
+            except pt.ParseTreeException as e:
                 e.m_nonwrapped_text = block._lexer.get_err_context(e.m_tokenpos)
                 raise
         elif isinstance(statement, (pt.Block, pt.NamedBlock)):
@@ -107,7 +107,7 @@ def do_module(block, mod, included=False):
                 try:
                     do_assignment(mod, block_statement, blocks[-1], mod.m_globals,
                               statement.m_blocktype == 'header', included)
-                except pt.ParseTreeException, e:
+                except pt.ParseTreeException as e:
                     e.m_nonwrapped_text = block._lexer.get_err_context(e.m_tokenpos)
                     raise
         elif isinstance(statement, pt.IncludeStatement):

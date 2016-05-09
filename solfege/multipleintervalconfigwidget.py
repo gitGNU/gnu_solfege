@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -48,7 +48,7 @@ class IntervalCheckBox(Gtk.HBox):
         Return a list with the integer value for the intervals
         that are active.
         """
-        return [x for x in self.checkbox_dict.keys() \
+        return [x for x in list(self.checkbox_dict.keys()) \
                 if self.checkbox_dict[x].get_active()]
     def set_value(self, v):
         """
@@ -56,7 +56,7 @@ class IntervalCheckBox(Gtk.HBox):
         v is a list of integers representing the intervals that are
         active.
         """
-        for key, btn in self.checkbox_dict.items():
+        for key, btn in list(self.checkbox_dict.items()):
             self.checkbox_dict[key].set_active(key in v)
         return
 
@@ -68,7 +68,7 @@ class nIntervalCheckBox(IntervalCheckBox, cfg.ConfigUtils):
         self.m_varname = varname
         intervals = self.get_list(self.m_varname)
         if not intervals:
-            intervals = range(1, mpd.interval.max_interval)
+            intervals = list(range(1, mpd.interval.max_interval))
             self.set_list(varname, intervals)
         self.set_value(intervals)
         self.add_watch(self.m_varname, self._watch_cb)
@@ -149,7 +149,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         label = Gtk.Label(_("Down:"))
         label.props.halign = Gtk.Align.END
         g.attach(label, 0, 1, 1, 1)
-        v = range(mpd.interval.min_interval, 0)
+        v = list(range(mpd.interval.min_interval, 0))
         v.reverse()
         for i in v:
             self.g_interval_chk[i] = c = Gtk.ToggleButton(mpd.interval.short_name[-i])
@@ -175,7 +175,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
     def reset_to_default(self, _o):
         self.set_int('cur_edit_interval', 1)
         self.set_int('number_of_intervals', 1)
-        self.set_list('ask_for_intervals_0', range(-12, 0)+range(1, 13))
+        self.set_list('ask_for_intervals_0', list(range(-12, 0))+list(range(1, 13)))
     def configure_all_like_active_interval(self, _o):
         v = self.get_list('ask_for_intervals_%i' \
                                % (self.g_int_sel_spin.get_value_as_int()-1))
@@ -204,7 +204,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
     def update_togglebuttons(self, i):
         self.m_ignore_iclick = 1
         v = self.get_list('ask_for_intervals_%i' % i)
-        for i in range(mpd.interval.min_interval, 0)+range(1, mpd.interval.max_interval + 1):
+        for i in list(range(mpd.interval.min_interval, 0))+list(range(1, mpd.interval.max_interval + 1)):
             self.g_interval_chk[i].set_active(i in v)
         self.m_ignore_iclick = 0
     def _watch_interval(self, i):

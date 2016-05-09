@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import os
 import tempfile
@@ -36,8 +36,8 @@ class MidiFileSynth(SynthCommon):
         self.m_tmpfilename = tempfile.mkstemp(".mid")[1]
         self.error_report_cb = None
         if verbose_init:
-            print "Solfege will use an external midiplayer program."
-            print "tmpfile:", self.m_tmpfilename
+            print("Solfege will use an external midiplayer program.")
+            print("tmpfile:", self.m_tmpfilename)
     def close(self):
         try:
             if os.path.exists(self.m_tmpfilename):

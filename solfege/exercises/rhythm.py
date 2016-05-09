@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 from gi.repository import GObject
 from gi.repository import Gdk
@@ -282,7 +282,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
             self.std_buttons_new_question()
             try:
                 self.m_t.play_question()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, self.on_end_practise):
                     raise
                 return

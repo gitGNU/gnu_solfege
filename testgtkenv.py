@@ -1,12 +1,13 @@
 # GNU Solfege - free ear training
 # Copyright (C) 2009, 2011 Tom Cato Amundsen
 
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
-print sys.version
+print(sys.version)
 
-import gtk
-print gtk
-print Gtk.ver
+from gi.repository import Gtk
+print(Gtk)
 
 class Win(Gtk.Window):
     def __init__(self):

@@ -3,7 +3,7 @@
 # Copyright (C) 2009, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
 
-from __future__ import absolute_import
+
 import unittest
 from solfege import statistics
 from solfege import application
@@ -25,25 +25,25 @@ class TestDB(unittest.TestCase):
         options, args = opt_parser.parse_args()
         a = application.SolfegeApp(options)
         t = idbyname.Teacher('idbyname')
-        t.set_lessonfile(u'solfege:lesson-files/chord-min-major')
+        t.set_lessonfile('solfege:lesson-files/chord-min-major')
         t.m_statistics.reset_session()
         t.m_statistics.add_wrong('minor', 'major')
         t.m_statistics.add_wrong('minor', 'major')
         t.m_statistics.add_wrong('minor', 'minor')
         t.m_statistics.add_correct('major')
         for seconds in (-1, 0, 10000):
-            self.assertEquals(t.m_statistics.get_num_correct_for_key(seconds, 'minor'), 1)
-            self.assertEquals(t.m_statistics.get_num_guess_for_key(seconds, 'minor'), 3)
+            self.assertEqual(t.m_statistics.get_num_correct_for_key(seconds, 'minor'), 1)
+            self.assertEqual(t.m_statistics.get_num_guess_for_key(seconds, 'minor'), 3)
     def test_store_variables(self):
         db = statistics.DB()
         db.set_variable('database_version', 2)
-        self.assertEquals(db.get_variable('database_version'), 2)
+        self.assertEqual(db.get_variable('database_version'), 2)
         db.set_variable('database_version', 3)
-        self.assertEquals(db.get_variable('database_version'), 3)
+        self.assertEqual(db.get_variable('database_version'), 3)
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'database_version', '3')
-        db.set_variable('textvar', u'this is кофе')
-        self.assertEquals(db.get_variable('textvar'), u'this is кофе')
+        db.set_variable('textvar', 'this is кофе')
+        self.assertEqual(db.get_variable('textvar'), 'this is кофе')
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'textvar', 5)
         self.assertRaises(db.VariableTypeError,
@@ -53,7 +53,7 @@ class TestDB(unittest.TestCase):
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'str_text', 'string')
         db.set_variable('known_number', 3.14159265)
-        self.assertEquals(db.get_variable('known_number'), 3.14159265)
+        self.assertEqual(db.get_variable('known_number'), 3.14159265)
         self.assertRaises(db.VariableUndefinedError,
             db.get_variable, 'e')
         db.del_variable('known_number')

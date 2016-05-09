@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 import sys
@@ -105,7 +105,7 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
                 self.m_P = None
     def check_askfor(self):
         if self.m_custom_mode:
-            self.set_list('ask_for_names', range(len(self.m_P.get_unique_cnames())))
+            self.set_list('ask_for_names', list(range(len(self.m_P.get_unique_cnames()))))
     def play_tonic(self):
         """
         Play the tonic of the question, if defined.
@@ -132,8 +132,8 @@ class MelodicIntervalTeacher(Teacher):
         self.m_tonika = None
         self.m_question = []
     def new_question(self, L, H):
-        assert isinstance(L, basestring)
-        assert isinstance(H, basestring)
+        assert isinstance(L, str)
+        assert isinstance(H, str)
 
         if self.m_timeout_handle:
             GObject.source_remove(self.m_timeout_handle)
@@ -171,7 +171,7 @@ class MelodicIntervalTeacher(Teacher):
             # database (and make it an int if it is not), and nComboBox
             # will make sure the int value is within the correct limits.
             lock_tonic = mpd.MusicalPitch.new_from_int(self.get_int("lock-to-key-note"))
-            lock_scaletype = utils.key_data.keys()[:][self.get_int("lock-to-key-scaletype")]
+            lock_scaletype = list(utils.key_data.keys())[:][self.get_int("lock-to-key-scaletype")]
 
         def try_make_question():
             try:
@@ -183,7 +183,7 @@ class MelodicIntervalTeacher(Teacher):
                 else:
                     self.m_tonika, i = utils.random_tonika_and_interval(L, H,
                             self.get_list('ask_for_intervals_0'))
-            except utils.NoPossibleIntervals, e:
+            except utils.NoPossibleIntervals as e:
                 raise self.ConfigureException(self.no_intervals_str % 1)
 
             self.m_question = [i]
@@ -197,7 +197,7 @@ class MelodicIntervalTeacher(Teacher):
                             interval_list,
                             lock_tonic, lock_scaletype)
                     if not i:
-                        raise self.ConfigureException(_(u"Failed to select random interval number %i because of the configuration of the exercise. Either you have enabled intervals only if one direction, or none of the intervals belong to the key selected when you enabled «Lock to key».") % x)
+                        raise self.ConfigureException(_("Failed to select random interval number %i because of the configuration of the exercise. Either you have enabled intervals only if one direction, or none of the intervals belong to the key selected when you enabled «Lock to key».") % x)
                 else:
                     i = utils.random_interval(t, L, H,
                             self.get_list('ask_for_intervals_%i' % x))
@@ -209,7 +209,7 @@ class MelodicIntervalTeacher(Teacher):
         for counter in range(max_try):
             try:
                 try_make_question()
-            except self.ConfigureException, e:
+            except self.ConfigureException as e:
                 if counter == max_try -1:
                     raise
                 else:
@@ -612,7 +612,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         try:
             if self.m_t.m_custom_mode:
                 self.g_statview.set_sensitive(False)
-                self.g_statview.set_tooltip_text(_(u"Statistics is disabled. Either because you selected a “Configure yourself” exercise, or because “Expert mode” is selected in the preferences window."))
+                self.g_statview.set_tooltip_text(_("Statistics is disabled. Either because you selected a “Configure yourself” exercise, or because “Expert mode” is selected in the preferences window."))
             else:
                 self.g_statview.set_sensitive(True)
                 self.g_statview.set_tooltip_text("")
@@ -696,7 +696,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         """
         try:
             return method(*args, **kwargs)
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
     def standard_exception_handler(self, e, cleanup_function=lambda: False):
@@ -864,7 +864,7 @@ class IntervalGui(Gui):
             mpd.MusicalPitch.new_from_int(60).get_user_notename(),
             [mpd.MusicalPitch.new_from_int(60 + i).get_user_notename() for i in range(12)])
         self.g_notename.show()
-        self.g_scaletype = gu.nComboBox(self.m_exname, 'lock-to-key-scaletype', _("Major"), [n['name'] for n in utils.key_data.values()])
+        self.g_scaletype = gu.nComboBox(self.m_exname, 'lock-to-key-scaletype', _("Major"), [n['name'] for n in list(utils.key_data.values())])
         self.g_scaletype.show()
         self.g_config_grid.attach(check, 0, row, 1, 1)
         self.g_config_grid.attach(self.g_notename, 1, row, 1, 1)
@@ -973,7 +973,7 @@ class LessonbasedGui(Gui):
                 self.g_music_displayer.display(self.m_t.m_P.get_music(varname), fontsize)
             else:
                 solfege.win.display_in_musicviewer(self.m_t.m_P.get_music(varname))
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             self.m_t.m_P.get_question()[varname].complete_to_musicdata_coords(self.m_t.m_P, e)
             e.m_mpd_varname = varname
             e.m_mpd_badcode = self.m_t.m_P.get_question()[varname].get_err_context(e, self.m_t.m_P)

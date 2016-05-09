@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 def mf_delta(i):
     assert isinstance(i, int) and i >= 0
     vect = []
@@ -39,7 +39,7 @@ def mf_int24(i):
     return [i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
 
 def mf_int32(i):
-    assert isinstance(i, int) and 0 <= i < 2L**32
+    assert isinstance(i, int) and 0 <= i < 2**32
     return [i >> 24 & 0xff, i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
 
 def write_int16(f, i):
@@ -48,7 +48,7 @@ def write_int16(f, i):
     f.write(chr(i  & 0xff))
 
 def write_int32(f, i):
-    assert isinstance(i, int) and 0 <= i < 2L**32
+    assert isinstance(i, int) and 0 <= i < 2**32
     f.write(chr(i >> 24 & 0xff))
     f.write(chr(i >> 16 & 0xff))
     f.write(chr(i >> 8 & 0xff))

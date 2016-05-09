@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 import os
 import re
@@ -336,7 +336,7 @@ class FlashBar(Gtk.Frame):
             if m:
                 varname = child[1:][:-1]
                 from solfege import lessonfilegui
-                if isinstance(kwargs[varname], basestring):
+                if isinstance(kwargs[varname], str):
                     w = Gtk.Label(label=kwargs[varname])
                     w.set_name("FlashBarLabel")
                 else:
@@ -810,7 +810,7 @@ class EditorDialogBase(object):
                 if (not self.m_filename) and (not self.m_changed):
                     del self.instance_dict[self.get_idict_key()]
                     self.destroy()
-            except Exception, e:
+            except Exception as e:
                 # Since we catch all sorts of exceptions here, we don't have
                 # to do handle string to int conversion in
                 # PractiseSheet.parse_file. Just let int() raise ValueException
@@ -836,7 +836,7 @@ class EditorDialogBase(object):
         if not os.path.exists(self.savedir):
             try:
                 os.mkdir(self.savedir)
-            except OSError, e:
+            except OSError as e:
                 pass
         if self.m_filename and os.path.commonprefix([
                self.savedir, os.path.dirname(self.m_filename)]) == self.savedir:
@@ -856,7 +856,7 @@ class EditorDialogBase(object):
                     self.m_filename = new_name
                     self.save()
                     self.set_title(self.m_filename)
-                except IOError, e:
+                except IOError as e:
                     dialog_ok(_("Error saving file"), self, str(e), Gtk.MessageType.ERROR)
                     dialog.destroy()
                     return False
@@ -875,7 +875,7 @@ class EditorDialogBase(object):
             try:
                 self.save()
                 retval = True
-            except IOError, e:
+            except IOError as e:
                 dialog_ok(_("Error saving file"), self, str(e), Gtk.MessageType.ERROR)
                 retval = False
         if retval:
@@ -1006,7 +1006,7 @@ class ClickableLabel(Gtk.LinkButton):
         vbox = Gtk.VBox(False, 0)
         vbox.set_alignment = set_alignment
         b = Gtk.Label()
-        b.set_markup(u"%s" % text)
+        b.set_markup("%s" % text)
         b.set_alignment(0.0, 0.5)
         vbox.pack_start(b, False, False, 0)
         self.get_children()[0].reparent(vbox)
@@ -1044,14 +1044,14 @@ class ExceptionDialog(Gtk.Dialog):
         self.g_primary.set_line_wrap(True)
         self.m_primary_bold = False
         self.msg_vbox.pack_start(self.g_primary, True, True, 0)
-        if isinstance(exception, StandardError):
+        if isinstance(exception, Exception):
             self.g_primary.set_text(str(exception).decode(sys.getfilesystemencoding(), 'replace'))
         else:
             if 'args' in dir(exception) and exception.args:
                 estr = exception.args[0]
             else:
                 estr = exception
-            if not isinstance(estr, unicode):
+            if not isinstance(estr, str):
                 estr = str(estr).decode(sys.getfilesystemencoding(), 'replace')
             self.g_primary.set_text(estr)
             if 'args' in dir(exception):
@@ -1063,7 +1063,7 @@ class ExceptionDialog(Gtk.Dialog):
         expander = Gtk.Expander(label="Traceback")
         self.vbox.pack_start(expander, True, True, 0)
         l = Gtk.Label("".join(traceback.format_exception(
-            sys.exc_type, sys.exc_value, sys.exc_traceback)).decode(sys.getfilesystemencoding(), 'replace'))
+            sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])).decode(sys.getfilesystemencoding(), 'replace'))
         l.set_alignment(0.0, 0.5)
         sc = Gtk.ScrolledWindow()
         sc.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)

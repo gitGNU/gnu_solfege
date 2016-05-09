@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import logging
 
 from solfege.mpd.rat import Rat
@@ -113,8 +113,8 @@ class MidiEventStream(object):
         def __init__(self, nc=16):
             self.free_MIDI_channels = []
             if nc > self.percussion_MIDI_channel:
-                for i in range(self.percussion_MIDI_channel) \
-                         + range(self.percussion_MIDI_channel, 16):
+                for i in list(range(self.percussion_MIDI_channel)) \
+                         + list(range(self.percussion_MIDI_channel, 16)):
                     self.free_MIDI_channels.append(self.MidiChannel(i))
             else:
                 for i in range(nc):
@@ -155,7 +155,7 @@ class MidiEventStream(object):
             if self.free_MIDI_channels:
                 return self.free_MIDI_channels.pop(0)
             # First try to find an allocated channel that is silent.
-            for key, channel_list in self.allocated_MIDI_channels.items():
+            for key, channel_list in list(self.allocated_MIDI_channels.items()):
                 for idx, channel in enumerate(channel_list):
                     if channel.is_silent():
                         ret = self.allocated_MIDI_channels[key].pop(idx)
@@ -402,7 +402,7 @@ class Track:
     """
     def txtdump(self):
         for event in self.m_v:
-            print event
+            print(event)
     def str_repr(self):
         retval = []
         for e in self.m_v:
@@ -495,7 +495,7 @@ class Track:
                     if pos not in D:
                         D[pos] = []
                     D[pos].append(event)
-        kv = D.keys()
+        kv = list(D.keys())
         kv.sort()
         self.m_v = []
         for x in range(len(kv)-1):

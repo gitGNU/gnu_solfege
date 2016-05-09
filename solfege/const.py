@@ -17,7 +17,7 @@
 # Moved RHYTHMS here because is should be available from a module that does
 # not pull in the gtk module.
 
-from __future__ import absolute_import
+
 
 RHYTHMS = ("c4", "c8 c8", "c16 c16 c16 c16", "c8 c16 c16",
            "c16 c16 c8", "c16 c8 c16", "c8. c16", "c16 c8.",

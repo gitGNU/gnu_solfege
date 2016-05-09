@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import locale
 import logging.handlers
@@ -86,7 +86,7 @@ if options.version:
         rev_info = ""
     else:
         rev_info = buildinfo.version_info
-    print (u"""GNU Solfege %s
+    print(("""GNU Solfege %s
 Revision_id: %s
 This is free software. It is covered by the GNU General Public License,
 and you are welcome to change it and/or distribute copies of it under
@@ -95,13 +95,13 @@ certain conditions. Invoke as `solfege --warranty` for more information.
 %s
         """ % (buildinfo.VERSION_STRING,
         rev_info,
-        solfege.application.solfege_copyright)).encode(sys.getfilesystemencoding(), 'replace')
+        solfege.application.solfege_copyright)).encode(sys.getfilesystemencoding(), 'replace'))
     sys.exit()
 
 if options.warranty:
-    print "GNU Solfege %s" % buildinfo.VERSION_STRING
-    print solfege.application.solfege_copyright.encode(sys.getfilesystemencoding(), 'replace')
-    print solfege.application.warranty
+    print("GNU Solfege %s" % buildinfo.VERSION_STRING)
+    print(solfege.application.solfege_copyright.encode(sys.getfilesystemencoding(), 'replace'))
+    print(solfege.application.warranty)
     sys.exit()
 
 # redirect error messages to a window that will popup if
@@ -148,10 +148,10 @@ def start_gui(datadir):
         solfege.splash_win.show_progress(_("Opening statistics database"))
     try:
         solfege.db = statistics.DB(f, profile=options.profile)
-    except sqlite3.OperationalError, e:
+    except sqlite3.OperationalError as e:
         if solfege.splash_win:
             solfege.splash_win.hide()
-        gu.dialog_ok(_(u"Failed to open the statistics database:\n«%s»") % str(e).decode(sys.getfilesystemencoding(), 'replace'), secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
+        gu.dialog_ok(_("Failed to open the statistics database:\n«%s»") % str(e).decode(sys.getfilesystemencoding(), 'replace'), secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
         sys.exit()
 
     def ef(t, value, traceback):
@@ -170,7 +170,7 @@ def start_gui(datadir):
             sys.__excepthook__(t, msg, traceback)
     if not options.disable_exception_handler:
         sys.excepthook = ef
-    print time.time() - start_time
+    print(time.time() - start_time)
     # We parse all lesson files when we are idle to save a half a
     # second the first time the user searches all lesson files using
     # Ctrl-F.
@@ -192,9 +192,9 @@ def start_app(datadir):
     with open("solfege.css", "r") as f:
         css = f.read()
     try:
-        style_provider.load_from_data(css)
-    except GObject.GError, e:
-        print e
+        style_provider.load_from_data(css.encode())
+    except GObject.GError as e:
+        print(e)
         pass
     Gtk.StyleContext.add_provider_for_screen(
         Gdk.Screen.get_default(), style_provider,

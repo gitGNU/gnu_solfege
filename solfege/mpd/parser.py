@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 r"""
 REMEMBER: down is positive, up is negative.
 
@@ -141,15 +141,15 @@ def parse_to_score_object(music):
             partial = toc_data
         elif toc == Lexer.TIME:
             if not cur_staff:
-                raise ParseError(u"\\time can not be used before \\staff", lexer)
+                raise ParseError("\\time can not be used before \\staff", lexer)
             # FIXME
             # Also now, we only allow the first voice to change time signatures
             if cur_staff.m_voices.index(cur_voice) != 0:
-                raise ParseError(u"only timesig in first voice", lexer)
+                raise ParseError("only timesig in first voice", lexer)
             # FIXME: we are stricter with time signatures that both solfege 3.16
             # and LilyPond
             if not cur_voice.is_bar_full():
-                raise ParseError(u"timesig change only when bar is full!", lexer)
+                raise ParseError("timesig change only when bar is full!", lexer)
             if partial:
                 score.add_partial_bar(partial, toc_data)
                 partial = None
@@ -161,7 +161,7 @@ def parse_to_score_object(music):
                 p.transpose_by_musicalpitch(transpose_pitch)
             k = (p.get_notename(), toc_data[1])
             if not cur_staff:
-                raise ParseError(u"\\key can not be used before \\staff", lexer)
+                raise ParseError("\\key can not be used before \\staff", lexer)
             cur_staff.set_key_signature(k, timepos)
         elif toc == Lexer.TIMES:
             if not times:
@@ -171,7 +171,7 @@ def parse_to_score_object(music):
         elif toc == Lexer.CLEF:
             try:
                 cur_staff.set_clef(toc_data, timepos)
-            except elems.UnknownClefException, e:
+            except elems.UnknownClefException as e:
                 e.m_lineno, e.m_linepos1, e.m_linepos2 = lexer.get_error_location()
                 raise
         elif toc == '|':
@@ -250,8 +250,8 @@ def parse_to_score_object(music):
                 note = elems.Note(toc_data.m_pitch, toc_data.m_duration)
                 try:
                     cur_voice.append(note, stem_dir)
-                except elems.Voice.BarFullException, e:
-                    raise ParseError(unicode(e), lexer)
+                except elems.Voice.BarFullException as e:
+                    raise ParseError(str(e), lexer)
                 if beam is not None:
                     beam.append(note)
                 if times is not None:

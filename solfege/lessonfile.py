@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import glob
 import locale
@@ -50,16 +50,16 @@ _test_mode = False
 
 # The name of the folder containing the standard learning trees.
 # Relative to the installation dir.
-exercises_dir = os.path.join(u"exercises", u"standard")
-_abs_exercises_dir = os.path.join(os.getcwdu(), exercises_dir) + os.sep
+exercises_dir = os.path.join("exercises", "standard")
+_abs_exercises_dir = os.path.join(os.getcwd(), exercises_dir) + os.sep
 
-solfege_uri = u"solfege:"
+solfege_uri = "solfege:"
 
 def uri_expand(url):
     """
     Convert from solfege: URI to normal file name.
     """
-    assert isinstance(url, unicode)
+    assert isinstance(url, str)
     if url.startswith(solfege_uri):
         url = os.path.join(exercises_dir, url[len(solfege_uri):])
     return url
@@ -73,10 +73,10 @@ def mk_uri(filename):
     """
     if os.path.isabs(filename):
         if filename.startswith(_abs_exercises_dir):
-            return (u"solfege:%s" % filename[len(_abs_exercises_dir):]).replace(os.sep, "/")
+            return ("solfege:%s" % filename[len(_abs_exercises_dir):]).replace(os.sep, "/")
     else:
-        if filename.startswith(u"%s%s" % (exercises_dir, os.sep)):
-            return (u"solfege:%s" % filename[len("%s%s" % (exercises_dir, os.sep)):]).replace(os.sep, "/")
+        if filename.startswith("%s%s" % (exercises_dir, os.sep)):
+            return ("solfege:%s" % filename[len("%s%s" % (exercises_dir, os.sep)):]).replace(os.sep, "/")
     return filename
 
 def is_uri(filename):
@@ -216,7 +216,7 @@ def rnc_markup_tokenizer(s):
     """
     [rn][mod1][num][\s-]
     """
-    rn_re = re.compile(u"""(?P<p1>[b♭♯#]?[ivIV]+)
+    rn_re = re.compile("""(?P<p1>[b♭♯#]?[ivIV]+)
                           (?P<p2>[^\d\s-]*)
                           (?P<p3>[^\s-]*)
                           (?P<sep>(\s*-\s*|\s*))""",
@@ -226,7 +226,7 @@ def rnc_markup_tokenizer(s):
     while i < len(s):
         m = rn_re.match(s[i:])
         if not m:
-            retval.append((u'ERR:%s' % s[i:], '', '', ''))
+            retval.append(('ERR:%s' % s[i:], '', '', ''))
             break
         retval.append((m.group('p1'), m.group('p2'), m.group('p3'), m.group('sep')))
         i += m.end()
@@ -257,7 +257,7 @@ def chordname_markup_tokenizer(s):
                 mpd.MusicalPitch.new_from_notename(v[-1])
                 bass = v[-1]
                 c = "/".join(v[:-1])
-            except mpd.InvalidNotenameException, e:
+            except mpd.InvalidNotenameException as e:
                 bass = ""
         else:
             bass = ""
@@ -354,7 +354,7 @@ class MpdParsable(MusicBaseClass):
                 utils.play_music3(mpdstring,
                     lessonfile_ref.get_tempo(),
                     instrument)
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             self.complete_to_musicdata_coords(lessonfile_ref, e)
             raise
         if _test_mode:
@@ -410,7 +410,7 @@ class MpdParsable(MusicBaseClass):
         """
         try:
             return mpd.parser.parse_to_score_object(self.get_mpd_music_string(lessonfile_ref))
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             if as_name:
                 e.m_mpd_varname = as_name
             raise
@@ -442,7 +442,7 @@ class MpdTransposable(MpdDisplayable):
         try:
             lex = mpd.parser.Lexer(self.m_musicdata)
             tokens = list(mpd.parser.Lexer(self.m_musicdata))
-        except mpd.InvalidNotenameException, e:
+        except mpd.InvalidNotenameException as e:
             self.complete_to_musicdata_coords(lessonfile_ref, e)
             raise
         for toc, toc_data in tokens:
@@ -523,7 +523,7 @@ class Chord(ChordCommon):
                 return [mpd.MusicalPitch.new_from_notename(n).get_octave_notename() for n in notenames]
             else:
                 return [mpd.MusicalPitch.new_from_notename(n).transpose_by_musicalpitch(lessonfile_ref.m_transpose).get_octave_notename() for n in notenames]
-        except mpd.InvalidNotenameException, e:
+        except mpd.InvalidNotenameException as e:
             e.m_obj_lineno, e.m_linepos1, e.m_linepos2 = mpd.parser.validate_only_notenames(self.m_musicdata)
             raise
     def get_music_as_notename_string(self, lessonfile_ref):
@@ -643,7 +643,7 @@ class Rvoice(VoiceCommon):
         lex = mpd.parser.Lexer(self.m_musicdata)
         try:
             pitch = self.get_first_pitch()
-        except mpd.InvalidNotenameException, e:
+        except mpd.InvalidNotenameException as e:
             errpitch = self.m_musicdata.split("\n")[e.m_lineno][e.m_linepos1:e.m_linepos2]
             if lessonfile_ref.header.random_transpose[0]:
                 return "\\staff\\transpose %s\\relative %s{\n%s\n}" % (
@@ -698,7 +698,7 @@ class Rvoice(VoiceCommon):
         """
         try:
             delta = abs(self.get_first_pitch().m_octave_i)
-        except mpd.InvalidNotenameException, e:
+        except mpd.InvalidNotenameException as e:
             delta = 0
         if hasattr(exception, 'm_obj_lineno'):
             return "\n".join((self.m_musicdata.split("\n")[exception.m_obj_lineno],
@@ -789,7 +789,7 @@ class PercBaseClass(MpdParsable):
     def _gen_track(self, lessonfile_ref, question):
         try:
             score = mpd.parser.parse_to_score_object(self.get_mpd_music_string(lessonfile_ref))
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             self.complete_to_musicdata_coords(lessonfile_ref, e)
             raise
         track = mpd.score_to_tracks(score)[0]
@@ -867,9 +867,9 @@ class Mma(MusicBaseClass):
         outfile = os.path.join(self.temp_dir, 'f.mid')
         f = open(infile, "w")
         if self.m_groove:
-            print >> f, "Groove %s" % self.m_groove
+            print("Groove %s" % self.m_groove, file=f)
         if lessonfile_ref.header.random_transpose[0]:
-            print >> f, "Transpose %i" % (lessonfile_ref.m_transpose.semitone_pitch() - mpd.MusicalPitch.new_from_notename("c'").semitone_pitch())
+            print("Transpose %i" % (lessonfile_ref.m_transpose.semitone_pitch() - mpd.MusicalPitch.new_from_notename("c'").semitone_pitch()), file=f)
         f.write(self.m_musicdata)
         f.close()
         try:
@@ -877,7 +877,7 @@ class Mma(MusicBaseClass):
             if mma[0].endswith(".py"):
                 mma.insert(0, sys.executable)
             subprocess.call(mma)
-        except OSError, e:
+        except OSError as e:
             raise osutils.BinaryForProgramException("MMA",
                 cfg.get_string("programs/mma"), e)
         soundcard.play_mediafile('midi', os.path.join(self.temp_dir, 'f.mid'))
@@ -900,7 +900,7 @@ class Cmdline(MusicBaseClass):
         try:
             osutils.PopenSingleton(str(self.m_musicdata).split(" "),
                    cwd=lessonfile_ref.m_location)
-        except OSError, e:
+        except OSError as e:
             raise osutils.RunningExecutableFailed(self.m_musicdata)
 
 class CSound(MusicBaseClass):
@@ -920,7 +920,7 @@ class CSound(MusicBaseClass):
                  os.path.join(self.temp_dir, "in.sco"),
                  "-W", "-d", "-o",
                  os.path.join(self.temp_dir, "out.wav")))
-        except OSError, e:
+        except OSError as e:
              raise osutils.BinaryForProgramException("Csound", cfg.get_string("programs/csound"), e)
         soundcard.play_mediafile('wav', os.path.join(self.temp_dir, "out.wav"))
 
@@ -1021,10 +1021,10 @@ class LessonfileCommon(object):
         for question in self.m_questions:
             question.active = 1
             # FIXMECOMPAT
-            if 'music' in question and isinstance(question.music, basestring):
+            if 'music' in question and isinstance(question.music, str):
                 # The following line is for backward compatibility
                 question.music = Music(question.music)
-        self.m_random = xrandom.Random(range(len(self.m_questions)))
+        self.m_random = xrandom.Random(list(range(len(self.m_questions))))
         # We have to make random_transpose a list, since this make
         # simplifies if statements in lessonfile.py
         # Also we cannot define the 'yes' and 'no' lesson file keywords
@@ -1050,7 +1050,7 @@ class LessonfileCommon(object):
         dp.m_location = self.m_location
         try:
             dp.parse_string(s, really_filename)
-        except LessonfileParseException, e:
+        except LessonfileParseException as e:
             e.m_nonwrapped_text = dp._lexer.get_err_context(dp._lexer.pos - 2)
             e.m_token = dp._lexer.m_tokens[dp._lexer.pos - 2]
             raise
@@ -1118,7 +1118,7 @@ class QuestionsLessonfile(LessonfileCommon):
             break
         try:
             self.get_question().music.randomize()
-        except AttributeError, e:
+        except AttributeError as e:
             pass
         self.m_random.add(self._idx)
         self.m_prev_question = self.get_music()
@@ -1180,7 +1180,7 @@ class QuestionsLessonfile(LessonfileCommon):
             n_down = low
             n_up = high
         interv = mpd.Interval()
-        interv.set_from_string(_keys_to_interval[random.choice(range(n_down, n_up+1))])
+        interv.set_from_string(_keys_to_interval[random.choice(list(range(n_down, n_up+1)))])
         return mpd.MusicalPitch.new_from_notename("c'") + interv
     def iterate_questions_with_unique_names(self):
         """Iterate the questions in the lessonfile, but only yield the
@@ -1294,7 +1294,7 @@ class QuestionsLessonfile(LessonfileCommon):
             question = self.get_question()
         try:
             question[varname].play(self, question)
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             # This code have to be here for code that run m_P.play_question
             # exception_handled to be able to say which variable has the bug
             # and show the bad code.
@@ -1322,11 +1322,11 @@ class QuestionsLessonfile(LessonfileCommon):
         else:
             retval = [cfg.get_int('config/preferred_instrument'),
                       cfg.get_int('config/preferred_instrument_volume')]
-        if isinstance(retval[0], unicode):
+        if isinstance(retval[0], str):
             try:
                 retval[0] = soundcard.find_midi_instrument_number(retval[0])
-            except KeyError, e:
-                print >> sys.stderr, "Warning: Invalid instrument name '%s' in lesson file:" % retval[0], e
+            except KeyError as e:
+                print("Warning: Invalid instrument name '%s' in lesson file:" % retval[0], e, file=sys.stderr)
                 retval[0] = cfg.get_int('config/preferred_instrument')
         return retval
     def get_instruments(self, question, count):
@@ -1353,11 +1353,11 @@ class QuestionsLessonfile(LessonfileCommon):
         while len(retval) < count * 2:
             retval.extend(retval[-2:])
         for idx in range(0, len(retval), 2):
-            if isinstance(retval[idx], unicode):
+            if isinstance(retval[idx], str):
                 try:
                     retval[idx] = soundcard.find_midi_instrument_number(retval[idx])
-                except KeyError, e:
-                    print >> sys.stderr, "Warning: Invalid instrument name '%s' in lesson file:" % retval[idx], e
+                except KeyError as e:
+                    print("Warning: Invalid instrument name '%s' in lesson file:" % retval[idx], e, file=sys.stderr)
                     retval[idx] = cfg.get_int('config/preferred_instrument')
         return retval
     def discard_questions_without_name(self):
@@ -1382,7 +1382,7 @@ class TestSupport(object):
     """
     def _generate_test_questions(self):
         count, t = parse_test_def(self.header.test)
-        q = range(len(self.m_questions)) * count
+        q = list(range(len(self.m_questions))) * count
         random.shuffle(q)
         return q
     def get_test_num_questions(self):
@@ -1436,7 +1436,7 @@ class DictationLessonfile(QuestionsLessonfile):
             r = self.m_questions[self._idx]['breakpoints']
             if not type(r) == type([]):
                 r = [r]
-        r = map(lambda e: Rat(e[0], e[1]), r)
+        r = [Rat(e[0], e[1]) for e in r]
         return r
     def get_clue_end(self):
         assert self._idx is not None
@@ -1529,7 +1529,7 @@ class RhythmDictation2Lessonfile(QuestionsLessonfile):
                 total += rat_len_of_digits(elem)
                 for e in elem.split(" "):
                     e = e.strip()
-                    n = elems.Note.new_from_string(u"%s%s" % (notename, e))
+                    n = elems.Note.new_from_string("%s%s" % (notename, e))
                     score.voice11.append(n)
                     count = 0
                 count += 1
@@ -1567,7 +1567,7 @@ class NameIntervalLessonfile(HeaderLessonfile):
         if self.header.accidentals == "":
             self.header.accidentals = 1
         if self.header.clef == "":
-            self.header.clef = u"violin"
+            self.header.clef = "violin"
         if not self.header.tones:
             self.header.tones = [mpd.MusicalPitch.new_from_notename("b"),
                                 mpd.MusicalPitch.new_from_notename("g''")]
@@ -1678,11 +1678,11 @@ class IdPropertyLessonfile(QuestionsLessonfile):
                     # FIXMECOMPAT convert integer properties to strings.
                     # This to be compatible with solfege 3.9.1 and older.
                     if type(question[varname]) in (int, float):
-                        question[varname] = istr(unicode(question[varname]))
+                        question[varname] = istr(str(question[varname]))
                     # then add to m_props
                     if question[varname] not in self.m_props[varname]:
                         self.m_props[varname].append(question[varname])
-        for k in self.m_props.keys():
+        for k in list(self.m_props.keys()):
             if not self.m_props[k]:
                 idx = self.header.qprops.index(k)
                 del self.header.qprops[idx]
@@ -1695,7 +1695,7 @@ class IdPropertyLessonfile(QuestionsLessonfile):
             # in the question
             missing_props = [p for p in self.m_props if p not in question]
             if missing_props:
-                self.m_discards.append("\n".join(textwrap.wrap(ungettext(
+                self.m_discards.append("\n".join(textwrap.wrap(ngettext(
                     'Discarding question %(questionidx)i from the lesson file "%(filename)s" because of a missing variable: %(var)s',
                     'Discarding question %(questionidx)i from the lesson file "%(filename)s" because of some missing variables: %(var)s',
                     len(missing_props)) %  {'questionidx': idx, 'filename': self.m_filename, 'var': ", ".join(missing_props)})))
@@ -1723,7 +1723,7 @@ class ElembuilderLessonfile(QuestionsLessonfile):
         # a single element as answer one gets a dict from parse_string and not
         # a list. Thus we pack the dict in a list and are happy.
         for question in self.m_questions:
-            if type(question['elements']) <> (type([])):
+            if type(question['elements']) != (type([])):
                 question['elements'] = [question['elements']]
         # This loop let us use normal strings and lesson file functions
         # like pangomarkup as element labels.
@@ -1777,7 +1777,7 @@ class InfoCache(object):
             except frontpage.FrontPageException:
                 self._data[filename] = self.PARSE_ERROR
         def iter_old_format_files(self):
-            for filename, value in self._data.items():
+            for filename, value in list(self._data.items()):
                 if value == self.OLD_FORMAT:
                     yield filename
     def __init__(self):
@@ -1818,7 +1818,7 @@ class InfoCache(object):
         }
         except KeyError:
             logging.debug("InfoCache.parse_file: FileNotLessonfile(%s)", filename)
-            print "file not lessonfile:", filename
+            print("file not lessonfile:", filename)
             raise self.FileNotLessonfile(filename)
         if not self._data[filename]['title']:
             self._data[filename]['title'] = "error: empty string as title in '%s'" % filename
@@ -1829,7 +1829,7 @@ class InfoCache(object):
         """
         logging.debug("iter_parse_all_files()")
         for filename in self._iter_files(
-                os.path.join(exercises_dir, u"lesson-files")):
+                os.path.join(exercises_dir, "lesson-files")):
             yield filename
         for filename in self.iter_user_files():
             yield filename
@@ -1861,12 +1861,12 @@ class InfoCache(object):
             self._lessonfiles_iterator = self.iter_parse_all_files()
             def on_idle_parse():
                 try:
-                    filename = self._lessonfiles_iterator.next()
+                    filename = next(self._lessonfiles_iterator)
                     return True
                 except StopIteration:
                     logging.debug("parse_all_files(...) done.")
                     import time
-                    print "all files parsed:", time.time() - start_time
+                    print("all files parsed:", time.time() - start_time)
                     pt.Identifier.check_ns = True
                     return False
             GObject.idle_add(on_idle_parse)
@@ -1874,7 +1874,7 @@ class InfoCache(object):
             list(self.iter_parse_all_files())
     def update_modified_files(self):
         self.cond_parse_dir(filesystem.user_lessonfiles())
-        self.cond_parse_dir(os.path.join(exercises_dir, u"lesson-files"))
+        self.cond_parse_dir(os.path.join(exercises_dir, "lesson-files"))
     def cond_parse_dir(self, dir):
         """
         Check the mtime of the files in dir if dirs mtime has changed
@@ -1885,7 +1885,7 @@ class InfoCache(object):
         if not os.path.exists(dir):
             return
         mtime = os.path.getmtime(dir)
-        assert isinstance(dir, unicode)
+        assert isinstance(dir, str)
         logging.debug("cond_parse_dir(%s) mtime=%s", dir, mtime)
         if dir not in self._dir_mtime:
             for filename in os.listdir(dir):
@@ -1911,10 +1911,10 @@ class InfoCache(object):
         """
         logging.debug("iter_user_files(%s)", only_user_collection)
         if only_user_collection:
-            mask = u"user/lesson-files/*"
+            mask = "user/lesson-files/*"
         else:
-            mask = u"*/*/*"
-        for fn in glob.glob(os.path.join(filesystem.user_data(), u"exercises", mask)):
+            mask = "*/*/*"
+        for fn in glob.glob(os.path.join(filesystem.user_data(), "exercises", mask)):
             if os.path.isfile(fn):
                 try:
                     self.parse_file(fn)

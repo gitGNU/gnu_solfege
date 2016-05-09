@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import sys
 
@@ -86,7 +86,7 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
         """
         if self._ignore_watch > 0:
             return
-        for n, button in self.m_button_dict.items():
+        for n, button in list(self.m_button_dict.items()):
             button.set_sensitive(
                 self.m_name_list.index(n) in self.get_list('ask_for_names'))
     def add(self, question, callback):
@@ -99,8 +99,8 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
             self.newline()
         b = Gtk.Button()
         if question.name.cval in self.m_button_dict:
-            print >> sys.stderr, "Warning: The lessonfile contain several questions with the same name:", question.name.cval
-            print >> sys.stderr, "         This is a bug in the lesson file."
+            print("Warning: The lessonfile contain several questions with the same name:", question.name.cval, file=sys.stderr)
+            print("         This is a bug in the lesson file.", file=sys.stderr)
         self.m_button_dict[question.name.cval] = b
         self.m_name_list.append(question.name.cval)
         b.m_cname = question.name.cval
@@ -137,8 +137,8 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
             self.newline()
         b = Gtk.CheckButton()
         if question.name.cval in self.m_button_dict:
-            print >> sys.stderr, "Warning: The lessonfile contain several questions with the same name:", question.name.cval
-            print >> sys.stderr, "         Things will not work as normal after this."
+            print("Warning: The lessonfile contain several questions with the same name:", question.name.cval, file=sys.stderr)
+            print("         Things will not work as normal after this.", file=sys.stderr)
         self.m_button_dict[question.name.cval] = b
         self.m_name_list.append(question.name.cval)
         b.set_active(question.active)
@@ -160,7 +160,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
                 v.append(i)
         self.set_list('ask_for_names', v)
     def select_all(self):
-        for button in self.m_button_dict.values():
+        for button in list(self.m_button_dict.values()):
             button.set_active(True)
 
 class RandomTransposeDialog(Gtk.Dialog):
@@ -252,7 +252,7 @@ class RandomTransposeDialog(Gtk.Dialog):
         gu.SpinButtonRangeController(self.m_spins['semitones'][0],
                                      self.m_spins['semitones'][1],
                                      -100, 100)
-        for n, w in self.m_buttons.items():
+        for n, w in list(self.m_buttons.items()):
             sizegroup.add_widget(w)
             for ww in self.m_spins[n]:
                 ww.set_sensitive(False)
@@ -277,7 +277,7 @@ class RandomTransposeDialog(Gtk.Dialog):
         for w in self.m_spins[n]:
             w.set_sensitive(self.m_buttons[n].get_active())
     def get_value(self):
-        for n, btn in self.m_buttons.items():
+        for n, btn in list(self.m_buttons.items()):
             if btn.get_active():
                 s = n
         if s == 'yes':

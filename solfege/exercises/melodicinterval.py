@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import Gtk
 
@@ -55,7 +55,7 @@ class Teacher(abstract.MelodicIntervalTeacher):
         if directions:
             q = self.m_question
         else:
-            q = map(abs, self.m_question)
+            q = list(map(abs, self.m_question))
         if q == answer:
             if self.q_status == self.QSTATUS_NEW \
                 and not self.m_custom_mode \
@@ -232,9 +232,9 @@ class Gui(abstract.IntervalGui):
             high = self.g_input.m_highest_tone
         try:
             ret = self.m_t.new_question(low, high)
-        except Teacher.ConfigureException, e:
+        except Teacher.ConfigureException as e:
             self.g_flashbar.clear()
-            solfege.win.display_error_message2(_("Exercise configuration problem"), unicode(e))
+            solfege.win.display_error_message2(_("Exercise configuration problem"), str(e))
             self.g_repeat.set_sensitive(False)
         else:
             if ret == Teacher.ERR_PICKY:
@@ -245,7 +245,7 @@ class Gui(abstract.IntervalGui):
                 self.std_buttons_exception_cleanup()
             try:
                 self.m_t.play_question()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, exception_cleanup):
                     raise
                 return

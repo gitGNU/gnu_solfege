@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 r"""
   linux                 win 3.8                           win 3.9
     ~                   C:\D&S\User
@@ -70,7 +70,7 @@ def _get_home_dir():
     if not os.path.exists(path1):
         if not os.path.exists(path2):
             if not os.path.exists(path3):
-                return os.getcwdu()
+                return os.getcwd()
             else: return path3
         else: return path2
     else: return path1
@@ -102,7 +102,7 @@ def get_home_dir():
         return _win32_unicode_decode(_get_home_dir())
     else:
         # linux user names can only be ascii chars.
-        return _get_home_dir().decode("iso-8859-1")
+        return _get_home_dir()
 
 
 #FIXME remove??
@@ -117,7 +117,7 @@ def user_data():
     if sys.platform == "win32":
         return os.path.join(winreg._get_reg_user_value(winreg.SHELL_FOLDERS, 'Personal'), appname)
     else:
-        return os.path.expanduser(u"~/.solfege")
+        return os.path.expanduser("~/.solfege")
 
 
 def user_lessonfiles():
@@ -127,9 +127,9 @@ def user_lessonfiles():
     created by the user. For example lesson files and learning trees.
     """
     if sys.platform == "win32":
-        return os.path.join(user_data(), u"lessonfiles")
+        return os.path.join(user_data(), "lessonfiles")
     else:
-        return os.path.expanduser(u"~/lessonfiles")
+        return os.path.expanduser("~/lessonfiles")
 
 
 def rcfile():

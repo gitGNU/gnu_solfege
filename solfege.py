@@ -18,10 +18,10 @@
 
 # This script is used to launch Solfege when running
 # it from the source dir without installing.
-from __future__ import absolute_import
-import __builtin__
+
+import builtins
 import time
-__builtin__.start_time = time.time()
+builtins.start_time = time.time()
 
 import sys
 import os
@@ -44,8 +44,8 @@ if sys.platform == 'win32':
             if os.path.exists(os.path.join(filesystem.get_home_dir(), ".solfegerc")):
                 shutil.copy(os.path.join(filesystem.get_home_dir(), ".solfegerc"),
                             filesystem.rcfile())
-    except (IOError, os.error), e:
-        print "Migration failed:", e
+    except (IOError, os.error) as e:
+        print("Migration failed:", e)
 
 from solfege import presetup
 presetup.presetup("default.config", None, filesystem.rcfile())

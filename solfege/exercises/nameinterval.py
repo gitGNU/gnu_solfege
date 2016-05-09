@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 
@@ -166,7 +166,7 @@ class Gui(abstract.LessonbasedGui):
                     self.get_int('config/feta_font_size=20'))
             else:
                 solfege.win.display_error_message2(_("Could not satisfy the constraints in the lesson header."), 'You must make more tones available by adjusting the "tones" variable in the lesson file header of the lesson file "%s".' % self.m_t.m_P.m_filename)
-        except lessonfile.LessonfileException, e:
+        except lessonfile.LessonfileException as e:
             if not self.standard_exception_handler(e):
                 raise
     def on_interval_quality_clicked(self, button, n):

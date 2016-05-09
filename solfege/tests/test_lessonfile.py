@@ -3,7 +3,7 @@
 # Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
 
-from __future__ import absolute_import
+
 from gi.repository import Gtk
 import unittest
 import time
@@ -30,8 +30,8 @@ class TestParser(TmpFileBase):
     def test_wrong_argument_count(self):
         try:
             self.do_file('question {\nmusic = music("c e g", "chor") }')
-        except pt.FunctionCall.WrongArgumentCount, e:
-            self.assertEquals('(line 1): question {\n'
+        except pt.FunctionCall.WrongArgumentCount as e:
+            self.assertEqual('(line 1): question {\n'
                               '(line 2): music = music("c e g", "chor") }\n'
                               '                        ^',
                               e.m_nonwrapped_text)
@@ -44,8 +44,8 @@ class TestParser(TmpFileBase):
                 'music = music("c e g",',
                 '   "chor")',
                 '}']))
-        except pt.FunctionCall.WrongArgumentCount, e:
-            self.assertEquals('(line 1): question {\n'
+        except pt.FunctionCall.WrongArgumentCount as e:
+            self.assertEqual('(line 1): question {\n'
                               '(line 2): music = music("c e g",\n'
                               '                        ^',
                               e.m_nonwrapped_text)
@@ -55,8 +55,8 @@ class TestParser(TmpFileBase):
         try:
             self.do_file("a=1\n"
                          "b = func() c=3")
-        except pt.LookupException, e:
-            self.assertEquals("(line 1): a=1\n"
+        except pt.LookupException as e:
+            self.assertEqual("(line 1): a=1\n"
                               "(line 2): b = func() c=3\n"
                               "              ^",
                               e.m_nonwrapped_text)
@@ -66,9 +66,9 @@ class TestParser(TmpFileBase):
         try:
             self.do_file("a=1\n"
                          "b = func(3, 4) c=3")
-        except pt.LookupException, e:
+        except pt.LookupException as e:
             #self.assertEquals(e.m_token[TOKEN_STRING], 'func')
-            self.assertEquals("(line 1): a=1\n"
+            self.assertEqual("(line 1): a=1\n"
                               "(line 2): b = func(3, 4) c=3\n"
                               "              ^",
                               e.m_nonwrapped_text)
@@ -77,36 +77,36 @@ class TestParser(TmpFileBase):
     def test_exception_atom(self):
         try:
             self.do_file("a=b")
-        except pt.LookupException, e:
+        except pt.LookupException as e:
             #self.assertEquals(e.m_token[TOKEN_STRING], "b")
-            self.assertEquals("(line 1): a=b\n"
+            self.assertEqual("(line 1): a=b\n"
                               "            ^",
                               e.m_nonwrapped_text)
         else:
             self.fail("LookupError not raised")
     def test_simplest(self):
         p = self.do_file("a=yes")
-        self.assertEquals(p.m_globals['a'], True)
+        self.assertEqual(p.m_globals['a'], True)
     def test_tempo_tuple(self):
         p = self.do_file("tempo = 240/4")
-        self.assertEquals(p.m_globals['tempo'], (240, 4))
+        self.assertEqual(p.m_globals['tempo'], (240, 4))
     def test_gettext(self):
         p = self.do_file('question {\n' \
             '  name = _("chord|m7")\n' \
             '  iname = _i("chord|m7")\n' \
             '  s = _("Major")\n' \
             '}')
-        self.assertEquals(p.m_questions[0].name, "chord|m7")
-        self.assertEquals(p.m_questions[0].name.cval, "chord|m7")
-        self.assertEquals(p.m_questions[0].iname, "m7")
-        self.assertEquals(p.m_questions[0].iname.cval, "chord|m7")
-        self.assertEquals(p.m_questions[0].s, "Dur")
-        self.assertEquals(p.m_questions[0].s.cval, "Major")
+        self.assertEqual(p.m_questions[0].name, "chord|m7")
+        self.assertEqual(p.m_questions[0].name.cval, "chord|m7")
+        self.assertEqual(p.m_questions[0].iname, "m7")
+        self.assertEqual(p.m_questions[0].iname.cval, "chord|m7")
+        self.assertEqual(p.m_questions[0].s, "Dur")
+        self.assertEqual(p.m_questions[0].s.cval, "Major")
     def test_predef(self):
-        self.p.m_module_predefs['treble'] = u'treble'
+        self.p.m_module_predefs['treble'] = 'treble'
         p = self.do_file("header { clef = treble }")
-        self.assert_(isinstance(p.header['clef'], unicode))
-        self.assertEquals(p.header['clef'], 'treble')
+        self.assertTrue(isinstance(p.header['clef'], str))
+        self.assertEqual(p.header['clef'], 'treble')
     def test_module_names(self):
         """
         Test that all module names are allowed, even if they crash
@@ -118,20 +118,20 @@ class TestParser(TmpFileBase):
                 '   module=%s',
                 '}',
             ]) % modulename)
-            self.assert_(isinstance(p.header['module'], unicode))
-            self.assertEquals(p.header['module'], modulename)
+            self.assertTrue(isinstance(p.header['module'], str))
+            self.assertEqual(p.header['module'], modulename)
     def test_include(self):
         self.add_file('element I { label = "I" }', 'progression_elements')
         p = self.do_file('include("progression_elements")')
-        self.assert_('element' in p.blocklists)
+        self.assertTrue('element' in p.blocklists)
     def test_include_dont_overwrite_header_vars_but_adds_new(self):
-        self.add_file('header{ c = 2 d = 5 }', u'incfile')
+        self.add_file('header{ c = 2 d = 5 }', 'incfile')
         p = self.do_file('\n'.join([
             'header{ c = 4 }',
             'include("incfile")',
         ]))
-        self.assertEquals(p.header['c'], 4)
-        self.assertEquals(p.header['d'], 5)
+        self.assertEqual(p.header['c'], 4)
+        self.assertEqual(p.header['d'], 5)
     def test_that_real_header_overwrites_previously_included(self):
         self.add_file('header{ c = 2 }', 'incfile')
         p = self.do_file('\n'.join([
@@ -139,42 +139,42 @@ class TestParser(TmpFileBase):
             'header{ c = 4 }',
             'include("incfile")',
         ]))
-        self.assertEquals(p.header['c'], 4)
+        self.assertEqual(p.header['c'], 4)
     def test_load(self):
         self.add_file('text', 'file-to-load')
         p = self.do_file('s = load("file-to-load")')
-        self.assert_('s' in p.m_globals and p.m_globals['s'] == 'text')
+        self.assertTrue('s' in p.m_globals and p.m_globals['s'] == 'text')
     def test_element_def(self):
         p = self.do_file('element progI { label = progressionlabel("I") }')
-        self.assert_('label' in p.blocklists['element'][0])
-        self.assertEquals(p.blocklists['element'][0]['name'], 'progI')
-        self.assertEquals(p.m_globals['progI']['name'], 'progI')
+        self.assertTrue('label' in p.blocklists['element'][0])
+        self.assertEqual(p.blocklists['element'][0]['name'], 'progI')
+        self.assertEqual(p.m_globals['progI']['name'], 'progI')
     def test_music_shortcut(self):
         p = self.do_file('question { chord("c e g") }')
-        self.assert_('music' in p.m_questions[0])
+        self.assertTrue('music' in p.m_questions[0])
     def test_music_shortcut_string(self):
         p = self.do_file('question { "c d e" }')
-        self.assert_('music' in p.m_questions[0])
+        self.assertTrue('music' in p.m_questions[0])
     def test_error_music_shortcut_string(self):
         try:
             self.do_file('question { "c d e"')
-        except dataparser.DataparserSyntaxError, e:
-            self.assertEquals(e.m_nonwrapped_text, "\n".join([
+        except dataparser.DataparserSyntaxError as e:
+            self.assertEqual(e.m_nonwrapped_text, "\n".join([
                 '(line 1): question { "c d e"',
                 '                            ^',
             ]))
         else:
             self.fail("DataparserSyntaxError not raised")
     def test_addition(self):
-        p = self.do_file(u"""
+        p = self.do_file("""
               a = "en " + "to"
               i = 3 + 5
               tr1 = _("major")
               title = _("Is the interval flat, in tune or sharp? %s cent wrong") % 10
               """)
-        self.assertEquals(p.m_globals['a'], "en to")
-        self.assertEquals(p.m_globals['i'], 8)
-        self.assertEquals(p.m_globals['tr1'], 'dur')
+        self.assertEqual(p.m_globals['a'], "en to")
+        self.assertEqual(p.m_globals['i'], 8)
+        self.assertEqual(p.m_globals['tr1'], 'dur')
     def test_absolute_import(self):
         """
         This test will import progression_elements and will show that
@@ -182,10 +182,10 @@ class TestParser(TmpFileBase):
         the file in solfege/tests/lib/
         """
         p = LessonfileCommon()
-        p.parse_file(u"solfege/tests/lesson-files/test_absolute_import")
+        p.parse_file("solfege/tests/lesson-files/test_absolute_import")
         self.assertFalse('tests_progression_elements' in p.m_globals)
-        self.assertEquals(p.m_globals['progression_elements'].m_globals['I']['label'].m_labeltype, 'progressionlabel')
-        self.assertEquals(p.m_globals['progression_elements'].m_globals['I']['label'].m_labeldata, 'I')
+        self.assertEqual(p.m_globals['progression_elements'].m_globals['I']['label'].m_labeltype, 'progressionlabel')
+        self.assertEqual(p.m_globals['progression_elements'].m_globals['I']['label'].m_labeldata, 'I')
     def test_absolute_import_not_found_but_relative_exists(self):
         """
         absolute import will load the the file relative to the lesson
@@ -193,7 +193,7 @@ class TestParser(TmpFileBase):
         """
         p = LessonfileCommon()
         self.assertFalse(os.path.exists("exercises/standard/lib/not_in_standard"))
-        p.parse_file(u"solfege/tests/lesson-files/test_absolute_import_not_found_load_relative")
+        p.parse_file("solfege/tests/lesson-files/test_absolute_import_not_found_load_relative")
     def test_absolute_import_as(self):
         """
         This test will import progression_elements and will show that
@@ -201,10 +201,10 @@ class TestParser(TmpFileBase):
         the file in solfege/tests/lib/
         """
         p = LessonfileCommon()
-        p.parse_file(u"solfege/tests/lesson-files/test_absolute_import_as")
+        p.parse_file("solfege/tests/lesson-files/test_absolute_import_as")
         self.assertFalse('tests_progression_elements' in p.m_globals)
-        self.assertEquals(p.m_globals['p'].m_globals['I']['label'].m_labeltype, 'progressionlabel')
-        self.assertEquals(p.m_globals['p'].m_globals['I']['label'].m_labeldata, 'I')
+        self.assertEqual(p.m_globals['p'].m_globals['I']['label'].m_labeltype, 'progressionlabel')
+        self.assertEqual(p.m_globals['p'].m_globals['I']['label'].m_labeldata, 'I')
 
     def test_relative_import(self):
         """
@@ -212,7 +212,7 @@ class TestParser(TmpFileBase):
         in the standard exercises
         """
         p = LessonfileCommon()
-        p.parse_file(u"solfege/tests/lesson-files/test_relative_import")
+        p.parse_file("solfege/tests/lesson-files/test_relative_import")
         self.assertTrue('tests_progression_elements' in p.m_globals['progression_elements'].m_globals)
     def test_relative_import_as(self):
         """
@@ -220,7 +220,7 @@ class TestParser(TmpFileBase):
         in the standard exercises
         """
         p = LessonfileCommon()
-        p.parse_file(u"solfege/tests/lesson-files/test_relative_import_as")
+        p.parse_file("solfege/tests/lesson-files/test_relative_import_as")
         self.assertTrue('tests_progression_elements' in p.m_globals['p'].m_globals)
     def test_relative_import_not_found_load_standard(self):
         """
@@ -228,7 +228,7 @@ class TestParser(TmpFileBase):
         found relative to the lesson file location.
         """
         p = LessonfileCommon()
-        p.parse_file(u"solfege/tests/lesson-files/test_relative_import_not_found_load_standard")
+        p.parse_file("solfege/tests/lesson-files/test_relative_import_not_found_load_standard")
         self.assertFalse(os.path.exists("solfege/tests/lib/jazz_progressions"))
 
 
@@ -249,16 +249,16 @@ class TestParserTranslations(TmpFileBase, I18nSetup):
            bar = "bar-C"
            bar[fr] = "bar-fr"
         """)
-        self.assertEquals(p.m_globals['foo'], u"foo-nb")
-        self.assertEquals(p.m_globals['foo'].cval, u"foo-C")
-        self.assertEquals(p.m_globals['bar'], u"bar-C")
-        self.assertEquals(p.m_globals['bar'].cval, u"bar-C")
+        self.assertEqual(p.m_globals['foo'], "foo-nb")
+        self.assertEqual(p.m_globals['foo'].cval, "foo-C")
+        self.assertEqual(p.m_globals['bar'], "bar-C")
+        self.assertEqual(p.m_globals['bar'].cval, "bar-C")
     def test_istr_translation_of_list(self):
         try:
             p = self.do_file('\n'.join(['foo = "foo-C", "fo2-C"',
                                       'foo[nb] = "foo-nb", "fo2-nb"']))
-        except dataparser.CanOnlyTranslateStringsException, e:
-            self.assertEquals(e.m_nonwrapped_text, '\n'.join([
+        except dataparser.CanOnlyTranslateStringsException as e:
+            self.assertEqual(e.m_nonwrapped_text, '\n'.join([
                  '(line 1): foo = "foo-C", "fo2-C"',
                  '(line 2): foo[nb] = "foo-nb", "fo2-nb"',
                  '                    ^']))
@@ -268,8 +268,8 @@ class TestParserTranslations(TmpFileBase, I18nSetup):
         try:
             p = self.do_file('\n'.join(['foo = 1',
                                       'foo[nb] = 2']))
-        except dataparser.CanOnlyTranslateStringsException, e:
-            self.assertEquals(e.m_nonwrapped_text, '\n'.join([
+        except dataparser.CanOnlyTranslateStringsException as e:
+            self.assertEqual(e.m_nonwrapped_text, '\n'.join([
                  '(line 1): foo = 1',
                  '(line 2): foo[nb] = 2',
                  '                    ^']))
@@ -289,11 +289,11 @@ class TestMpdTransposable(TmpFileBase):
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
         self.p._idx = 0
     def test_get_musicdata_transposed(self):
-        self.assertEquals("d fis a", self.p.m_questions[0]['music'].get_musicdata_transposed(self.p))
+        self.assertEqual("d fis a", self.p.m_questions[0]['music'].get_musicdata_transposed(self.p))
         self.p.header.random_transpose = ("key", -5, 6)
         # get_musicdata_transposed works for all transposition modes.
-        self.assertEquals("d fis a", self.p.m_questions[0]['music'].get_musicdata_transposed(self.p))
-        self.assertEquals("c e g", self.p.m_questions[0]['music'].m_musicdata)
+        self.assertEqual("d fis a", self.p.m_questions[0]['music'].get_musicdata_transposed(self.p))
+        self.assertEqual("c e g", self.p.m_questions[0]['music'].m_musicdata)
 
 class TestChord(MObjTest):
     def setUp(self):
@@ -306,53 +306,53 @@ class TestChord(MObjTest):
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
         self.p._idx = 0
     def get_get_mpd_music_string(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
+        self.assertEqual(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
             r"\staff{ <c e g> }")
         self.p.header.random_transpose = (True,)
-        self.assertEquals(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
+        self.assertEqual(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
             r"\staff\transpose d'{ <c e g> }")
     def test_get_music_as_notename_list(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_music_as_notename_list(self.p), ['c', 'e', 'g'])
+        self.assertEqual(self.p.m_questions[0]['music'].get_music_as_notename_list(self.p), ['c', 'e', 'g'])
         self.p.header.random_transpose = (True,)
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
-        self.assertEquals(self.p.m_questions[0]['music'].get_music_as_notename_list(self.p), ['d', 'fis', 'a'])
+        self.assertEqual(self.p.m_questions[0]['music'].get_music_as_notename_list(self.p), ['d', 'fis', 'a'])
     def test_get_lilypond_code(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code(self.p), "\\score{  \\transpose c' d'{ <c e g> } \\layout {   ragged-last = ##t   \\context { \\Staff \\remove \"Time_signature_engraver\" }  }}")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code(self.p), "\\score{  \\transpose c' d'{ <c e g> } \\layout {   ragged-last = ##t   \\context { \\Staff \\remove \"Time_signature_engraver\" }  }}")
         self.p.header.random_transpose = ('atonal', -5, 5)
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code(self.p), "\\score{    { <d fis a> } \\layout {   ragged-last = ##t   \\context { \\Staff \\remove \"Time_signature_engraver\" }  }}")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code(self.p), "\\score{    { <d fis a> } \\layout {   ragged-last = ##t   \\context { \\Staff \\remove \"Time_signature_engraver\" }  }}")
     def test_get_lilypond_code_first_note(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\transpose c' d'{ c }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\transpose c' d'{ c }")
         self.p.header.random_transpose = ('atonal', -5, 5)
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"{ d }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"{ d }")
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n48 n52 n55 d1/4 o48 o52 o55")
     def test_3patch_play(self):
         cfg.set_bool('config/override_default_instrument', True)
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:1 p1:2 p2:3 v0:121 n0:48 v1:122 n1:52 v2:123 n2:55 d1/4 o48 o52 o55")
     def test_play_arpeggio(self):
         question = self.p.m_questions[0]
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t180/4 p0:0 v0:100 n48 d1/4 o48 n52 d1/4 o52 n55 d1/4 o55")
         self.p.header.random_transpose = (True,)
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t180/4 p0:0 v0:100 n50 d1/4 o50 n54 d1/4 o54 n57 d1/4 o57")
         cfg.set_bool('config/override_default_instrument', True)
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t180/4 p0:1 p1:2 p2:3 v0:121 n50 d1/4 o50 v1:122 n54 d1/4 o54 v2:123 n57 d1/4 o57")
     def test_atonal_transpose(self):
         self.p.header.random_transpose = ('atonal', -4, 4)
-        self.assertEquals(self.p.m_questions[0]['music'].get_musicdata_transposed(self.p), "d fis a")
+        self.assertEqual(self.p.m_questions[0]['music'].get_musicdata_transposed(self.p), "d fis a")
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("es'")
-        self.assertEquals(self.p.m_questions[0]['music'].get_musicdata_transposed(self.p), "ees g bes")
+        self.assertEqual(self.p.m_questions[0]['music'].get_musicdata_transposed(self.p), "ees g bes")
 
 class TestMusic(MObjTest):
     def setUp(self):
@@ -382,23 +382,23 @@ class TestMusic(MObjTest):
         # is used
         question = self.p.m_questions[2]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:37 p1:33 v0:38 n0:72 v1:34 n1:71 d1/4 o72 o71")
         # If the question has only one track, the last instrument,
         # representing the highest instrument, is used.
         question = self.p.m_questions[3]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:37 v0:38 n0:72 d1/4 o72")
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
         # Music objects should ignore config/override_default_instrument
         cfg.set_bool('config/override_default_instrument', True)
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
         #
         question = self.p.m_questions[1]
@@ -406,18 +406,18 @@ class TestMusic(MObjTest):
         # instrument, as it as in questions[1], then even Music will
         # play with more than one instrument.:w
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:37 p1:35 p2:33 v0:38 n0:72 v1:36 n1:64 v2:34 n2:48 d1/4 o72 o64 o48")
     def test_play_slowly(self):
         question = self.p.m_questions[0]
         #test.py TestMusic viser at det ikke blir generert riktig instrument
         #for ovelser som progressions-2 (harmonicprogressiondictation)
         question['music'].play_slowly(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t30/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
         cfg.set_bool('config/override_default_instrument', True)
         question['music'].play_slowly(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t30/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
 
 class TestMusic3(MObjTest):
@@ -437,17 +437,17 @@ class TestMusic3(MObjTest):
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
         #
         cfg.set_bool('config/override_default_instrument', True)
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:3 p1:2 p2:1 v0:123 n0:72 v1:122 n1:64 v2:121 n2:48 d1/4 o72 o64 o48")
         #
         question = self.p.m_questions[1]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(1),
+        self.assertEqual(soundcard.synth.flush_testdata(1),
             "t60/4 p0:37 p1:35 p2:33 v0:38 n0:72 v1:36 n1:67 n1:64 v2:34 n2:48 d1/4 o72 o67 o64 o48")
 
 class TestVoiceCommon(unittest.TestCase):
@@ -465,7 +465,7 @@ class TestVoiceCommon(unittest.TestCase):
             ("\nc", "c"),
             ):
             x = Rvoice(s)
-            self.assertEquals(x.get_first_pitch().get_octave_notename(), n)
+            self.assertEqual(x.get_first_pitch().get_octave_notename(), n)
         self.assertRaises(MusicObjectException, Rvoice("\\clef bass").get_first_pitch)
 
 
@@ -482,33 +482,33 @@ class TestVoice(MObjTest):
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
         self.p._idx = 0
     def test_get_mpd_music_string(self):
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
                           "\\staff{\nc d e\n}")
         self.p.header.random_transpose = [True]
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
                           "\\staff\\transpose d'{\nc d e\n}")
         self.p.header.random_transpose = ['atonal', -5, 6]
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
                           "\\staff{\nd e fis\n}")
     def test_get_lilypond_code(self):
-        self.assertEquals(self._m().get_lilypond_code(self.p),
+        self.assertEqual(self._m().get_lilypond_code(self.p),
                           r"{ c d e }")
         self.p.header.random_transpose = [True]
-        self.assertEquals(self._m().get_lilypond_code(self.p),
+        self.assertEqual(self._m().get_lilypond_code(self.p),
                           r"\transpose c' d'{ c d e }")
         self.p.header.random_transpose = "atonal", -5, 6
-        self.assertEquals(self._m().get_lilypond_code(self.p),
+        self.assertEqual(self._m().get_lilypond_code(self.p),
                           r"{ d e fis }")
     def test_get_lilypond_code_first_note(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice{ \cadenzaOn c } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice{ \cadenzaOn c } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
         self.p.header.random_transpose = [True]
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), ur"\score{ \new Staff<< \new Voice\transpose c' d'{ \cadenzaOn c } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice\transpose c' d'{ \cadenzaOn c } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
         self.p.header.random_transpose = "atonal", -5, 6
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice{ \cadenzaOn d } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice{ \cadenzaOn d } \new Voice{ \hideNotes c d e } >> \layout { ragged-last = ##t } }")
     def _test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n48 d1/4 o48 n50 d1/4 o50 n52 d1/4 o52")
     def test_play(self):
         self._test_play()
@@ -522,7 +522,7 @@ class TestVoice(MObjTest):
     def test_play_slowly(self):
         question = self.p.m_questions[0]
         question['music'].play_slowly(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t30/4 p0:0 v0:100 n48 d1/4 o48 n50 d1/4 o50 n52 d1/4 o52")
     def test_findfirst(self):
         for p1, p2, s, n in (
@@ -539,16 +539,16 @@ class TestVoice(MObjTest):
             (1, 2, "\nc", "c"),
             ):
             x = Rvoice(s)
-            self.assertEquals((p1, p2), mpdutils.find_possible_first_note(x.m_musicdata), "String failed: %s: %s" % (s, mpdutils.find_possible_first_note(x.m_musicdata)))
-            self.assertEquals(s[p1:p2], n)
+            self.assertEqual((p1, p2), mpdutils.find_possible_first_note(x.m_musicdata), "String failed: %s: %s" % (s, mpdutils.find_possible_first_note(x.m_musicdata)))
+            self.assertEqual(s[p1:p2], n)
     def test_error_handling(self):
         m = self._m(1).get_mpd_music_string(self.p)
         try:
             mpd.parser.parse_to_score_object(m)
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             self._m(1).complete_to_musicdata_coords(self.p, e)
             ec = self._m(1).get_err_context(e, self.p)
-            self.assertEquals(ec,
+            self.assertEqual(ec,
               "Bad input to the music object of type voice made\n"
               "the parser fail to parse the following generated\n"
               "music code:\n"
@@ -576,11 +576,11 @@ class TestErrorHandling(MObjTest):
                 question = self.p.m_questions[0]
                 try:
                     self.p.play_question(question)
-                except MusicObjectException, e:
-                    self.assertEquals(err_context, str(e))
-                except mpd.MpdException, e:
+                except MusicObjectException as e:
+                    self.assertEqual(err_context, str(e))
+                except mpd.MpdException as e:
                     ec = question.music.get_err_context(e, self.p)
-                    self.assertEquals(err_context, ec, "Music failed with musictype %s:\n%s !=\n%s" % (t, err_context, ec))
+                    self.assertEqual(err_context, ec, "Music failed with musictype %s:\n%s !=\n%s" % (t, err_context, ec))
                 else:
                     self.fail("No exception raised in this code: %s" % code)
     def test_1(self):
@@ -704,24 +704,24 @@ class TestRvoice(MObjTest):
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
         self.p._idx = 0
     def test_get_mpd_music_string(self):
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
             "\\staff\\relative c'{\nc d b c\n}")
         self.p.header.random_transpose = (True,)
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
             "\\staff\\transpose d'\\relative c'{\nc d b c\n}")
         self.p.header.random_transpose = ['atonal', -5, 6]
-        self.assertEquals(self._m().get_mpd_music_string(self.p),
+        self.assertEqual(self._m().get_mpd_music_string(self.p),
             "\\staff\\relative d'{\nd e cis d\n}")
-        self.assertEquals(self._m(1).get_mpd_music_string(self.p),
+        self.assertEqual(self._m(1).get_mpd_music_string(self.p),
             "\\staff\\relative d'{\n[ d8 e ] fis16\n}")
-        self.assertEquals(self._m(2).get_mpd_music_string(self.p),
+        self.assertEqual(self._m(2).get_mpd_music_string(self.p),
             "\\staff\\relative d,,{\nd e' cis d\n}")
-        self.assertEquals(self._m(3).get_mpd_music_string(self.p),
+        self.assertEqual(self._m(3).get_mpd_music_string(self.p),
             "\\staff\\relative cis,{\ncis e' cis d\n}")
     def _test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n60 d1/4 o60 n62 d1/4 o62 n59 d1/4 o59 n60 d1/4 o60")
     def test_play(self):
         self._test_play()
@@ -735,19 +735,19 @@ class TestRvoice(MObjTest):
     def test_play_slowly(self):
         question = self.p.m_questions[0]
         question['music'].play_slowly(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t30/4 p0:0 v0:100 n60 d1/4 o60 n62 d1/4 o62 n59 d1/4 o59 n60 d1/4 o60")
     def test_get_lilypond_code(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code(self.p), r"\transpose c' d'\relative c{ c' d b c }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code(self.p), r"\transpose c' d'\relative c{ c' d b c }")
     def test_get_lilypond_code_first_note(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice\transpose c' d'\relative c{ \cadenzaOn c' } \new Voice{ \hideNotes c' d b c } >> \layout { ragged-last = ##t } }")
+        self.assertEqual(self.p.m_questions[0]['music'].get_lilypond_code_first_note(self.p), r"\score{ \new Staff<< \new Voice\transpose c' d'\relative c{ \cadenzaOn c' } \new Voice{ \hideNotes c' d b c } >> \layout { ragged-last = ##t } }")
     def test_bad_first_note(self):
         self.p.header.random_transpose = (True, 0, 0)
         m = self._m(4).get_mpd_music_string(self.p)
         try:
             mpd.parser.parse_to_score_object(m)
-        except mpd.parser.ParseError, e:
-            self.assertEquals(self._m(4).get_err_context(e, self.p),
+        except mpd.parser.ParseError as e:
+            self.assertEqual(self._m(4).get_err_context(e, self.p),
                 "Bad input to the music object of type rvoice made\n"
                 "the parser fail to parse the following generated\n"
                 "music code:\n"
@@ -760,8 +760,8 @@ class TestRvoice(MObjTest):
         m = self._m(5).get_mpd_music_string(self.p)
         try:
             mpd.parser.parse_to_score_object(m)
-        except mpd.InvalidNotenameException, e:
-            self.assertEquals(self._m(5).get_err_context(e, self.p),
+        except mpd.InvalidNotenameException as e:
+            self.assertEqual(self._m(5).get_err_context(e, self.p),
                 "Bad input to the music object of type rvoice made\n"
                 "the parser fail to parse the following generated\n"
                 "music code:\n"
@@ -774,8 +774,8 @@ class TestRvoice(MObjTest):
         m = self._m(6).get_mpd_music_string(self.p)
         try:
             mpd.parser.parse_to_score_object(m)
-        except mpd.InvalidNotenameException, e:
-            self.assertEquals(self._m(6).get_err_context(e, self.p),
+        except mpd.InvalidNotenameException as e:
+            self.assertEqual(self._m(6).get_err_context(e, self.p),
                 "Bad input to the music object of type rvoice made\n"
                 "the parser fail to parse the following generated\n"
                 "music code:\n"
@@ -800,7 +800,7 @@ class TestSatb(MObjTest):
         self.p.m_transpose = mpd.MusicalPitch.new_from_notename("d'")
         self.p._idx = 0
     def test_get_mpd_music_string(self):
-        self.assertEquals(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
+        self.assertEqual(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
             "\\staff{ \\key c \\major\\stemUp <c''> }\n" \
             "\\addvoice{ \\stemDown <e'> }\n" \
             "\\staff{ \\key c \\major\\clef bass \\stemUp <g>}\n" \
@@ -808,7 +808,7 @@ class TestSatb(MObjTest):
         # FIXME Satb only works if the music object is the current selected
         # question. Can we get around this?
         self.p._idx  = 1
-        self.assertEquals(self.p.m_questions[1]['music'].get_mpd_music_string(self.p),
+        self.assertEqual(self.p.m_questions[1]['music'].get_mpd_music_string(self.p),
             "\\staff{ \\key aes \\major\\stemUp <c''> }\n" \
             "\\addvoice{ \\stemDown <as'> }\n" \
             "\\staff{ \\key aes \\major\\clef bass \\stemUp <es'>}\n" \
@@ -816,21 +816,21 @@ class TestSatb(MObjTest):
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n72 n64 n55 n48 d1/4 o72 o64 o55 o48")
     def test_play_arpeggio(self):
         question = self.p.m_questions[0]
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n60 d1/4 o60 n52 d1/4 o52 n55 d1/4 o55 n48 d1/4 o48")
         question = self.p.m_questions[2]
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n60 d1/4 o60 n55 d1/4 o55 n52 d1/4 o52 n55 d1/4 o55 n48 d1/4 o48")
         # Then with transposition
         self.p.header.random_transpose = (True,)
         question['music'].play_arpeggio(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 p0:0 v0:100 n62 d1/4 o62 n57 d1/4 o57 n54 d1/4 o54 n57 d1/4 o57 n50 d1/4 o50")
 
 class TestRhythm(MObjTest):
@@ -845,7 +845,7 @@ class TestRhythm(MObjTest):
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 v9:100 P80 d1/4 o80 P37 d1/8 o37")
     def test_bad_time(self):
         question = self.p.m_questions[1]
@@ -862,7 +862,7 @@ class TestPercussion(MObjTest):
     def test_play(self):
         question = self.p.m_questions[0]
         question['music'].play(self.p, question)
-        self.assertEquals(soundcard.synth.flush_testdata(),
+        self.assertEqual(soundcard.synth.flush_testdata(),
             "t60/4 v9:100 P52 d1/16 o52 P53 d1/16 o53 P55 d1/4 o55")
 
 
@@ -878,9 +878,9 @@ class TestWavfile(MObjTest):
             time.sleep(3)
     def test_get_mpd_music_string(self):
         question = self.p.m_questions[0]
-        self.assertEquals(question['music'].get_mpd_music_string(self.p),
+        self.assertEqual(question['music'].get_mpd_music_string(self.p),
                           "Wavfile:exercises/standard/lesson-files/share/fifth-small-293.33.wav")
-        self.assertEquals(question.music.m_musicdata,
+        self.assertEqual(question.music.m_musicdata,
                           "exercises/standard/lesson-files/share/fifth-small-293.33.wav")
         self.assertTrue(isinstance(question.music, Wavfile))
 
@@ -896,9 +896,9 @@ class TestMidifile(MObjTest):
             time.sleep(3)
     def test_get_mpd_music_string(self):
         question = self.p.m_questions[0]
-        self.assertEquals(question['music'].get_mpd_music_string(self.p),
+        self.assertEqual(question['music'].get_mpd_music_string(self.p),
                           "Midifile:exercises/standard/lesson-files/share/fanfare.midi")
-        self.assertEquals(question.music.m_musicdata,
+        self.assertEqual(question.music.m_musicdata,
                           "exercises/standard/lesson-files/share/fanfare.midi")
         self.assertTrue(isinstance(question.music, Midifile))
 
@@ -973,14 +973,14 @@ class TestLessonfileHeader(MObjTest, I18nSetup):
         }
         question { } #dummy question to avoid NoQuestionsInFileException
         """)
-        self.assertEquals(self.p.header['untranslated'], u"jojo")
-        self.assertEquals(self.p.header['untranslated'].cval, u"jojo")
-        self.assertEquals(self.p.header['translated'], u"dur")
-        self.assertEquals(self.p.header['translated'].cval, u"major")
-        self.assertEquals(self.p.header.untranslated, u"jojo")
-        self.assertEquals(self.p.header.untranslated.cval, u"jojo")
-        self.assertEquals(self.p.header.translated, u"dur")
-        self.assertEquals(self.p.header.translated.cval, u"major")
+        self.assertEqual(self.p.header['untranslated'], "jojo")
+        self.assertEqual(self.p.header['untranslated'].cval, "jojo")
+        self.assertEqual(self.p.header['translated'], "dur")
+        self.assertEqual(self.p.header['translated'].cval, "major")
+        self.assertEqual(self.p.header.untranslated, "jojo")
+        self.assertEqual(self.p.header.untranslated.cval, "jojo")
+        self.assertEqual(self.p.header.translated, "dur")
+        self.assertEqual(self.p.header.translated.cval, "major")
     def test_infile_translations_discard(self):
         self.do_file("""
         header {
@@ -991,8 +991,8 @@ class TestLessonfileHeader(MObjTest, I18nSetup):
         """)
         # This test is run with LANGUAGE='no', so the 'et' translation
         # is discarded
-        self.assertEquals(self.p.header.title, "C-locale header")
-        self.assertEquals(self.p.header.title.cval, "C-locale header")
+        self.assertEqual(self.p.header.title, "C-locale header")
+        self.assertEqual(self.p.header.title.cval, "C-locale header")
 
 class TestLessonfileQuestion(MObjTest, I18nSetup):
     def setUp(self):
@@ -1005,16 +1005,16 @@ class TestLessonfileQuestion(MObjTest, I18nSetup):
         question { # question has no name
         }
         """)
-        self.assertEquals(self.p.m_questions[0].name, u"untranslated")
-        self.assertEquals(self.p.m_questions[0].name.cval, u"untranslated")
-        self.assertEquals(self.p.m_questions[1].name, u"dur")
-        self.assertEquals(self.p.m_questions[1].name.cval, u"major")
+        self.assertEqual(self.p.m_questions[0].name, "untranslated")
+        self.assertEqual(self.p.m_questions[0].name.cval, "untranslated")
+        self.assertEqual(self.p.m_questions[1].name, "dur")
+        self.assertEqual(self.p.m_questions[1].name.cval, "major")
         self.assertRaises(AttributeError, lambda : self.p.m_questions[2].name)
     def test_setattr(self):
         q = dataparser.Question()
         q.var = 1
-        self.assertEquals(q.var, 1)
-        self.assertEquals(q['var'], 1)
+        self.assertEqual(q.var, 1)
+        self.assertEqual(q['var'], 1)
 
 class TestLessonfileMisc(TmpFileBase):
     parserclass = IdPropertyLessonfile
@@ -1023,9 +1023,9 @@ class TestLessonfileMisc(TmpFileBase):
         d = Rvoice("a b c")
         e = Rvoice("a b c")
         f = Rvoice("c c c")
-        self.assertNotEquals(c, d)
-        self.assertNotEquals(d, e)
-        self.assertNotEquals(d, f)
+        self.assertNotEqual(c, d)
+        self.assertNotEqual(d, e)
+        self.assertNotEqual(d, f)
     def test_IdPropertyLessonfileFilter(self):
         s = """header {
                 qprops = "name", "inversion"
@@ -1037,8 +1037,8 @@ class TestLessonfileMisc(TmpFileBase):
         p = self.do_file(s)
         # One question should be discarded because it does not have
         # the inversion variable
-        self.assertEquals(len(p.m_discards), 1)
-        self.assertEquals(len(p.m_questions), 1)
+        self.assertEqual(len(p.m_discards), 1)
+        self.assertEqual(len(p.m_questions), 1)
     def test_IdPropertyLessonfileFilter2(self):
         s = 'header { qprops = "name", "inversion" qprop_labels = "Name", "Inversion" }\n' \
             'question { name = "one" inversion=1} \n' \
@@ -1047,8 +1047,8 @@ class TestLessonfileMisc(TmpFileBase):
         # No questions are discaded.
         # top is not a property since it is not added to qprops, so
         # thats why the first question is not discarded.
-        self.assertEquals(len(p.m_discards), 0)
-        self.assertEquals(len(p.m_questions), 2)
+        self.assertEqual(len(p.m_discards), 0)
+        self.assertEqual(len(p.m_questions), 2)
     def test_IdPropertyLessonfile_qprops(self):
         s = 'header { qprops = "name", "inversion", "toptone" qprop_labels = "Name", "Inversion", "Toptone" }\n' \
             'question { name = "one" inversion=1} \n' \
@@ -1058,7 +1058,7 @@ class TestLessonfileMisc(TmpFileBase):
         # two properties, of the tree listed in qprops. The 'top' variable
         # in the second question does not affect what is or is not discarded
         # because is it not a property (not defined in qprops)
-        self.assertEquals(len(p.m_questions), 2)
+        self.assertEqual(len(p.m_questions), 2)
     def test_ChordLessonfileFilter(self):
         s = """header { }
             question { name = "one" }
@@ -1068,7 +1068,7 @@ class TestLessonfileMisc(TmpFileBase):
         p = self.do_file(s)
         # One question should be discarded because it does not have
         # the inversion variable
-        self.assertEquals(len(p.m_questions), 1)
+        self.assertEqual(len(p.m_questions), 1)
     def test_ChordLessonfileFilter2(self):
         s = 'header { qprops = "name", "inversion" qprop_labels = "Name", "Inversion" }\n' \
             'question { name = "one" inversion=1} \n' \
@@ -1078,7 +1078,7 @@ class TestLessonfileMisc(TmpFileBase):
         # No questions are discaded.
         # top is not a property since it is not added to qprops, so
         # thats why the first question is not discarded.
-        self.assertEquals(len(p.m_questions), 2)
+        self.assertEqual(len(p.m_questions), 2)
     def test_IdProperty(self):
         """
         Once, a single item qprops did not work.
@@ -1087,7 +1087,7 @@ class TestLessonfileMisc(TmpFileBase):
             'question { name = "major" music = chord("c e g") } '
         self.p = IdPropertyLessonfile()
         p = self.do_file(s)
-        self.assertEquals(p.header.qprops, [u'name'])
+        self.assertEqual(p.header.qprops, ['name'])
     def test_nrandom(self):
         self._worker_Xrandom("nrandom")
     def test_prandom(self):
@@ -1108,25 +1108,25 @@ class TestLessonfileMisc(TmpFileBase):
         for idx in range(2):
             st = p.m_questions[idx]['style']
             for x in range(20):
-                self.assert_(str(st) in styles)
-                self.assert_(unicode(st) in styles)
+                self.assertTrue(str(st) in styles)
+                self.assertTrue(str(st) in styles)
                 st.randomize()
             # This test only works with nrandom, because prandom will
             # return a possible different value every time.
             if rfunc == 'nrandom':
                 l = Gtk.Label(label=st)
-                self.assert_(l.get_text() == unicode(st), "%s and gtk does not cooperate." % rfunc)
+                self.assertTrue(l.get_text() == str(st), "%s and gtk does not cooperate." % rfunc)
 
 class TestLabelObject(unittest.TestCase):
     def test_construct(self):
         l = LabelObject("pangomarkup", "abc")
-        self.assertEquals(l.cval, ("pangomarkup", "abc"))
+        self.assertEqual(l.cval, ("pangomarkup", "abc"))
     def test_rn_markup(self):
         for s, v in (
             ("Imaj7-", [('I', 'maj', '7', '-')]),
             ("bIIIm7 -", [('bIII', 'm', '7', ' -')]),
-            (u"♯IIIm7 -", [(u'♯III', 'm', '7', ' -')]),
-            (u"♭IIIm7 -", [(u'♭III', 'm', '7', ' -')]),
+            ("♯IIIm7 -", [('♯III', 'm', '7', ' -')]),
+            ("♭IIIm7 -", [('♭III', 'm', '7', ' -')]),
             ("Imaj7-IIm7-V9-Imaj7", [('I', 'maj', '7', '-'),
                                      ('II', 'm', '7', '-'),
                                      ('V', '', '9', '-'),
@@ -1136,7 +1136,7 @@ class TestLabelObject(unittest.TestCase):
             ("Imaj7-V7", [('I', 'maj', '7', '-'), ('V', '', '7', '')]),
             ("Imaj7  -IIm9", [('I', 'maj', '7', '  -'), ('II', 'm', '9', '')]),
                 ):
-            self.assertEquals(rnc_markup_tokenizer(s), v, (rnc_markup_tokenizer(s), v))
+            self.assertEqual(rnc_markup_tokenizer(s), v, (rnc_markup_tokenizer(s), v))
 
     def test_chordname_markup(self):
         for s, v in (
@@ -1153,7 +1153,7 @@ class TestLabelObject(unittest.TestCase):
             ('gm:7/d', [('g', 'm', '7', 'd')]),
             ('gm:13/5-/d', [('g', 'm', '13/5-', 'd')]),
             ):
-            self.assertEquals(chordname_markup_tokenizer(s), v)
+            self.assertEqual(chordname_markup_tokenizer(s), v)
 
 class TestOurLessonFiles(unittest.TestCase):
     def test_test_requirement(self):
@@ -1170,9 +1170,9 @@ class TestOurLessonFiles(unittest.TestCase):
                 if fn.endswith("~") or fn.startswith("."):
                     continue
                 f = parse_lesson_file_header(fullname)
-                self.failIf(f is None, "Parsing lesson header failed: %s" % fullname)
+                self.assertFalse(f is None, "Parsing lesson header failed: %s" % fullname)
                 if 'test' in f.header:
-                    self.failIf('test_requirement' not in f.header, fullname)
+                    self.assertFalse('test_requirement' not in f.header, fullname)
 
 suite = unittest.makeSuite(TestParser)
 suite.addTest(unittest.makeSuite(TestParserTranslations))

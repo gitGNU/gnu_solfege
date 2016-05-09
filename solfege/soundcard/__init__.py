@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 """
 Api used to export exercises to midi file
 =========================================
@@ -91,7 +91,7 @@ def play_mediafile(typeid, filename):
                 _mediaplayer = osutils.Popen(args=args, startupinfo=info)
             else:
                 _mediaplayer = osutils.Popen(args=args)
-        except OSError, e:
+        except OSError as e:
             raise osutils.BinaryForMediaPlayerException(typeid,
                 cfg.get_string("sound/%s_player" % typeid), e)
 
@@ -127,7 +127,7 @@ def initialise_devicefile(devicefile, devicenum=0, verbose_init=0):
                                                   verbose_init)
     else:#if devicefile == '/dev/sequencer':
         if devicefile != '/dev/sequencer':
-            print "warning: the device file is unknown. Assuming it is /dev/sequencer - compatible"
+            print("warning: the device file is unknown. Assuming it is /dev/sequencer - compatible")
         import solfege.soundcard.oss_sequencer
         synth = solfege.soundcard.oss_sequencer.OSSSequencerSynth(devicefile, devicenum,
                                                 verbose_init)
@@ -368,7 +368,7 @@ percussion_names = [
 
 first_percussion_int_value = 35
 def percussionname_to_int(name):
-    assert isinstance(name, basestring)
+    assert isinstance(name, str)
     return percussion_names.index(name) + first_percussion_int_value
 
 def int_to_percussionname(i):

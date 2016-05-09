@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import errno
 import locale
@@ -26,7 +26,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
-from urlparse import urlparse
+from urllib.parse import urlparse
 import webbrowser
 
 from solfege import mpd
@@ -51,7 +51,7 @@ try:
 except ImportError:
     alsaseq = None
 
-solfege_copyright = u"Copyright © 1999-2008 Tom Cato Amundsen <tca@gnu.org>, and others."
+solfege_copyright = "Copyright © 1999-2008 Tom Cato Amundsen <tca@gnu.org>, and others."
 
 warranty = """
 This program is free software: you can redistribute it and/or modify
@@ -145,9 +145,9 @@ def check_rcfile():
                 " ".join(v[1:]))
     if cfg.get_int("app/rcfileversion") < 17:
         v = cfg.get_string("app/frontpage").split("/")
-        if v[0] == u"exercises" and v[1] != u"standard":
+        if v[0] == "exercises" and v[1] != "standard":
             cfg.set_string("app/frontpage",
-                           u"/".join([v[0], u"standard"] + v[1:]))
+                           "/".join([v[0], "standard"] + v[1:]))
     if cfg.get_int("app/rcfileversion") < 18:
         cfg.del_key("gui/web_browser_as_help_browser")
     if cfg.get_int("app/rcfileversion") < 19:
@@ -213,7 +213,7 @@ class SolfegeApp(cfg.ConfigUtils):
                 try:
                     soundcard.initialise_alsa_sequencer((clientid, portid),
                             self.m_options.verbose_sound_init)
-                except alsaseq.SequencerError, e:
+                except alsaseq.SequencerError as e:
                     logging.debug("initialise_alsa_sequencer failed. Using fake synth.")
                     self.display_sound_init_error_message(e)
                     soundcard.initialise_using_fake_synth(True)
@@ -231,12 +231,12 @@ class SolfegeApp(cfg.ConfigUtils):
             try:
                 soundcard.initialise_winsynth(cfg.get_int("sound/synth_number"),
                       verbose_init=self.m_options.verbose_sound_init)
-            except ImportError, e:
+            except ImportError as e:
                 self.display_sound_init_error_message(e)
                 cfg.set_string("sound/type", "fake-synth")
                 soundcard.initialise_using_fake_synth(True)
                 return
-            except RuntimeError, e:
+            except RuntimeError as e:
                 # We can get here if winmidi.output_devices() in winsynth
                 # __init__ returns no devices. Don't know when, but it could
                 # happen.
@@ -261,7 +261,7 @@ class SolfegeApp(cfg.ConfigUtils):
                              cfg.get_string("sound/device_file"),
                              cfg.get_int("sound/synth_number"),
                              verbose_init=self.m_options.verbose_sound_init)
-            except (soundcard.SoundInitException, OSError, ImportError), e:
+            except (soundcard.SoundInitException, OSError, ImportError) as e:
                 self.m_sound_init_exception = e
                 soundcard.initialise_using_fake_synth(True)
         if cfg.get_string("programs/csound") == "AUTODETECT":
@@ -330,8 +330,8 @@ class SolfegeApp(cfg.ConfigUtils):
             # if the user have written his own exercise module
             if os.path.exists(os.path.normpath(os.path.join(
                             os.path.dirname(filename),
-                            "..", "modules", u"%s.py" % module))):
-                module = u"user:%s/%s" % (
+                            "..", "modules", "%s.py" % module))):
+                module = "user:%s/%s" % (
                     os.path.dirname(filename).split(os.sep)[-2],
                     module)
         if module not in self.m_teachers:
@@ -358,13 +358,13 @@ class SolfegeApp(cfg.ConfigUtils):
         except (lessonfile.LessonfileParseException,
                 dataparser.DataparserException,
                 parsetree.ParseTreeException,
-                IOError), e:
+                IOError) as e:
             cleanup()
             gu.display_exception_message(e, lessonfile=filename)
             return
         if 'm_discards' in dir(self.m_teachers[module].m_P):
             for msg in self.m_teachers[module].m_P.m_discards:
-                print >> sys.stderr, msg
+                print(msg, file=sys.stderr)
         solfege.win.box_dict[module].practise_box.set_sensitive(True)
         solfege.win.box_dict[module].g_config_grid.set_sensitive(True)
         solfege.win.box_dict[module].action_area.set_sensitive(True)
@@ -382,7 +382,7 @@ class SolfegeApp(cfg.ConfigUtils):
         if u.scheme:
             try:
                 webbrowser.open_new(href)
-            except Exception, e:
+            except Exception as e:
                 solfege.win.display_error_message2(_("Error opening web browser"), str(e))
         else:
             solfege.win.display_docfile(u.path)
@@ -438,13 +438,13 @@ class SolfegeApp(cfg.ConfigUtils):
                 g.on_end_practise()
         try:
             cfg.sync()
-        except IOError, e:
+        except IOError as e:
             gu.display_exception_message(e)
         try:
             if solfege.db:
                 solfege.db.conn.commit()
                 solfege.db.conn.close()
-        except sqlite3.ProgrammingError, e:
+        except sqlite3.ProgrammingError as e:
             gu.display_exception_message(e)
         if soundcard.synth:
             soundcard.synth.close()
@@ -552,7 +552,7 @@ class SolfegeApp(cfg.ConfigUtils):
                         try:
                             subprocess.call(
                                 [cfg.get_string(app_cfg_name)] + opts)
-                        except OSError, e:
+                        except OSError as e:
                             raise osutils.BinaryForMediaConvertorException(app_cfg_name,
                                 cfg.get_string(app_cfg_name), e)
 
@@ -604,7 +604,7 @@ class SolfegeApp(cfg.ConfigUtils):
         yield count dicts, where each dict contain the data needed to
         print both the teachers and the students question.
         """
-        counts = {}.fromkeys(range(len(p.m_questions)), 0)
+        counts = {}.fromkeys(list(range(len(p.m_questions))), 0)
         for x in range(count):
             while 1:
                 p.select_random_question()

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 #FIXME: voice1_lowest_ylinepos and stempos in the original parser.py
 # give some alignment we need to implement here too.
@@ -159,7 +159,7 @@ class MusicElement(object):
         assert isinstance(duration, Duration)
         self.m_duration = duration
     def __repr__(self):
-        return unicode(self.__class__)[:-2].replace("<class '", '<') + u" %s at %s>" % (self.m_duration.as_mpd_string(), hex(id(self)))
+        return str(self.__class__)[:-2].replace("<class '", '<') + " %s at %s>" % (self.m_duration.as_mpd_string(), hex(id(self)))
 
 class Note(MusicElement):
     __hash__ = None
@@ -191,7 +191,7 @@ class Note(MusicElement):
             Duration.new_from_string("%s%s" % (m.group('len'), m.group('dots')))
         )
     def __repr__(self):
-        return unicode(self.__class__)[:-2].replace("<class '", '<') + u" %s%s at %s>" % (self.m_musicalpitch.get_octave_notename(), self.m_duration.as_mpd_string(), hex(id(self)))
+        return str(self.__class__)[:-2].replace("<class '", '<') + " %s%s at %s>" % (self.m_musicalpitch.get_octave_notename(), self.m_duration.as_mpd_string(), hex(id(self)))
 
 class Rest(MusicElement):
     def __init__(self, duration):
@@ -250,7 +250,7 @@ class Voice(HasParent):
         NotEnoughtTimeException or similar.
         """
         def __unicode__(self):
-            return u"There is not enough space left in the bar"
+            return "There is not enough space left in the bar"
     class NoteDontBelongHere(Exception):
         """
         raised if we try to beam notes that does not belong to this voice.
@@ -809,7 +809,7 @@ class Bar(object):
             # This conditional is true if the elem we are replacing is shorter
             # than the new one. We must select the correct order to adjust the
             # timeposes so we don't overwrite values
-            if mods.items()[0][0] < mods.items()[0][1]:
+            if list(mods.items())[0][0] < list(mods.items())[0][1]:
                 keys = sorted(mods.keys())
             else:
                 keys = reversed(sorted(mods.keys()))

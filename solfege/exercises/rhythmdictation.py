@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from solfege import abstract
 from solfege.mpd import elems
@@ -59,8 +59,8 @@ class Teacher(abstract.Teacher):
         if 'rhythm' in self.m_P.get_question():
             music_obj = self.m_P.get_question()['rhythm']
             if not isinstance(music_obj, lessonfile.MpdParsable):
-                raise lessonfile.LessonfileException(_(u"The music object named «rhythm» is not a subclass of MpdParsable"),
-                _(u'Read about the «rhythm» variable in the section «Question block» in the chapter named «Extending GNU Solfege» in the user manual.'))
+                raise lessonfile.LessonfileException(_("The music object named «rhythm» is not a subclass of MpdParsable"),
+                _('Read about the «rhythm» variable in the section «Question block» in the chapter named «Extending GNU Solfege» in the user manual.'))
             music = music_obj.get_mpd_music_string(self.m_P)
         else:
             music_obj = self.m_P.get_question()['music']
@@ -125,7 +125,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_w.grab_focus()
             self.g_w.set_score(self.m_t.get_empty_staff())
             self.g_c.set_editable(True)
-        except Exception, e:
+        except Exception as e:
             if isinstance(e, mpd.MpdException):
                 if 'm_mpd_badcode' not in dir(e):
                     e.m_mpd_badcode = self.m_t.m_P.get_question()[e.m_mpd_varname].get_err_context(e, self.m_t.m_P)

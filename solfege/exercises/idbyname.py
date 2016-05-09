@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import GObject
 
@@ -227,7 +227,7 @@ class Gui(abstract.LessonbasedGui):
                 if question.name.cval == button.m_cname:
                     self.m_t.m_P.play_question(question)
                     return
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
     def on_left_click(self, button):
@@ -254,7 +254,7 @@ class Gui(abstract.LessonbasedGui):
                     if self.get_bool("config/auto_repeat_question_if_wrong_answer"):
                         self.m_t.m_P.play_question()
                     self.std_buttons_answer_wrong()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
     def new_question(self, widget=None):
@@ -279,7 +279,7 @@ class Gui(abstract.LessonbasedGui):
                 self.std_buttons_new_question()
                 self.g_bb.grab_focus_first_button()
                 self.g_flashbar.clear()
-        except Exception, e:
+        except Exception as e:
             if isinstance(e, mpd.MpdException):
                 if 'm_mpd_badcode' not in dir(e):
                     e.m_mpd_badcode = self.m_t.m_P.get_question()['music'].get_err_context(e, self.m_t.m_P)

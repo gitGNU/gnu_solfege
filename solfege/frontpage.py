@@ -16,8 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
-from __future__ import with_statement
+
+
 
 import codecs
 import glob
@@ -59,7 +59,7 @@ def get_front_pages_list(debug):
             # filter out bzr revert backups
             if fn.endswith("~"):
                 return False
-            if os.path.split(fn)[1] == u"Makefile":
+            if os.path.split(fn)[1] == "Makefile":
                 return False
             return True
     def add_subdir(subdir):
@@ -67,14 +67,14 @@ def get_front_pages_list(debug):
             v = [os.path.join(subdir, fn) for fn in os.listdir(subdir)]
             return [x for x in v if is_frontpage(x)]
         return []
-    files = [fn for fn in glob.glob(os.path.join(u"exercises", "*", "*"))
+    files = [fn for fn in glob.glob(os.path.join("exercises", "*", "*"))
              if is_frontpage(fn)]
     # The next line is for pre 3.15 compat. We used to place learning
     # trees there.
-    files.extend(add_subdir(os.path.join(filesystem.app_data(), u"learningtrees")))
+    files.extend(add_subdir(os.path.join(filesystem.app_data(), "learningtrees")))
     # This is the recommended place to save front page files
     files.extend([
-        fn for fn in glob.glob(os.path.join(filesystem.user_data(), u"exercises", "*", "*"))
+        fn for fn in glob.glob(os.path.join(filesystem.user_data(), "exercises", "*", "*"))
         if is_frontpage(fn)])
     if not debug:
         try:
@@ -92,15 +92,15 @@ class _TreeCommon(list):
         else:
             list.__init__(self, items)
     def dump(self, stream, level=0):
-        print >> stream, "%s%s([" % (" " * level, self.__class__.__name__)
+        print("%s%s([" % (" " * level, self.__class__.__name__), file=stream)
         self.dump_children(stream, level)
-        print >> stream, "%s ])," % (" " * level)
+        print("%s ])," % (" " * level), file=stream)
     def dump_children(self, stream, level):
         for child in self:
             if isinstance(child, _TreeCommon):
                 child.dump(stream, level + 1)
             else:
-                print >> stream, "%su'%s'," % (" " * (level + 1), escape(child))
+                print("%su'%s'," % (" " * (level + 1), escape(child)), file=stream)
     def iterate_filenames(self):
         """
         Yield the filenames of each lesson that has been added to this
@@ -110,7 +110,7 @@ class _TreeCommon(list):
             if isinstance(child, _TreeCommon):
                 for c in child.iterate_filenames():
                     yield c
-            if isinstance(child, (str, unicode)):
+            if isinstance(child, str):
                 yield child
     def get_use_dict(self):
         """
@@ -132,12 +132,12 @@ class _TreeCommon(list):
     def iterate_flattened(self):
         for child in self:
             yield child
-            if not isinstance(child, unicode):
+            if not isinstance(child, str):
                 for subchild in child.iterate_flattened():
                     yield subchild
     @staticmethod
     def tests_in_sub(sub):
-        if isinstance(sub, unicode):
+        if isinstance(sub, str):
             try:
                 return bool(solfege.lessonfile.infocache.get(sub, 'test'))
             except solfege.lessonfile.infocache.FileNotFound:
@@ -167,21 +167,21 @@ class _TreeCommon(list):
             return x
 
 class _NamedTreeCommon(_TreeCommon):
-    def __init__(self, name=u'', listitems=[]):
-        assert isinstance(name, unicode)
+    def __init__(self, name='', listitems=[]):
+        assert isinstance(name, str)
         _TreeCommon.__init__(self, listitems)
         self.m_name = name
     def dump(self, stream, level=0):
-        print >> stream, "%s%s(_(u'%s'), [" % (" " * level, self.__class__.__name__, escape(self.m_name))
+        print("%s%s(_(u'%s'), [" % (" " * level, self.__class__.__name__, escape(self.m_name)), file=stream)
         self.dump_children(stream, level)
-        print >> stream, "%s ])," % (" " * level)
+        print("%s ])," % (" " * level), file=stream)
 
 class LinkList(_NamedTreeCommon):
     """
     A list of links leading to exercises or new pages.
     """
     def append(self, item):
-        assert isinstance(item, (str, unicode, Page))
+        assert isinstance(item, (str, Page))
         super(LinkList, self).append(item)
     def __str__(self):
         return "LinkList(_('%s')# len: %i)" % (self.m_name, len(self))
@@ -194,8 +194,8 @@ class Column(_TreeCommon):
         return "Column(#len: %i)" % len(self)
 
 class Page(_NamedTreeCommon):
-    def __init__(self, name=u'', listitems=[]):
-        assert isinstance(name, unicode)
+    def __init__(self, name='', listitems=[]):
+        assert isinstance(name, str)
         _NamedTreeCommon.__init__(self, name, listitems)
         self.m_modified = False
     def __repr__(self):
@@ -227,9 +227,9 @@ class FileHeader(_TreeCommon):
         _TreeCommon.__init__(self, [page])
         self.m_version = version
     def dump(self, stream, level=0):
-        print >> stream, "%s%s(%s, " % (" " * level, self.__class__.__name__, self.m_version)
+        print("%s%s(%s, " % (" " * level, self.__class__.__name__, self.m_version), file=stream)
         self.dump_children(stream, level)
-        print >> stream, "%s )" % (" " * level)
+        print("%s )" % (" " * level), file=stream)
     def save_file(self, filename):
         """
         Rules:
@@ -282,7 +282,7 @@ def parse_tree(s, C_locale=False):
             # We do the isinstance check because this way we can handle
             # people manually editing the data file and adding strings that
             # are plain ascii, but not marked as unicode ( u'' )
-            return s if isinstance(s, unicode) else unicode(s)
+            return s if isinstance(s, str) else str(s)
         ifunc = ifu
     else:
         # The headings and links to exercises or pages should not have
@@ -291,7 +291,7 @@ def parse_tree(s, C_locale=False):
         # them, if found, in the string. This way we can reuse strings
         # with accels that are translated, saving translator work.
         def _s(s):
-            return _(s).replace("_", "").replace(u"…", "")
+            return _(s).replace("_", "").replace("…", "")
         ifunc = _s
     namespace = {
         'FileHeader': FileHeader,
@@ -304,7 +304,7 @@ def parse_tree(s, C_locale=False):
     }
     try:
         ret = eval(s, namespace, namespace)
-    except Exception, e:
+    except Exception as e:
         raise FrontPageException(str(e))
     if isinstance(ret, FileHeader):
         return ret[0]

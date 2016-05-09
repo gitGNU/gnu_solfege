@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from solfege import gu
 from solfege import abstract
@@ -99,10 +99,10 @@ class Gui(abstract.LessonbasedGui):
                 self.g_w.grab_focus()
                 self.g_w.set_score(self.m_t.m_score)
                 self.g_c.set_editable(True)
-        except Duration.BadStringException, e:
-            gu.dialog_ok("Lesson file error", secondary_text=u"Bad rhythm string in the elements variable of the lessonfile. Only digits and dots expected: %s" % unicode(e))
+        except Duration.BadStringException as e:
+            gu.dialog_ok("Lesson file error", secondary_text="Bad rhythm string in the elements variable of the lessonfile. Only digits and dots expected: %s" % str(e))
             exception_cleanup()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
     def guess_answer(self, *w):

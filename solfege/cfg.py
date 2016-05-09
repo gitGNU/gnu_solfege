@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-from __future__ import absolute_import
+
 """
 TODO:
     - cfg.get_list
@@ -97,7 +97,7 @@ _system_filename = None
 data = {}
 
 def split(key):
-    v = key.rpartition(u"/")
+    v = key.rpartition("/")
     return v[0], v[2]
 
 def parse_file_into_dict(dictionary, filename):
@@ -134,7 +134,7 @@ def _maybe_create_key(key):
         data[section] = {}
 
 def iterate_sections():
-    for n in data.keys():
+    for n in list(data.keys()):
         yield n
 ########################
 ## set_XXXX functions ##
@@ -143,14 +143,14 @@ def iterate_sections():
 def set_string(key, val):
     _maybe_create_key(key)
     section, k = split(key)
-    if not isinstance(val, unicode):
+    if not isinstance(val, str):
         val = val.decode("utf-8")
     oldval = get_string(key)
     data[section][k] = val
     if key in _watches and (oldval != get_string(key)):
         if key in _blocked_watches and _blocked_watches[key] > 0:
             return
-        for cb in _watches[key].values():
+        for cb in list(_watches[key].values()):
             cb(key)
 
 def set_int(key, val):
@@ -162,7 +162,7 @@ def set_int(key, val):
     if key in _watches and (oldval != get_string(key)):
         if key in _blocked_watches and _blocked_watches[key] > 0:
             return
-        for cb in _watches[key].values():
+        for cb in list(_watches[key].values()):
             cb(key)
 
 def set_float(key, val):
@@ -174,7 +174,7 @@ def set_float(key, val):
     if key in _watches and (oldval != get_string(key)):
         if key in  _blocked_watches and _blocked_watches[key] > 0:
             return
-        for cb in _watches[key].values():
+        for cb in list(_watches[key].values()):
             cb(key)
 
 def set_bool(key, val):
@@ -331,11 +331,11 @@ def initialise(app_defaults_filename, system_filename, user_filename):
         try:
             data = parse_file_into_dict({}, app_defaults_filename)
         except CfgParseException:
-            print "-" * 60
-            print "The program failed to parse default.config. This means that"
-            print "you have modified the file, because it was ok then Solfege"
-            print "was released. Fix the file yourself, or reinstall Solfege."
-            print "-" * 60
+            print("-" * 60)
+            print("The program failed to parse default.config. This means that")
+            print("you have modified the file, because it was ok then Solfege")
+            print("was released. Fix the file yourself, or reinstall Solfege.")
+            print("-" * 60)
             raise
     else:
         data = {}

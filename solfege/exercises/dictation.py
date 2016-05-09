@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import Gtk
 
@@ -80,7 +80,7 @@ class Gui(abstract.LessonbasedGui):
         self.m_t.m_P.select_previous()
         try:
             self.display_start_of_music()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, self.exception_cleanup):
                 raise
         else:
@@ -92,7 +92,7 @@ class Gui(abstract.LessonbasedGui):
         self.m_t.m_P.select_next()
         try:
             self.display_start_of_music()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, self.exception_cleanup):
                 raise
         else:
@@ -106,7 +106,7 @@ class Gui(abstract.LessonbasedGui):
             return
         try:
             self.m_t.m_P.play_question()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, soundcard.synth.stop):
                 raise
     def on_end_practise(self):
@@ -118,7 +118,7 @@ class Gui(abstract.LessonbasedGui):
         try:
             self.g_music_displayer.display(self.m_t.m_P.get_music(),
                             self.get_int('config/feta_font_size=20'))
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
     def _update(self):
@@ -135,7 +135,7 @@ class Gui(abstract.LessonbasedGui):
                     cfg.get_int('config/preferred_instrument'),
                     cfg.get_int('config/preferred_instrument_volume'),
                     start, end)
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, soundcard.synth.stop):
                     raise
         for i in self.g_partbox.get_children():
@@ -180,7 +180,7 @@ class Gui(abstract.LessonbasedGui):
             else:
                 self.g_music_displayer.display(self.m_t.m_P.get_music(),
                             fontsize, Rat(0, 1))
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             if self.m_t.m_P.get_clue_music():
                 e.m_mpd_varname = 'clue_music'
             else:
@@ -206,7 +206,7 @@ class Gui(abstract.LessonbasedGui):
         self.action_area.set_sensitive(True)
         try:
             self.display_start_of_music()
-        except Exception, e:
+        except Exception as e:
             def cleanup_function():
                 self.m_t.q_status = self.QSTATUS_NO
                 self.g_play.set_sensitive(False)

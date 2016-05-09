@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 import codecs
 
 class Heading(object):
@@ -29,7 +29,7 @@ class Heading(object):
 class Report(list):
     pass
 
-class Paragraph(unicode):
+class Paragraph(str):
     pass
 
 class Table(list):
@@ -47,51 +47,51 @@ class ReportWriterCommon(object):
 
 class HtmlReport(ReportWriterCommon):
     def write_report(self, report):
-        print >> self.m_outfile, """<html>
+        print("""<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <style type="text/css">
 th { text-align: left; border-bottom: 1px solid black}
 </style>
 </head>
-<body>"""
+<body>""", file=self.m_outfile)
         for elem in report:
             f = {'Heading': self.write_heading,
                  'Paragraph': self.write_paragraph,
                  'Table': self.write_table,
                 }[elem.__class__.__name__](elem)
-        print >> self.m_outfile, "</body>\n</html>"
+        print("</body>\n</html>", file=self.m_outfile)
     def write_heading(self, heading):
-        print >> self.m_outfile, "<h%(level)i>%(str)s</h%(level)i>" % {
+        print("<h%(level)i>%(str)s</h%(level)i>" % {
             'level': heading.m_level,
-            'str': heading.m_text}
+            'str': heading.m_text}, file=self.m_outfile)
     def write_paragraph(self, paragraph):
-        print >> self.m_outfile, "<p>%s</p>" % paragraph
+        print("<p>%s</p>" % paragraph, file=self.m_outfile)
     def write_table(self, table):
-        print >> self.m_outfile, "<table border='0'>"
+        print("<table border='0'>", file=self.m_outfile)
         for row in table:
             self.write_tablerow(row)
-        print >> self.m_outfile, "</table>"
+        print("</table>", file=self.m_outfile)
     def write_tablerow(self, row):
-        print >> self.m_outfile, "<tr>"
+        print("<tr>", file=self.m_outfile)
         for t in row:
-            print >> self.m_outfile, "<td>%s</td>" % t
-        print >> self.m_outfile, "</tr>"
+            print("<td>%s</td>" % t, file=self.m_outfile)
+        print("</tr>", file=self.m_outfile)
 
 class LatexReport(ReportWriterCommon):
     def write_report(self, report):
-        print >> self.m_outfile, r"\documentclass{article}"
-        print >> self.m_outfile, r"\begin{document}"
+        print(r"\documentclass{article}", file=self.m_outfile)
+        print(r"\begin{document}", file=self.m_outfile)
         for elem in report:
             f = {'Heading': self.write_heading,
                  'Paragraph': self.write_paragraph,
                  'Table': self.write_table,
             }[elem.__class__.__name__](elem)
-        print >> self.m_outfile, r"\end{document}"
+        print(r"\end{document}", file=self.m_outfile)
     def write_heading(self, heading):
-        print >> self.m_outfile, r"\section{%s}" % heading.m_text
+        print(r"\section{%s}" % heading.m_text, file=self.m_outfile)
     def write_paragraph(self, paragraph):
-        print >> self.m_outfile, paragraph
+        print(paragraph, file=self.m_outfile)
     def write_table(self, t):
         pass
     def write_tablerow(self, t):

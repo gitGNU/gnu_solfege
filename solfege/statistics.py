@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 
 import hashlib
 import logging
@@ -48,13 +48,13 @@ def hash_lessonfile_text(s):
 
 
 def hash_of_lessonfile(filename):
-    assert isinstance(filename, unicode)
+    assert isinstance(filename, str)
     return hash_lessonfile_text(open(lessonfile.uri_expand(filename), 'r').read())
 
 
 class DB(object):
-    type_int_dict = {int: 0, unicode: 1, float: 2}
-    int_type_dict = {0: int, 1: unicode, 2: float}
+    type_int_dict = {int: 0, str: 1, float: 2}
+    int_type_dict = {0: int, 1: str, 2: float}
     class VariableTypeError(Exception): pass
     class VariableUndefinedError(Exception): pass
     class FileNotInDB(Exception): pass
@@ -73,7 +73,7 @@ class DB(object):
             statistics_filename = self.get_statistics_filename()
             # We make a backup of the statistics file since Solfege 3.21.2 will
             # delete the statistics for the elembuilder exercise.
-            bk_filename = u"%s.pre-3.21.2.backup" % statistics_filename
+            bk_filename = "%s.pre-3.21.2.backup" % statistics_filename
             if os.path.exists(statistics_filename) and not os.path.exists(bk_filename):
                 shutil.copyfile(statistics_filename, bk_filename)
             head, tail = os.path.split(statistics_filename)
@@ -162,7 +162,7 @@ class DB(object):
         columns = [x[1] for x in
             self.conn.execute('pragma table_info(lessonfiles)').fetchall()]
         # true if the database is created by solfege 3.15.0 - 3.15.2
-        if u'uuid' in columns:
+        if 'uuid' in columns:
             logging.debug("statistics: dropping tables because the database is from solfege-3.15.0-3.15.2")
             self.remove_tables()
             self.create_tables()
@@ -275,8 +275,8 @@ class DB(object):
                     "(fileid, timestamp, sessiontype) "
                     "values (?, ?, ?)",
                     (fileid, timestamp, 1))
-            except sqlite3.IntegrityError, e:
-                logging.error(u"%s, %s, %s", e, fileid, timestamp)
+            except sqlite3.IntegrityError as e:
+                logging.error("%s, %s, %s", e, fileid, timestamp)
         # Insert all practise sessions into sessioninfo
         for fileid, timestamp in self.conn.execute("select distinct fileid, timestamp from sessions"):
             # This can fail because 3.14.11 and earlier had a bug where the same
@@ -286,8 +286,8 @@ class DB(object):
                     "(fileid, timestamp, sessiontype) "
                     "values (?, ?, ?)",
                     (fileid, timestamp, 0))
-            except sqlite3.IntegrityError, e:
-                logging.error(u"%s, %s, %s", e, fileid, timestamp)
+            except sqlite3.IntegrityError as e:
+                logging.error("%s, %s, %s", e, fileid, timestamp)
         # Copy all tests from the obsolete "tests" table to "sessions"
         for a, b, c, d in self.conn.execute("select fileid, timestamp, answerkey, guessed from tests"):
             # This can fail because 3.14.11 and earlier had a bug where the same
@@ -297,8 +297,8 @@ class DB(object):
                     "(fileid, timestamp, answerkey, guessed) "
                     "values (?, ?, ?, ?)",
                     (a, b, c, d))
-            except sqlite3.IntegrityError, e:
-                logging.error(u"%s, %s, %s", e, fileid, timestamp)
+            except sqlite3.IntegrityError as e:
+                logging.error("%s, %s, %s", e, fileid, timestamp)
         for fileid, filename in self.conn.execute(
                 "select sessioninfo.fileid, lessonfiles.filename "
                 "from sessioninfo, lessonfiles "
@@ -455,11 +455,11 @@ class DB(object):
             self.conn.execute("insert into variables "
                     "(variable_name, type, value) "
                     "values (?, ?, ?)",
-                    (name, self.type_int_dict[type(value)], unicode(value)))
+                    (name, self.type_int_dict[type(value)], str(value)))
         else:
             self.conn.execute("update variables "
                 "set value=? where variable_name=?",
-                (unicode(value), name))
+                (str(value), name))
     def get_variable(self, name):
         cursor = self.conn.execute('select type, value from variables where variable_name=?', (name,))
         try:
@@ -515,7 +515,7 @@ class AbstractStatistics(object):
             c = [x[0] for x in list(c)]
         v = [self.int_if_int(x) for x in c]
         v.sort()
-        return [unicode(x) for x in v]
+        return [str(x) for x in v]
     def get_statistics(self, seconds):
         """
         return a dict with statistics more recent than 'seconds' seconds.
@@ -597,21 +597,21 @@ class AbstractStatistics(object):
         row = cursor.execute(
                 "select count from sessions where fileid=? and timestamp=? "
                 "and answerkey=? and guessed=?",
-                (fileid, self.m_timestamp, unicode(question), unicode(answer))).fetchone()
+                (fileid, self.m_timestamp, str(question), str(answer))).fetchone()
         if not row:
             cursor.execute(
                 "insert into sessions "
                 "(fileid, timestamp, answerkey, guessed, count) "
                 "values(?, ?, ?, ?, ?)",
                 (fileid, self.m_timestamp,
-                 unicode(question), unicode(answer), 1))
+                 str(question), str(answer), 1))
         else:
             assert cursor.fetchone() is None
             cursor.execute(
                 "update sessions set count=? where "
                 "fileid=? and timestamp=? and answerkey=? and guessed=?",
                 (row[0] + 1, fileid,
-                 self.m_timestamp, unicode(question), unicode(answer)))
+                 self.m_timestamp, str(question), str(answer)))
         solfege.db.conn.commit()
     def add_wrong(self, question, answer):
         self._add(question, answer)

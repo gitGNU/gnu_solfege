@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import logging
 from solfege.soundcard.synth_common import SynthCommon
 from solfege.soundcard import winmidi
@@ -27,7 +27,7 @@ class WinSynth(SynthCommon):
         SynthCommon.__init__(self)
         try:
             self.__driver = winmidi.Winmidi(devnum)
-        except RuntimeError, e:
+        except RuntimeError as e:
             if not winmidi.output_devices():
                 e.args = e.args + (_("No MIDI output devices available."),)
                 raise
@@ -47,7 +47,7 @@ class WinSynth(SynthCommon):
         self.play_midieventstream(MidiEventStream(*tracks))
     def play_midieventstream(self, midieventstream):
         if self.__driver is None:
-            raise RuntimeError, "Attempted to use synth after closing."
+            raise RuntimeError("Attempted to use synth after closing.")
         self.__driver.reset(self.m_devnum)
         # bigger magic plays slower
         magic = 1440000

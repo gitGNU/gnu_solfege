@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import logging
 from solfege.soundcard import oss_common
 from solfege.soundcard import solfege_c_midi
@@ -39,7 +39,7 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
     def reset(self):
         # list of available voices, number depends on the soundcard.
         # AWE32 and GUS has 32, OPL3: 18, OPL2: 9
-        self.m_voices = range(self.m_num_voices)
+        self.m_voices = list(range(self.m_num_voices))
         # dictionary remembering what instrument we have set on the
         # different channels. There are by definition NUM_CHANNELS channels
         self.m_channel_patches = {}

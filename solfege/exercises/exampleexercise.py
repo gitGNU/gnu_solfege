@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -113,7 +113,7 @@ class Gui(abstract.Gui):
         if the 'New' button is insensitive.
         """
         self.std_buttons_new_question()
-        print "New question"
+        print("New question")
     def on_start_practise(self):
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()

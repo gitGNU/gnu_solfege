@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 """
 FIXME update.
 In addition to the names in this file, only this is public in
@@ -71,7 +71,7 @@ def music_to_track(music, start=None, end=None):
 ##################
 
 def transpose_notename(n, t):
-    assert isinstance(n, basestring)
+    assert isinstance(n, str)
     assert isinstance(t, int)
     # 1 2 sekund
     # 3 4 ters

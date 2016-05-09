@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 
 import os
 import shutil
@@ -29,7 +29,7 @@ from solfege import gu
 
 class NewProfileDialog(Gtk.Dialog):
     def __init__(self):
-        Gtk.Dialog.__init__(self, _(u"_Create profile\u2026").replace(u"\u2026", "").replace("_", ""))
+        Gtk.Dialog.__init__(self, _("_Create profile\u2026").replace("\u2026", "").replace("_", ""))
         self.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                          Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT)
         vbox = gu.hig_dlg_vbox()
@@ -65,28 +65,28 @@ class NewProfileDialog(Gtk.Dialog):
         self.g_entry.set_text(_("New Profile"))
         self.set_default_response(Gtk.ResponseType.ACCEPT)
     def on_entry_changed(self, *w):
-        pdir = os.path.join(filesystem.app_data(), u"profiles",
+        pdir = os.path.join(filesystem.app_data(), "profiles",
                             self.g_entry.get_text().decode("utf-8"))
         self.g_profile_location.set_text(pdir)
         if os.path.exists(pdir):
-            self.g_status.set_text(_(u"The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
+            self.g_status.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
             self.g_statusbox.show()
             self.set_response_sensitive(Gtk.ResponseType.ACCEPT, False)
         else:
             self.g_statusbox.hide()
-            self.g_status.set_text(u"")
+            self.g_status.set_text("")
             self.set_response_sensitive(Gtk.ResponseType.ACCEPT, True)
 
 
 class RenameProfileDialog(Gtk.Dialog):
     def __init__(self, oldname):
-        Gtk.Dialog.__init__(self, _(u"_Rename profile\u2026").replace("_", "").replace(u"\u2026", ""))
+        Gtk.Dialog.__init__(self, _("_Rename profile\u2026").replace("_", "").replace("\u2026", ""))
         self.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                         Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT)
         vbox = gu.hig_dlg_vbox()
         self.vbox.pack_start(vbox, True, True, 0)
 
-        label = Gtk.Label(label=_(u"Rename the profile «%s» to:") % oldname)
+        label = Gtk.Label(label=_("Rename the profile «%s» to:") % oldname)
         label.set_alignment(0.0, 0.5)
         vbox.pack_start(label, False, False, 0)
 
@@ -102,14 +102,14 @@ class RenameProfileDialog(Gtk.Dialog):
         self.set_default_response(Gtk.ResponseType.ACCEPT)
     def on_entry_changed(self, w):
         s = self.g_entry.get_text().decode("utf-8")
-        pdir = os.path.join(filesystem.app_data(), u"profiles", s)
+        pdir = os.path.join(filesystem.app_data(), "profiles", s)
         ok = False
         if not s:
             self.g_info.show()
             self.g_info.set_text("Empty string not allowed")
         elif os.path.exists(pdir):
             self.g_info.show()
-            self.g_info.set_text(_(u"The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
+            self.g_info.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
         else:
             self.g_info.hide()
             ok = True
@@ -137,15 +137,15 @@ class ProfileManagerBase(Gtk.Dialog):
         vbox.pack_start(hbox, True, True, 0)
         button_box = Gtk.VBox()
 
-        self.g_create_profile = Gtk.Button.new_with_mnemonic(_(u"_Create profile\u2026"))
+        self.g_create_profile = Gtk.Button.new_with_mnemonic(_("_Create profile\u2026"))
         self.g_create_profile.connect('clicked', self.on_create_profile)
         button_box.pack_start(self.g_create_profile, False, False, 0)
 
-        self.g_rename_profile = Gtk.Button.new_with_mnemonic(_(u"_Rename profile\u2026"))
+        self.g_rename_profile = Gtk.Button.new_with_mnemonic(_("_Rename profile\u2026"))
         self.g_rename_profile.connect('clicked', self.on_rename_profile)
         button_box.pack_start(self.g_rename_profile, False, False, 0)
 
-        self.g_delete_profile = Gtk.Button.new_with_mnemonic(_(u"_Delete profile\u2026"))
+        self.g_delete_profile = Gtk.Button.new_with_mnemonic(_("_Delete profile\u2026"))
         self.g_delete_profile.connect('clicked', self.on_delete_profile)
         button_box.pack_start(self.g_delete_profile, False, False, 0)
 
@@ -180,13 +180,13 @@ class ProfileManagerBase(Gtk.Dialog):
         ret = dlg.run()
         if ret == Gtk.ResponseType.ACCEPT:
             pdir = os.path.join(filesystem.app_data(),
-                                u"profiles", dlg.g_entry.get_text().decode("utf-8"))
+                                "profiles", dlg.g_entry.get_text().decode("utf-8"))
             if not os.path.exists(pdir):
                 try:
                     os.makedirs(pdir)
                     self.g_liststore.append((dlg.g_entry.get_text().decode("utf-8"),))
                     self.g_tw.set_cursor((len(self.g_liststore)-1,))
-                except OSError, e:
+                except OSError as e:
                     gu.display_exception_message(e)
         dlg.destroy()
     def on_rename_profile(self, w):
@@ -202,12 +202,12 @@ class ProfileManagerBase(Gtk.Dialog):
             it = self.g_liststore.get_iter(path)
             try:
                 os.rename(os.path.join(
-                    filesystem.app_data(), u"profiles", self.get_profile()),
+                    filesystem.app_data(), "profiles", self.get_profile()),
                     os.path.join(filesystem.app_data(),
-                        u"profiles", dlg.g_entry.get_text().decode("utf-8")))
+                        "profiles", dlg.g_entry.get_text().decode("utf-8")))
                 if rename_default:
                     self.m_default_profile = dlg.g_entry.get_text().decode("utf-8")
-            except OSError, e:
+            except OSError as e:
                 gu.display_exception_message(e)
                 dlg.destroy()
                 return
@@ -216,12 +216,12 @@ class ProfileManagerBase(Gtk.Dialog):
                 0, dlg.g_entry.get_text().decode("utf-8"))
         dlg.destroy()
     def on_delete_profile(self, w):
-        if gu.dialog_yesno(_(u"Permanently delete the user profile «%s»?") % self.get_profile(), self):
+        if gu.dialog_yesno(_("Permanently delete the user profile «%s»?") % self.get_profile(), self):
             path, column = self.g_tw.get_cursor()
             it = self.g_liststore.get_iter(path)
             try:
-                shutil.rmtree(os.path.join(filesystem.app_data(), u"profiles", self.get_profile()))
-            except OSError, e:
+                shutil.rmtree(os.path.join(filesystem.app_data(), "profiles", self.get_profile()))
+            except OSError as e:
                 gu.display_exception_message(e)
                 return
             self.g_liststore.remove(it)

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 """
 Modules that have translated messages need to import this module
 to make pydoc work.
@@ -61,30 +61,30 @@ def langs():
     return retval
 
 def _nop(s):
-    return unicode(s)
+    return str(s)
 
 def setup(prefix, config_locale=None):
     global locale_setup_failed
     # Gettext and gtk+ chech the variables in this order.
     try:
         locale.setlocale(locale.LC_ALL, '')
-    except locale.Error, e:
-        print
-        print "\n".join(textwrap.wrap(
+    except locale.Error as e:
+        print()
+        print("\n".join(textwrap.wrap(
             "Failed to run locale.setlocale(locale.LC_ALL, '') "
             "Will continue without translated messages. "
             "This is not a bug in GNU Solfege. See the README file "
-            "for more details."))
-        print "\nIgnored the following error:"
+            "for more details.")))
+        print("\nIgnored the following error:")
         traceback.print_exc(file=sys.stdout)
-        print
-        import __builtin__
+        print()
+        import builtins
         locale_setup_failed = True
-        __builtin__.__dict__['_no_xgettext'] = _nop
-        __builtin__.__dict__['_'] = _nop
-        __builtin__.__dict__['_i_no_xgettext'] = _nop
-        __builtin__.__dict__['_i'] = _nop
-        __builtin__.__dict__['ungettext'] = _nop
+        builtins.__dict__['_no_xgettext'] = _nop
+        builtins.__dict__['_'] = _nop
+        builtins.__dict__['_i_no_xgettext'] = _nop
+        builtins.__dict__['_i'] = _nop
+        builtins.__dict__['ungettext'] = _nop
         return
     varlist = ('LANGUAGE', 'LC_MESSAGES')
     if not config_locale:
@@ -107,15 +107,15 @@ def setup(prefix, config_locale=None):
             if s:
                 s = locale.normalize(s)
                 os.environ['LANGUAGE'] = s
-    import __builtin__
+    import builtins
     t = gettext.translation("solfege",
                            os.path.join(prefix, 'share', 'locale'),
                            fallback=True)
-    __builtin__.__dict__['_'] = t.ugettext
-    __builtin__.__dict__['_no_xgettext'] = t.ugettext
-    __builtin__.__dict__['_i'] = _i
-    __builtin__.__dict__['_i_no_xgettext'] = _i
-    __builtin__.__dict__['ungettext'] = t.ungettext
+    builtins.__dict__['_'] = t.gettext
+    builtins.__dict__['_no_xgettext'] = t.gettext
+    builtins.__dict__['_i'] = _i
+    builtins.__dict__['_i_no_xgettext'] = _i
+    builtins.__dict__['ngettext'] = t.ngettext
     # plurals usage:
     # i =  'some integer value'
     # ungettext("%i car", "%i cars", i) % i

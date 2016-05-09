@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import locale
 import logging
@@ -203,17 +203,17 @@ class ExerciseView(SelectWinBase):
                         label.connect('clicked', self.on_page_link_clicked, link)
                         self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
                     else:
-                        assert isinstance(link, unicode), type(link)
+                        assert isinstance(link, str), type(link)
                         if display_only_tests:
                             solfege.db.validate_stored_statistics(link)
                         try:
                             for field_idx, fieldname in enumerate(self.m_fields):
-                                if fieldname in (u'link', u'link-with-filename-tooltip'):
+                                if fieldname in ('link', 'link-with-filename-tooltip'):
                                     labeltxt = lessonfile.infocache.get(link, 'title')
                                     label = gu.ClickableLabel(_no_xgettext(labeltxt))
                                     if solfege.app.m_options.debug:
-                                        label.set_tooltip_text(u"%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
-                                    elif fieldname == u'link-with-filename-tooltip':
+                                        label.set_tooltip_text("%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
+                                    elif fieldname == 'link-with-filename-tooltip':
                                         label.set_tooltip_text(link)
                                     if show_topics:
                                         topic = solfege.app.m_frontpage_data.get_topic_of_lesson_file(link)
@@ -228,10 +228,10 @@ class ExerciseView(SelectWinBase):
                                     label.set_alignment(0.0, 0.5)
                                 self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
                         except lessonfile.InfoCache.FileNotFound:
-                            label = gu.ClickableLabel(_(u"«%s» was not found") % link)
+                            label = gu.ClickableLabel(_("«%s» was not found") % link)
                             label.make_warning()
                         except lessonfile.InfoCache.FileNotLessonfile:
-                            label = gu.ClickableLabel(_(u"Failed to parse «%s»") % link)
+                            label = gu.ClickableLabel(_("Failed to parse «%s»") % link)
                             label.make_warning()
                     if first:
                         label.m_first = True
@@ -239,7 +239,7 @@ class ExerciseView(SelectWinBase):
                     self.m_linkbuttons.append(label)
                     label.connect('focus-in-event', self.on_focus_in)
                     if display_only_tests:
-                        if isinstance(link, unicode):
+                        if isinstance(link, str):
                             passed, result = solfege.db.get_test_status(link)
                             if passed == True:
                                 self.g_grid.attach(Gtk.Label(_("passed, %.1f%%") % (result * 100)),
@@ -262,13 +262,13 @@ class ExerciseView(SelectWinBase):
         solfege.app.practise_lessonfile(filename)
     def display_search_result(self, searchfor, result, result_C, display_only_tests=False):
         self._display_data(
-          frontpage.Page(u'',
+          frontpage.Page('',
             frontpage.Column([
               frontpage.LinkList(
-            _(u"Search results for “%s”:") % searchfor,
+            _("Search results for “%s”:") % searchfor,
               result),
               frontpage.LinkList(
-            _(u"C-locale search results for “%s”:") % searchfor,
+            _("C-locale search results for “%s”:") % searchfor,
               result_C),
               ])))
     def on_end_practise(self, w=None):
@@ -297,7 +297,7 @@ class ExerciseView(SelectWinBase):
         for child in self.m_page.iterate_flattened():
             if isinstance(child, frontpage.LinkList):
                 cur_topic = child
-            if isinstance(child, unicode):
+            if isinstance(child, str):
                 try:
                     if (match_func(child) and test_filter(child)) and child not in found:
                         if cur_topic != last_topic:
@@ -324,7 +324,7 @@ class FrontPage(ExerciseView):
         self.g_searchentry.grab_focus()
     def on_search(self, *button):
         search_for = decode_entry_string(self.g_searchentry.get_text().lower())
-        logging.debug(u"FrontPage.on_search '%s'", search_for)
+        logging.debug("FrontPage.on_search '%s'", search_for)
         page = self._search(search_for, False, False)
         page_C = self._search(search_for, True, False)
         page_C.m_name = _('Search untranslated lesson titles')
@@ -345,7 +345,7 @@ class TestsView(ExerciseView):
         search_for = decode_entry_string(self.g_searchentry.get_text().lower())
         page = self._search(search_for, False, True)
         page_C = self._search(search_for, True, True)
-        page_C.m_name = u'Search exercises without translating them'
+        page_C.m_name = 'Search exercises without translating them'
         if not page_C.is_empty():
             page[0].append(frontpage.LinkList(_('Too few matches?'),
                 listitems=[page_C]))

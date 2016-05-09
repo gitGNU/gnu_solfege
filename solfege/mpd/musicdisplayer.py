@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
@@ -126,7 +126,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
             if isinstance(staff, engravers.RhythmStaffContext):
                 linerange = (0,)
             else:
-                linerange = range(-2, 3)
+                linerange = list(range(-2, 3))
             for y in linerange:
                 ct.move_to(0, staff_centrum + dim.linespacing * y + 0.5)
                 ct.rel_line_to(staff_len, 0)

@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import os
 import time
@@ -161,7 +161,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         """
         module = lessonfile.infocache.get(filename, 'module')
         if module not in ('harmonicinterval', 'melodicinterval', 'idbyname'):
-            print "Only harmonicinterval, melodicinterval and idbyname module exercises are working now. Ignoring..."
+            print("Only harmonicinterval, melodicinterval and idbyname module exercises are working now. Ignoring...")
             return
         if module == 'idbyname':
             p = lessonfile.LessonfileCommon()
@@ -242,7 +242,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
                     title = self.get_lessonfile_title(filename)
                 else:
                     fn = None
-                    title = _(u"«<b>%s</b>» was not found") % filename
+                    title = _("«<b>%s</b>» was not found") % filename
                 self.g_liststore.append((fn,
                     title,
                     lesson['count'],
@@ -250,7 +250,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
                     lesson['delay']))
             else:
                 self.g_liststore.append((filename,
-                    _(u"«%s» not found") % filename,
+                    _("«%s» not found") % filename,
                     lesson['count'],
                     lesson['repeat'],
                     lesson['delay']))
@@ -262,22 +262,22 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         """
         assert self.m_filename
         f = open(self.m_filename, 'w')
-        print >> f, "# Training set definition file for GNU Solfege %s" % buildinfo.VERSION_STRING
-        print >> f, "\nfileformat_version = %i" % self.fileformat_version
-        print >> f, "output_format = \"%s\"" % [k for k in self.g_output if self.g_output[k].get_active()][0]
-        print >> f, "named_tracks = %s" % (u"yes" if self.g_named_tracks.get_active() else u"no")
+        print("# Training set definition file for GNU Solfege %s" % buildinfo.VERSION_STRING, file=f)
+        print("\nfileformat_version = %i" % self.fileformat_version, file=f)
+        print("output_format = \"%s\"" % [k for k in self.g_output if self.g_output[k].get_active()][0], file=f)
+        print("named_tracks = %s" % ("yes" if self.g_named_tracks.get_active() else "no"), file=f)
         iter = self.g_liststore.get_iter_first()
         while iter:
-            print >> f, "lesson {"
+            print("lesson {", file=f)
             filename = self.g_liststore.get_value(iter, self.STORE_FILENAME)
-            print >> f, '  filename = "%s"' % filename
-            print >> f, '  count = %i' \
-                % self.g_liststore.get_value(iter, self.STORE_COUNT)
-            print >> f, '  repeat = %i' \
-                % self.g_liststore.get_value(iter, self.STORE_REPEAT)
-            print >> f, '  delay = %i' \
-                % self.g_liststore.get_value(iter, self.STORE_DELAY)
-            print >> f, "}\n"
+            print('  filename = "%s"' % filename, file=f)
+            print('  count = %i' \
+                % self.g_liststore.get_value(iter, self.STORE_COUNT), file=f)
+            print('  repeat = %i' \
+                % self.g_liststore.get_value(iter, self.STORE_REPEAT), file=f)
+            print('  delay = %i' \
+                % self.g_liststore.get_value(iter, self.STORE_DELAY), file=f)
+            print("}\n", file=f)
             iter = self.g_liststore.iter_next(iter)
         f.close()
         self.m_changed = False
@@ -314,7 +314,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         while iter:
             v.append({
                 'filename': \
-                        unicode(self.g_liststore.get_value(iter, self.STORE_FILENAME)),
+                        str(self.g_liststore.get_value(iter, self.STORE_FILENAME)),
                 'count': self.g_liststore.get_value(iter, self.STORE_COUNT),
                 'repeat': self.g_liststore.get_value(iter, self.STORE_REPEAT),
                 'delay': self.g_liststore.get_value(iter, self.STORE_DELAY),
@@ -333,7 +333,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
                 while Gtk.events_pending():
                     Gtk.main_iteration()
             progress_dialog.destroy()
-        except osutils.BinaryBaseException, e:
+        except osutils.BinaryBaseException as e:
             progress_dialog.destroy()
             solfege.win.display_error_message2(e.msg1, e.msg2)
 

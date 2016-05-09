@@ -3,13 +3,13 @@
 # Copied from http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/473846
 # Copyright Christopher Arndt under the Python License.
 
-from __future__ import absolute_import
 
-import _winreg
+
+import winreg
 import re
 import os
 SHELL_FOLDERS = r'Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
-HKCU = _winreg.HKEY_CURRENT_USER
+HKCU = winreg.HKEY_CURRENT_USER
 
 # helper functions
 def _substenv(m):
@@ -37,14 +37,14 @@ def _get_reg_value(key, subkey, name):
     if possible.
     """
 
-    key = _winreg.OpenKey(key, subkey)
+    key = winreg.OpenKey(key, subkey)
     try:
-        ret = _winreg.QueryValueEx(key, name)
+        ret = winreg.QueryValueEx(key, name)
     except WindowsError:
         return None
     else:
         key.Close()
-        if ret[1] == _winreg.REG_EXPAND_SZ:
+        if ret[1] == winreg.REG_EXPAND_SZ:
             return expandvars(ret[0])
         else:
             return ret[0]

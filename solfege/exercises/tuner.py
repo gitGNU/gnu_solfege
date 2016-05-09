@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 """
 This code does not work. Also notice that is is not imported by
@@ -48,7 +48,7 @@ class Gui(abstract.Gui):
         self.__idle_tag = GObject.timeout_add(300, self.update_view)
     def update_view(self):
         freq = soundcard.solfege_c_midi.idle_loop()
-        print freq
+        print(freq)
         notename, cent = utils.freq_to_notename_cent(freq)
         self.g_hz.set_text(str(freq))
         self.g_notename.set_text(notename)

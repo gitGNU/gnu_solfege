@@ -4,15 +4,15 @@
 
 # Utility functions used by the test suite.
 
-from __future__ import absolute_import
 
-import __builtin__
+
+import builtins
 import os
 import unittest
 
 from solfege import i18n
 
-__builtin__.testsuite_is_running = True
+builtins.testsuite_is_running = True
 
 outdir = 'test-outdir'
 
@@ -40,8 +40,8 @@ class TmpFileBase(unittest.TestCase):
         outfile.write(content)
         outfile.close()
     def do_file(self, content):
-        self.add_file(content, u'testfile')
-        self.p.parse_file(os.path.join(self.tmpdir, u'testfile'))
+        self.add_file(content, 'testfile')
+        self.p.parse_file(os.path.join(self.tmpdir, 'testfile'))
         return self.p
     def tearDown(self):
         for filename in self.m_files:

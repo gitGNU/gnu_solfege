@@ -17,8 +17,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -304,7 +304,7 @@ class Gui(abstract.Gui, abstract_solmisation_addon.SolmisationAddOnGuiClass):
                 self.g_rhythm_viewer.add_rhythm_element(self.m_t.m_question[0])
             try:
                 self.m_t.play_question()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, self.on_end_practise):
                     raise
                 return

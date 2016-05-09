@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # 4.69
-from __future__ import absolute_import
+
 """
 prog             The test done before calling
  +statementlist
@@ -95,7 +95,7 @@ TOKEN_STRING = 1
 TOKEN_IDX = 2
 TOKEN_LINENO = 3
 
-class istr(unicode):
+class istr(str):
     def __init__(self, s):
         self.cval = s
         self.m_added_language = None
@@ -104,7 +104,7 @@ class istr(unicode):
         Handle format strings in translated strings:
         _("%i. inversion") % 2
         """
-        i=istr(unicode(self) % other)
+        i=istr(str(self) % other)
         i.cval = self.cval % other
         return i
     def add_translation(self, lang, s):
@@ -120,7 +120,7 @@ class istr(unicode):
             # The first language in the list is preferred.
             new_pos = i18n.langs().index(lang)
             if not self.m_added_language:
-                old_pos = sys.maxint
+                old_pos = sys.maxsize
             else:
                 old_pos = i18n.langs().index(self.m_added_language)
             if new_pos < old_pos:
@@ -217,14 +217,14 @@ class Lexer:
         # the encoding marker must be in the first two lines
         m = r.match("\n".join(src.split("\n")[0:2]))
         if m:
-            src = unicode(src, m.groups()[0], errors="replace")
+            src = str(src, m.groups()[0], errors="replace")
         else:
-            src = unicode(src, "UTF-8", errors="replace")
-        assert isinstance(src, unicode)
+            src = str(src, "UTF-8", errors="replace")
+        assert isinstance(src, str)
         src = src.replace("\r", "\n")
         # Some editors (notepad on win32?) insert the BOM, so we have
         # to check for it and remove it since the lexer don't handle it.
-        src = src.lstrip(unicode(codecs.BOM_UTF8, "utf8"))
+        src = src.lstrip(str(codecs.BOM_UTF8, "utf8"))
         self.m_src = src
         self.pos = 0
         pos = 0
@@ -232,8 +232,8 @@ class Lexer:
         self.m_tokens = []
         while 1:
             try:
-                if src[pos] in u"\u202f\xa0 \n\t{}=%+,/().":
-                    if src[pos] in u'\u202f\xa0 \t':
+                if src[pos] in "\u202f\xa0 \n\t{}=%+,/().":
+                    if src[pos] in '\u202f\xa0 \t':
                         pos += 1
                         continue
                     if src[pos] == '\n':
@@ -405,7 +405,7 @@ class Dataparser:
         elif allow_music_shortcut:
             fakt = self.expressionlist()
             if self._lexer.peek_type() == '}':
-                return pt.Assignment(pt.Identifier(u"music"), fakt[0])
+                return pt.Assignment(pt.Identifier("music"), fakt[0])
             else:
                 raise DataparserSyntaxError(self, self._lexer.pos, "The (obsolete) music shortcut construct must be the last statement in a question block.")
         self._lexer.scan_any()
@@ -416,12 +416,12 @@ class Dataparser:
         try:
             filename = self._lexer.scan('STRING')
         except:
-            print >> sys.stderr, "Warning: The file '%s' uses old style syntax for the include command." % self.m_filename
-            print >> sys.stderr, 'This is not fatal now but will be in the future. You should change the code\nfrom include(filename) to include("filename")\n'
+            print("Warning: The file '%s' uses old style syntax for the include command." % self.m_filename, file=sys.stderr)
+            print('This is not fatal now but will be in the future. You should change the code\nfrom include(filename) to include("filename")\n', file=sys.stderr)
             filename = self._lexer.scan('NAME')
         fn = os.path.join(self.m_location, filename)
         if not os.path.exists(fn):
-            fn = os.path.join(os.getcwdu(), u'exercises/standard/lesson-files', filename)
+            fn = os.path.join(os.getcwd(), 'exercises/standard/lesson-files', filename)
         s = open(fn, 'rU').read()
         p = Dataparser()
         p.m_location = self.m_location
@@ -447,12 +447,12 @@ class Dataparser:
         return pt.Assignment(pt.Identifier(mod_name), p.tree)
     def do_import(self):
         return self._import_worker(
-            os.path.join(os.getcwdu(), "exercises", "standard", "lib"),
+            os.path.join(os.getcwd(), "exercises", "standard", "lib"),
             os.path.join(self.m_location, "..", "lib"))
     def do_rimport(self):
         return self._import_worker(
             os.path.join(self.m_location, "..", "lib"),
-            os.path.join(os.getcwdu(), "exercises", "standard", "lib"))
+            os.path.join(os.getcwd(), "exercises", "standard", "lib"))
     def assignment(self):
         """NAME "=" expression ("," expression)* """
         npos = self._lexer.pos

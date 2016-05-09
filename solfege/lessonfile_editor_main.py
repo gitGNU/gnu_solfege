@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 import os
 import sys
@@ -283,7 +283,7 @@ class MainWin(Gtk.Window):
             filename = gu.decode_filename(dialog.get_filename())
             try:
                 self.load_file(filename)
-            except Exception, e:
+            except Exception as e:
                 dialog.destroy()
                 m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                         Gtk.ButtonsType.CLOSE,
@@ -342,10 +342,10 @@ class MainWin(Gtk.Window):
             ofile.write('    lesson_id = "%s"\n' % self.m_P.header.lesson_id)
         ofile.write('    title = "%s"\n}\n' % self.m_P.header.title)
         for q in self.m_P.m_questions:
-            print >> ofile, 'question {'
-            print >> ofile, '    name = "%s"' % q.name
-            print >> ofile, '    music = music("%s", chord)' % q.music.m_musicdata
-            print >> ofile, '}'
+            print('question {', file=ofile)
+            print('    name = "%s"' % q.name, file=ofile)
+            print('    music = music("%s", chord)' % q.music.m_musicdata, file=ofile)
+            print('}', file=ofile)
         ofile.close()
         self.m_P.m_changed = False
 
@@ -424,7 +424,7 @@ edit your hand written lesson files with this program.</p>
         #
         if self.m_chord_tones:
             s = ""
-            for n in self.m_chord_tones.values():
+            for n in list(self.m_chord_tones.values()):
                 s += " " + n.get_octave_notename()
             self.g_displayer.display("\staff{ < %s >}\staff{\clef bass}" % s, "20-tight")
         else:
@@ -456,7 +456,7 @@ edit your hand written lesson files with this program.</p>
                 return
             else:
                 self.m_chord_tones[n.steps()].m_accidental_i = int(self.g_displayer.m_cursor)
-        v = self.m_chord_tones.values()
+        v = list(self.m_chord_tones.values())
         v.sort()
         v = [y.get_octave_notename() for y in v]
         self.m_P.m_questions[self.m_P._idx].music.m_musicdata = " ".join(v)

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import Gtk
 
@@ -164,7 +164,7 @@ class Gui(abstract.LessonbasedGui):
                 self.g_chordtype_box.get_children()[0].grab_focus()
             elif g == Teacher.ERR_PICKY:
                 self.g_flashbar.flash(_("You have to solve this question first."))
-        except Exception, e:
+        except Exception as e:
             # This is one place where m_mpd_badcode might be set, since it will
             # be set if the exception is raisd by m_P.play_question(), but not
             # by select_random_question called by m_t.new_question()
@@ -230,7 +230,7 @@ class Gui(abstract.LessonbasedGui):
                 if question.name.cval == button.m_chordtype:
                     self.m_t.m_P.play_question(question)
                     return
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
     def on_chordtype_clicked(self, btn, t):

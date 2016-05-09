@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -95,13 +95,13 @@ class Teacher(abstract.Teacher):
                         utils.random_tonic_and_interval_in_key(L, H,
                             self.get_list('intervals'),
                             mpd.MusicalPitch.new_from_int(self.get_int("lock-to-key-note")),
-                            solfege.utils.key_data.keys()[:][self.get_int("lock-to-key-scaletype")])
+                            list(solfege.utils.key_data.keys())[:][self.get_int("lock-to-key-scaletype")])
                 else:
                     self.m_tonika, self.m_interval = \
                           utils.random_tonika_and_interval(L, H,
                             self.get_list('intervals'))
-            except solfege.utils.NoPossibleIntervals, e:
-                solfege.win.display_error_message2(_("Exercise configuration problem"), unicode(e))
+            except solfege.utils.NoPossibleIntervals as e:
+                solfege.win.display_error_message2(_("Exercise configuration problem"), str(e))
                 return self.ERR_NO_INTERVALLS
             if last_question is None:
                 break
@@ -285,7 +285,7 @@ class Gui(abstract.IntervalGui):
                 self.g_repeat_melodic.set_sensitive(False)
             try:
                 self.m_t.play_question()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, exception_cleanup):
                     raise
                 return

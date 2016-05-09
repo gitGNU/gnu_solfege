@@ -14,8 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -238,7 +238,7 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         if self.get_bool('disable_unused_intervals'):
             self.set_sensitivity(self.get_sensitive_buttons())
         else:
-            self.set_sensitivity(range(mpd.interval.max_interval+1))
+            self.set_sensitivity(list(range(mpd.interval.max_interval+1)))
     def set_sensitivity(self, make_active):
         for x in range(1, mpd.interval.max_interval + 1):
             if x in self.m_buttons:
@@ -333,10 +333,10 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         self.m_neckl = 0
         self.m_xlist = []
         self.m_lowest_tone = mpd.int_to_octave_notename(
-            min(map(mpd.notename_to_int, self.m_strings)))
+            min(list(map(mpd.notename_to_int, self.m_strings))))
         self.m_highest_tone = mpd.int_to_octave_notename(
-            len(self.m_fretdist) - 1 + max(map(mpd.notename_to_int, self.m_strings)))
-        self.m_stringtuning = map(mpd.notename_to_int, self.m_strings)
+            len(self.m_fretdist) - 1 + max(list(map(mpd.notename_to_int, self.m_strings))))
+        self.m_stringtuning = list(map(mpd.notename_to_int, self.m_strings))
         tmp = 0
         for x in self.m_fretdist:
             tmp = tmp + x

@@ -14,13 +14,13 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 import string
 import sys
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 
 from gi.repository import Gtk
 
@@ -75,7 +75,7 @@ class ReportBugWindow(Gtk.Dialog):
         buf = self.g_tw.get_buffer()
         description = buf.get_text(buf.get_start_iter(), buf.get_end_iter(),
                                    False)
-        data = urllib.urlencode({
+        data = urllib.parse.urlencode({
             'email': self.g_email.get_text(),
             'version': buildinfo.VERSION_STRING,
             'revision_id': buildinfo.REVISION_ID,
@@ -91,8 +91,8 @@ class ReportBugWindow(Gtk.Dialog):
             'traceback': self.m_error_text,
         })
         try:
-            urllib2.urlopen("http://www.solfege.org/crashreport/", data)
-        except urllib2.HTTPError, e:
-            print "HTTPError:", e
+            urllib.request.urlopen("http://www.solfege.org/crashreport/", data)
+        except urllib.error.HTTPError as e:
+            print("HTTPError:", e)
         return
 

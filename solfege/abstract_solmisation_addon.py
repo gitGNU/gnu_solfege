@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 
@@ -32,7 +32,7 @@ from solfege.const import solmisation_syllables, solmisation_notenames
 
 
 class SolmisationAddOnClass:
-    elements = range(35)
+    elements = list(range(35))
     def new_question(self):
         """returns:
             self.ERR_PICKY : if the question is not yet solved and the

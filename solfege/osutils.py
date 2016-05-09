@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import
+
 
 import os
 import re
@@ -177,7 +177,7 @@ def find_progs(execs):
 
     execs - a tuple of possible executable names
     """
-    assert isinstance(execs, (list, tuple,))
+    assert isinstance(execs, (list, tuple))
     retval = set()
     for p in os.environ['PATH'].split(os.pathsep):
         for e in execs:

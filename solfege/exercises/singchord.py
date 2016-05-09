@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from solfege import abstract
 from solfege import gu
@@ -64,7 +64,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_music_displayer.display(self.m_t.m_P.get_music(), fontsize)
             self.g_play_answer.set_sensitive(True)
             self.m_t.play_440hz()
-        except Exception, e:
+        except Exception as e:
             if isinstance(e, mpd.MpdException):
                 e.m_mpd_varname = 'music'
                 e.m_mpd_badcode = self.m_t.m_P.get_question().music.get_err_context(e, self.m_t.m_P)
@@ -84,7 +84,7 @@ class Gui(abstract.LessonbasedGui):
     def play_440hz(self, widget):
         try:
             self.m_t.play_440hz()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
 

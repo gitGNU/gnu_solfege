@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 
@@ -81,7 +81,7 @@ class Gui(abstract.Gui):
         self.g_play_all.set_sensitive(True)
         try:
             self.m_t.play_question()
-        except Exception,e:
+        except Exception as e:
             def cleanup():
                 self.g_play_first_note.set_sensitive(False)
                 self.g_play_last_note.set_sensitive(False)

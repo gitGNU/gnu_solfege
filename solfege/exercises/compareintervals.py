@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 
@@ -55,10 +55,10 @@ class Teacher(abstract.Teacher):
 
         first = self.get_list('first_interval_up')
         if self.get_string('first_interval_type') == 'melodic':
-            first = first + map(lambda a: -a, self.get_list('first_interval_down'))
+            first = first + [-a for a in self.get_list('first_interval_down')]
         last = self.get_list('last_interval_up')
         if self.get_string('last_interval_type') == 'melodic':
-            last = last + map(lambda a: -a, self.get_list('last_interval_down'))
+            last = last + [-a for a in self.get_list('last_interval_down')]
         if not (first and last):
             return self.ERR_CONFIGURE
         self.m_intervals = [random.choice(first), random.choice(last)]
@@ -308,7 +308,7 @@ class Gui(abstract.Gui):
         if q == Teacher.OK:
             try:
                 self.m_t.play_question()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, self.m_t.end_practise):
                     raise
                 return

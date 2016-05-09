@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import operator
 
@@ -88,7 +88,7 @@ class MidiPerformer(object):
         return D
     def generate_track_for_voice(self, voice, kv, tracktype):
         D = self.get_event_dict(voice, kv)
-        keys = D.keys()
+        keys = list(D.keys())
         keys.sort()
         prev_time = Rat(0)
         ms = tracktype()

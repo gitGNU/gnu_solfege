@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 """
 The Interval class is a class that is used to do math with
 intervals and musical pitches. You use this class if you
@@ -362,10 +362,10 @@ class Interval:
         """
         if self.m_interval == 4 and self.m_mod == -1:
             if self.m_octave == 0:
-                return u"Tritone"
+                return "Tritone"
             elif self.m_octave == 1:
-                return u"Octave + Tritone"
-        return u"%s %s" % (
+                return "Octave + Tritone"
+        return "%s %s" % (
                 self._nn_to_interval_quality[self.get_quality_short()],
                 number_name(self.steps()))
     def get_name(self):

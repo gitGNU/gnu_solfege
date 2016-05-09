@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 class SynthCommon(object):
     def __init__(self):
         self.__test_saved_play_midieventstream = None

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import re
 
@@ -73,9 +73,9 @@ class Lexer:
     re_key = re.compile(r"\\key\s+([a-z]+)\s*\\(major|minor)", re.UNICODE)
     re_times = re.compile(r"\\times\s+(\d+)\s*/\s*(\d+)\s*{", re.UNICODE)
     def __init__(self, s):
-        if not isinstance(s, unicode):
+        if not isinstance(s, str):
             s = s.decode("utf-8")
-        assert isinstance(s, unicode)
+        assert isinstance(s, str)
         self.m_string = s
         self.m_notelen = Duration(4, 0)
         self.m_idx = 0
@@ -125,10 +125,10 @@ class Lexer:
                 ret.append("%s " % toc)
         return "".join(ret).strip()
 
-    def next(self):
+    def __next__(self):
         try:
             return self._next()
-        except _exceptions.MpdException, e:
+        except _exceptions.MpdException as e:
             if 'm_mpd_badcode' not in dir(e):
                 e.m_lineno, e.m_linepos1, e.m_linepos2 = self.get_error_location()
             raise

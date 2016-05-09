@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import math
 import random
@@ -39,9 +39,9 @@ def int_to_intervalname(i, shortname=None, updown=None):
         n = mpd.Interval.new_from_int(abs(i)).get_name()
     if updown:
         if i > 0:
-            n = "%s%s" % (n, u"\u2191")
+            n = "%s%s" % (n, "\u2191")
         elif i < 0:
-            n = "%s%s" % (n, u"\u2193")
+            n = "%s%s" % (n, "\u2193")
     return n
 
 
@@ -85,8 +85,8 @@ def random_tonika_and_interval(lowest, highest, irange):
     Raise NoPossibleIntervals if we cannot create an interval within the
     given range of tones.
     """
-    assert isinstance(lowest, basestring)
-    assert isinstance(highest, basestring)
+    assert isinstance(lowest, str)
+    assert isinstance(highest, str)
     lowest = mpd.notename_to_int(lowest)
     highest = mpd.notename_to_int(highest)
     assert lowest <= highest
@@ -118,8 +118,8 @@ def random_interval_in_key(first, lowest, highest, irange, tonic, keytype):
         tonic   MusicalPitch, the key the tones should be taken from
         keytype "major", "natural-minor" or "harmonic-minor"
     """
-    assert isinstance(lowest, basestring)
-    assert isinstance(highest, basestring)
+    assert isinstance(lowest, str)
+    assert isinstance(highest, str)
     lowest = mpd.notename_to_int(lowest)
     highest = mpd.notename_to_int(highest)
     assert isinstance(first, mpd.MusicalPitch)
@@ -256,8 +256,8 @@ def compare_version_strings(A, B):
         return -1
     elif B == "":
         return 1
-    av = map(lambda s: int(s), A.split("."))
-    bv = map(lambda s: int(s), B.split("."))
+    av = [int(s) for s in A.split(".")]
+    bv = [int(s) for s in B.split(".")]
     x = 0
     while len(av) > x < len(bv):
         if av[x] > bv[x]:

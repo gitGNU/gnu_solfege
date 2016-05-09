@@ -18,7 +18,7 @@
 
 import os
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from gi.repository import Gtk
 
@@ -44,7 +44,7 @@ def download():
             message_format="Download python modules?")
     m.add_button("Cancel", Gtk.ResponseType.CANCEL)
     m.add_button(Gtk.STOCK_EXECUTE, Gtk.ResponseType.ACCEPT)
-    m.format_secondary_markup(u"""This will download «%(url)s» and build it in a subdirectory of %(pdir)s.
+    m.format_secondary_markup("""This will download «%(url)s» and build it in a subdirectory of %(pdir)s.
 
 This is what the program will do for you:
 
@@ -75,15 +75,15 @@ ________________________________________________________________________________
         logwin.write("Downloading %s of %s bytes\n" % (count * size, total))
     try:
         if not os.path.exists(bz2abs):
-            urllib.urlretrieve(url, bz2abs, progress_callback)
-    except IOError, e:
+            urllib.request.urlretrieve(url, bz2abs, progress_callback)
+    except IOError as e:
         logwin.write(str(e).decode(sys.getfilesystemencoding(), 'replace'))
         logwin.write("\nFailed to download alsa Python modules.")
         logwin.run_finished()
         return
     try:
         logwin.popen(["tar", "xjf", bz2], cwd=pdir)
-    except OSError, e:
+    except OSError as e:
         logwin.write("\nExtracting %s failed.\n" % bz2)
         logwin.write("Make sure tar and bz2 is installed.\n")
         logwin.write("Could not build ALSA python module.\n")
@@ -96,14 +96,14 @@ ________________________________________________________________________________
             logwin.write("\nRunning the python interpreter failed.\nCould not build ALSA python module.")
             logwin.run_finished()
             return
-    except OSError, e:
+    except OSError as e:
         logwin.write("\nRunning the python interpreter failed.\nCould not build ALSA python module.")
         logwin.run_finished()
         return
     sys.path.append(os.path.join(pdir, "pyalsa-%s" % pyalsa_ver))
     import pyalsa
     reload(pyalsa)
-    print pyalsa
+    print(pyalsa)
     logwin.write("\npyalsa module: %s\n\n" % str(pyalsa))
     logwin.write("The module is built. Now you must make Solfege find it.\n")
     logwin.write("There are some ways to do it:\n")

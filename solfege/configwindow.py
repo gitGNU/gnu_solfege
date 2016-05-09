@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import logging
 import os
@@ -48,9 +48,9 @@ except ImportError:
 if sys.platform == 'win32':
     try:
         from solfege.soundcard import winmidi
-    except ImportError, e:
-        print >> sys.stderr, "Loading winmidi.pyd failed:"
-        print >> sys.stderr, e
+    except ImportError as e:
+        print("Loading winmidi.pyd failed:", file=sys.stderr)
+        print(e, file=sys.stderr)
         winmidi = None
 
 class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
@@ -88,7 +88,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             if not path:
                 return
             path = tuple(path)
-            for key, page in self.m_page_mapping.items():
+            for key, page in list(self.m_page_mapping.items()):
                 if key == path:
                     page.show()
                 else:
@@ -342,22 +342,22 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             is_unique = True
             for notename in notenames:
                 if (notename != notenames[int(path)]
-                    and cfg.get_string('idtone/tone_%s_ak' % notename) == unichr(accel_key)):
+                    and cfg.get_string('idtone/tone_%s_ak' % notename) == chr(accel_key)):
                     is_unique = False
                     break
             if not is_unique:
-                gu.dialog_ok(_(u"The accelerator in use for the tone “%s”. You have to choose another key.") % solfege.mpd.MusicalPitch.new_from_notename(notename).get_user_notename(), parent=self, msgtype=Gtk.MessageType.ERROR)
+                gu.dialog_ok(_("The accelerator in use for the tone “%s”. You have to choose another key.") % solfege.mpd.MusicalPitch.new_from_notename(notename).get_user_notename(), parent=self, msgtype=Gtk.MessageType.ERROR)
                 return
             it = self.g_idtone_accels.get_iter(path)
-            cfg.set_string('idtone/tone_%s_ak' % notenames[int(path)], unichr(accel_key))
-            self.g_idtone_accels.set(it, 1, unichr(accel_key))
+            cfg.set_string('idtone/tone_%s_ak' % notenames[int(path)], chr(accel_key))
+            self.g_idtone_accels.set(it, 1, chr(accel_key))
             return True
         renderer.connect('accel-edited', acc_ff)
         column = Gtk.TreeViewColumn(_i("keyboard|Key"), renderer, text=1)
         self.g_treeview.append_column(column)
         page_vbox.pack_start(self.g_treeview, True, True, 0)
-        layouts = {'ascii': (_('ASCII'), u'awsedfujikol'),
-                   'dvorak': (_('Dvorak'), u'a,o.eughctrn'),
+        layouts = {'ascii': (_('ASCII'), 'awsedfujikol'),
+                   'dvorak': (_('Dvorak'), 'a,o.eughctrn'),
         }
         hbox = Gtk.HBox()
         page_vbox.pack_start(hbox, False, False, 0)
@@ -398,15 +398,15 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             is_unique = True
             for interval in intervals:
                 if (interval != intervals[int(path)]
-                    and cfg.get_string('interval_input/%s' % interval) == unichr(accel_key)):
+                    and cfg.get_string('interval_input/%s' % interval) == chr(accel_key)):
                     is_unique = False
                     break
             if not is_unique:
-                gu.dialog_ok(_(u"The accelerator in use for “%s”. You have to choose another key.") % mpd.Interval.new_from_int(intervals.index(interval)).get_name(), parent=self, msgtype=Gtk.MessageType.ERROR)
+                gu.dialog_ok(_("The accelerator in use for “%s”. You have to choose another key.") % mpd.Interval.new_from_int(intervals.index(interval)).get_name(), parent=self, msgtype=Gtk.MessageType.ERROR)
                 return
             it = self.g_interval_accels.get_iter(path)
-            cfg.set_string('interval_input/%s' % intervals[int(path)], unichr(accel_key))
-            self.g_interval_accels.set(it, 1, unichr(accel_key))
+            cfg.set_string('interval_input/%s' % intervals[int(path)], chr(accel_key))
+            self.g_interval_accels.set(it, 1, chr(accel_key))
             return True
         renderer.connect('accel-edited', acc_ff)
         column = Gtk.TreeViewColumn(_i("keyboard|Key"), renderer, text=1)
@@ -414,8 +414,8 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         page_vbox.pack_start(self.g_intervals_treeview, True, True, 0)
         hbox = Gtk.HBox()
         page_vbox.pack_start(hbox, False, False, 0)
-        layouts = {'ascii': (_('ASCII'), u'1qaz2wsx3edc4rfv'),
-                   'dvorak': (_('Dvorak'), u"1'a;2,oq3.ej4puk"),
+        layouts = {'ascii': (_('ASCII'), '1qaz2wsx3edc4rfv'),
+                   'dvorak': (_('Dvorak'), "1'a;2,oq3.ej4puk"),
         }
         def set_buttons(widget, layout):
             v = layouts[layout][1]
@@ -526,7 +526,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
              ],
             }
         sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
-        for formatid, format in format_info.items():
+        for formatid, format in list(format_info.items()):
             combo = gu.sComboBox('sound', '%s_player' % formatid, [p[0] for p in format['players']])
             combo.set_tooltip_text(_("Enter the name of the program. An absolute path is required only if the executable is not found on the PATH."))
             combo.opts = gu.sComboBox('sound', '%s_player_options' % formatid, 'NOT YET!')
@@ -558,7 +558,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
     def test_XXX_player(self, w, typeid, testfile):
         try:
             soundcard.play_mediafile(typeid, os.path.join('exercises/standard/lesson-files/share', testfile))
-        except osutils.BinaryBaseException, e:
+        except osutils.BinaryBaseException as e:
             solfege.win.display_error_message2(e.msg1, e.msg2)
     def popup_alsa_connection_list(self, widget):
         connection_list = soundcard.alsa_sequencer.get_connection_list()
@@ -738,7 +738,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         # Here we are only cathing exceptions we know the MidiFileSynth
         # can raise. Maybe we should catch something from the Sequencer
         # synths too?
-        except osutils.BinaryBaseException, e:
+        except osutils.BinaryBaseException as e:
             solfege.win.display_error_message2(e.msg1, e.msg2)
     def on_apply(self, *v):
         """Returns -1 if sound init fails."""
@@ -755,14 +755,14 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                     soundcard.initialise_devicefile(
                         self.g_device_file.get_child().get_text(),
                         self.g_synth_num.get_value_as_int())
-            except (soundcard.SoundInitException, OSError, ImportError), e:
+            except (soundcard.SoundInitException, OSError, ImportError) as e:
                 solfege.app.display_sound_init_error_message(e)
                 return -1
         elif solfege.soundcard.alsa_sequencer and self.g_alsa_radio.get_active():
             if self.m_gui_client_port:
                 try:
                     soundcard.initialise_alsa_sequencer(self.m_gui_client_port)
-                except solfege.soundcard.alsa_sequencer.alsaseq.SequencerError, e:
+                except solfege.soundcard.alsa_sequencer.alsaseq.SequencerError as e:
                     logging.debug("initialise_alsa_sequencer(%s) failed: %s", self.m_gui_client_port, str(e))
                     solfege.app.display_sound_init_error_message(e)
                     return -1
@@ -796,7 +796,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                 self.g_synth.set_active(soundcard.synth.m_devnum + 1)
     def delete_statistics(self, *w):
         if gu.dialog_delete(_("Delete statistics and test results?"), self,
-                _(u"This will delete and recreate the file «%s».") % solfege.db.get_statistics_filename()):
+                _("This will delete and recreate the file «%s».") % solfege.db.get_statistics_filename()):
             restart = False
             # We need to test for this, because get_view() can also return the front page
             if isinstance(solfege.win.get_view(), abstract.Gui):
@@ -810,14 +810,14 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         self.update_statistics_info()
     def delete_obsolete_statistics(self, *w):
         if gu.dialog_delete(_("Delete obsolete statistics?"), self,
-                _(u"This will delete the directory «%s».") % os.path.join(filesystem.app_data(), u"statistics")):
+                _("This will delete the directory «%s».") % os.path.join(filesystem.app_data(), "statistics")):
             try:
-                shutil.rmtree(os.path.join(filesystem.app_data(), u"statistics"))
-            except OSError, e:
+                shutil.rmtree(os.path.join(filesystem.app_data(), "statistics"))
+            except OSError as e:
                 gu.display_exception_message(e)
             self.update_old_statistics_info()
     def update_old_statistics_info(self):
-        path = os.path.join(filesystem.app_data(), u'statistics')
+        path = os.path.join(filesystem.app_data(), 'statistics')
         if os.path.exists(path):
             count = 1 # count app_data()/statistics too
         else:

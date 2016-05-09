@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import logging
 import time
@@ -65,7 +65,7 @@ class Teacher(abstract.Teacher):
                     retval.append(float(lexer.m_notelen.get_rat_value()) * self.m_P.get_tempo()[1] / self.m_P.get_tempo()[0] * 60)
                 else:
                     retval[-1] += float(lexer.m_notelen.get_rat_value()) * self.m_P.get_tempo()[1] / self.m_P.get_tempo()[0] * 60
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             e.m_obj_lineno, e.m_linepos1, e.m_linepos2 = lexer.get_error_location()
             e.m_mpd_varname = qvar
             e.m_mpd_badcode = self.m_P.get_question()[qvar].get_err_context(e, self.m_P)
@@ -163,7 +163,7 @@ class Gui(abstract.LessonbasedGui):
             self.std_buttons_exception_cleanup()
         try:
             g = self.m_t.new_question()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
             return
@@ -172,7 +172,7 @@ class Gui(abstract.LessonbasedGui):
                 self.g_music_displayer.clear()
             try:
                 self.do_at_question_start_show_play()
-            except Exception, e:
+            except Exception as e:
                 if not self.standard_exception_handler(e, exception_cleanup):
                     raise
             else:
@@ -213,7 +213,7 @@ class Gui(abstract.LessonbasedGui):
                     self.m_t.start_tapping()
                     self.g_flashbar.set(self.please_tap_str)
                 self.g_flashbar.flash(msg)
-        except Exception, e:
+        except Exception as e:
             # We need to check for exceptions here because for each
             # tap, solfege will parse a music string and compare the rhythm
             # the user has tapped so far.

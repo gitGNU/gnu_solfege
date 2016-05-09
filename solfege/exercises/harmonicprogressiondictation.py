@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import textwrap
 
 from gi.repository import Gtk
@@ -117,7 +117,7 @@ class Gui(abstract.LessonbasedGui):
                 self.std_buttons_new_question()
                 self.g_entry.set_text("")
                 self.g_entry.grab_focus()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
     def give_up(self, widget=None):

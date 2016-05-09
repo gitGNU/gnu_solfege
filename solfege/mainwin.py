@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import solfege
 
@@ -134,7 +134,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             'Exit': Gtk.ActionGroup('Exit'),
             'NotExit': Gtk.ActionGroup('NotExit'),
         }
-        for a in self.m_action_groups.values():
+        for a in list(self.m_action_groups.values()):
             self.g_ui_manager.insert_action_group(a, 1)
         self.setup_menu()
         self.main_box = Gtk.VBox()
@@ -189,7 +189,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             filename = self.default_front_page
         try:
             solfege.app.m_frontpage_data = frontpage.load_tree(filename)
-        except Exception, e:
+        except Exception as e:
             if solfege.splash_win:
                 solfege.splash_win.hide()
             solfege.app.m_frontpage_data = frontpage.load_tree(self.default_front_page)
@@ -211,9 +211,9 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             lambda o: solfege.app.handle_href('theory-intervals.html')),
           ('TreeEditor', None, _('_Edit Front Page'), None, None,
             self.do_tree_editor),
-          ('ExportTrainingSet', None, _(u'E_xport Exercises to Audio Files…'), None, None,
+          ('ExportTrainingSet', None, _('E_xport Exercises to Audio Files…'), None, None,
             self.new_training_set_editor),
-          ('EditPractiseSheet', None, _(u'Ear Training Test Pri_ntout…'), None, None,
+          ('EditPractiseSheet', None, _('Ear Training Test Pri_ntout…'), None, None,
             self.new_practisesheet_editor),
           ('ProfileManager', None, _("Profile _Manager"), None, None,
             self.open_profile_manager),
@@ -325,9 +325,9 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             reshow_splash = True
         else:
             reshow_splash = False
-        if not isinstance(text, unicode):
+        if not isinstance(text, str):
             text = text.decode(locale.getpreferredencoding(), 'replace')
-        if not isinstance(secondary_text, unicode):
+        if not isinstance(secondary_text, str):
             secondary_text = secondary_text.decode(locale.getpreferredencoding(), 'replace')
         m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                               Gtk.ButtonsType.CLOSE, text)
@@ -345,7 +345,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             reshow_splash = True
         else:
             reshow_splash = False
-        if not isinstance(msg, unicode):
+        if not isinstance(msg, str):
             msg = msg.decode(locale.getpreferredencoding(), 'replace')
         m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                               Gtk.ButtonsType.CLOSE, None)
@@ -380,8 +380,8 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             box2.pack_start(gu.hig_label_widget(_("Solfege application data:"), Gtk.Label(label=filesystem.app_data()), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget(_("Solfege user data:"), Gtk.Label(label=filesystem.user_data()), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget(_("Solfege config file:"), Gtk.Label(label=filesystem.rcfile()), sizegroup), False, False, 0)
-            box2.pack_start(gu.hig_label_widget(_("Solfege installation directory:"), Gtk.Label(label=os.getcwdu()), sizegroup), False, False, 0)
-            box2.pack_start(gu.hig_label_widget(_("User manual in HTML format:"), Gtk.Label(label=os.path.join(os.getcwdu(), "help")), sizegroup), False, False, 0)
+            box2.pack_start(gu.hig_label_widget(_("Solfege installation directory:"), Gtk.Label(label=os.getcwd()), sizegroup), False, False, 0)
+            box2.pack_start(gu.hig_label_widget(_("User manual in HTML format:"), Gtk.Label(label=os.path.join(os.getcwd(), "help")), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget("gtk:", Gtk.Label(label=str(Gtk)), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget("pyalsa:", Gtk.Label(label=str(alsaseq)), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget("PYTHONHOME", Gtk.Label(os.environ.get('PYTHONHOME', 'Not defined')), sizegroup), False, False, 0)
@@ -461,7 +461,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                         os.makedirs(filesystem.user_data())
                         shutil.copytree(os.path.join(filesystem.get_home_dir(), "lessonfiles"),
                                         os.path.join(filesystem.user_data(), "lessonfiles"))
-                    except (OSError, shutil.Error), e:
+                    except (OSError, shutil.Error) as e:
                         gu.dialog_ok(_("Error while copying directory:\n%s" % e))
                     else:
                         gu.dialog_ok(_("Files copied. The old files has been left behind. Please delete them when you have verified that all files was copied correctly."))
@@ -487,18 +487,18 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                 else:
                     # We add the .bak exstention if the file already exists.
                     shutil.move(os.path.join(filesystem.app_data(), "learningtrees", fn),
-                            os.path.join(filesystem.user_data(), "learningtrees", u"%s.bak" % fn))
+                            os.path.join(filesystem.user_data(), "learningtrees", "%s.bak" % fn))
                 os.rmdir(os.path.join(os.path.join(filesystem.app_data(), "learningtrees")))
         item = self.g_ui_manager.get_widget("/Menubar/FileMenu/FrontPagesMenu")
         item.connect('activate', lambda s: self.create_frontpage_menu())
         try:
             i18n.locale_setup_failed
-            print >> sys.stderr, "\n".join(textwrap.wrap("Translations are disabled because your locale settings are broken. This is not a bug in GNU Solfege, so don't report it. The README file distributed with the program has some more details."))
+            print("\n".join(textwrap.wrap("Translations are disabled because your locale settings are broken. This is not a bug in GNU Solfege, so don't report it. The README file distributed with the program has some more details.")), file=sys.stderr)
         except AttributeError:
             pass
         for filename in lessonfile.infocache.frontpage.iter_old_format_files():
             gu.dialog_ok(_("Cannot load front page file"), None,
-                _(u"The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
+                _("The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
     def activate_exercise(self, module, urlobj=None):
         self.show_view(module)
         # We need this test because not all exercises use a notebook.
@@ -514,12 +514,12 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         Display the HTML file named by fn in the help browser window.
         """
         for lang in solfege.app.m_userman_language, "C":
-            filename = os.path.join(os.getcwdu(), u"help", lang, fn)
+            filename = os.path.join(os.getcwd(), "help", lang, fn)
             if os.path.isfile(filename):
                 break
         try:
             webbrowser.open(filename)
-        except Exception, e:
+        except Exception as e:
             self.display_error_message2(_("Error opening web browser"), str(e))
     def display_user_exercises(self, w):
         col = frontpage.Column()
@@ -535,7 +535,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             linklist.append(filename)
         if os.path.isdir(filesystem.user_lessonfiles()):
             linklist = None
-            col.append(frontpage.Paragraph(_('You really should move the following directory to a directory below <span font_family="monospace">%s</span>. Future versions of GNU Solfege will not display files in the old location. The user manual have details on where to place the files.') % os.path.join(filesystem.user_data(), u'exercises')))
+            col.append(frontpage.Paragraph(_('You really should move the following directory to a directory below <span font_family="monospace">%s</span>. Future versions of GNU Solfege will not display files in the old location. The user manual have details on where to place the files.') % os.path.join(filesystem.user_data(), 'exercises')))
             # Added just to be nice with people not moving their files from
             # pre 3.15.3 location:
             for filename in os.listdir(filesystem.user_lessonfiles()):
@@ -626,7 +626,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             obj, page = self.m_history[-1]
             self.trim_history(obj, page)
             # Find the box_dict key for obj
-            for k, o in self.box_dict.items():
+            for k, o in list(self.box_dict.items()):
                 if o == obj:
                     obj.display_data(page)
                     self.show_view(k)
@@ -676,7 +676,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             self.g_config_window.show()
     def quit_program(self, *w):
         can_quit = True
-        for dlg in gu.EditorDialogBase.instance_dict.values():
+        for dlg in list(gu.EditorDialogBase.instance_dict.values()):
             if dlg.close_window():
                 dlg.destroy()
             else:

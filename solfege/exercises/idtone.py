@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import random
 import os
@@ -35,7 +35,7 @@ import solfege
 
 class Teacher(abstract.Teacher):
     #FIXME the following lines
-    OK, ERR_PICKY, ERR_TONES = range(3)
+    OK, ERR_PICKY, ERR_TONES = list(range(3))
     ERR_PICKY = 1
     ERR_CONFIG = 2
     OCTAVES = [-2, -1, 0, 1, 2, 3]
@@ -208,7 +208,7 @@ _("""You have to select some tones practise. Do this on the config page by setti
                 else:
                     self.g_flashbar.clear()
                     self.m_t.play_question()
-            except Exception,e:
+            except Exception as e:
                 def cleanup():
                     self.std_buttons_exception_cleanup()
                 if not self.standard_exception_handler(e, cleanup):
@@ -245,7 +245,7 @@ _("""You have to select some tones practise. Do this on the config page by setti
                     else:
                         if self.get_bool("config/auto_repeat_question_if_wrong_answer"):
                             self.m_t.play_question()
-                except Exception, e:
+                except Exception as e:
                     if not self.standard_exception_handler(e):
                         raise
         self.set_percentage_label()

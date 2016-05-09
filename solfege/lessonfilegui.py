@@ -17,7 +17,7 @@
 
 # Lesson file related GUI code.
 
-from __future__ import absolute_import
+
 
 ############################
 # Python Standard Library
@@ -47,11 +47,11 @@ def chordname_markup(s):
     v = []
     for nn, mod, sup, bass in lessonfile.chordname_markup_tokenizer(s):
         if bass:
-            bass = u"/%s" % mpd.MusicalPitch.new_from_notename(bass).get_user_notename()
+            bass = "/%s" % mpd.MusicalPitch.new_from_notename(bass).get_user_notename()
         nn = mpd.MusicalPitch.new_from_notename(nn).get_user_notename()
         nn = nn[0].upper() + nn[1:]
         v.append('%s%s<span size="large" rise="11000">%s</span>%s' % (nn, mod, sup, bass))
-    return u'<span font_family="serif" size="xx-large">%s</span>' % u" ".join(v)
+    return '<span font_family="serif" size="xx-large">%s</span>' % " ".join(v)
 
 def new_labelobject(label):
     """
@@ -68,7 +68,7 @@ def new_labelobject(label):
         QuestionNameButtonTable and make it transpose the labels.
         But I don't think translated labels should have high priority.
     """
-    if isinstance(label, basestring):
+    if isinstance(label, str):
         # We hope all strings are unicode, but check for basestring just
         # in case some modules are wrong.
         l = Gtk.Label(label=_i(label))
@@ -144,7 +144,7 @@ class ExercisesMenuAddIn(object):
                             menu.append(item)
                             item.set_submenu(create_menu(link))
                         else:
-                            assert isinstance(link, unicode)
+                            assert isinstance(link, str)
                             # This will also alert us if the file is not
                             # found or not parsable:
                             try:

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import operator
 
 from gi.repository import Gtk
@@ -26,6 +26,7 @@ from solfege.mpd import const
 from solfege.mpd import elems
 from solfege.mpd import mpdutils
 from solfege.mpd.musicalpitch import MusicalPitch
+from functools import reduce
 
 ACCIDENTAL__2 = -2
 ACCIDENTAL__1 = -1
@@ -159,7 +160,7 @@ class AccidentalsEngraver(Engraver):
             for a in v:
                 x += w[a]
             return x
-        self.m_usize = reduce(operator.__add__, map(f, accs.values())) + len(accs)
+        self.m_usize = reduce(operator.__add__, list(map(f, list(accs.values())))) + len(accs)
     def get_width(self):
         return self.m_usize
     def engrave(self, ct, staff_yoffset):

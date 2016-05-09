@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 import os
 from solfege.soundcard import solfege_c_midi
 from solfege.soundcard.soundcardexceptions import SyscallException, SeqNoSynthsException
@@ -52,13 +52,13 @@ class AbstractSynth:
             self.close()
             raise SyscallException("While trying to open the device %s\nioctl(seqfd, SNDCTL_SYNTH_INFO, &si) failed" % self.m_device, solfege_c_midi.cvar.errno)
     def print_soundcard_info(self):
-        print "Devicefile:", self.m_device
-        print "The following sound devices has been found:"
+        print("Devicefile:", self.m_device)
+        print("The following sound devices has been found:")
         assert solfege_c_midi.cvar.seqfd
         nrsynths = solfege_c_midi.sndctl_seq_nrsynths()
         for x in range(nrsynths):
-            print "%i: %s" % (x, solfege_c_midi.get_synth_name(x))
-        print "--- using %s ---" % solfege_c_midi.get_synth_name(self.m_devnum)
+            print("%i: %s" % (x, solfege_c_midi.get_synth_name(x)))
+        print("--- using %s ---" % solfege_c_midi.get_synth_name(self.m_devnum))
     def close(self):
         if solfege_c_midi.cvar.seqfd != -1:
             solfege_c_midi.sndctl_seq_reset()

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import Gtk
 
@@ -133,7 +133,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_music_displayer.clear(self.m_t.m_P.header.music_displayer_stafflines)
         try:
             self.do_at_question_start_show_play()
-        except Exception, e:
+        except Exception as e:
             # Setup buttons when we have an exception. We have to do this
             # before we call standard_exception_handler because we wan't
             # the buttons in this state, even if standard_exception_handler

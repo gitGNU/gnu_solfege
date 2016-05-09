@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
-from __future__ import division
+
+
 
 import datetime
 
@@ -35,7 +35,7 @@ def label_from_key(statistics, key):
     except Exception:
         v = key
     else:
-        if isinstance(v, (int, float, long)):
+        if isinstance(v, (int, float)):
             v = key
     if not v:
         l = Gtk.Label(label=key)
@@ -59,7 +59,7 @@ class SimpleTable(Gtk.VBox):
         table = Gtk.Table()
         label = Gtk.Label()
         label.set_alignment(0.0, 0.5)
-        label.set_markup(u"<b>%s</b>" % self.m_heading)
+        label.set_markup("<b>%s</b>" % self.m_heading)
         self.pack_start(label, True, True, 0)
         for idx, (cell1, cell2) in enumerate(self.m_data):
             table.attach(label_from_key(self.m_statistics, cell1), 1, 2, idx*2+1, idx*2+2,
@@ -159,12 +159,12 @@ class PercentagesTable(Gtk.Frame):
         table.attach(Gtk.VSeparator(), 10, 11, 0, 7)
         self.boxdict['keys'] = key_box = Gtk.VBox(False, 0)
         table.attach(key_box, 0, 1, 6, 7)
-        for key, box in self.boxdict.items():
+        for key, box in list(self.boxdict.items()):
             box.set_border_width(gu.PAD_SMALL)
         self.update(statistics)
         self.show_all()
     def update(self, statistics):
-        for box in self.boxdict.values():
+        for box in list(self.boxdict.values()):
             for o in box.get_children():
                 o.destroy()
         for sk, seconds in (('session', 0),
@@ -175,9 +175,9 @@ class PercentagesTable(Gtk.Frame):
             if num_guess == 0:
                 self.m_totals[sk+'percent'].set_text("-")
             else:
-                self.m_totals[sk+'percent'].set_text(u"%.0f%%" %
+                self.m_totals[sk+'percent'].set_text("%.0f%%" %
                    (statistics.get_num_correct(seconds) / num_guess * 100))
-            self.m_totals[sk+'count'].set_text(unicode(num_guess))
+            self.m_totals[sk+'count'].set_text(str(num_guess))
         for k in statistics.get_keys(True):
             l = label_from_key(statistics, k)
             self.boxdict['keys'].pack_start(l, True, True, 0)
@@ -191,7 +191,7 @@ class PercentagesTable(Gtk.Frame):
                 else:
                     self.boxdict[sk+'percent'].pack_start(
                         Gtk.Label("%.0f%%" % (statistics.get_num_correct_for_key(seconds, k) / num_guess * 100)), False, False, 0)
-                self.boxdict[sk+'count'].pack_start(Gtk.Label(unicode(num_guess)), True, True, 0)
+                self.boxdict[sk+'count'].pack_start(Gtk.Label(str(num_guess)), True, True, 0)
         self.show_all()
 
 
@@ -235,14 +235,14 @@ class StatisticsViewer(Gtk.ScrolledWindow):
         for time, f, result in self.m_statistics.iter_test_results():
             t = datetime.datetime.fromtimestamp(time)
             if self.m_statistics.m_t.m_P.header.statistics_matrices == 'enabled':
-                m = MatrixTable(_(u"Test dated %(date)s: %(percent).1f%%") % {
+                m = MatrixTable(_("Test dated %(date)s: %(percent).1f%%") % {
                     'date': t.strftime("%x %X"),
                     'percent': f}, result, self.m_statistics)
                 m.show()
                 self.g_tables.pack_start(m, False, False, 0)
             else:
                 num_x_per_question = lessonfile.parse_test_def(self.m_statistics.m_t.m_P.header.test)[0]
-                b = SimpleTable(_(u"Test dated %(date)s: %(percent).1f%%") % {
+                b = SimpleTable(_("Test dated %(date)s: %(percent).1f%%") % {
                     'date': t.strftime("%x %X"),
                     'percent': f
                 }, self.m_statistics)

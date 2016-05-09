@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from solfege import abstract
 from solfege import gu
@@ -78,7 +78,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_repeat_arpeggio.set_sensitive(True)
             self.g_play_answer.set_sensitive(True)
             self.g_play_answer.grab_focus()
-        except Exception, e:
+        except Exception as e:
             if isinstance(e, mpd.MpdException):
                 self.m_t.m_P.get_question()['music'].complete_to_musicdata_coords(self.m_t.m_P, e)
                 e.m_mpd_varname = 'music'
@@ -88,7 +88,7 @@ class Gui(abstract.LessonbasedGui):
     def hear_answer(self, widget):
         try:
             self.m_t.m_P.play_question(varname='answer')
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
         self.g_new.grab_focus()

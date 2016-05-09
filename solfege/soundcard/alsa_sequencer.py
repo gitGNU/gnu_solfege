@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import sys
 from pyalsa import alsaseq
@@ -34,13 +34,13 @@ class AlsaSequencer(SynthCommon):
                               streams = alsaseq.SEQ_OPEN_OUTPUT,
                               mode = alsaseq.SEQ_NONBLOCK)
         if verbose_init:
-            print "clientport:", clientport
-            print "Sequencer", self.m_sequencer
-            print "\tname:", self.m_sequencer.name
-            print "\tclientname", self.m_sequencer.clientname
-            print "\tstreams:    %d (%s)" % (self.m_sequencer.streams, str(self.m_sequencer.streams))
-            print "\tmode:       %d (%s)" % (self.m_sequencer.mode, str(self.m_sequencer.mode))
-            print "\tclient_id:  %s" % self.m_sequencer.client_id
+            print("clientport:", clientport)
+            print("Sequencer", self.m_sequencer)
+            print("\tname:", self.m_sequencer.name)
+            print("\tclientname", self.m_sequencer.clientname)
+            print("\tstreams:    %d (%s)" % (self.m_sequencer.streams, str(self.m_sequencer.streams)))
+            print("\tmode:       %d (%s)" % (self.m_sequencer.mode, str(self.m_sequencer.mode)))
+            print("\tclient_id:  %s" % self.m_sequencer.client_id)
         self.m_port = self.m_sequencer.create_simple_port(name = self.name,
                              type = alsaseq.SEQ_PORT_TYPE_MIDI_GENERIC \
                                   | alsaseq.SEQ_PORT_TYPE_APPLICATION,
@@ -95,7 +95,7 @@ class AlsaSequencer(SynthCommon):
                 event.set_data({'queue.param.value' : 500000 * 60 / e[1],
                                 'queue.queue': self.m_queue})
             else:
-                print e
+                print(e)
                 raise Exception("Not implemented")
             event.source = (0, 0)
             event.queue = self.m_queue
@@ -111,7 +111,7 @@ class AlsaSequencer(SynthCommon):
         # make sure that the sequencer sees all our events
         self.m_sequencer.drain_output()
     def close(self):
-        print "close: FIXME"
+        print("close: FIXME")
     def stop(self):
         self.m_sequencer.stop_queue(self.m_queue)
         self.m_sequencer.drain_output()
@@ -134,6 +134,6 @@ def get_connection_list():
                 or type & alsaseq.SEQ_PORT_TYPE_APPLICATION) and \
                     caps & (alsaseq.SEQ_PORT_CAP_WRITE | alsaseq.SEQ_PORT_CAP_SUBS_WRITE):
                 retval.append((clientid, portid, clientname, portname,
-                    u"%i:%i %s %s" % (clientid, portid, clientname, portname)))
+                    "%i:%i %s %s" % (clientid, portid, clientname, portname)))
     return retval
 

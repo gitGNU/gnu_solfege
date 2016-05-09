@@ -3,7 +3,7 @@
 # Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
 
-from __future__ import absolute_import
+
 import unittest
 import traceback
 import codecs
@@ -22,24 +22,24 @@ class TestLexer(unittest.TestCase):
 
 var = 3
 """, None)
-        self.assertEquals(l.get_line(0), "#comment1")
-        self.assertEquals(l.get_line(1), "#comment2")
-        self.assertEquals(l.get_line(2), "#comment3")
-        self.assertEquals(l.get_line(3), "")
-        self.assertEquals(l.get_line(4), "var = 3")
+        self.assertEqual(l.get_line(0), "#comment1")
+        self.assertEqual(l.get_line(1), "#comment2")
+        self.assertEqual(l.get_line(2), "#comment3")
+        self.assertEqual(l.get_line(3), "")
+        self.assertEqual(l.get_line(4), "var = 3")
     def test_scan(self):
         p = Dataparser()
         p._lexer = Lexer("\"string\" name 1.2 2 (", p)
-        self.assertEquals(p._lexer.scan(STRING), "string")
-        self.assertEquals(p._lexer.scan(NAME), "name")
-        self.assertEquals(p._lexer.scan(FLOAT), "1.2")
-        self.assertEquals(p._lexer.scan(INTEGER), "2")
+        self.assertEqual(p._lexer.scan(STRING), "string")
+        self.assertEqual(p._lexer.scan(NAME), "name")
+        self.assertEqual(p._lexer.scan(FLOAT), "1.2")
+        self.assertEqual(p._lexer.scan(INTEGER), "2")
         p._lexer = Lexer("1 2 3", p)
         try:
             p._lexer.scan(STRING)
-        except DataparserException, e:
-            self.assertEquals(u"(line 1): 1 2 3\n"
-                              u"          ^",
+        except DataparserException as e:
+            self.assertEqual("(line 1): 1 2 3\n"
+                              "          ^",
                               e.m_nonwrapped_text)
         else:
             self.fail("DataparserException not raised")
@@ -47,8 +47,8 @@ var = 3
         p = Dataparser()
         try:
             p._lexer = Lexer("question { a = 3} |!", p)
-        except UnableToTokenizeException, e:
-            self.assertEquals("(line 1): question { a = 3} |!\n"
+        except UnableToTokenizeException as e:
+            self.assertEqual("(line 1): question { a = 3} |!\n"
                               "                            ^",
                               e.m_nonwrapped_text)
         else:
@@ -56,15 +56,15 @@ var = 3
         try:
             p._lexer = Lexer("x = 4\n"
                              "question { a = 3} |!", p)
-        except UnableToTokenizeException, e:
-            self.assertEquals("(line 1): x = 4\n"
+        except UnableToTokenizeException as e:
+            self.assertEqual("(line 1): x = 4\n"
                               "(line 2): question { a = 3} |!\n"
                               "                            ^",
                               e.m_nonwrapped_text)
         else:
             self.fail("UnableToTokenizeException not raised")
     def test_encodings_utf8(self):
-        s = u"""
+        s = """
         name = "øæå" """
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'utf-8')
         f.write(s)
@@ -74,10 +74,10 @@ var = 3
         f.close()
         p = Dataparser()
         p._lexer = Lexer(s, p)
-        self.assertEquals(p._lexer.m_tokens[2][1], u"øæå")
+        self.assertEqual(p._lexer.m_tokens[2][1], "øæå")
     def test_encodings_iso88591(self):
-        s = u'#vim: set fileencoding=iso-8859-1 : \n' \
-            u'name = "øæå" '
+        s = '#vim: set fileencoding=iso-8859-1 : \n' \
+            'name = "øæå" '
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'iso-8859-1')
         f.write(s)
         f.close()
@@ -86,7 +86,7 @@ var = 3
         f.close()
         p = Dataparser()
         p._lexer = Lexer(s, p)
-        self.assertEquals(p._lexer.m_tokens[2][1], u"øæå")
+        self.assertEqual(p._lexer.m_tokens[2][1], "øæå")
     def _test_encodings_delcar_not_first(self):
         """
         FIXME: I disabled this test because people suddenly started
@@ -135,27 +135,27 @@ class TestDataParser(TmpFileBase):
     parserclass = Dataparser
     def assertRaisedIn(self, methodname):
         t = traceback.extract_tb(sys.exc_info()[2])
-        self.assertEquals(t[-1][2], methodname)
+        self.assertEqual(t[-1][2], methodname)
     def test_exception_statement_1(self):
         try:
             self.do_file("b")
-        except DataparserSyntaxError, e:
+        except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEquals(u"(line 1): b\n"+
-                              u"           ^",
+            self.assertEqual("(line 1): b\n"+
+                              "           ^",
                               e.m_nonwrapped_text)
-            self.assertEquals(e.m_token, ('EOF', None, 1, 0))
+            self.assertEqual(e.m_token, ('EOF', None, 1, 0))
         else:
             self.fail("DataparserSyntaxError not raised")
     def test_exception_statement_2(self):
         try:
             self.do_file("a)")
-        except DataparserSyntaxError, e:
+        except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEquals(u"(line 1): a)\n"+
-                              u"           ^",
+            self.assertEqual("(line 1): a)\n"+
+                              "           ^",
                               e.m_nonwrapped_text)
-            self.assertEquals(e.m_token, (')', ')', 1, 0))
+            self.assertEqual(e.m_token, (')', ')', 1, 0))
         else:
             self.fail("DataparserSyntaxError not raised")
     def test_exception_statement_3(self):
@@ -163,9 +163,9 @@ class TestDataParser(TmpFileBase):
             self.do_file("""#comment
   XYZ
 """)
-        except DataparserSyntaxError, e:
+        except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEquals(u"(line 1): #comment\n"+
+            self.assertEqual("(line 1): #comment\n"+
                               "(line 2):   XYZ\n"+
                               "(line 3): \n"+
                               "          ^",
@@ -178,9 +178,9 @@ class TestDataParser(TmpFileBase):
   A)
 """)
 
-        except DataparserSyntaxError, e:
+        except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEquals(u"(line 1): #comment\n"+
+            self.assertEqual("(line 1): #comment\n"+
                               "(line 2):   A)\n"+
                               "             ^",
                               e.m_nonwrapped_text)
@@ -189,10 +189,10 @@ class TestDataParser(TmpFileBase):
     def test_exception_assignment(self):
         try:
             self.do_file("question = 3")
-        except AssignmentToReservedWordException, e:
+        except AssignmentToReservedWordException as e:
             self.assertRaisedIn('assignment')
-            self.assertEquals(u"(line 1): question = 3\n" +
-                              u"          ^",
+            self.assertEqual("(line 1): question = 3\n" +
+                              "          ^",
                               e.m_nonwrapped_text)
         else:
             self.fail("AssignmentToReservedWordException not raised")
@@ -205,15 +205,15 @@ class TestDataParser(TmpFileBase):
            var[nb] = "var-nb"
          }
         """)
-        self.assertEquals(p.tree[0].right.evaluate({}, {}),
-                          u'foo-C')
-        self.assertEquals(p.tree[1].right.evaluate({}, {}),
-                          u'foo-nb')
-        self.assertEquals(p.tree[2][0].right.evaluate({}, {}),
-                          u'var-C')
-        self.assertEquals(p.tree[2][1].right.evaluate({}, {}),
-                          u'var-nb')
-        self.assert_(isinstance(p.tree[2][0].right.evaluate({}, {}), istr))
+        self.assertEqual(p.tree[0].right.evaluate({}, {}),
+                          'foo-C')
+        self.assertEqual(p.tree[1].right.evaluate({}, {}),
+                          'foo-nb')
+        self.assertEqual(p.tree[2][0].right.evaluate({}, {}),
+                          'var-C')
+        self.assertEqual(p.tree[2][1].right.evaluate({}, {}),
+                          'var-nb')
+        self.assertTrue(isinstance(p.tree[2][0].right.evaluate({}, {}), istr))
     def test_istr_translations_in_file_lang_before_C(self):
         """
         The Dataparser will accept setting the translated var before the
@@ -224,25 +224,25 @@ class TestDataParser(TmpFileBase):
            foo[no] = "foo-no"
            foo = "foo-C"
         """)
-        self.assertEquals(p.tree[0].left, "foo[no]")
-        self.assertEquals(p.tree[0].right.m_value, u"foo-no")
-        self.assertEquals(p.tree[0].right.m_value.cval, u"foo-no")
-        self.assertEquals(p.tree[1].right.m_value, u"foo-C")
+        self.assertEqual(p.tree[0].left, "foo[no]")
+        self.assertEqual(p.tree[0].right.m_value, "foo-no")
+        self.assertEqual(p.tree[0].right.m_value.cval, "foo-no")
+        self.assertEqual(p.tree[1].right.m_value, "foo-C")
     def test_i18n_list_fails(self):
         try:
             self.do_file('foo[no] = "foo-no", "blabla" ')
-        except CanOnlyTranslateStringsException, e:
-            self.assertEquals(e.m_nonwrapped_text,
-               u'(line 1): foo[no] = "foo-no", "blabla" \n'
+        except CanOnlyTranslateStringsException as e:
+            self.assertEqual(e.m_nonwrapped_text,
+               '(line 1): foo[no] = "foo-no", "blabla" \n'
                +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
     def test_i18n_int_fails(self):
         try:
             self.do_file('foo[no] = 8')
-        except CanOnlyTranslateStringsException, e:
-            self.assertEquals(e.m_nonwrapped_text,
-               u'(line 1): foo[no] = 8\n'
+        except CanOnlyTranslateStringsException as e:
+            self.assertEqual(e.m_nonwrapped_text,
+               '(line 1): foo[no] = 8\n'
                +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
@@ -251,11 +251,11 @@ class TestDataParser(TmpFileBase):
             "import progression_elements",
             "t = progression_elements.I",
         ]))
-        self.assertEquals(len(p.tree), 2)
-        self.assert_(isinstance(p.tree[0], pt.Assignment))
-        self.assert_(isinstance(p.tree[0].right, pt.Program))
-        self.assert_(isinstance(p.tree[1], pt.Assignment))
-        self.assert_(isinstance(p.tree[1].right, pt.Identifier))
+        self.assertEqual(len(p.tree), 2)
+        self.assertTrue(isinstance(p.tree[0], pt.Assignment))
+        self.assertTrue(isinstance(p.tree[0].right, pt.Program))
+        self.assertTrue(isinstance(p.tree[1], pt.Assignment))
+        self.assertTrue(isinstance(p.tree[1].right, pt.Identifier))
     def test_import_as(self):
         p = self.do_file("\n".join([
             "import progression_elements as p",
@@ -263,11 +263,11 @@ class TestDataParser(TmpFileBase):
             "question {",
             "   prog = p.I",
             "}"]))
-        self.assertEquals(len(p.tree), 3)
-        self.assert_(isinstance(p.tree[0], pt.Assignment))
-        self.assert_(isinstance(p.tree[0].right, pt.Program))
-        self.assert_(isinstance(p.tree[1].right, pt.Identifier))
-        self.assert_(isinstance(p.tree[2][0].right, pt.Identifier))
+        self.assertEqual(len(p.tree), 3)
+        self.assertTrue(isinstance(p.tree[0], pt.Assignment))
+        self.assertTrue(isinstance(p.tree[0].right, pt.Program))
+        self.assertTrue(isinstance(p.tree[1].right, pt.Identifier))
+        self.assertTrue(isinstance(p.tree[2][0].right, pt.Identifier))
     def test_pt_2(self):
         p = self.do_file("""header {
         module = idbyname
@@ -279,68 +279,68 @@ class TestDataParser(TmpFileBase):
         """)
         for d in p.tree[0]:
             if d.left == 'module':
-                self.assertEquals(d.right, 'idbyname')
+                self.assertEqual(d.right, 'idbyname')
     def test_nested_block(self):
         """
         As we can see, the Dataparser class and the parsetree code
         can handle nested blocks.
         """
         p = self.do_file("question { a = 4 subbl { b = 5} }")
-        self.assert_(isinstance(p.tree[0], pt.Block))
-        self.assert_(isinstance(p.tree[0][0], pt.Assignment))
-        self.assert_(isinstance(p.tree[0][1], pt.Block))
-        self.assert_(isinstance(p.tree[0][1][0], pt.Assignment))
-        self.assertEquals(p.tree[0][1][0].right.evaluate({}, {}), 5)
+        self.assertTrue(isinstance(p.tree[0], pt.Block))
+        self.assertTrue(isinstance(p.tree[0][0], pt.Assignment))
+        self.assertTrue(isinstance(p.tree[0][1], pt.Block))
+        self.assertTrue(isinstance(p.tree[0][1][0], pt.Assignment))
+        self.assertEqual(p.tree[0][1][0].right.evaluate({}, {}), 5)
     def test_named_block(self):
         p = self.do_file('element I { label = "label-I" } '
                       +'element II { label = "label-II" }')
-        self.assertEquals(len(p.tree), 2)
-        self.assertEquals(len(p.tree[0]), 1)
-        self.assertEquals(len(p.tree[1]), 1)
-        self.assert_(isinstance(p.tree[0], pt.NamedBlock))
-        self.assertEquals(p.tree[0][0].right.evaluate({}, {}), 'label-I')
-        self.assert_(isinstance(p.tree[1], pt.NamedBlock))
-        self.assertEquals(p.tree[1][0].right.evaluate({}, {}), 'label-II')
+        self.assertEqual(len(p.tree), 2)
+        self.assertEqual(len(p.tree[0]), 1)
+        self.assertEqual(len(p.tree[1]), 1)
+        self.assertTrue(isinstance(p.tree[0], pt.NamedBlock))
+        self.assertEqual(p.tree[0][0].right.evaluate({}, {}), 'label-I')
+        self.assertTrue(isinstance(p.tree[1], pt.NamedBlock))
+        self.assertEqual(p.tree[1][0].right.evaluate({}, {}), 'label-II')
 
 class TestIstr(I18nSetup):
     def test_musicstr(self):
         s = istr(r"\staff{ c e g }")
-        self.assert_(isinstance(s, basestring))
+        self.assertTrue(isinstance(s, str))
     def test_add_translations1(self):
         #i18n.langs: nb_NO, nb, C
         # name = "Yes"
         # name[no] = "Ja"
         s = "Yes"
         s = istr(s)
-        self.assertEquals(unicode(s), u'Yes')
+        self.assertEqual(str(s), 'Yes')
         s = s.add_translation('nb', 'Ja')
-        self.assertEquals(s, u'Ja')
+        self.assertEqual(s, 'Ja')
         s = s.add_translation('nb_NO', 'Ja!')
-        self.assertEquals(s, u'Ja!')
+        self.assertEqual(s, 'Ja!')
     def test_add_translations2(self):
         #i18n.langs: nb_NO, nb, C
         # name = "Yes"
         # name[no] = "Ja"
         s = "Yes"
         s = istr(s)
-        self.assertEquals(s, u'Yes')
+        self.assertEqual(s, 'Yes')
         s = s.add_translation('nb_NO', 'Ja!')
-        self.assertEquals(s, u'Ja!')
+        self.assertEqual(s, 'Ja!')
         s = s.add_translation('nb', 'Ja')
-        self.assertEquals(s, u'Ja!', "Should still be 'Ja!' because no_NO is preferred before no")
+        self.assertEqual(s, 'Ja!', "Should still be 'Ja!' because no_NO is preferred before no")
     def test_override_gettext(self):
         s = dataparser_i18n_func("major")
-        self.assertEquals(s, "dur")
-        self.assertEquals(s.cval, "major")
+        self.assertEqual(s, "dur")
+        self.assertEqual(s.cval, "major")
         s = s.add_translation('nb', "Dur")
-        self.assertEquals(s, u"Dur")
+        self.assertEqual(s, "Dur")
     def test_type(self):
         s = istr("jo")
-        self.assert_(type(s) == istr)
+        self.assertTrue(type(s) == istr)
         self.assertRaises(TypeError, lambda s: type(s) == str)
-        self.assert_(isinstance(s, istr))
-        self.assert_(not isinstance(s, str))
-        self.assert_(isinstance(s, unicode))
+        self.assertTrue(isinstance(s, istr))
+        self.assertTrue(not isinstance(s, str))
+        self.assertTrue(isinstance(s, str))
 
 suite = unittest.makeSuite(TestLexer)
 suite.addTest(unittest.makeSuite(TestDataParser))

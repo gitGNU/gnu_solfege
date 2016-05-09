@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from gi.repository import Gtk
 
@@ -51,7 +51,7 @@ class Teacher(abstract.Teacher):
                                       self.QSTATUS_GIVE_UP)):
             return self.ERR_PICKY
         self.m_P.select_random_question()
-        self.m_solved = {}.fromkeys(self.m_P.m_props.keys(), False)
+        self.m_solved = {}.fromkeys(list(self.m_P.m_props.keys()), False)
         self.q_status = self.QSTATUS_NEW
         return self.OK
     def give_up(self):
@@ -68,7 +68,7 @@ class Teacher(abstract.Teacher):
         assert self.q_status == self.QSTATUS_NEW
         if value == self.m_P.get_question()[property_name].cval:
             self.m_solved[property_name] = True
-            if False not in self.m_solved.values():
+            if False not in list(self.m_solved.values()):
                 self.q_status = self.QSTATUS_SOLVED
                 return self.ALL_CORRECT
             return self.CORRECT
@@ -158,11 +158,11 @@ class Gui(abstract.LessonbasedGui):
         # pprops say how many properties are we going to display.
         # We will not display a property if no questions use it.
         num_used_props = len(
-            [x for x in self.m_t.m_P.m_props.keys() if self.m_t.m_P.m_props[x]])
+            [x for x in list(self.m_t.m_P.m_props.keys()) if self.m_t.m_P.m_props[x]])
         # tcols say how many columns we need. We need a column for each
         # column separator
         tcols = num_used_props * 2 - 1
-        trows = max([len(x) for x in self.m_t.m_P.m_props.values()]) + 2
+        trows = max([len(x) for x in list(self.m_t.m_P.m_props.values())]) + 2
         # The column headings
         for idx, label in enumerate(self.m_t.m_P.header.qprop_labels):
             self.g_atable.attach(Gtk.Label(label=label), idx * 2, idx * 2 + 1, 0, 1,
@@ -171,7 +171,7 @@ class Gui(abstract.LessonbasedGui):
         # Then we create the buttons used to answer.
         for x, prop in enumerate(self.m_t.m_P.header.qprops):
             for y, proplabel in enumerate(self.m_t.m_P.m_props[prop]):
-                button = Gtk.Button(unicode(proplabel))
+                button = Gtk.Button(str(proplabel))
                 button.m_property_name = prop
                 button.m_property_value = proplabel.cval
                 button.connect('clicked', self.on_prop_button_clicked)
@@ -237,7 +237,7 @@ class Gui(abstract.LessonbasedGui):
             if match:
                 try:
                     self.m_t.m_P.play_question(question)
-                except Exception, e:
+                except Exception as e:
                     if not self.standard_exception_handler(e):
                         raise
                 return
@@ -268,7 +268,7 @@ class Gui(abstract.LessonbasedGui):
             self.std_buttons_new_question()
             self.g_give_up.set_sensitive(True)
             [btn for btn in self.g_atable.get_children() if isinstance(btn, Gtk.Button)][-1].grab_focus()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
     def on_start_practise(self):

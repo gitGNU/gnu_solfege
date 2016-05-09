@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -29,12 +29,12 @@ class BaseIconFactory(Gtk.IconFactory):
         self.add_default()
 
     def add_icons(self, icons):
-        for stock_id, filename in icons.items():
+        for stock_id, filename in list(icons.items()):
             if os.path.isfile(os.path.join(self.datadir, filename)):
                 iconset = Gtk.IconSet(GdkPixbuf.Pixbuf.new_from_file(os.path.join(self.datadir, filename)))
                 self.add(stock_id, iconset)
             else:
-                print >> sys.stderr, "File not found: %s" % filename
+                print("File not found: %s" % filename, file=sys.stderr)
 
 class EditorIconFactory(BaseIconFactory):
     """
@@ -68,6 +68,6 @@ class SolfegeIconFactory(BaseIconFactory):
         d = {}
         d['solfege-icon'] = 'graphics/solfege.svg'
         for iname in icon_list:
-            d['solfege-%s' % iname] = os.path.join(u"graphics", iname) + ".png"
+            d['solfege-%s' % iname] = os.path.join("graphics", iname) + ".png"
         self.add_icons(d)
 

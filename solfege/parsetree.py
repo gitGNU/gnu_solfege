@@ -19,10 +19,10 @@ class LookupException(ParseTreeException):
     pass
 
 
-class Identifier(unicode):
+class Identifier(str):
     check_ns = True
     def __repr__(self):
-        return u"Identifier(%s)" % self
+        return "Identifier(%s)" % self
     def evaluate(self, local_namespace, global_namespace):
         if "." in self:
             mod, name = self.split(".")
@@ -42,7 +42,7 @@ class Identifier(unicode):
 
 class Node(object):
     def dump(self, indent=0):
-        print " " * indent, self
+        print(" " * indent, self)
 
 class Literal(Node):
     """
@@ -50,12 +50,12 @@ class Literal(Node):
     """
     def __init__(self, value):
         Node.__init__(self)
-        assert isinstance(value, (int, unicode, float))
+        assert isinstance(value, (int, str, float))
         self.m_value = value
     def evaluate(self, local_namespace, global_namespace):
         return self.m_value
     def __repr__(self):
-        return u"Literal(%s)" % repr(self.m_value)
+        return "Literal(%s)" % repr(self.m_value)
 
 class TempoType(Node):
     def __init__(self, bpm, nlen):
@@ -72,7 +72,7 @@ class Assignment(Node):
         self.left = name
         self.right = expression
     def __repr__(self):
-        return u"%s = %s" % (self.left, self.right)
+        return "%s = %s" % (self.left, self.right)
 
 class FunctionCall(Node):
     class WrongArgumentCount(ParseTreeException):
@@ -87,7 +87,7 @@ class FunctionCall(Node):
         self.m_name = name
         self.m_args = args
     def __repr__(self):
-        return u"%s(%s)" % (self.m_name, self.m_args)
+        return "%s(%s)" % (self.m_name, self.m_args)
     def evaluate(self, local_namespace, global_namespace):
         args = [x.evaluate(local_namespace, global_namespace) for x in self.m_args]
         # Functions are only in the global namespace, as functions
@@ -142,7 +142,7 @@ class Block(CodeBlock):
         CodeBlock.__init__(self)
         self.m_blocktype = blocktype
     def __repr__(self):
-        return u"UnnamedBlock(type=%s)" % self.m_blocktype
+        return "UnnamedBlock(type=%s)" % self.m_blocktype
 
 
 class NamedBlock(CodeBlock):
@@ -155,14 +155,14 @@ class NamedBlock(CodeBlock):
         self.m_blocktype = blocktype
         self.m_name = name
     def __repr__(self):
-        return u"NamedBlock(type=%s, name=%s)" % (self.m_blocktype, self.m_name)
+        return "NamedBlock(type=%s, name=%s)" % (self.m_blocktype, self.m_name)
 
 
 class Program(CodeBlock):
     def __init__(self):
         CodeBlock.__init__(self)
     def dump(self, indent=0):
-        print "Program:"
+        print("Program:")
         for statement in self:
             statement.dump(indent + 2)
 

@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import
+
 
 from solfege import abstract
 from solfege import gu
@@ -60,7 +60,7 @@ class Teacher(abstract.MelodicIntervalTeacher):
             tones.append(last)
             score.voice11.append(elems.Note(last,
                 solfege.mpd.Duration(4, 0)))
-        score.m_staffs[0].set_clef(solfege.mpd.select_clef(u" ".join([x.get_octave_notename() for x in tones])), solfege.mpd.Rat(0, 1))
+        score.m_staffs[0].set_clef(solfege.mpd.select_clef(" ".join([x.get_octave_notename() for x in tones])), solfege.mpd.Rat(0, 1))
         return score
     def guessed_correct(self):
         if self.get_int('number_of_intervals=1') == 1 \
@@ -134,8 +134,8 @@ class Gui(abstract.Gui):
         try:
             r = self.m_t.new_question(self.get_string('user/lowest_pitch'),
                                       self.get_string('user/highest_pitch'))
-        except Teacher.ConfigureException, e:
-            solfege.win.display_error_message2(_("Exercise configuration problem"), unicode(e))
+        except Teacher.ConfigureException as e:
+            solfege.win.display_error_message2(_("Exercise configuration problem"), str(e))
             return
         if r == Teacher.OK:
             self.m_t.play_first_tone()
@@ -206,7 +206,7 @@ class Gui(abstract.Gui):
                 return
         try:
             r = self._new_question()
-        except Exception, e:
+        except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
             return
