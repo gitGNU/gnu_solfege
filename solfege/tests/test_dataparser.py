@@ -63,30 +63,6 @@ var = 3
                               e.m_nonwrapped_text)
         else:
             self.fail("UnableToTokenizeException not raised")
-    def test_encodings_utf8(self):
-        s = """
-        name = "øæå" """
-        f = codecs.open(os.path.join(outdir, "file1"), 'w', 'utf-8')
-        f.write(s)
-        f.close()
-        f = open(os.path.join(outdir, "file1"), 'rU')
-        s = f.read()
-        f.close()
-        p = Dataparser()
-        p._lexer = Lexer(s, p)
-        self.assertEqual(p._lexer.m_tokens[2][1], "øæå")
-    def test_encodings_iso88591(self):
-        s = '#vim: set fileencoding=iso-8859-1 : \n' \
-            'name = "øæå" '
-        f = codecs.open(os.path.join(outdir, "file1"), 'w', 'iso-8859-1')
-        f.write(s)
-        f.close()
-        f = open(os.path.join(outdir, "file1"), 'rU')
-        s = f.read()
-        f.close()
-        p = Dataparser()
-        p._lexer = Lexer(s, p)
-        self.assertEqual(p._lexer.m_tokens[2][1], "øæå")
     def _test_encodings_delcar_not_first(self):
         """
         FIXME: I disabled this test because people suddenly started
@@ -336,11 +312,8 @@ class TestIstr(I18nSetup):
         self.assertEqual(s, "Dur")
     def test_type(self):
         s = istr("jo")
-        self.assertTrue(type(s) == istr)
-        self.assertRaises(TypeError, lambda s: type(s) == str)
-        self.assertTrue(isinstance(s, istr))
-        self.assertTrue(not isinstance(s, str))
-        self.assertTrue(isinstance(s, str))
+        self.assertIsInstance(s, istr)
+        self.assertIsInstance(s, str)
 
 class TestEncodingSniffer(TmpFileBase):
     parserclass = Dataparser
