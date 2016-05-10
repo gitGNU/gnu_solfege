@@ -21,7 +21,7 @@ class Test_parse_file_into_dict(unittest.TestCase):
         self.assertEqual(d['gui']['expert_mode'], "false")
     def test_fail_on_non_utf8(self):
         filename = os.path.join(outdir, 'bad-unicode.ini')
-        outfile = open(filename, 'w')
+        outfile = open(filename, 'w', encoding="iso-8859-1")
         outfile.write("# This file is not in utf8 encoding\n"
              "[sound]\n"
              "midi_player=/ABC/Us\xe9r\xa0\xff\xff\xff\x00r /bin/timidity\n")
