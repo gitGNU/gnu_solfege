@@ -11,5 +11,5 @@ modules = [os.path.splitext(os.path.basename(x))[0] \
            for x in glob.glob("solfege/soundcard/tests/test_*.py")]
 
 for m in modules:
-    exec "import solfege.soundcard.tests.%s" % m
+    exec("import solfege.soundcard.tests.%s" % m)
 suite = unittest.TestSuite([globals()[m].suite for m in modules])
