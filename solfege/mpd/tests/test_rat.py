@@ -18,6 +18,9 @@ class TestRat(unittest.TestCase):
         self.assertEquals(float(r), 1.0)
         self.assertEquals(r.m_num, 4)
         self.assertEquals(r.m_den, 4)
+    def test_as_float(self):
+        self.assertEquals(float(Rat(1, 2)), 0.5)
+        self.assertEquals(float(Rat(2, 4)), 0.5)
     def test_addition(self):
         self.assertEquals(Rat(1, 4) + Rat(1, 4), Rat(2, 4))
         self.assertEquals(Rat(3, 4) + Rat(1, 4), Rat(1, 1))
@@ -28,13 +31,14 @@ class TestRat(unittest.TestCase):
     def test_division(self):
         r1 = Rat(1, 2)
         r2 = Rat(1, 2)
-        d = r1 / r2
         self.assertEquals(Rat(1, 2) / Rat(1, 2), Rat(1, 1))
         self.assertEquals(Rat(1, 2) / Rat(2, 4), Rat(1, 1))
         self.assertEquals(Rat(1, 4) / 2, Rat(1, 8))
         self.assertEquals(Rat(1, 4) / Rat(3, 2),  Rat(1, 6))
+        self.assertEquals(Rat(1, 4) / 2, Rat(1, 8))
     def test_cmp(self):
         self.assertNotEquals(Rat(4, 3), None)
+        self.assertEquals(Rat(1, 2), Rat(2, 4))
         self.assertTrue(True)
     def test_listsort(self):
         v = [Rat(0, 4), Rat(3, 8), Rat(1, 8), Rat(1, 4)]

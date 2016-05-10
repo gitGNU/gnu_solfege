@@ -44,14 +44,14 @@ class Rat(object):
         a = self.m_num * B.m_den + B.m_num * self.m_den
         b = self.m_den * B.m_den
         g = gcd(a, b)
-        return Rat(a/g, b/g)
+        return Rat(a // g, b // g)
     def __sub__(self, B):
         assert isinstance(self, Rat)
         assert isinstance(B, Rat)
         a = (self.m_num * B.m_den - B.m_num * self.m_den)
         b = self.m_den * B.m_den
         g = gcd(a, b)
-        return Rat(a/g, b/g)
+        return Rat(a // g, b // g)
     def __mul__(self, B):
         assert isinstance(self, Rat)
         if type(B) == type(0):
@@ -60,21 +60,12 @@ class Rat(object):
         assert isinstance(B, Rat)
         g = gcd(self.m_num*B.m_num, self.m_den*B.m_den)
         return Rat(self.m_num*B.m_num/g, self.m_den*B.m_den/g)
-    def __rdiv__(self, B):
-        """ called when integer / Rat
-        """
-        assert isinstance(B, int)
-        assert isinstance(self, Rat)
-        a = B * self.m_den
-        b = self.m_num
-        g = gcd(a, b)
-        return Rat(a/g, b/g)
-    def __div__(self, i):
+    def __truediv__(self, i):
         if isinstance(i, int):
             i = Rat(i, 1)
         r = Rat(self.m_num * i.m_den, self.m_den * i.m_num)
         g = gcd(r.m_num, r.m_den)
-        return Rat(r.m_num / g, r.m_den / g)
+        return Rat(r.m_num // g, r.m_den // g)
     def __rmul__(self, B):
         """ called when integer * Rat
         """
@@ -89,9 +80,11 @@ class Rat(object):
         return 1.0 * self.m_num / self.m_den
     def __hash__(self):
         return hash((self.m_num, self.m_den))
-    def __cmp__(self, B):
+    def __eq__(self, B):
         if B is None:
-            return 1
-        return cmp(1.0*self.m_num/self.m_den, 1.0*B.m_num/B.m_den)
+            return False
+        return self.m_num / self.m_den == B.m_num / B.m_den
+    def __lt__(self, B):
+        return self.m_num / self.m_den < B.m_num / B.m_den
 
 
