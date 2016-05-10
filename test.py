@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Solfege - free ear training software
 # Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
@@ -13,11 +13,11 @@ import atexit
 # we need this hack because doctest messes with _
 def f(s):
     if type(s) == type(""):
-        print "'%s'" % s
+        print ("'%s'" % s)
     elif s is None:
         return
     else:
-        print s
+        print (s)
 
 sys.__displayhook__ = f
 

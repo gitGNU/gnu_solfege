@@ -342,6 +342,50 @@ class TestIstr(I18nSetup):
         self.assertTrue(not isinstance(s, str))
         self.assertTrue(isinstance(s, str))
 
+class TestEncodingSniffer(TmpFileBase):
+    parserclass = Dataparser
+    def test_file_not_found(self):
+        self.assertRaises(FileNotFoundError, read_encoding_marker_from_file, "asdfasdf")
+        self.assertEquals(
+            read_encoding_marker_from_file("exercises/standard/lesson-files/progression-atte"),
+            "iso-8859-1")
+        self.assertEquals(
+            read_encoding_marker_from_file("exercises/standard/lesson-files/chord-min-major"),
+            None)
+    def test_from_string(self):
+        self.assertEquals(read_encoding_marker_from_string(
+            "# vim: set fileencoding=findme\n"
+            + "# line\n"
+            + "line\n"), "findme")
+        self.assertEquals(read_encoding_marker_from_string(
+            "# comment\n"
+            + "# vim: set fileencoding=findme\n"
+            + "# line\nline\n"), "findme")
+        # Test that the file encoding is only detecte if placed in one
+        # of the first two lines
+        self.assertEquals(read_encoding_marker_from_string(
+            "line 1\n"
+            + "line 2\n"
+            + "# vim: set fileencoding=findme\n"
+            + "# line\nline\n"), None)
+    def test_utf8_in_first_line(self):
+        self.assertEquals(read_encoding_marker_from_string(
+            "# ソルフェージュ\n"
+            + "# vim: set fileencoding=findme\n"
+            + "# line\nline\n"), "findme")
+    def test_empty_string(self):
+        self.assertIsNone(read_encoding_marker_from_string(""))
+    def test_empty_lines(self):
+        self.assertIsNone(read_encoding_marker_from_string("\n\n\n"))
+        self.add_file("\n\n\n\n\n\n", "empty-lines")
+        self.assertIsNone(read_encoding_marker_from_file(
+            os.path.join(self.tmpdir, "empty-lines")))
+    def test_empty_file(self):
+        self.add_file("", "empty-file")
+        self.assertIsNone(read_encoding_marker_from_file(
+            os.path.join(self.tmpdir, "empty-file")))
+
 suite = unittest.makeSuite(TestLexer)
 suite.addTest(unittest.makeSuite(TestDataParser))
 suite.addTest(unittest.makeSuite(TestIstr))
+suite.addTest(unittest.makeSuite(TestEncodingSniffer))

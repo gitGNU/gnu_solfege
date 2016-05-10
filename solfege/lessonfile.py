@@ -1937,7 +1937,12 @@ def parse_lesson_file_header(filename):
     # have placed in the directory. It could be a whole DVD iso image.
     # The actual size we read, 40k, is mentioned in the user manual,
     # and must be updated there too if changed.
-    s = open(filename, 'rU').read(40960)
+
+    e = dataparser.read_encoding_marker_from_file(filename)
+    if not e:
+        # Solfege assumes the file encoding it utf-8 unless specified
+        e = 'utf-8'
+    s = open(filename, 'r', encoding=e).read(40960)
     m = r.search(s)
     p = LessonfileCommon()
     ###############################

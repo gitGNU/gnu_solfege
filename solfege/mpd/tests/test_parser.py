@@ -73,7 +73,7 @@ class TestMpdParser(unittest.TestCase):
             "}"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '{')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (11, 12))
         else:
@@ -83,7 +83,7 @@ class TestMpdParser(unittest.TestCase):
             "}"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '<')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (15, 16))
         else:
@@ -94,7 +94,7 @@ class TestMpdParser(unittest.TestCase):
             "}"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '<')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (9, 10))
         else:
@@ -104,7 +104,7 @@ class TestMpdParser(unittest.TestCase):
             "  c4 d > \times 3/2"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '>')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (7, 8))
         else:
@@ -113,7 +113,7 @@ class TestMpdParser(unittest.TestCase):
         s = "\\staff { c4 \\times 3/2 { \\times 3/2 { c4 c4 } } }\n"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '\\times 3/2 {')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (25, 37))
         else:
@@ -123,7 +123,7 @@ class TestMpdParser(unittest.TestCase):
             "  c4 d }"
         try:
             t = mpd.music_to_tracklist(s)
-        except ParseError, e:
+        except ParseError as e:
             self._check(e, s, '\\addvoice')
             self.assertEquals((e.m_linepos1, e.m_linepos2), (3, 12))
         else:
@@ -174,7 +174,7 @@ class TestMpdParser(unittest.TestCase):
     def test_bar_full(self):
         try:
             p = mpd.parser.parse_to_score_object(r"\staff{ c2. c }")
-        except mpd.MpdException, e:
+        except mpd.MpdException as e:
             self.assertEquals((e.m_lineno, e.m_linepos1, e.m_linepos2),
                               (0, 12, 13))
     def test_times(self):

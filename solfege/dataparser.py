@@ -204,6 +204,40 @@ class UnableToTokenizeException(DataparserException):
                 'filename': lexer.m_parser().m_filename})
         self.m_nonwrapped_text = lexer.get_tokenize_err_context()
 
+def read_encoding_marker_from_string(string):
+    """
+    According to http://www.python.org/dev/peps/pep-0263/
+    the encoding marker must be in the first two lines
+    Return None if no encoding marker found
+    """
+    r = re.compile("#.*?coding\s*[:=]\s*([\w_.-]+)")
+    c = 0
+    for line in string.split("\n"):
+        m = r.match(line)
+        if m:
+            return m.groups()[0]
+        c +=1
+        if c == 2:
+            break
+
+
+def read_encoding_marker_from_file(filename):
+    """
+    According to http://www.python.org/dev/peps/pep-0263/
+    the encoding marker must be in the first two lines
+    Return None if no encoding marker found
+    """
+    r = re.compile(b"#.*?coding\s*[:=]\s*([\w_.-]+)")
+    with open(filename, 'br') as f:
+        line = f.readline()
+        m = r.match(line)
+        if m:
+            return m.groups()[0].decode("ascii")
+        line = f.readline()
+        m = r.match(line)
+        if m:
+            return m.groups()[0].decode("ascii")
+        return
 
 class Lexer:
     def __init__(self, src, parser):
@@ -212,15 +246,6 @@ class Lexer:
             self.m_parser = weakref.ref(parser)
         else:
             self.m_parser = parser
-        r = re.compile("#.*?coding\s*[:=]\s*([\w_.-]+)")
-        # according to http://www.python.org/dev/peps/pep-0263/
-        # the encoding marker must be in the first two lines
-        m = r.match("\n".join(src.split("\n")[0:2]))
-        if m:
-            src = str(src, m.groups()[0], errors="replace")
-        else:
-            src = str(src, "UTF-8", errors="replace")
-        assert isinstance(src, str)
         src = src.replace("\r", "\n")
         # Some editors (notepad on win32?) insert the BOM, so we have
         # to check for it and remove it since the lexer don't handle it.
