@@ -21,59 +21,59 @@
 >>> gettext.NullTranslations().install()
 >>> a = MusicalPitch.new_from_notename("g")
 >>> b = MusicalPitch.new_from_notename("f")
->>> print a - b
+>>> print(a - b)
 2
->>> print (a - 2).get_octave_notename()
+>>> print((a - 2).get_octave_notename())
 f
->>> print (a + 3).get_octave_notename()
+>>> print((a + 3).get_octave_notename())
 ais
->>> print a < b
+>>> print(a < b)
 0
->>> print a > b
+>>> print(a > b)
 1
->>> print MusicalPitch.new_from_int(55) == a
+>>> print(MusicalPitch.new_from_int(55) == a)
 1
->>> print MusicalPitch.new_from_notename(a.get_notename()) == a
+>>> print(MusicalPitch.new_from_notename(a.get_notename()) == a)
 1
->>> print a.clone() == a, id(a) == id(a.clone())
+>>> print(a.clone() == a, id(a) == id(a.clone()))
 True False
 >>> a=MusicalPitch()
->>> print a.m_octave_i == a.m_accidental_i == a.m_octave_i == 0
+>>> print(a.m_octave_i == a.m_accidental_i == a.m_octave_i == 0)
 1
->>> print a.semitone_pitch()
+>>> print(a.semitone_pitch())
 48
->>> print a.get_octave_notename()
+>>> print(a.get_octave_notename())
 c
->>> print (a+2).get_octave_notename()
+>>> print((a+2).get_octave_notename())
 d
->>> print (2+a).get_octave_notename()
+>>> print((2+a).get_octave_notename())
 d
->>> print MusicalPitch.new_from_notename("des'").get_notename()
+>>> print(MusicalPitch.new_from_notename("des'").get_notename())
 des
->>> print MusicalPitch.new_from_int(50).semitone_pitch()
+>>> print(MusicalPitch.new_from_int(50).semitone_pitch())
 50
->>> print MusicalPitch.new_from_int(50).get_notename()
+>>> print(MusicalPitch.new_from_int(50).get_notename())
 d
 >>> n=MusicalPitch.new_from_notename("fis,")
->>> print n.get_user_octave_notename()
+>>> print(n.get_user_octave_notename())
 f#,
 >>> n=MusicalPitch.new_from_notename("b,,")
->>> print n.get_octave_notename()
+>>> print(n.get_octave_notename())
 b,,
->>> print n.get_user_octave_notename()
+>>> print(n.get_user_octave_notename())
 b,,
 >>> gettext.translation('solfege', './share/locale/', languages=['nb_NO']).install()
->>> print n.get_octave_notename()
+>>> print(n.get_octave_notename())
 b,,
->>> print n.get_user_octave_notename()
+>>> print(n.get_user_octave_notename())
 <sub>1</sub>H
->>> print n.get_user_notename()
+>>> print(n.get_user_notename())
 h
->>> print _("Close")
+>>> print(_("Close"))
 Lukk
 >>> n = MusicalPitch()
 >>> n.set_from_notename("d'")
->>> print n.get_octave_notename()
+>>> print(n.get_octave_notename())
 d'
 """
 
@@ -347,7 +347,7 @@ class MusicalPitch:
     def __le__(self, B):
         return self.semitone_pitch() <= B.semitone_pitch()
     def __eq__(self, B):
-        return self.semitone_pitch == B.semitone_pitch()
+        return self.semitone_pitch() == B.semitone_pitch()
     def __str__(self):
         return "(MusicalPitch %s)" % self.get_octave_notename()
     def get_user_notename(self):
