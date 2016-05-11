@@ -56,10 +56,10 @@ class Rat(object):
         assert isinstance(self, Rat)
         if type(B) == type(0):
             g = gcd(self.m_num*B, self.m_den)
-            return Rat(self.m_num*B/g, self.m_den/g)
+            return Rat(self.m_num*B // g, self.m_den // g)
         assert isinstance(B, Rat)
         g = gcd(self.m_num*B.m_num, self.m_den*B.m_den)
-        return Rat(self.m_num*B.m_num/g, self.m_den*B.m_den/g)
+        return Rat(self.m_num * B.m_num // g, self.m_den * B.m_den // g)
     def __truediv__(self, i):
         if isinstance(i, int):
             i = Rat(i, 1)
@@ -73,11 +73,11 @@ class Rat(object):
         assert isinstance(B, int)
         a = self.m_num * B
         g = gcd(a, self.m_den)
-        return Rat(a/g, self.m_den/g)
+        return Rat(a // g, self.m_den // g)
     def __int__(self):
-        return self.m_num / self.m_den
+        return self.m_num // self.m_den
     def __float__(self):
-        return 1.0 * self.m_num / self.m_den
+        return self.m_num / self.m_den
     def __hash__(self):
         return hash((self.m_num, self.m_den))
     def __eq__(self, B):

@@ -20,7 +20,7 @@ TODO:
     - cfg.get_list
     - cfg.set_list
     - watches outside ConfigUtils
->>> import cfg
+>>> from solfege import cfg
 >>> cfg.initialise(None, "default.config", "~/.cfg-test")
 >>> cfg.set_string("section/stringvar", "value")
 >>> cfg.get_string("section/stringvar")

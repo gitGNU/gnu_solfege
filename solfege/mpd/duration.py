@@ -52,7 +52,7 @@ class Duration:
         if not m:
             raise Duration.BadStringException(string)
         return Duration(int(m.groups()[0]),  len(m.groups()[1]))
-    def __cmp__(self, B):
+    def __lt__(self, B):
         """
         >>> A=Duration(4, 1, Rat(1, 1))
         >>> B=Duration(4, 1, Rat(1, 1))
@@ -62,9 +62,12 @@ class Duration:
         >>> (cmp(A, C), cmp(A, B))
         (-1, 0)
         """
+        assert isinstance(B, Rat)
         if not B:
             return -1
-        return cmp(self.get_rat_value(), B.get_rat_value())
+        return self.get_rat_value() < B.get_rat_value()
+    def __eq__(self, B):
+        return self.get_rat_value() == B.get_rat_value()
     def get_rat_value(self):
         """
         >>> A=Duration(4, 1, Rat(1, 1))
