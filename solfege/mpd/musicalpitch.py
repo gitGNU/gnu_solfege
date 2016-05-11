@@ -243,7 +243,7 @@ class MusicalPitch:
     def pitch_class(self):
         return ([0, 2, 4, 5, 7, 9, 11][self.m_notename_i] + self.m_accidental_i) % 12
     def set_from_int(self, midiint):
-        self.m_octave_i = (midiint-48)/12
+        self.m_octave_i = (midiint-48) // 12
         self.m_notename_i = {0:0, 1:0, 2:1, 3:1, 4:2, 5:3, 6:3, 7:4, 8:4,
                              9:5, 10:5, 11:6}[midiint % 12]
         self.m_accidental_i = midiint-(self.m_octave_i+4)*12 \
@@ -302,7 +302,7 @@ class MusicalPitch:
             r = self.clone()
             _p = r.semitone_pitch()
             r.m_notename_i = r.m_notename_i + i.m_interval * i.m_dir
-            r.m_octave_i = r.m_octave_i + r.m_notename_i / 7 + i.m_octave * i.m_dir
+            r.m_octave_i = r.m_octave_i + r.m_notename_i // 7 + i.m_octave * i.m_dir
             r.m_notename_i = r.m_notename_i % 7
             _diff = r.semitone_pitch() - _p
             r.m_accidental_i = r.m_accidental_i + (i.get_intvalue() - _diff)
