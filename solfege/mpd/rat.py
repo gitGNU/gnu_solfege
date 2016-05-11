@@ -86,5 +86,7 @@ class Rat(object):
         return self.m_num / self.m_den == B.m_num / B.m_den
     def __lt__(self, B):
         return self.m_num / self.m_den < B.m_num / B.m_den
+    def __le__(self, B):
+        return self.m_num / self.m_den <= B.m_num / B.m_den
 
 
