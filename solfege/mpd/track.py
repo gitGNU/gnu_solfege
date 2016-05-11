@@ -75,6 +75,7 @@ class SetVolumeEvent(EventBase):
 class TempoEvent(EventBase):
     def __init__(self, bpm, notelen):
         EventBase.__init__(self)
+        assert isinstance(bpm, int)
         self.m_bpm = bpm
         self.m_notelen = notelen
     def __str__(self):
@@ -480,6 +481,7 @@ class Track:
     def set_bpm(self, bpm, notelen=4):
         self.m_v.append(TempoEvent(bpm, notelen))
     def prepend_bpm(self, bpm, notelen=4):
+        assert isinstance(bpm, int)
         self.m_v.insert(0, TempoEvent(bpm, notelen))
     def bender(self, chn, value):
         "value >= 0"

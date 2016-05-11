@@ -363,7 +363,7 @@ class MpdParsable(MusicBaseClass):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         instrument = lessonfile_ref.get_instrument(question)
         tempo = lessonfile_ref.get_tempo()
-        tempo = (tempo[0]/2, tempo[1])
+        tempo = (tempo[0] // 2, tempo[1])
         utils.play_music(self.get_mpd_music_string(lessonfile_ref),
             tempo, instrument[0], instrument[1])
         if _test_mode:
