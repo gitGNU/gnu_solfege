@@ -342,16 +342,12 @@ class MusicalPitch:
         return MusicalPitch.new_from_int(v-i)
     def __int__(self):
         return self.semitone_pitch()
-    def __cmp__(self, B):
-        if (self is None or self is None):
-            return -1
-        diff = self - B
-        if diff < 0:
-            return -1
-        elif diff > 0:
-            return 1
-        else:
-            return 0
+    def __lt__(self, B):
+        return self.semitone_pitch() < B.semitone_pitch()
+    def __le__(self, B):
+        return self.semitone_pitch() <= B.semitone_pitch()
+    def __eq__(self, B):
+        return self.semitone_pitch == B.semitone_pitch()
     def __str__(self):
         return "(MusicalPitch %s)" % self.get_octave_notename()
     def get_user_notename(self):
