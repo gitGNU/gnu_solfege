@@ -59,7 +59,7 @@ class SolfegeOptionParser(optparse.OptionParser):
         encoding = outfile.encoding
         if not encoding:
             encoding = "iso-8859-1"
-        outfile.write(self.format_help().encode(encoding, 'replace'))
+        outfile.write(self.format_help())
 
 
 
