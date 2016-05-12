@@ -67,7 +67,7 @@ class TestParser(TmpFileBase):
             self.do_file("a=1\n"
                          "b = func(3, 4) c=3")
         except pt.LookupException as e:
-            #self.assertEquals(e.m_token[TOKEN_STRING], 'func')
+            #self.assertEqual(e.m_token[TOKEN_STRING], 'func')
             self.assertEqual("(line 1): a=1\n"
                               "(line 2): b = func(3, 4) c=3\n"
                               "              ^",
@@ -78,7 +78,7 @@ class TestParser(TmpFileBase):
         try:
             self.do_file("a=b")
         except pt.LookupException as e:
-            #self.assertEquals(e.m_token[TOKEN_STRING], "b")
+            #self.assertEqual(e.m_token[TOKEN_STRING], "b")
             self.assertEqual("(line 1): a=b\n"
                               "            ^",
                               e.m_nonwrapped_text)

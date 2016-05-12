@@ -8,43 +8,43 @@ from solfege.mpd.rat import Rat
 
 class TestRat(unittest.TestCase):
     def test_constructor(self):
-        self.assertEquals(float(Rat(1, 4)), 0.25)
-        self.assertEquals(float(Rat(9, 8)), 1.125)
-        self.assertEquals(float(Rat(4, 4)), 1.0)
+        self.assertEqual(float(Rat(1, 4)), 0.25)
+        self.assertEqual(float(Rat(9, 8)), 1.125)
+        self.assertEqual(float(Rat(4, 4)), 1.0)
         # I was a little surprised by the following, that 4/4 is not
         # simplified to 1, but I also see that we need it this way
         # for time signatures.
         r = Rat(4, 4)
-        self.assertEquals(float(r), 1.0)
-        self.assertEquals(r.m_num, 4)
-        self.assertEquals(r.m_den, 4)
+        self.assertEqual(float(r), 1.0)
+        self.assertEqual(r.m_num, 4)
+        self.assertEqual(r.m_den, 4)
     def test_as_float(self):
-        self.assertEquals(float(Rat(1, 2)), 0.5)
-        self.assertEquals(float(Rat(2, 4)), 0.5)
+        self.assertEqual(float(Rat(1, 2)), 0.5)
+        self.assertEqual(float(Rat(2, 4)), 0.5)
     def test_addition(self):
-        self.assertEquals(Rat(1, 4) + Rat(1, 4), Rat(2, 4))
-        self.assertEquals(Rat(3, 4) + Rat(1, 4), Rat(1, 1))
-        self.assertEquals(Rat(3, 4) + Rat(1, 4), Rat(2, 2))
-        self.assertEquals(Rat(4, 4) + Rat(1, 4), Rat(5, 4))
+        self.assertEqual(Rat(1, 4) + Rat(1, 4), Rat(2, 4))
+        self.assertEqual(Rat(3, 4) + Rat(1, 4), Rat(1, 1))
+        self.assertEqual(Rat(3, 4) + Rat(1, 4), Rat(2, 2))
+        self.assertEqual(Rat(4, 4) + Rat(1, 4), Rat(5, 4))
     def test_subtract(self):
-        self.assertEquals(Rat(3, 4) - Rat(1, 4), Rat(1, 2))
+        self.assertEqual(Rat(3, 4) - Rat(1, 4), Rat(1, 2))
     def test_division(self):
         r1 = Rat(1, 2)
         r2 = Rat(1, 2)
-        self.assertEquals(Rat(1, 2) / Rat(1, 2), Rat(1, 1))
-        self.assertEquals(Rat(1, 2) / Rat(2, 4), Rat(1, 1))
-        self.assertEquals(Rat(1, 4) / 2, Rat(1, 8))
-        self.assertEquals(Rat(1, 4) / Rat(3, 2),  Rat(1, 6))
-        self.assertEquals(Rat(1, 4) / 2, Rat(1, 8))
+        self.assertEqual(Rat(1, 2) / Rat(1, 2), Rat(1, 1))
+        self.assertEqual(Rat(1, 2) / Rat(2, 4), Rat(1, 1))
+        self.assertEqual(Rat(1, 4) / 2, Rat(1, 8))
+        self.assertEqual(Rat(1, 4) / Rat(3, 2),  Rat(1, 6))
+        self.assertEqual(Rat(1, 4) / 2, Rat(1, 8))
     def test_cmp(self):
-        self.assertNotEquals(Rat(4, 3), None)
-        self.assertEquals(Rat(1, 2), Rat(2, 4))
+        self.assertNotEqual(Rat(4, 3), None)
+        self.assertEqual(Rat(1, 2), Rat(2, 4))
         self.assertTrue(True)
     def test_listsort(self):
         v = [Rat(0, 4), Rat(3, 8), Rat(1, 8), Rat(1, 4)]
-        self.assertEquals(v, [Rat(0, 4), Rat(3, 8), Rat(1, 8), Rat(1, 4)])
+        self.assertEqual(v, [Rat(0, 4), Rat(3, 8), Rat(1, 8), Rat(1, 4)])
         v.sort()
-        self.assertEquals(v, [Rat(0, 4), Rat(1, 8), Rat(1, 4), Rat(3, 8)])
+        self.assertEqual(v, [Rat(0, 4), Rat(1, 8), Rat(1, 4), Rat(3, 8)])
 
 
 suite = unittest.makeSuite(TestRat)

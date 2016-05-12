@@ -260,8 +260,9 @@ def parse_to_score_object(music):
                 # single tones of a chord.
                 if tie_is_in_the_air:
                     for note in cur_voice.m_tdict[last_pos]['elem']:
-                        if [n for n in cur_voice.m_tdict[timepos]['elem'] if n.m_musicalpitch.get_octave_notename() == note.m_musicalpitch.get_octave_notename()]:
-                            cur_voice.tie([note, n])
+                        for n in cur_voice.m_tdict[timepos]['elem']:
+                            if n.m_musicalpitch.get_octave_notename() == note.m_musicalpitch.get_octave_notename():
+                                cur_voice.tie([note, n])
                     tie_is_in_the_air = 0
                 last_pos = timepos
                 timepos = timepos + toc_data.m_duration.get_rat_value()

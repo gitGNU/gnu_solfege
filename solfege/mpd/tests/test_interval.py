@@ -34,30 +34,30 @@ class TestInterval(unittest.TestCase):
                 ('M16', 1, 2, 0, 26, 16), # 2*octave + second
                 ):
             n = Interval(s)
-            self.assertEquals((n.m_interval, n.m_octave, n.m_mod), (a, b, c))
-            self.assertEquals(repr(n), s)
-            self.assertEquals(i, n.get_intvalue())
-            self.assertEquals(steps, n.steps())
+            self.assertEqual((n.m_interval, n.m_octave, n.m_mod), (a, b, c))
+            self.assertEqual(repr(n), s)
+            self.assertEqual(i, n.get_intvalue())
+            self.assertEqual(steps, n.steps())
     def test_addition(self):
         a = MusicalPitch.new_from_notename("c'")
         b = Interval("m2")
-        self.assertEquals((a+b).get_octave_notename(), "des'")
+        self.assertEqual((a+b).get_octave_notename(), "des'")
     def test_add_d5(self):
         a = MusicalPitch.new_from_notename("b")
         b = Interval("-d5")
-        self.assertEquals((a+b).get_octave_notename(), "eis")
+        self.assertEqual((a+b).get_octave_notename(), "eis")
         a = MusicalPitch.new_from_notename("bis")
         b = Interval("-d5")
-        self.assertEquals((a+b).get_octave_notename(), "eisis")
+        self.assertEqual((a+b).get_octave_notename(), "eisis")
         a = MusicalPitch.new_from_notename("bisis")
         b = Interval("-d5")
-        self.assertEquals((a+b).get_octave_notename(), "fisis")
+        self.assertEqual((a+b).get_octave_notename(), "fisis")
     def test_new_from_int(self):
         for x in range(-12, 12):
             i = Interval.new_from_int(x)
             a = MusicalPitch.new_from_notename("bisis")
             b = a + i
-            self.assertEquals(int(a) + x, int(b))
+            self.assertEqual(int(a) + x, int(b))
     def test_get_cname(self):
         for i, s in enumerate((
             "Perfect Unison",
@@ -86,7 +86,7 @@ class TestInterval(unittest.TestCase):
             "Major Fourteenth",
             "Perfect Double Octave",
         )):
-            self.assertEquals(Interval.new_from_int(i).get_cname(), s, (i, s))
+            self.assertEqual(Interval.new_from_int(i).get_cname(), s, (i, s))
 
 suite = unittest.makeSuite(TestInterval)
 

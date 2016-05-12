@@ -376,7 +376,8 @@ class Dataparser:
         """
         self.m_filename = filename
         self.m_location = os.path.split(filename)[0]
-        self._lexer = Lexer(open(filename, 'rU').read(), self)
+        with open(filename, 'r') as f:
+            self._lexer = Lexer(f.read(), self)
         self.reserved_words = ('_', 'question', 'header')
         self.prog()
     def parse_string(self, s, really_filename=False):
@@ -447,7 +448,8 @@ class Dataparser:
         fn = os.path.join(self.m_location, filename)
         if not os.path.exists(fn):
             fn = os.path.join(os.getcwd(), 'exercises/standard/lesson-files', filename)
-        s = open(fn, 'rU').read()
+        with open(fn, 'r') as f:
+            s = f.read()
         p = Dataparser()
         p.m_location = self.m_location
         p.parse_string(s)

@@ -59,14 +59,18 @@ class Duration:
         >>> C=Duration(2, 2, Rat(4, 7))
         >>> A==None, A==B, A==C
         (False, True, False)
-        >>> (cmp(A, C), cmp(A, B))
-        (-1, 0)
+        >>> A == B
+        True
+        >>> A > B
+        False
         """
-        assert isinstance(B, Rat)
+        assert isinstance(B, (Rat, Duration)), B
         if not B:
             return -1
         return self.get_rat_value() < B.get_rat_value()
     def __eq__(self, B):
+        if B is None:
+            return False
         return self.get_rat_value() == B.get_rat_value()
     def get_rat_value(self):
         """

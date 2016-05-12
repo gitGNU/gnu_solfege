@@ -43,13 +43,14 @@ def hash_lessonfile_text(s):
     lines = s.split("\n")
     lines = [x for x in lines if (not x.startswith("#") and bool(x))]
     sha1 = hashlib.sha1()
-    sha1.update("\n".join(lines))
+    sha1.update("\n".join(lines).encode("utf-8"))
     return sha1.hexdigest()
 
 
 def hash_of_lessonfile(filename):
     assert isinstance(filename, str)
-    return hash_lessonfile_text(open(lessonfile.uri_expand(filename), 'r').read())
+    with open(lessonfile.uri_expand(filename), 'r') as f:
+        return f.read()
 
 
 class DB(object):

@@ -73,7 +73,7 @@ var = 3
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'iso-8859-1')
         f.write(s)
         f.close()
-        f = open(os.path.join(outdir, "file1"), 'rU')
+        f = open(os.path.join(outdir, "file1"), 'r')
         s = f.read()
         f.close()
         self.assertRaises(UnableToTokenizeException,
@@ -90,7 +90,7 @@ var = 3
         f = codecs.open(os.path.join(outdir, "file1"), 'w', 'iso-8859-1')
         f.write(s)
         f.close()
-        f = open(os.path.join(outdir, "file1"), 'rU')
+        f = open(os.path.join(outdir, "file1"), 'r')
         s = f.read()
         f.close()
         self.assertRaises(UnableToTokenizeException,
@@ -319,30 +319,30 @@ class TestEncodingSniffer(TmpFileBase):
     parserclass = Dataparser
     def test_file_not_found(self):
         self.assertRaises(FileNotFoundError, read_encoding_marker_from_file, "asdfasdf")
-        self.assertEquals(
+        self.assertEqual(
             read_encoding_marker_from_file("exercises/standard/lesson-files/progression-atte"),
             "iso-8859-1")
-        self.assertEquals(
+        self.assertEqual(
             read_encoding_marker_from_file("exercises/standard/lesson-files/chord-min-major"),
             None)
     def test_from_string(self):
-        self.assertEquals(read_encoding_marker_from_string(
+        self.assertEqual(read_encoding_marker_from_string(
             "# vim: set fileencoding=findme\n"
             + "# line\n"
             + "line\n"), "findme")
-        self.assertEquals(read_encoding_marker_from_string(
+        self.assertEqual(read_encoding_marker_from_string(
             "# comment\n"
             + "# vim: set fileencoding=findme\n"
             + "# line\nline\n"), "findme")
         # Test that the file encoding is only detecte if placed in one
         # of the first two lines
-        self.assertEquals(read_encoding_marker_from_string(
+        self.assertEqual(read_encoding_marker_from_string(
             "line 1\n"
             + "line 2\n"
             + "# vim: set fileencoding=findme\n"
             + "# line\nline\n"), None)
     def test_utf8_in_first_line(self):
-        self.assertEquals(read_encoding_marker_from_string(
+        self.assertEqual(read_encoding_marker_from_string(
             "# ソルフェージュ\n"
             + "# vim: set fileencoding=findme\n"
             + "# line\nline\n"), "findme")

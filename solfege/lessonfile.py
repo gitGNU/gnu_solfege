@@ -907,12 +907,10 @@ class CSound(MusicBaseClass):
     def __init__(self, orc, sco):
         MusicBaseClass.__init__(self, (orc, sco))
     def play(self, lessonfile_ref, question):
-        outfile = open(os.path.join(self.temp_dir, "in.orc"), 'w')
-        outfile.write(self.m_musicdata[0])
-        outfile.close()
-        outfile = open(os.path.join(self.temp_dir, "in.sco"), 'w')
-        outfile.write(self.m_musicdata[1])
-        outfile.close()
+        with open(os.path.join(self.temp_dir, "in.orc"), 'w') as outfile:
+            outfile.write(self.m_musicdata[0])
+        with open(os.path.join(self.temp_dir, "in.sco"), 'w') as outfile:
+            outfile.write(self.m_musicdata[1])
         try:
             subprocess.call(
                 (cfg.get_string("programs/csound"),
@@ -1005,8 +1003,9 @@ class LessonfileCommon(object):
         self.m_filename = filename
         # We open and read the file without using the codecs module
         # because the lexer class will check for a coding tag in
-        # the lesson file before decoding it.
-        s = open(uri_expand(filename), 'rU').read()
+        # the lesson file before decoding it. FIXMEPY3 wrong comment
+        with open(uri_expand(filename), 'r') as f:
+            s = f.read()
         self.parse_string(s, really_filename=filename)
     def parse_string(self, s, really_filename=None):
         """
@@ -1942,7 +1941,9 @@ def parse_lesson_file_header(filename):
     if not e:
         # Solfege assumes the file encoding it utf-8 unless specified
         e = 'utf-8'
-    s = open(filename, 'r', encoding=e).read(40960)
+    with open(filename, 'r', encoding=e) as f:
+        s = f.read(40960)
+
     m = r.search(s)
     p = LessonfileCommon()
     ###############################

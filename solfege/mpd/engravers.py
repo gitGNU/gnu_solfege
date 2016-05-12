@@ -568,7 +568,7 @@ class StemEngraver(Engraver):
         the common (and for now only used) value is -1 for noteheads on
         down-stems and +1 for noteheads on up-stems.
         """
-        self.m_noteheads.sort(lambda a, b: cmp(a.m_ypos, b.m_ypos))
+        self.m_noteheads.sort(key=lambda n: n.m_ypos)
         # TODO: handle crashing noteheads in two different voices.
 
         # When laying out noteheads, we start with the notehead at the

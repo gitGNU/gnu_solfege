@@ -253,7 +253,7 @@ class Interval:
             self.m_dir = -1
         else:
             self.m_dir = 1
-        self.m_octave = abs(i) / 12
+        self.m_octave = abs(i) // 12
         self.m_mod, self.m_interval = (
                (0, 0),          # unison
                (-1, 1), (0, 1), # second

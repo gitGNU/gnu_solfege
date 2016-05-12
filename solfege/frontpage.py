@@ -255,7 +255,7 @@ def may_be_frontpage(filename):
     locking the program at startup if someone places a very large file
     in the directory where front page files is supposed to be.
     """
-    with codecs.open(filename, "rU", 'utf-8', 'replace') as f:
+    with codecs.open(filename, "r", 'utf-8', 'replace') as f:
         s = f.readline().strip()
         while s:
             if s.startswith("#"):
@@ -312,7 +312,7 @@ def parse_tree(s, C_locale=False):
         raise OldFormatException()
 
 def load_tree(fn, C_locale=False):
-    ret = parse_tree(codecs.open(fn, "rU", 'utf-8', 'replace').read(), C_locale)
+    ret = parse_tree(codecs.open(fn, "r", 'utf-8', 'replace').read(), C_locale)
     # We store all files by absolute filename or solfege: uri internally
     ret.foreach_file(mk_abs, os.path.split(fn)[0] + os.sep)
     return ret

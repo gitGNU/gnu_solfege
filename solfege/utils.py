@@ -161,7 +161,7 @@ def random_tonic_and_interval_in_key(lowest, highest, irange, tonic, keytype):
     # are with the range of tones we can use
     all_tones = pitches_in_key(tonic, keytype, lowest, highest)
 
-    # Then make a list of which of teh intervals in irange that
+    # Then make a list of which of the intervals in irange that
     # can be played with the available tones
     possible_intervals = []
     for i in irange:

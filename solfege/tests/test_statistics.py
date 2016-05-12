@@ -44,14 +44,18 @@ class TestDB(unittest.TestCase):
             db.set_variable, 'database_version', '3')
         db.set_variable('textvar', 'this is кофе')
         self.assertEqual(db.get_variable('textvar'), 'this is кофе')
+        # Variables should not change type
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'textvar', 5)
+        # Variables should not change type
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'textvar', 5.5)
+        # Variables should not change type
         self.assertRaises(db.VariableTypeError,
             db.set_variable, 'textvar', True)
+        # only str is allowed, not str
         self.assertRaises(db.VariableTypeError,
-            db.set_variable, 'str_text', 'string')
+            db.set_variable, 'str_text', b'bytestring')
         db.set_variable('known_number', 3.14159265)
         self.assertEqual(db.get_variable('known_number'), 3.14159265)
         self.assertRaises(db.VariableUndefinedError,
