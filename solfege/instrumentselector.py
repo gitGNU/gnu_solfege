@@ -30,7 +30,7 @@ class MidiInstrumentMenu(Gtk.Menu):
         self.m_callback = callback
         for x in range(len(soundcard.instrument_names)):
             if x % 8 == 0:
-                menuitem = Gtk.MenuItem(soundcard.instrument_sections[x/8])
+                menuitem = Gtk.MenuItem(soundcard.instrument_sections[x//8])
                 submenu = Gtk.Menu()
                 self.append(menuitem)
                 menuitem.set_submenu(submenu)
@@ -57,7 +57,7 @@ class nInstrumentSelector(Gtk.VBox, cfg.ConfigUtils):
         self.g_button.connect('clicked', self.on_btnclick)
         hbox.pack_start(self.g_button, True, True, 0)
         g = Gtk.VolumeButton()
-        g.props.value = self.get_int('%s_volume' % name) / MAX_VOLUME
+        g.props.value = self.get_int('%s_volume' % name) // MAX_VOLUME
         def ff(volumebutton, value):
             self.set_int('%s_volume' % name, int(value * MAX_VOLUME))
         g.connect('value-changed', ff)
