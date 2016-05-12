@@ -779,17 +779,17 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         Store the current state of the data in self.m_orig_dump so that
         is_modified() will return False until we make new changes.
         """
-        io = io.StringIO()
-        self.m_model.dump(io)
-        self.m_orig_dump = io.getvalue()
+        s = io.StringIO()
+        self.m_model.dump(s)
+        self.m_orig_dump = s.getvalue()
     def is_modified(self):
         """
         Return True if the data has changed since the last call to
         set_not_modified()
         """
-        io = io.StringIO()
-        self.m_model.dump(io)
-        s = io.getvalue()
+        s = io.StringIO()
+        self.m_model.dump(s)
+        s = s.getvalue()
         return s != self.m_orig_dump
     @property
     def m_changed(self):

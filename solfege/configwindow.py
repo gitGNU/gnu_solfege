@@ -550,7 +550,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             testbutton.connect('clicked', self.test_XXX_player,
                            formatid, format['testfile'])
             testbutton.set_sensitive(bool(
-                    osutils.find_progs((combo.get_child().get_text().decode("utf-8"),))))
+                    osutils.find_progs((combo.get_child().get_text(),))))
             box = gu.hig_label_widget(format['label'],
                                       [combo, combo.opts, testbutton],
                                       sizegroup, True, True)

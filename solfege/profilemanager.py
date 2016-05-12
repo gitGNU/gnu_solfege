@@ -66,10 +66,10 @@ class NewProfileDialog(Gtk.Dialog):
         self.set_default_response(Gtk.ResponseType.ACCEPT)
     def on_entry_changed(self, *w):
         pdir = os.path.join(filesystem.app_data(), "profiles",
-                            self.g_entry.get_text().decode("utf-8"))
+                            self.g_entry.get_text())
         self.g_profile_location.set_text(pdir)
         if os.path.exists(pdir):
-            self.g_status.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
+            self.g_status.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text())
             self.g_statusbox.show()
             self.set_response_sensitive(Gtk.ResponseType.ACCEPT, False)
         else:
@@ -101,7 +101,7 @@ class RenameProfileDialog(Gtk.Dialog):
         vbox.pack_start(self.g_info, False, False, 0)
         self.set_default_response(Gtk.ResponseType.ACCEPT)
     def on_entry_changed(self, w):
-        s = self.g_entry.get_text().decode("utf-8")
+        s = self.g_entry.get_text()
         pdir = os.path.join(filesystem.app_data(), "profiles", s)
         ok = False
         if not s:
@@ -109,7 +109,7 @@ class RenameProfileDialog(Gtk.Dialog):
             self.g_info.set_text("Empty string not allowed")
         elif os.path.exists(pdir):
             self.g_info.show()
-            self.g_info.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text().decode("utf-8"))
+            self.g_info.set_text(_("The profile «%s» already exists.") % self.g_entry.get_text())
         else:
             self.g_info.hide()
             ok = True
@@ -168,7 +168,7 @@ class ProfileManagerBase(Gtk.Dialog):
         tw.connect('cursor-changed', self.on_cursor_changed)
         tw.set_cursor((0,))
         for idx, s in enumerate(self.g_liststore):
-            if s[0].decode("utf-8") == default_profile:
+            if s[0] == default_profile:
                 tw.set_cursor((idx, ))
         #
         chk = gu.nCheckButton("app", "noprofilemanager", _("D_on't ask at startup"))
@@ -180,11 +180,11 @@ class ProfileManagerBase(Gtk.Dialog):
         ret = dlg.run()
         if ret == Gtk.ResponseType.ACCEPT:
             pdir = os.path.join(filesystem.app_data(),
-                                "profiles", dlg.g_entry.get_text().decode("utf-8"))
+                                "profiles", dlg.g_entry.get_text())
             if not os.path.exists(pdir):
                 try:
                     os.makedirs(pdir)
-                    self.g_liststore.append((dlg.g_entry.get_text().decode("utf-8"),))
+                    self.g_liststore.append((dlg.g_entry.get_text(),))
                     self.g_tw.set_cursor((len(self.g_liststore)-1,))
                 except OSError as e:
                     gu.display_exception_message(e)
@@ -204,16 +204,16 @@ class ProfileManagerBase(Gtk.Dialog):
                 os.rename(os.path.join(
                     filesystem.app_data(), "profiles", self.get_profile()),
                     os.path.join(filesystem.app_data(),
-                        "profiles", dlg.g_entry.get_text().decode("utf-8")))
+                        "profiles", dlg.g_entry.get_text()))
                 if rename_default:
-                    self.m_default_profile = dlg.g_entry.get_text().decode("utf-8")
+                    self.m_default_profile = dlg.g_entry.get_text()
             except OSError as e:
                 gu.display_exception_message(e)
                 dlg.destroy()
                 return
             path, column = self.g_tw.get_cursor()
             self.g_liststore.set(self.g_liststore.get_iter(path),
-                0, dlg.g_entry.get_text().decode("utf-8"))
+                0, dlg.g_entry.get_text())
         dlg.destroy()
     def on_delete_profile(self, w):
         if gu.dialog_yesno(_("Permanently delete the user profile «%s»?") % self.get_profile(), self):
@@ -242,7 +242,7 @@ class ProfileManagerBase(Gtk.Dialog):
         if list(cursor[0]) == [0]:
             return None
         it = self.g_liststore.get_iter(cursor[0])
-        return self.g_liststore.get(it, 0)[0].decode("utf-8")
+        return self.g_liststore.get(it, 0)[0]
 
 
 class ProfileManager(ProfileManagerBase):

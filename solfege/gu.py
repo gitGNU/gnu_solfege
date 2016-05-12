@@ -186,7 +186,7 @@ def sComboBox(exname, name, strings):
     g.get_child().set_text(cfg.get_string("%s/%s" % (exname, name)))
     g.connect('changed', lambda w:
             cfg.set_string("%s/%s" % (exname, name),
-                           w.get_child().get_text().decode("utf-8")))
+                           w.get_child().get_text()))
     return g
 
 
