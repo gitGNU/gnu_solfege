@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from gi.repository import Gtk
 import sys, os
@@ -38,7 +38,7 @@ class DisplaytestWindow(Gtk.Window):
         self.g_text.set_editable(True)
         try:
             s = open(musicfile, "r").read()
-        except IOError, e:
+        except IOError as e:
             s = r"\staff{c' d' e'}"
         self.m_buf = self.g_text.get_buffer()
         self.m_buf.insert(self.m_buf.get_end_iter(), s)
