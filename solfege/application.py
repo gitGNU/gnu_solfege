@@ -350,7 +350,7 @@ class SolfegeApp(cfg.ConfigUtils):
             module = lessonfile.infocache.get(filename, 'module')
             self.m_teachers[module].m_P = None
             solfege.win.box_dict[module].practise_box.set_sensitive(False)
-            solfege.win.box_dict[module].config_box.set_sensitive(False)
+            solfege.win.box_dict[module].g_config_grid.set_sensitive(False)
             solfege.win.box_dict[module].action_area.set_sensitive(False)
             solfege.win.box_dict[module].std_buttons_end_practise()
         try:
