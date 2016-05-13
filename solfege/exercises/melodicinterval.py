@@ -192,7 +192,7 @@ class Gui(abstract.IntervalGui):
             return
         self.m_answer.append(interval)
         d = self.m_t.m_question[len(self.m_answer)-1]
-        md = d / abs(d)
+        md = d // d
         if self.g_input.know_directions():
             md = 1
         if not self.msg:
