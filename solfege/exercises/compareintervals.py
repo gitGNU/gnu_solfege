@@ -121,7 +121,7 @@ class Teacher(abstract.Teacher):
          1 : last is largest
         Return: 1 if correct, 0 if wrong
         """
-        a = cmp(abs(self.m_intervals[1]), abs(self.m_intervals[0])) == c
+        a = utils.cmp(abs(self.m_intervals[1]), abs(self.m_intervals[0])) == c
         if a:
             self.maybe_auto_new_question()
             self.q_status = self.QSTATUS_SOLVED
