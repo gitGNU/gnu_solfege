@@ -1001,10 +1001,11 @@ class LessonfileCommon(object):
         """
         self.m_location = os.path.split(uri_expand(filename))[0]
         self.m_filename = filename
+        e = dataparser.read_encoding_marker_from_file(uri_expand(filename))
         # We open and read the file without using the codecs module
         # because the lexer class will check for a coding tag in
         # the lesson file before decoding it. FIXMEPY3 wrong comment
-        with open(uri_expand(filename), 'r') as f:
+        with open(uri_expand(filename), 'r', encoding=e) as f:
             s = f.read()
         self.parse_string(s, really_filename=filename)
     def parse_string(self, s, really_filename=None):
