@@ -715,9 +715,6 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 raise
         """
         sourcefile, lineno, func, code = traceback.extract_tb(sys.exc_info()[2])[0]
-        # We can replace characters because we will only display the
-        # file name, not open the file.
-        sourcefile = sourcefile.decode(sys.getfilesystemencoding(), 'replace')
         if solfege.app.m_options.disable_exception_handler:
             return False
         elif isinstance(e, lessonfile.NoQuestionsConfiguredException):
