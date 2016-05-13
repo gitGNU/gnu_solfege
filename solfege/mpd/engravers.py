@@ -418,7 +418,7 @@ class BeamEngraver(Engraver):
             for x in range(len(self.m_stems)):
                 self.m_stems[x].m_beamed_stem_top = \
                     self.m_stems[x].m_beamed_stem_top - d
-        y1 = self.m_stems[0].m_beamed_stem_top * dim.linespacing/2 + staff_yoffset
+        y1 = self.m_stems[0].m_beamed_stem_top * dim.linespacing // 2 + staff_yoffset
         beamw = 3
         beaml = 10
         for y in range(beamw):
@@ -841,9 +841,9 @@ class _StaffCommon(list):
                         if yline_down < ypos > 5:
                             yline_down = ypos
             if yline_up:
-                yline_up = - yline_up / 2 - 2
+                yline_up = - yline_up // 2 - 2
             if yline_down:
-                yline_down = yline_down / 2 - 2
+                yline_down = yline_down // 2 - 2
             if yline_up or yline_down:
                 e = LedgerLineEngraver(yline_up, yline_down)
                 eng['elem'].append(e)
