@@ -1551,10 +1551,7 @@ class NameIntervalLessonfile(HeaderLessonfile):
                 iquality.append(i.get_quality_short())
             if i.steps() not in inumbers:
                 inumbers.append(i.steps())
-        def quality_sort(a, b):
-            v = ['dd', 'd', 'm', 'M', 'p', 'a', 'aa']
-            return cmp(v.index(a), v.index(b))
-        iquality.sort(quality_sort)
+        iquality.sort(key=lambda q: ['dd', 'd', 'm', 'M', 'p', 'a', 'aa'].index(q))
         inumbers.sort()
         if not self.header.interval_number:
             self.header.interval_number = inumbers
