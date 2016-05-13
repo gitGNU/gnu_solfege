@@ -26,6 +26,9 @@ from solfege import soundcard
 
 from solfege.mpd.const import DEFAULT_VELOCITY
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 def mangle_email(email):
     email = email.replace("@", " ,, ")
     email = email.replace(".", " ,, ")
