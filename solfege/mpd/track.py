@@ -362,10 +362,10 @@ class MidiEventStream(object):
                     #m.seq_bender(DEV, e[1], e[2])
                 else:
                     raise Exception("mpd.track: Corrupt track error")
-        f = open(filename, "w")
+        f = open(filename, "wb")
         mfutils.MThd(f)
-        f.write("MTrk")
-        mfutils.write_int32(f, len(v)+4)
+        f.write(b"MTrk")
+        mfutils.write_int32(f, len(v) + 4)
         v = v + mfutils.mf_end_of_track()
         mfutils.write_vect(f, v)
         f.close()

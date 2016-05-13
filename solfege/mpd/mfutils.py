@@ -44,15 +44,11 @@ def mf_int32(i):
 
 def write_int16(f, i):
     assert isinstance(i, int) and 0 <= i < 2**16
-    f.write(chr(i >> 8 & 0xff))
-    f.write(chr(i  & 0xff))
+    f.write(bytes(mf_int16(i)))
 
 def write_int32(f, i):
     assert isinstance(i, int) and 0 <= i < 2**32
-    f.write(chr(i >> 24 & 0xff))
-    f.write(chr(i >> 16 & 0xff))
-    f.write(chr(i >> 8 & 0xff))
-    f.write(chr(i  & 0xff))
+    f.write(bytes(mf_int32(i)))
 
 MIDI_NOTE_OFF = 0x80
 MIDI_NOTE_ON = 0x90
@@ -88,16 +84,16 @@ def mf_volume_change(chan, volume):
 def mf_note_on(delta, chan, note, vel):
     assert 0 <= chan < 16
     return mf_delta(delta) + [chan+MIDI_NOTE_ON, note, vel]
+
 def mf_note_off(delta, chan, note, vel):
     assert 0 <= chan < 16
     return mf_delta(delta) + [chan+MIDI_NOTE_OFF, note, vel]
+
 def mf_end_of_track():
     return [0x0, 0xff, 0x2f, 0x00]
 
 def write_vect(f, v):
-    for c in v:
-        assert isinstance(c, int) and 0 <= c < 256
-        f.write(chr(c))
+    f.write(bytes(v))
 
 class MThd:
     PPQN = 96
@@ -118,7 +114,7 @@ class MThd:
         # Wow many Pulses (i.e. clocks) Per Quarter Note resolution
         # the time-stamps are based upon.
         v = v + mf_int16(MThd.PPQN)
-        f.write("MThd")
+        f.write(b"MThd")
         write_int32(f, len(v)) #chunk len
-        write_vect(f, v)
+        f.write(bytes(v))
 
