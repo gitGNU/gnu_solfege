@@ -541,7 +541,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                         model.append([player_options])
                     widget.opts.get_child().set_text(format['players'][widget.get_active()][1])
                 widget.testbutton.set_sensitive(bool(
-                    osutils.find_progs((widget.get_child().get_text().decode("utf-8"),))))
+                    osutils.find_progs((widget.get_child().get_text(),))))
 
             combo.connect('changed', _changed, formatid)
             testbutton = Gtk.Button(_("_Test").replace("_", ""))

@@ -30,11 +30,6 @@ from solfege import frontpage
 from solfege import gu
 from solfege import lessonfile
 
-def decode_entry_string(s):
-    if sys.platform == 'win32':
-        return s.decode("mbcs", "replace")
-    return s.decode(locale.getpreferredencoding(), "decode")
-
 
 class SelectWinBase(Gtk.ScrolledWindow):
     """
@@ -323,7 +318,7 @@ class FrontPage(ExerciseView):
                            show_topics)
         self.g_searchentry.grab_focus()
     def on_search(self, *button):
-        search_for = decode_entry_string(self.g_searchentry.get_text().lower())
+        search_for = self.g_searchentry.get_text().lower()
         logging.debug("FrontPage.on_search '%s'", search_for)
         page = self._search(search_for, False, False)
         page_C = self._search(search_for, True, False)
@@ -342,7 +337,7 @@ class TestsView(ExerciseView):
         self._display_data(data, True, is_search_result, show_topics)
         self.g_searchentry.grab_focus()
     def on_search(self, *button):
-        search_for = decode_entry_string(self.g_searchentry.get_text().lower())
+        search_for = self.g_searchentry.get_text().lower()
         page = self._search(search_for, False, True)
         page_C = self._search(search_for, True, True)
         page_C.m_name = 'Search exercises without translating them'
@@ -369,9 +364,9 @@ class SearchView(ExerciseView):
         self._display_data(data)
         self.g_searchentry.grab_focus()
     def on_search(self, *button):
-        search_for = decode_entry_string(self.g_searchentry.get_text().lower())
+        search_for = self.g_searchentry.get_text().lower()
         lessonfile.infocache.update_modified_files()
-        self.display_search_result(decode_entry_string(self.g_searchentry.get_text()), [
+        self.display_search_result(self.g_searchentry.get_text(), [
             filename for filename in lessonfile.infocache._data
             if search_for in _(lessonfile.infocache.get(filename, 'title')).lower()
         ], [
