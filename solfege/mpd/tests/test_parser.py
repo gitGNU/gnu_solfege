@@ -9,6 +9,7 @@ from solfege import mpd
 
 from solfege.mpd import Rat
 
+
 class TestClef(unittest.TestCase):
     def test_constructor_ok(self):
         c = Clef("violin")
@@ -16,12 +17,15 @@ class TestClef(unittest.TestCase):
         self.assertEqual(c.m_name, "violin")
         c = Clef("violin_8")
         self.assertEqual(c.m_octaviation, -7)
+
     def test_constructor_unknown_clef(self):
         self.assertRaises(UnknownClefException, Clef, "not a clefname")
         self.assertRaises(UnknownClefException, Clef, "violin _ 8")
+
     def test_octaviation(self):
         self.assertEqual(Clef("violin").steps_to_ylinepos(0), 13)
         self.assertEqual(Clef("violin_8").steps_to_ylinepos(0), 13 - 7)
+
     def test_steps_to_ylinepos(self):
         for s, c, o, i in (
             ("violin", "violin", 0, 13),
@@ -29,11 +33,12 @@ class TestClef(unittest.TestCase):
             ("violin_15", "violin", -14, 13 - 14),
             ("violin^8", "violin", 7, 13 + 7),
             ("violin^15", "violin", 14, 13 + 14),
-            ):
+        ):
             clef = Clef(s)
             self.assertEqual(clef.m_name, c)
             self.assertEqual(clef.m_octaviation, o)
             self.assertEqual(clef.steps_to_ylinepos(0), i)
+
 
 class TestMpdParser(unittest.TestCase):
     """
@@ -47,19 +52,23 @@ class TestMpdParser(unittest.TestCase):
         s is the string to search in
         substring is the string to find
         """
-        self.assertEqual(s.split("\n")[e.m_lineno]
-                                       [e.m_linepos1:e.m_linepos2], substring)
+        self.assertEqual(
+            s.split("\n")[e.m_lineno][e.m_linepos1:e.m_linepos2], substring)
+
     def test_rest(self):
         # cmp to 1 because this is one track
         self.assertEqual(len(mpd.music_to_tracklist(r"\staff {r}")), 1)
+
     def test_skip(self):
         score = parse_to_score_object(r"\staff{ c s }")
         d = score.m_staffs[0].m_voices[0].m_tdict
         self.assertIsInstance(d[mpd.Rat(0, 1)]['elem'], Stem)
         self.assertIsInstance(d[mpd.Rat(1, 4)]['elem'][0], Skip)
+
     def test_dotted_rest(self):
         self.assertEqual(len(mpd.music_to_tracklist(r"\staff {r4.}")), 1)
         self.assertEqual(len(mpd.music_to_tracklist(r"\staff {r4..}")), 1)
+
     def test_dottt(self):
         t = mpd.music_to_tracklist(r"\staff { c4 r4. c4 }")
         self.assertEqual(t[0].str_repr(), "n48 d1/4 o48 d3/8 n48 d1/4 o48")
@@ -67,6 +76,7 @@ class TestMpdParser(unittest.TestCase):
         self.assertEqual(t[0].str_repr(), "n48 d1/4 o48 d7/16 n48 d1/4 o48")
         t = mpd.music_to_tracklist(r"\staff { c4.. c16 }")
         self.assertEqual(t[0].str_repr(), "n48 d7/16 o48 n48 d1/16 o48")
+
     def test_parse_brace_not_allowed(self):
         s = "\\staff{ c4 { e \n" \
             "}"
@@ -77,6 +87,7 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (11, 12))
         else:
             self.assertFalse("No exception raised!")
+
     def test_parse_err1(self):
         s = "\\staff{ c4 < d < e \n" \
             "}"
@@ -87,6 +98,7 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (15, 16))
         else:
             self.assertFalse("No exception raised!")
+
     def test_parse_err2(self):
         s = "\\staff{ \n" \
             "  c4 < d < e \n" \
@@ -98,6 +110,7 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (9, 10))
         else:
             self.assertFalse("No exception raised!")
+
     def test_parse_err3(self):
         s = "\\staff{ \n" \
             "  c4 d > \times 3/2"
@@ -108,6 +121,7 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (7, 8))
         else:
             self.assertFalse("No exception raised!")
+
     def test_parse_times_do_not_nest(self):
         s = "\\staff { c4 \\times 3/2 { \\times 3/2 { c4 c4 } } }\n"
         try:
@@ -117,6 +131,7 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (25, 37))
         else:
             self.assertFalse("No exception raised!")
+
     def test_parse_addvoice_before_staff(self):
         s = "   \\addvoice { \n" \
             "  c4 d }"
@@ -127,59 +142,68 @@ class TestMpdParser(unittest.TestCase):
             self.assertEqual((e.m_linepos1, e.m_linepos2), (3, 12))
         else:
             self.assertFalse("No exception raised!")
+
     def test_whitespace_at_end(self):
         s = "   \\staff { \n" \
             "  c4 d } \n" \
             "\t \n"
         mpd.music_to_tracklist(s)
+
     def test_relative(self):
         s = r"\staff\relative d'{ d f }"
         score = parse_to_score_object(s)
         self.assertEqual(score.voice11.m_tdict[Rat(0, 1)]['elem'][0],
-                          Note.new_from_string("d'4"))
+                         Note.new_from_string("d'4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 4)]['elem'][0],
-                          Note.new_from_string("f'4"))
+                         Note.new_from_string("f'4"))
+
     def test_transpose(self):
         s = r"\staff\transpose d'{ c d }"
         score = parse_to_score_object(s)
         self.assertEqual(score.voice11.m_tdict[Rat(0, 1)]['elem'][0],
-                          Note.new_from_string("d4"))
+                         Note.new_from_string("d4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 4)]['elem'][0],
-                          Note.new_from_string("e4"))
+                         Note.new_from_string("e4"))
         s = r"\staff\transpose d''{ c d }"
         score = parse_to_score_object(s)
         self.assertEqual(score.voice11.m_tdict[Rat(0, 1)]['elem'][0],
-                          Note.new_from_string("d'4"))
+                         Note.new_from_string("d'4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 4)]['elem'][0],
-                          Note.new_from_string("e'4"))
+                         Note.new_from_string("e'4"))
+
     def test_transpose_relative(self):
         s = r"\staff\transpose d'\relative c'{ c d }"
         score = parse_to_score_object(s)
         self.assertEqual(score.voice11.m_tdict[Rat(0, 1)]['elem'][0],
-                          Note.new_from_string("d'4"))
+                         Note.new_from_string("d'4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 4)]['elem'][0],
-                          Note.new_from_string("e'4"))
+                         Note.new_from_string("e'4"))
         s = r"\staff\transpose d''\relative c'{ c d e}"
         score = parse_to_score_object(s)
         self.assertEqual(score.voice11.m_tdict[Rat(0, 1)]['elem'][0],
-                          Note.new_from_string("d''4"))
+                         Note.new_from_string("d''4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 4)]['elem'][0],
-                          Note.new_from_string("e''4"))
+                         Note.new_from_string("e''4"))
         self.assertEqual(score.voice11.m_tdict[Rat(1, 2)]['elem'][0],
-                          Note.new_from_string("fis''4"))
+                         Note.new_from_string("fis''4"))
+
     def test_partial_bar(self):
         parse_to_score_object(r"\partial 4\staff\relative c'{ c d e }")
+
     def test_bar_full(self):
         try:
             mpd.parser.parse_to_score_object(r"\staff{ c2. c }")
         except mpd.MpdException as e:
             self.assertEqual((e.m_lineno, e.m_linepos1, e.m_linepos2),
-                              (0, 12, 13))
+                             (0, 12, 13))
+
     def test_times(self):
         t = mpd.music_to_tracklist(r"\staff{ \times 2/3{c8 d e} }")
-        self.assertEqual(t[0].str_repr(),
+        self.assertEqual(
+            t[0].str_repr(),
             "n48 d1/12 o48 n50 d1/12 o50 n52 d1/12 o52")
         parse_to_score_object(r"\staff{ \times 2/3{c8 d e} }")
+
 
 class TestLexer(unittest.TestCase):
     def test_simplest(self):
@@ -190,6 +214,7 @@ class TestLexer(unittest.TestCase):
         g = next(l)
         self.assertEqual(l.REST, g[0])
         self.assertEqual(g[1].m_duration.get_rat_value(), mpd.Rat(1, 4))
+
     def test_note_dotting(self):
         l = mpd.lexer.Lexer("c4 c4. c.")
         self.assertEqual(next(l)[1].m_duration, mpd.duration.Duration(4, 0))
@@ -197,6 +222,7 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(t, mpd.lexer.Lexer.NOTE)
         self.assertEqual(m.m_duration, mpd.duration.Duration(4, 1))
         self.assertRaises(mpd.lexer.LexerError, next, l)
+
     def test_rest_dotting(self):
         l = mpd.lexer.Lexer("c4 r4. r.")
         self.assertEqual(next(l)[1].m_duration, mpd.duration.Duration(4, 0))
@@ -204,6 +230,7 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(t, mpd.lexer.Lexer.REST)
         self.assertEqual(m.m_duration, mpd.duration.Duration(4, 1))
         self.assertRaises(mpd.lexer.LexerError, next, l)
+
     def test_inherited_time_dotting(self):
         l = mpd.lexer.Lexer("r4.. c")
         t, m = next(l)
@@ -212,6 +239,7 @@ class TestLexer(unittest.TestCase):
         t, m = next(l)
         self.assertEqual(t, mpd.lexer.Lexer.NOTE)
         self.assertEqual(getattr(m, 'm_duration', None), None)
+
     def test_whitespace(self):
         l = mpd.lexer.Lexer("\t\nc4 \n r4   \n")
         g = next(l)
@@ -220,29 +248,31 @@ class TestLexer(unittest.TestCase):
         g = next(l)
         self.assertEqual(l.REST, g[0])
         self.assertEqual(g[1].m_duration.get_rat_value(), mpd.Rat(1, 4))
+
     def test_tokenizing(self):
         for music in (
-                r"c d e",
-                r"c4 d e8",
-                r"c4 d8. e f4",
-                r"\staff{ c }",
-                r"\staff{ \time 3/4 c'8 g, }",
-                r"\staff{ \time 3/4 c'8 g, } \addvoice{ c }",
-                r"\staff{ \clef bass c }",
-                r"\stemUp c \stemDown d \stemBoth e",
-                r"\staff\transpose d'{ c }",
-                r"\key a \minor c \key fis \major",
-                r"c4 s2 s s8",
-                r"r r2 r",
-                r"\staff\relative g''{ c d e }",
-                r"\times 2/3{ c }",
-                r"\staff{ \tupletDown \times 2/3{ [ c'8 d' e' ] } }",
-                r"c \tupletDown d \tupletBoth e \tupletUp f",
-                r"< c4 e g >",
-                r"[ c'8 e ]",
-                r"\partial 8 c8",
-                ):
+            r"c d e",
+            r"c4 d e8",
+            r"c4 d8. e f4",
+            r"\staff{ c }",
+            r"\staff{ \time 3/4 c'8 g, }",
+            r"\staff{ \time 3/4 c'8 g, } \addvoice{ c }",
+            r"\staff{ \clef bass c }",
+            r"\stemUp c \stemDown d \stemBoth e",
+            r"\staff\transpose d'{ c }",
+            r"\key a \minor c \key fis \major",
+            r"c4 s2 s s8",
+            r"r r2 r",
+            r"\staff\relative g''{ c d e }",
+            r"\times 2/3{ c }",
+            r"\staff{ \tupletDown \times 2/3{ [ c'8 d' e' ] } }",
+            r"c \tupletDown d \tupletBoth e \tupletUp f",
+            r"< c4 e g >",
+            r"[ c'8 e ]",
+            r"\partial 8 c8",
+        ):
             self.assertEqual(music, mpd.lexer.Lexer.to_string(list(mpd.lexer.Lexer(music))))
+
     def test_set_first_pitch_ok(self):
         fis = mpd.MusicalPitch.new_from_notename("fis")
         for s, n in (
@@ -259,10 +289,11 @@ class TestLexer(unittest.TestCase):
             ("\nc", "\nfis"),
             ("\n\\time 3/4\nc d e", "\n\\time 3/4\nfis d e"),
             ("", ""),
-            ):
+        ):
             lex = mpd.lexer.Lexer(s)
             lex.set_first_pitch(fis)
             self.assertEqual(lex.m_string, n)
+
     def test_set_first_pitch_errors(self):
         fis = mpd.MusicalPitch.new_from_notename("fis")
         lex = mpd.lexer.Lexer("c d ERR e f")
@@ -276,6 +307,7 @@ class TestLexer(unittest.TestCase):
         lex = mpd.lexer.Lexer("\clef bass c d ERR e f")
         lex.set_first_pitch(fis)
         self.assertEqual(lex.m_string, "\clef bass fis d ERR e f")
+
     def test_m_notelen(self):
         lexer = mpd.lexer.Lexer("c8 d s16 r32")
         toc, toc_data = next(lexer)
@@ -287,6 +319,7 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(toc_data.m_duration.get_rat_value(), mpd.Rat(1, 16))
         toc, toc_data = next(lexer)
         self.assertEqual(toc_data.m_duration.get_rat_value(), mpd.Rat(1, 32))
+
     def test_partial(self):
         lexer = mpd.lexer.Lexer(r"\partial 4. \staff")
         toc, toc_data = next(lexer)
@@ -294,6 +327,7 @@ class TestLexer(unittest.TestCase):
         self.assertEqual(toc_data, mpd.duration.Duration.new_from_string("4."))
         toc, toc_data = next(lexer)
         self.assertEqual(toc, lexer.STAFF)
+
 
 class TestFunctions(unittest.TestCase):
     def test_validate_only_notenames(self):
@@ -304,6 +338,7 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(validate_only_notenames("c ERR g"), (0, 2, 5))
         self.assertEqual(validate_only_notenames("c\nERR\ng"), (1, 0, 3))
         self.assertEqual(validate_only_notenames("c\n  ERR\ng"), (1, 2, 5))
+
 
 class TestScore(unittest.TestCase):
     def test_timelist(self):

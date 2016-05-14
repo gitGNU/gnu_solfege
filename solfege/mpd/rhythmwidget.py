@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import copy
 import os
 
@@ -46,10 +44,11 @@ class RhythmWidgetController(Gtk.HBox):
         self.g_rwidget.connect('cursor-moved', self.on_cursor_moved)
         for k in (1, 2, 4, 8, 16, 32):
             im = Gtk.Image()
-            im.set_from_file(os.path.join("graphics", "note-%i.svg"% k))
+            im.set_from_file(os.path.join("graphics", "note-%i.svg" % k))
             b = Gtk.Button()
             b.add(im)
             self.pack_start(b, False, False, 0)
+
             def f(widget, i):
                 added = self.g_rwidget.on_add_item(elems.Note(
                     MusicalPitch.new_from_notename("c"),
@@ -66,6 +65,7 @@ class RhythmWidgetController(Gtk.HBox):
             b = Gtk.Button()
             b.add(im)
             self.pack_start(b, False, False, 0)
+
             def f(widget, i):
                 added = self.g_rwidget.on_add_item(elems.Rest(
                     Duration(i, 0)))
@@ -117,24 +117,31 @@ class RhythmWidgetController(Gtk.HBox):
         self.g_rwidget.m_ins_mode = not self.g_mode.get_active()
         self.pack_start(self.g_mode, False, False, 0)
         self.show_all()
+
     def ctrl_on_ins(self, button):
         self.g_rwidget.m_ins_mode = not self.g_mode.get_active()
-        self.g_mode.set_label({False: _i("insert-overwrite|INSRT"),
+        self.g_mode.set_label({
+            False: _i("insert-overwrite|INSRT"),
             True: _i("insert-overwrite|OVER")}[button.get_active()])
         self.g_rwidget.grab_focus()
+
     def ctrl_on_delete(self, button):
         self.g_rwidget.delete()
         self.g_rwidget.grab_focus()
+
     def on_toggle_dots(self, button, delta):
         self.g_rwidget.on_toggle_dots(delta)
         self.g_rwidget.grab_focus()
+
     def on_toggle_tie(self, button):
         self.g_rwidget.on_toggle_tie()
         self.g_rwidget.grab_focus()
+
     def set_editable(self, b):
         self.g_rwidget.m_editable = b
         self.g_rwidget.queue_draw()
         self.set_sensitive(b)
+
     def on_cursor_moved(self, *w):
         e = self.g_rwidget.m_score.voice11.m_tdict[self.g_rwidget.get_cursor_timepos()]
         if isinstance(e['elem'][0], elems.Skip):
@@ -155,18 +162,21 @@ class RhythmWidget(MusicDisplayer):
     skipdur = Duration(4, 0)
     NOTE_INPUT = 1
     REST_INPUT = 2
+
     def __init__(self):
         MusicDisplayer.__init__(self)
-        #self.g_d.connect("draw", self.on_draw)
+        # self.g_d.connect("draw", self.on_draw)
         self.add_events(Gdk.EventMask.KEY_RELEASE_MASK)
         self.add_events(Gdk.EventMask.BUTTON_PRESS_MASK)
         self.connect("key-press-event", self.on_key_press)
-        #self.set_flags(Gtk.CAN_FOCUS)
+        # self.set_flags(Gtk.CAN_FOCUS)
+
         def f(*w):
             self.grab_focus()
         self.connect("button-press-event", f)
         self.m_cursor = None
         self.m_input_mode = RhythmWidget.NOTE_INPUT
+
     def get_cursor_timepos(self):
         """
         Return the timepos the cursor has. Return None if the
@@ -181,22 +191,26 @@ class RhythmWidget(MusicDisplayer):
         if timeposes:
             return self.m_score.m_staffs[0].get_timeposes()[self.m_cursor]
         return
+
     def cursor_prev(self):
         if self.m_cursor > 0:
             self.m_cursor -= 1
             self.adjust_hadjustment()
             self.emit('cursor-moved')
+
     def cursor_next(self):
         if self.m_cursor < len(self.m_score.m_staffs[0].get_timeposes()) - 1:
             self.m_cursor += 1
             self.adjust_hadjustment()
             self.emit('cursor-moved')
+
     def backspace(self):
         if self.m_cursor > 0:
             self.cursor_prev()
             self.delete()
             self.adjust_hadjustment()
             self.emit('cursor-moved')
+
     def on_key_press(self, window, event):
         if not self.m_editable:
             return
@@ -206,7 +220,7 @@ class RhythmWidget(MusicDisplayer):
                     Gdk.KEY_4: 8,
                     Gdk.KEY_5: 16,
                     Gdk.KEY_6: 32,
-        }
+                    }
         if event.keyval in (Gdk.KEY_Right, Gdk.KEY_KP_Right):
             self.cursor_next()
             self.queue_draw()
@@ -219,8 +233,9 @@ class RhythmWidget(MusicDisplayer):
             self.delete()
         elif event.keyval in key_dict:
             if self.m_input_mode == self.NOTE_INPUT:
-                added = self.on_add_item(elems.Note(MusicalPitch.new_from_notename("c"),
-                    Duration(key_dict[event.keyval], 0)))
+                added = self.on_add_item(
+                    elems.Note(MusicalPitch.new_from_notename("c"),
+                               Duration(key_dict[event.keyval], 0)))
             else:
                 assert self.m_input_mode == self.REST_INPUT
                 added = self.on_add_item(elems.Rest(
@@ -240,6 +255,7 @@ class RhythmWidget(MusicDisplayer):
                 self.m_input_mode = self.REST_INPUT
             else:
                 self.m_input_mode = self.NOTE_INPUT
+
     def on_toggle_tie(self):
         timepos = self.get_cursor_timepos()
         if not isinstance(self.m_score.voice11.m_tdict[timepos]['elem'][0], elems.Note):
@@ -250,10 +266,12 @@ class RhythmWidget(MusicDisplayer):
         elif self.m_score.voice11.m_tdict[timepos]['elem'][0].m_tieinfo in ('start', 'go'):
             if self.m_score.voice11.untie_next(timepos):
                 self.score_updated()
+
     def delete(self):
         timepos = self.get_cursor_timepos()
         self.m_score.voice11.del_elem(timepos)
         self.score_updated()
+
     def on_toggle_dots(self, delta):
         """
         delta is the number of dots to add or remove.
@@ -271,21 +289,24 @@ class RhythmWidget(MusicDisplayer):
         if self.m_score.voice11.try_set_elem(new_elem, timepos, False):
             self.score_updated()
         return True
+
     def on_add_item(self, item):
         """
         Return True if an item was added.
         Return False if it was not added.
         """
-        if self.m_score.voice11.try_set_elem(item, self.get_cursor_timepos(),
-                self.m_ins_mode):
+        if self.m_score.voice11.try_set_elem(
+                item, self.get_cursor_timepos(), self.m_ins_mode):
             self.score_updated()
             self.adjust_hadjustment()
             return True
         return False
+
     def set_score(self, score, cursor=0):
         self.m_score = score
         self.m_cursor = cursor
         self.score_updated()
+
     def score_updated(self):
         """
         Redraw the staff. This should be called whenever m_score is updated.
@@ -301,6 +322,7 @@ class RhythmWidget(MusicDisplayer):
         else:
             self.m_cursor = None
         self.emit('score-updated')
+
     def on_draw(self, darea, ct):
         MusicDisplayer.on_draw(self, darea, ct)
         timepos = self.get_cursor_timepos()
@@ -320,6 +342,7 @@ class RhythmWidget(MusicDisplayer):
         ct.set_source_rgb(1.0, 0, 0)
         ct.rectangle(engraver.m_xpos, y, 10, 3)
         ct.stroke()
+
     def adjust_hadjustment(self):
         # Auto scrolling
         adj = self.get_hadjustment()
@@ -336,10 +359,13 @@ class RhythmWidget(MusicDisplayer):
                 x = 0
             adj.set_value(x)
 
-GObject.signal_new('cursor-moved', RhythmWidget, GObject.SignalFlags.RUN_FIRST,
-    None, tuple())
-GObject.signal_new('score-updated', RhythmWidget, GObject.SignalFlags.RUN_FIRST,
-    None, tuple())
+GObject.signal_new('cursor-moved', RhythmWidget,
+                   GObject.SignalFlags.RUN_FIRST,
+                   None, tuple())
+GObject.signal_new('score-updated', RhythmWidget,
+                   GObject.SignalFlags.RUN_FIRST,
+                   None, tuple())
+
 
 class TestWin(Gtk.Window):
     def __init__(self):
@@ -361,6 +387,7 @@ class TestWin(Gtk.Window):
         c.show()
         c.set_editable(True)
         self.connect('delete_event', self.quit)
+
     def quit(self, *w):
         Gtk.main_quit()
 

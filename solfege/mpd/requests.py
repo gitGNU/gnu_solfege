@@ -19,10 +19,12 @@ from solfege.mpd.duration import Duration
 from solfege.mpd.rat import Rat
 from solfege.mpd.musicalpitch import MusicalPitch
 
+
 class ItHasDuration:
     """
     Base class from RestRequest and MusicalRequest.
     """
+
     def __init__(self, duration, dots):
         """duration: integer 1 for 1/1 note 4 for 1/4 etc
         """
@@ -33,24 +35,32 @@ class ItHasDuration:
 
 
 class RestRequest(ItHasDuration):
+
     def __init__(self, duration, dots):
         ItHasDuration.__init__(self, duration, dots)
+
     def __str__(self):
         return "(RestRequest:%s)" % self.m_duration
 
+
 class SkipRequest(ItHasDuration):
+
     def __init__(self, duration, dots):
         ItHasDuration.__init__(self, duration, dots)
+
     def __str__(self):
         return "(SkipRequest:%s)" % self.m_duration
 
 
 class MusicRequest(ItHasDuration):
+
     def __init__(self, notename, duration, dots):
         ItHasDuration.__init__(self, duration, dots)
         self.m_pitch = MusicalPitch.new_from_notename(notename)
+
     def __str__(self):
-        return "(Music:%s, %s)" % (self.m_pitch.get_octave_notename(), self.m_duration)
+        return "(Music:%s, %s)" % (
+            self.m_pitch.get_octave_notename(), self.m_duration)
+
     def transpose(self, P):
         self.m_pitch.transpose_by_musicalpitch(P)
-

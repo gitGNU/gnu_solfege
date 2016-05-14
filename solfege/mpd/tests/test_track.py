@@ -26,6 +26,7 @@ class TestTrack(unittest.TestCase):
              ('note-on', 0, 90, 127),
              ('notelen-time', Rat(1, 4)),
              ('note-off', 0, 90, 127)])
+
     def test_1voice_setpatch(self):
         t = Track()
         t.note(4, 90, 127)
@@ -44,6 +45,7 @@ class TestTrack(unittest.TestCase):
              ('notelen-time', Rat(1, 4)),
              ('note-off', 1, 91, 127),
              ])
+
     def test_midi_overlap(self):
         t1 = Track()
         t1.note(8, 92, 121)
@@ -60,10 +62,12 @@ class TestMidiEventStream(TmpFile):
     def setUp(self):
         TmpFile.setUp(self)
         cfg.set_bool('config/override_default_instrument', True)
+
     def test_track1(self):
         t = Track()
         t.prepend_patch(33)
         t.note(4, 60, 120)
+
     def test_3instr(self):
         t1 = Track()
         t1.set_patch(3)
@@ -92,6 +96,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t1, t2, t3).str_repr(details=1),
             "p0:3 p1:4 p2:5 v0:100 n0:93 v1:100 n1:94 v2:100 n2:95 d1/4 o93 o94 o95")
+
     def test_str_repr(self):
         t1 = Track()
         t1.set_volume(88)
@@ -121,6 +126,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t1, t2, t3).str_repr(details=1),
             "p0:3 p1:4 p2:5 v0:88 n0:93 v1:100 n1:94 v2:100 n2:95 d1/4 o93 o94 o95")
+
     def test_track2(self):
         self.do_file("""
         header { random_transpose = no }
@@ -131,6 +137,7 @@ class TestMidiEventStream(TmpFile):
         """)
         self.p._idx = 0
         mpd.music_to_tracklist(self.p.get_question()['music'].get_mpd_music_string(self.p))
+
     def test_track3(self):
         self.do_file("""
         header { random_transpose = no }
@@ -162,6 +169,7 @@ class TestMidiEventStream(TmpFile):
             "o72 o64 o55 o48 "
             "n0:72 n1:64 n2:55 n3:48 d1/1 "
             "o72 o64 o55 o48")
+
     def test_track3_1(self):
         self.do_file("""
         header { random_transpose = no }
@@ -183,6 +191,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(*tracklist).str_repr(details=1),
             "p0:1 p1:2 v0:100 n0:72 d1/2 v1:100 n1:55 d1/2 o72 o55 n0:72 n1:55 d1/1 o72 o55")
+
     def test_track3_2(self):
         self.do_file(r"""
         header { random_transpose = no }
@@ -211,6 +220,7 @@ class TestMidiEventStream(TmpFile):
             "o72 o55 o48 "
             "n0:72 n1:55 n2:48 d1/1 "
             "o72 o55 o48")
+
     def test_bug1(self):
         """
         For each moment in time, all note-off events have to be
@@ -245,6 +255,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t1, t2).str_repr(details=1),
             "p0:3 p1:4 v0:100 n0:93 v1:100 n1:95 d1/4 o93 o95 n0:95 n1:97 d1/4 o95 o97")
+
     def test_melodic_interval_2_tracks(self):
         """
         In this test, only MIDI channel 0 will be allocated, even though
@@ -266,6 +277,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             m.str_repr(1),
             "p0:1 p1:2 v0:101 n0:64 d1/4 o64 v1:102 n1:66 d1/4 o66")
+
     def test_patch_volume_order(self):
         """
         Assert that the order of set_patch and set_volume does not matter.
@@ -281,6 +293,7 @@ class TestMidiEventStream(TmpFile):
         t1.set_patch(1)
         t1.note(4, 64)
         self.assertEqual(MidiEventStream(t1).str_repr(details=1), "p0:1 v0:101 n0:64 d1/4 o64")
+
     def test_prepend_patch(self):
         """
         If multiple set_patch is done, the last will be used.
@@ -291,6 +304,7 @@ class TestMidiEventStream(TmpFile):
         t.note(4, 55)
         self.assertEqual(
             MidiEventStream(t).str_repr(), "p0:2 v0:100 n55 d1/4 o55")
+
     def test_set_patch(self):
         """
         If multiple set_patch is done, the last will be used.
@@ -301,6 +315,7 @@ class TestMidiEventStream(TmpFile):
         t.note(4, 55)
         self.assertEqual(
             MidiEventStream(t).str_repr(), "p0:3 v0:100 n55 d1/4 o55")
+
     def test_set_patch2(self):
         """
         Assert that there is not sendt a new volume event when we change patch.
@@ -313,6 +328,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t).str_repr(),
             "p0:2 p1:3 v0:100 n55 d1/4 o55 v1:100 n57 d1/4 o57")
+
     def test_set_volume(self):
         """
         Assert that there is not sendt a new pacth event when we change volume
@@ -325,6 +341,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t).str_repr(),
             "p0:0 p1:0 v0:98 n55 d1/4 o55 v1:99 n57 d1/4 o57")
+
     def test_set_bpm(self):
         t = Track()
         t.set_bpm(120)
@@ -332,6 +349,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t).str_repr(1),
             "t120/4 p0:0 v0:100 n0:50 d1/4 o50")
+
     def test_set_bpm2(self):
         """
         Two set_bpm in a row should only generate MIDI events for the
@@ -344,6 +362,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t).str_repr(1),
             "t121/4 p0:0 v0:100 n0:50 d1/4 o50")
+
     def test_set_bpm3(self):
         """
         When two tracks set a different tempo, the tempo from the
@@ -358,6 +377,7 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(
             MidiEventStream(t1, t2).str_repr(1),
             "t121/4 p0:0 v0:100 n0:50 n0:55 d1/4 o50 o55")
+
     def test_x1(self):
         t1 = Track()
         t1.set_patch(1)
@@ -370,6 +390,7 @@ class TestMidiEventStream(TmpFile):
         t1.note(4, 60)
         m = MidiEventStream(t1)
         self.assertEqual("p0:1 p1:2 p2:3 p3:4 v0:100 n0:60 d1/4 o60 v1:100 n1:60 d1/4 o60 v2:100 n2:60 d1/4 o60 v3:100 n3:60 d1/4 o60", m.str_repr(1))
+
     def test_x2(self):
         t1 = Track()
         t1.note(4, 62)
@@ -379,6 +400,7 @@ class TestMidiEventStream(TmpFile):
         t2.note(1, 60)
         m = MidiEventStream(t1, t2)
         self.assertEqual("p0:0 p1:0 v0:100 n0:62 n0:60 d1/4 o62 v1:100 n1:60 d1/4 o60 n0:62 d1/2 o62 o60", m.str_repr(1))
+
     def test_x3(self):
         t1 = Track()
         t1.note(4, 62)
@@ -395,6 +417,7 @@ class TestMidiEventStream(TmpFile):
 class TestChannelDevice(unittest.TestCase):
     def setUp(self):
         self.cd = MidiEventStream.ChannelDevice()
+
     def test_1(self):
         ch_dev = MidiEventStream.ChannelDevice()
         self.assertEqual(0, ch_dev.require_channel(60, 0, 100))

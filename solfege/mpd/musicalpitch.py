@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 """
 >>> import locale, gettext
 >>> gettext.NullTranslations().install()
@@ -119,12 +118,15 @@ _("notename|bbb")
 _("notename|b#")
 _("notename|bx")
 
+
 class InvalidNotenameException(_exceptions.MpdException):
     def __init__(self, n):
         _exceptions.MpdException.__init__(self)
         self.m_notename = n
+
     def __str__(self):
         return _("Invalid notename: %s") % self.m_notename
+
 
 class MusicalPitch:
     LOWEST_STEPS = -28
@@ -133,30 +135,35 @@ class MusicalPitch:
                  'g', 'gis', 'a', 'ais', 'b')
     natural_notenames = ('c', 'd', 'e', 'f', 'g', 'a', 'b')
     sharp_notenames = ('cis', 'dis', 'fis', 'gis', 'ais')
+
     def clone(self):
         r = MusicalPitch()
         r.m_octave_i = self.m_octave_i
         r.m_notename_i = self.m_notename_i
         r.m_accidental_i = self.m_accidental_i
         return r
+
     def new_from_notename(n):
         assert isinstance(n, str)
         r = MusicalPitch()
         r.set_from_notename(n)
         return r
     new_from_notename = staticmethod(new_from_notename)
+
     def new_from_int(i):
-        assert type(i) == type(0)
+        assert isinstance(i, int)
         r = MusicalPitch()
         r.set_from_int(i)
         return r
     new_from_int = staticmethod(new_from_int)
+
     def __init__(self):
         """
          c,,,, is lowest: m_octave_i == -4, steps() == -28
          g'''''' is highest: m_octave_i = 6, steps() == 46
         """
         self.m_octave_i = self.m_accidental_i = self.m_notename_i = 0
+
     def transpose_by_musicalpitch(self, P):
         """Silly function used by mpd/parser.py and company
         (d') transposes up one major second.
@@ -169,12 +176,13 @@ class MusicalPitch:
             self.m_notename_i = self.m_notename_i - 7
             self.m_octave_i = self.m_octave_i + 1
         self.m_octave_i = self.m_octave_i + P.m_octave_i - 1
-        if self.semitone_pitch()-old_p < tra:
+        if self.semitone_pitch() - old_p < tra:
             self.m_accidental_i = self.m_accidental_i + 1
-        elif self.semitone_pitch()-old_p > tra:
+        elif self.semitone_pitch() - old_p > tra:
             self.m_accidental_i = self.m_accidental_i - 1
         self.sanitate_accidental()
         return self
+
     def sanitate_accidental(self):
         """
         Make use self.m_accidental_i is some of the values -2, -1, 0, 1, 2
@@ -185,7 +193,8 @@ class MusicalPitch:
         if not -3 < self.m_accidental_i < 3:
             p = self.semitone_pitch()
             self.set_from_int(p)
-    def enharmonic_flip(self):#FIXME find proper name.
+
+    def enharmonic_flip(self):  # FIXME find proper name.
         """
         Change the notename, so that gis becomes aes.
         What about d, should it be cisis or eeses??
@@ -207,27 +216,28 @@ class MusicalPitch:
         if self.m_accidental_i == 1 and self.m_notename_i < 6:
             self.m_accidental_i = -1
             self.m_notename_i += 1
+
     def normalize_double_accidental(self):
         """
         Change the tone so that we avoid double accidentals.
         """
         if self.m_accidental_i == 2:
-            if self.m_notename_i in (0, 1, 3, 4, 5): # c d f g a
+            if self.m_notename_i in (0, 1, 3, 4, 5):  # c d f g a
                 self.m_notename_i += 1
                 self.m_accidental_i = 0
-            elif self.m_notename_i == 2: # e
+            elif self.m_notename_i == 2:  # e
                 self.m_notename_i = 3
                 self.m_accidental_i = 1
             else:
-                assert self.m_notename_i == 6 # b
+                assert self.m_notename_i == 6  # b
                 self.m_notename_i = 0
                 self.m_accidental_i = 1
                 self.m_octave_i += 1
         elif self.m_accidental_i == -2:
-            if self.m_notename_i in (1, 2, 4, 5, 6): # d e g a b
+            if self.m_notename_i in (1, 2, 4, 5, 6):  # d e g a b
                 self.m_notename_i -= 1
                 self.m_accidental_i = 0
-            elif self.m_notename_i == 3: # f
+            elif self.m_notename_i == 3:  # f
                 self.m_notename_i = 2
                 self.m_accidental_i = -1
             else:
@@ -235,19 +245,25 @@ class MusicalPitch:
                 self.m_notename_i = 6
                 self.m_accidental_i = -1
                 self.m_octave_i -= 1
+
     def steps(self):
         return self.m_notename_i + self.m_octave_i * 7
+
     def semitone_pitch(self):
-        return [0, 2, 4, 5, 7, 9, 11][self.m_notename_i] + \
-               self.m_accidental_i + self.m_octave_i * 12 + 48
+        return [0, 2, 4, 5, 7, 9, 11][self.m_notename_i] \
+            + self.m_accidental_i + self.m_octave_i * 12 + 48
+
     def pitch_class(self):
         return ([0, 2, 4, 5, 7, 9, 11][self.m_notename_i] + self.m_accidental_i) % 12
+
     def set_from_int(self, midiint):
-        self.m_octave_i = (midiint-48) // 12
-        self.m_notename_i = {0:0, 1:0, 2:1, 3:1, 4:2, 5:3, 6:3, 7:4, 8:4,
-                             9:5, 10:5, 11:6}[midiint % 12]
-        self.m_accidental_i = midiint-(self.m_octave_i+4)*12 \
-                              -[0, 2, 4, 5, 7, 9, 11][self.m_notename_i]
+        self.m_octave_i = (midiint - 48) // 12
+        self.m_notename_i = {0: 0, 1: 0, 2: 1, 3: 1, 4: 2, 5: 3, 6: 3, 7: 4,
+                             8: 4, 9: 5, 10: 5, 11: 6}[midiint % 12]
+        self.m_accidental_i = midiint \
+            - (self.m_octave_i + 4) * 12 \
+            - [0, 2, 4, 5, 7, 9, 11][self.m_notename_i]
+
     def set_from_notename(self, notename):
         if not notename:
             raise InvalidNotenameException(notename)
@@ -264,7 +280,7 @@ class MusicalPitch:
         if notename.startswith('as'):
             notename = 'aes' + notename[2:]
         while notename.endswith('es'):
-            self.m_accidental_i = self.m_accidental_i -1
+            self.m_accidental_i = self.m_accidental_i - 1
             notename = notename[:-2]
         while notename.endswith('is'):
             self.m_accidental_i = self.m_accidental_i + 1
@@ -273,6 +289,7 @@ class MusicalPitch:
             self.m_notename_i = ['c', 'd', 'e', 'f', 'g', 'a', 'b'].index(notename)
         except ValueError:
             raise InvalidNotenameException(tmp)
+
     def randomize(self, lowest, highest):
         """
         lowest and highest can be an integer, string or a MusicalPitch instance
@@ -284,19 +301,21 @@ class MusicalPitch:
             highest = MusicalPitch.new_from_notename(highest).semitone_pitch()
         self.set_from_int(random.randint(int(lowest), int(highest)))
         return self
+
     def __radd__(self, a):
         return self + a
+
     def __add__(self, i):
         """
         MusicalPitch + integer = MusicalPitch
         MusicalPitch + Interval = MusicalPitch
         """
-        if type(i) == type(0):
+        if isinstance(i, int):
             v = self.semitone_pitch()
             if not 0 <= v + i < 128:
                 raise ValueError
-            return MusicalPitch.new_from_int(v+i)
-        elif i.__class__.__name__ == 'Interval':#isinstance(i, interval.Interval):
+            return MusicalPitch.new_from_int(v + i)
+        elif i.__class__.__name__ == 'Interval':  # isinstance(i, interval.Interval):
             if not 0 <= self.semitone_pitch() + i.get_intvalue() < 128:
                 raise ValueError
             r = self.clone()
@@ -328,7 +347,8 @@ class MusicalPitch:
                 raise ValueError
             return r
         else:
-            raise _exceptions.MpdException("Cannot add %s" %type(i))
+            raise _exceptions.MpdException("Cannot add %s" % type(i))
+
     def __sub__(self, i):
         """
         MusicalPitch - MusicalPitch = integer
@@ -339,27 +359,37 @@ class MusicalPitch:
         assert isinstance(i, int)
         v = self.semitone_pitch()
         assert 0 <= v - i < 128
-        return MusicalPitch.new_from_int(v-i)
+        return MusicalPitch.new_from_int(v - i)
+
     def __int__(self):
         return self.semitone_pitch()
+
     def __lt__(self, B):
         return self.semitone_pitch() < B.semitone_pitch()
+
     def __le__(self, B):
         return self.semitone_pitch() <= B.semitone_pitch()
+
     def __eq__(self, B):
         return self.semitone_pitch() == B.semitone_pitch()
+
     def __str__(self):
         return "(MusicalPitch %s)" % self.get_octave_notename()
+
     def get_user_notename(self):
         # xgettext:no-python-format
         return self._format_notename(_i("notenameformat|%(notename)s"))
+
     def get_user_octave_notename(self):
         # xgettext:no-python-format
         return self._format_notename(_i("notenameformat|%(notename)s%(oct)s"))
+
     def get_notename(self):
         return self._format_notename("%(utnotename)s")
+
     def get_octave_notename(self):
         return self._format_notename("%(utnotename)s%(oct)s")
+
     def _format_notename(self, format_string):
         """
         utnotename : untranslated notename, solfege-internal format.
@@ -378,10 +408,10 @@ class MusicalPitch:
         """
         assert -3 < self.m_accidental_i < 3, self.m_accidental_i
         utnotename = ['c', 'd', 'e', 'f', 'g', 'a', 'b'][self.m_notename_i]\
-                   + ['eses', 'es', '', 'is', 'isis'][self.m_accidental_i+2]
+            + ['eses', 'es', '', 'is', 'isis'][self.m_accidental_i + 2]
         notename = "notename|" \
-                 + ['c', 'd', 'e', 'f', 'g', 'a', 'b'][self.m_notename_i]\
-                 + ['bb', 'b', '', '#', 'x'][self.m_accidental_i+2]
+            + ['c', 'd', 'e', 'f', 'g', 'a', 'b'][self.m_notename_i]\
+            + ['bb', 'b', '', '#', 'x'][self.m_accidental_i + 2]
         notename = _i(notename)
         if self.m_octave_i < 0:
             notename2 = notename.capitalize()
@@ -398,7 +428,7 @@ class MusicalPitch:
         else:
             suboct = ""
         if self.m_octave_i < -1:
-            suboct2 = "<sub>%s</sub>" % (-self.m_octave_i-1)
+            suboct2 = "<sub>%s</sub>" % (-self.m_octave_i - 1)
         else:
             suboct2 = ""
         if self.m_octave_i > 0:
@@ -417,4 +447,3 @@ class MusicalPitch:
         except KeyError:
             logging.error("musicalpitch: Bad translation of notenameformat string")
             return "%(notename)s%(oct)s" % D
-
