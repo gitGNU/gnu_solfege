@@ -132,7 +132,6 @@ class TestScore(unittest.TestCase):
         self.score.voice11.append(n3)
         self.score.voice11.append(n4)
         self.score.voice11.tie([n1, n2, n3])
-        p = performer.MidiPerformer(self.score)
         t = mpd.score_to_tracks(self.score)
         self.assertEqual(t[0].str_repr(), "n48 d3/4 o48 n50 d1/4 o50")
     def test_tuplets(self):
