@@ -23,11 +23,14 @@ from solfege.mpd.const import DEFAULT_VELOCITY, DEFAULT_VOLUME
 
 set_patch_delay = 0
 
+
 class EventBase(object):
     def __init__(self):
         self.m_time = None
+
     def __str__(self):
-        return "(%s, time:%s)" % ( self.__class__.__name__, self.m_time)
+        return "(%s, time:%s)" % (self.__class__.__name__, self.m_time)
+
 
 class NoteEventBase(EventBase):
     def __init__(self, pitch, velocity):
@@ -35,16 +38,20 @@ class NoteEventBase(EventBase):
         assert 0 <= pitch
         self.m_pitch = pitch
         self.m_velocity = velocity
+
     def __str__(self):
         return "(%s, pitch:%s, vel:%s, time:%s)" % (self.__class__.__name__, self.m_pitch, self.m_velocity, self.m_time)
+
 
 class NoteOnEvent(NoteEventBase):
     def __init__(self, pitch, velocity):
         NoteEventBase.__init__(self, pitch, velocity)
 
+
 class NoteOffEvent(NoteEventBase):
     def __init__(self, pitch, velocity):
         NoteEventBase.__init__(self, pitch, velocity)
+
 
 class Delay(EventBase):
     def __init__(self, duration):
@@ -53,24 +60,31 @@ class Delay(EventBase):
         """
         EventBase.__init__(self)
         self.m_duration = duration
+
     def __str__(self):
         return "(%s, dur:%s, time:%s)" % (self.__class__.__name__, self.m_duration, self.m_time)
+
 
 class SetPatchEvent(EventBase):
     def __init__(self, patch):
         EventBase.__init__(self)
         assert 0 <= patch < 128
         self.m_patch = patch
+
     def __str__(self):
-        return "(%s, time:%s, patch:%i)" % ( self.__class__.__name__, self.m_time, self.m_patch)
+        return "(%s, time:%s, patch:%i)" % (self.__class__.__name__, self.m_time, self.m_patch)
+
 
 class SetVolumeEvent(EventBase):
     def __init__(self, volume):
         EventBase.__init__(self)
         assert 0 <= volume < 256
         self.m_volume = int(volume)
+
     def __str__(self):
-        return "(%s, time:%s, volume:%i)" % ( self.__class__.__name__, self.m_time, self.m_volume)
+
+        return "(%s, time:%s, volume:%i)" % (self.__class__.__name__, self.m_time, self.m_volume)
+
 
 class TempoEvent(EventBase):
     def __init__(self, bpm, notelen):
@@ -78,8 +92,10 @@ class TempoEvent(EventBase):
         assert isinstance(bpm, int)
         self.m_bpm = bpm
         self.m_notelen = notelen
+
     def __str__(self):
-        return "(%s, time:%s, bpm/notelen: %s/%s)" % ( self.__class__.__name__, self.m_time, self.m_bpm, self.m_notelen)
+        return "(%s, time:%s, bpm/notelen: %s/%s)" % (self.__class__.__name__, self.m_time, self.m_bpm, self.m_notelen)
+
 
 class MidiEventStream(object):
     TEMPO = 'tempo'
@@ -89,6 +105,7 @@ class MidiEventStream(object):
     NOTELEN_TIME = 'notelen-time'
     BENDER = 'bender'
     SET_PATCH = 'program-change'
+
     class ChannelDevice(object):
         """
         Bad name, but I don't have a better idea right now. This
@@ -96,26 +113,31 @@ class MidiEventStream(object):
         """
         # We are zero-indexed, so this is MIDI channel 10
         percussion_MIDI_channel = 9
+
         class MidiChannel(object):
             def __init__(self, number):
                 self.m_number = number
                 self.m_tones = set()
+
             def start_tone(self, i):
                 assert i not in self.m_tones
                 self.m_tones.add(i)
+
             def stop_tone(self, i):
                 assert i in self.m_tones
                 self.m_tones.remove(i)
+
             def is_silent(self):
                 """
                 Return True if no tones are playing on this channel.
                 """
                 return not bool(self.m_tones)
+
         def __init__(self, nc=16):
             self.free_MIDI_channels = []
             if nc > self.percussion_MIDI_channel:
-                for i in list(range(self.percussion_MIDI_channel)) \
-                         + list(range(self.percussion_MIDI_channel, 16)):
+                for i in (list(range(self.percussion_MIDI_channel))
+                          + list(range(self.percussion_MIDI_channel, 16))):
                     self.free_MIDI_channels.append(self.MidiChannel(i))
             else:
                 for i in range(nc):
@@ -129,10 +151,13 @@ class MidiEventStream(object):
             self.int_to_channel_object = {}
             for channel in self.free_MIDI_channels:
                 self.int_to_channel_object[channel.m_number] = channel
+
         def set_channel_data(self, channel, key, data):
             setattr(self.int_to_channel_object[channel], key, data)
+
         def get_channel_data(self, channel, key):
             return getattr(self.int_to_channel_object[channel], key, None)
+
         def require_channel(self, pitch, patch, volume):
             key = (patch, volume)
             if key in self.allocated_MIDI_channels:
@@ -148,6 +173,7 @@ class MidiEventStream(object):
                 self.allocated_MIDI_channels[key] = [self.alloc_channel()]
                 return self.allocated_MIDI_channels[key][-1].m_number
             return -1
+
         def alloc_channel(self):
             """
             Return a unused MIDI channel. Search for silent channels first,
@@ -164,6 +190,7 @@ class MidiEventStream(object):
                             del self.allocated_MIDI_channels[key]
                         return ret
             raise Exception("FIXME: handle running out of MIDI channels!")
+
         def get_channel_for_patch(self, patch, volume):
             """
             Return the MIDI channel number we should use to play a tone
@@ -171,12 +198,16 @@ class MidiEventStream(object):
             yet.
             """
             return self.allocated_MIDI_channels[patch, volume].m_number
+
         def start_note(self, channel, pitch):
             self.int_to_channel_object[channel].start_tone(pitch)
+
         def stop_note(self, channel, pitch):
             self.int_to_channel_object[channel].stop_tone(pitch)
+
         def is_playing(self, channel, pitch):
             return pitch in self.int_to_channel_object[channel].m_tones
+
     def __init__(self, *tracks):
         # The number of MIDI channels are changed in the test suite to easier
         # test handling of too few midi channels.
@@ -184,6 +215,7 @@ class MidiEventStream(object):
         self.m_tracks = tracks
         for track in self.m_tracks:
             track.calculate_event_times()
+
     def _create_dict_of_track(self, track):
         """
         Return a dict of the track, where the key is a list with
@@ -197,10 +229,11 @@ class MidiEventStream(object):
             retval[event.m_time].append(event)
         for key in retval:
             retval[key] = {
-              'NoteOffEvents': [x for x in retval[key] if isinstance(x, NoteOffEvent)],
-              'OtherEvents': [x for x in retval[key] if not isinstance(x, (NoteOffEvent, NoteOnEvent))],
-              'NoteOnEvents': [x for x in retval[key] if isinstance(x, NoteOnEvent)]}
+                'NoteOffEvents': [x for x in retval[key] if isinstance(x, NoteOffEvent)],
+                'OtherEvents': [x for x in retval[key] if not isinstance(x, (NoteOffEvent, NoteOnEvent))],
+                'NoteOnEvents': [x for x in retval[key] if isinstance(x, NoteOnEvent)]}
         return retval
+
     def sorted_events(self):
         """
         This method will rearrange the midi events so that all events of the
@@ -214,7 +247,7 @@ class MidiEventStream(object):
                 self.SET_PATCH: [],
                 self.VOLUME: [],
                 self.NOTE_ON: []
-        }
+                }
         for e in self:
             if e[0] == self.NOTELEN_TIME:
                 for k in (self.NOTE_OFF, self.TEMPO, self.SET_PATCH,
@@ -227,12 +260,13 @@ class MidiEventStream(object):
                 data[e[0]].append(e)
         for event in data[self.NOTE_OFF]:
             yield event
+
     def __iter__(self):
         ret = []
         for e in self.__mkevents():
             if e[0] == 'program-change' and ret:
                 i = len(ret)
-                while (isinstance(ret[i-1][1], Rat) or ret[i-1][1] != e[1]) and i > 1:
+                while (isinstance(ret[i - 1][1], Rat) or ret[i - 1][1] != e[1]) and i > 1:
                     i -= 1
                 if i < len(ret):
                     while ret[i][0] == 'program-change' and i < len(ret) - 1 and ret[i][1] < e[1]:
@@ -242,6 +276,7 @@ class MidiEventStream(object):
                 ret.append(e)
         for e in ret:
             yield e
+
     def __mkevents(self):
         # tpos_set will know all the positions in time where anything happens
         # on any staff
@@ -256,7 +291,7 @@ class MidiEventStream(object):
         track_state = {}
         for x in range(len(self.m_tracks)):
             track_state[x] = {'volume-requested': DEFAULT_VOLUME,
-                        'patch-requested': 0}
+                              'patch-requested': 0}
         tempo_request = None
         tempo_current = None
         # We use this list of dicts to know which MIDI channel the tones are
@@ -268,7 +303,7 @@ class MidiEventStream(object):
         ch_dev = self.ChannelDevice(self.num_MIDI_channels)
         last_pos = Rat(0, 1)
         for tpos in tpos_list:
-            if tpos != last_pos: # Just to not insert before the first events
+            if tpos != last_pos:  # Just to not insert before the first events
                 yield self.NOTELEN_TIME, tpos - last_pos
             for idx, track in enumerate(tracks2):
                 if tpos in track:
@@ -307,9 +342,10 @@ class MidiEventStream(object):
                                 ch_dev.set_channel_data(chn, 'volume', track_state[idx]['volume-requested'])
                                 yield self.VOLUME, chn, track_state[idx]['volume-requested']
                         else:
-                            chn = ch_dev.require_channel(e.m_pitch,
-                                        track_state[idx]['patch-requested'],
-                                        track_state[idx]['volume-requested'])
+                            chn = ch_dev.require_channel(
+                                e.m_pitch,
+                                track_state[idx]['patch-requested'],
+                                track_state[idx]['volume-requested'])
                             if ch_dev.get_channel_data(chn, 'patch') != track_state[idx]['patch-requested']:
                                 ch_dev.set_channel_data(chn, 'patch', track_state[idx]['patch-requested'])
                                 yield self.SET_PATCH, chn, track_state[idx]['patch-requested']
@@ -325,6 +361,7 @@ class MidiEventStream(object):
                         ch_dev.start_note(chn, e.m_pitch)
                         yield self.NOTE_ON, chn, e.m_pitch, e.m_velocity
             last_pos = tpos
+
     def create_midifile(self, filename, appendstreams=[]):
         """
         filename -- a string naming the file to write the generated midi file to.
@@ -359,7 +396,7 @@ class MidiEventStream(object):
                     v = v + mfutils.mf_volume_change(e[1], e[2])
                 elif e[0] == self.BENDER:
                     logging.debug("create_midifile: FIXME todo: seq_bender for play_with_drvmidi")
-                    #m.seq_bender(DEV, e[1], e[2])
+                    # m.seq_bender(DEV, e[1], e[2])
                 else:
                     raise Exception("mpd.track: Corrupt track error")
         f = open(filename, "wb")
@@ -369,6 +406,7 @@ class MidiEventStream(object):
         v = v + mfutils.mf_end_of_track()
         mfutils.write_vect(f, v)
         f.close()
+
     def str_repr(self, details=0):
         v = []
         for e in self:
@@ -404,6 +442,7 @@ class Track:
     def txtdump(self):
         for event in self.m_v:
             print(event)
+
     def str_repr(self):
         retval = []
         for e in self.m_v:
@@ -420,24 +459,28 @@ class Track:
             elif isinstance(e, Delay):
                 retval.append('d%i/%i' % (e.m_duration.m_num, e.m_duration.m_den))
         return " ".join(retval)
+
     def __init__(self, default_velocity=None):
         if default_velocity is None:
             self.m_default_velocity = DEFAULT_VELOCITY
         else:
             self.m_default_velocity = default_velocity
         self.m_v = []
+
     def start_note(self, pitch, vel=None):
         assert 0 <= int(pitch) < 128
         if vel is None:
             vel = self.m_default_velocity
         assert 0 <= vel < 128
         self.m_v.append(NoteOnEvent(int(pitch), int(vel)))
+
     def stop_note(self, pitch, vel=None):
         assert 0 <= int(pitch) < 128
         if vel is None:
             vel = self.m_default_velocity
         assert 0 <= vel < 128
         self.m_v.append(NoteOffEvent(int(pitch), int(vel)))
+
     def notelen_time(self, notelen):
         """
         To avoid having to alter all code calling this, we interpret
@@ -451,6 +494,7 @@ class Track:
         else:
             assert isinstance(notelen, Rat)
             self.m_v.append(Delay(notelen))
+
     def note(self, notelen, pitch, vel=None):
         """
         See notelen_time docstring.
@@ -461,12 +505,14 @@ class Track:
         self.start_note(pitch, vel)
         self.notelen_time(notelen)
         self.stop_note(pitch, vel)
+
     def set_patch(self, patch):
         """
         Add an event that will change the midi instrument for the
         notes following this event.
         """
         self.m_v.append(SetPatchEvent(patch))
+
     def prepend_patch(self, patch):
         """
         Insert an event that will change the midi instrument at the
@@ -474,18 +520,24 @@ class Track:
         only the first call will have any effect.
         """
         self.m_v.insert(0, SetPatchEvent(patch))
+
     def set_volume(self, volume):
         self.m_v.append(SetVolumeEvent(volume))
+
     def prepend_volume(self, volume):
         self.m_v.insert(0, SetVolumeEvent(volume))
+
     def set_bpm(self, bpm, notelen=4):
         self.m_v.append(TempoEvent(bpm, notelen))
+
     def prepend_bpm(self, bpm, notelen=4):
         assert isinstance(bpm, int)
         self.m_v.insert(0, TempoEvent(bpm, notelen))
+
     def bender(self, chn, value):
         "value >= 0"
         self.m_v.append([self.BENDER, chn, value])
+
     def merge_with(self, B):
         D = {}
         for track in [self, B]:
@@ -500,12 +552,13 @@ class Track:
         kv = list(D.keys())
         kv.sort()
         self.m_v = []
-        for x in range(len(kv)-1):
+        for x in range(len(kv) - 1):
             for event in D[kv[x]]:
                 self.m_v.append(event)
-            self.m_v.append(Delay(kv[x+1]-kv[x]))
+            self.m_v.append(Delay(kv[x + 1] - kv[x]))
         for event in D[kv[-1]]:
             self.m_v.append(event)
+
     def replace_note(self, old, new):
         assert isinstance(old, int)
         assert 0 <= old < 128
@@ -515,6 +568,7 @@ class Track:
             if isinstance(event, (NoteOnEvent, NoteOffEvent)) \
                     and event.m_pitch == old:
                 event.m_pitch = new
+
     def calculate_event_times(self):
         """
         Set the variable m_time on each Event. Well actually we don't set
@@ -528,7 +582,7 @@ class Track:
             else:
                 e.m_time = pos
 
+
 class PercussionTrack(Track):
     def __init__(self):
         Track.__init__(self)
-

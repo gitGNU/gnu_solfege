@@ -10,36 +10,40 @@ from solfege.mpd.rat import Rat
 from solfege import lessonfile
 from solfege import cfg
 
+
 class TmpFile(TmpFileBase):
     parserclass = lessonfile.QuestionsLessonfile
+
 
 class TestTrack(unittest.TestCase):
     def test_simple1(self):
         t = Track()
         t.note(4, 90, 127)
-        self.assertEqual(list(MidiEventStream(t)),
-          [('program-change', 0, 0),
-           ('volume', 0, 100),
-           ('note-on', 0, 90, 127),
-           ('notelen-time', Rat(1, 4)),
-           ('note-off', 0, 90, 127)])
+        self.assertEqual(
+            list(MidiEventStream(t)),
+            [('program-change', 0, 0),
+             ('volume', 0, 100),
+             ('note-on', 0, 90, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 90, 127)])
     def test_1voice_setpatch(self):
         t = Track()
         t.note(4, 90, 127)
         t.set_patch(3)
         t.note(4, 91, 127)
-        self.assertEqual(list(MidiEventStream(t)),
-          [('program-change', 0, 0),
-           ('program-change', 1, 3),
-           ('volume', 0, 100),
-           ('note-on', 0, 90, 127),
-           ('notelen-time', Rat(1, 4)),
-           ('note-off', 0, 90, 127),
-           ('volume', 1, 100),
-           ('note-on', 1, 91, 127),
-           ('notelen-time', Rat(1, 4)),
-           ('note-off', 1, 91, 127),
-           ])
+        self.assertEqual(
+            list(MidiEventStream(t)),
+            [('program-change', 0, 0),
+             ('program-change', 1, 3),
+             ('volume', 0, 100),
+             ('note-on', 0, 90, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 90, 127),
+             ('volume', 1, 100),
+             ('note-on', 1, 91, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 1, 91, 127),
+             ])
     def test_midi_overlap(self):
         t1 = Track()
         t1.note(8, 92, 121)
@@ -70,21 +74,23 @@ class TestMidiEventStream(TmpFile):
         t3 = Track()
         t3.set_patch(5)
         t3.note(4, 95, 127)
-        self.assertEqual(list(MidiEventStream(t1, t2, t3)),
-           [('program-change', 0, 3),
-            ('program-change', 1, 4),
-            ('program-change', 2, 5),
-            ('volume', 0, 100),
-            ('note-on', 0, 93, 127),
-            ('volume', 1, 100),
-            ('note-on', 1, 94, 127),
-            ('volume', 2, 100),
-            ('note-on', 2, 95, 127),
-            ('notelen-time', Rat(1, 4)),
-            ('note-off', 0, 93, 127),
-            ('note-off', 1, 94, 127),
-            ('note-off', 2, 95, 127)])
-        self.assertEqual(MidiEventStream(t1, t2, t3).str_repr(details=1),
+        self.assertEqual(
+            list(MidiEventStream(t1, t2, t3)),
+            [('program-change', 0, 3),
+             ('program-change', 1, 4),
+             ('program-change', 2, 5),
+             ('volume', 0, 100),
+             ('note-on', 0, 93, 127),
+             ('volume', 1, 100),
+             ('note-on', 1, 94, 127),
+             ('volume', 2, 100),
+             ('note-on', 2, 95, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 93, 127),
+             ('note-off', 1, 94, 127),
+             ('note-off', 2, 95, 127)])
+        self.assertEqual(
+            MidiEventStream(t1, t2, t3).str_repr(details=1),
             "p0:3 p1:4 p2:5 v0:100 n0:93 v1:100 n1:94 v2:100 n2:95 d1/4 o93 o94 o95")
     def test_str_repr(self):
         t1 = Track()
@@ -97,22 +103,23 @@ class TestMidiEventStream(TmpFile):
         t3 = Track()
         t3.set_patch(5)
         t3.note(4, 95, 127)
-        self.assertEqual(list(MidiEventStream(t1, t2, t3)),
-           [
-            ('program-change', 0, 3),
-            ('program-change', 1, 4),
-            ('program-change', 2, 5),
-            ('volume', 0, 88),
-            ('note-on', 0, 93, 127),
-            ('volume', 1, 100),
-            ('note-on', 1, 94, 127),
-            ('volume', 2, 100),
-            ('note-on', 2, 95, 127),
-            ('notelen-time', Rat(1, 4)),
-            ('note-off', 0, 93, 127),
-            ('note-off', 1, 94, 127),
-            ('note-off', 2, 95, 127)])
-        self.assertEqual(MidiEventStream(t1, t2, t3).str_repr(details=1),
+        self.assertEqual(
+            list(MidiEventStream(t1, t2, t3)),
+            [('program-change', 0, 3),
+             ('program-change', 1, 4),
+             ('program-change', 2, 5),
+             ('volume', 0, 88),
+             ('note-on', 0, 93, 127),
+             ('volume', 1, 100),
+             ('note-on', 1, 94, 127),
+             ('volume', 2, 100),
+             ('note-on', 2, 95, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 93, 127),
+             ('note-off', 1, 94, 127),
+             ('note-off', 2, 95, 127)])
+        self.assertEqual(
+            MidiEventStream(t1, t2, t3).str_repr(details=1),
             "p0:3 p1:4 p2:5 v0:88 n0:93 v1:100 n1:94 v2:100 n2:95 d1/4 o93 o94 o95")
     def test_track2(self):
         self.do_file("""
@@ -146,14 +153,15 @@ class TestMidiEventStream(TmpFile):
             track_fasit[idx] = "p%i " % (idx + 1) + track_fasit[idx]
         for idx, correct in enumerate(track_fasit):
             self.assertEqual(tracklist[idx].str_repr(), correct)
-        self.assertEqual(MidiEventStream(*tracklist).str_repr(details=1),
-          "p0:1 p1:2 p2:3 p3:4 v0:100 n0:72 d1/4 "
-          "v1:100 n1:64 d1/4 "
-          "v2:100 n2:55 d1/4 "
-          "v3:100 n3:48 d1/4 "
-          "o72 o64 o55 o48 "
-          "n0:72 n1:64 n2:55 n3:48 d1/1 "
-          "o72 o64 o55 o48")
+        self.assertEqual(
+            MidiEventStream(*tracklist).str_repr(details=1),
+            "p0:1 p1:2 p2:3 p3:4 v0:100 n0:72 d1/4 "
+            "v1:100 n1:64 d1/4 "
+            "v2:100 n2:55 d1/4 "
+            "v3:100 n3:48 d1/4 "
+            "o72 o64 o55 o48 "
+            "n0:72 n1:64 n2:55 n3:48 d1/1 "
+            "o72 o64 o55 o48")
     def test_track3_1(self):
         self.do_file("""
         header { random_transpose = no }
@@ -172,8 +180,9 @@ class TestMidiEventStream(TmpFile):
             track_fasit[idx] = "p%i " % (idx + 1) + track_fasit[idx]
         for idx, correct in enumerate(track_fasit):
             self.assertEqual(tracklist[idx].str_repr(), correct)
-        self.assertEqual(MidiEventStream(*tracklist).str_repr(details=1),
-          "p0:1 p1:2 v0:100 n0:72 d1/2 v1:100 n1:55 d1/2 o72 o55 n0:72 n1:55 d1/1 o72 o55")
+        self.assertEqual(
+            MidiEventStream(*tracklist).str_repr(details=1),
+            "p0:1 p1:2 v0:100 n0:72 d1/2 v1:100 n1:55 d1/2 o72 o55 n0:72 n1:55 d1/1 o72 o55")
     def test_track3_2(self):
         self.do_file(r"""
         header { random_transpose = no }
@@ -194,13 +203,14 @@ class TestMidiEventStream(TmpFile):
             track_fasit[idx] = "p%i " % (idx + 1) + track_fasit[idx]
         for idx, correct in enumerate(track_fasit):
             self.assertEqual(tracklist[idx].str_repr(), correct)
-        self.assertEqual(MidiEventStream(*tracklist).str_repr(details=1),
-          "p0:1 p1:2 p2:3 v0:100 n0:72 d1/2 "
-          "v1:100 n1:55 d1/4 "
-          "v2:100 n2:48 d1/4 "
-          "o72 o55 o48 "
-          "n0:72 n1:55 n2:48 d1/1 "
-          "o72 o55 o48")
+        self.assertEqual(
+            MidiEventStream(*tracklist).str_repr(details=1),
+            "p0:1 p1:2 p2:3 v0:100 n0:72 d1/2 "
+            "v1:100 n1:55 d1/4 "
+            "v2:100 n2:48 d1/4 "
+            "o72 o55 o48 "
+            "n0:72 n1:55 n2:48 d1/1 "
+            "o72 o55 o48")
     def test_bug1(self):
         """
         For each moment in time, all note-off events have to be
@@ -216,22 +226,24 @@ class TestMidiEventStream(TmpFile):
         t2.set_patch(4)
         t2.note(4, 95, 127)
         t2.note(4, 97, 127)
-        self.assertEqual(list(MidiEventStream(t1, t2)),
-           [('program-change', 0, 3),
-            ('program-change', 1, 4),
-            ('volume', 0, 100),
-            ('note-on', 0, 93, 127),
-            ('volume', 1, 100),
-            ('note-on', 1, 95, 127),
-            ('notelen-time', Rat(1, 4)),
-            ('note-off', 0, 93, 127),
-            ('note-off', 1, 95, 127),
-            ('note-on', 0, 95, 127),
-            ('note-on', 1, 97, 127),
-            ('notelen-time', Rat(1, 4)),
-            ('note-off', 0, 95, 127),
-            ('note-off', 1, 97, 127)])
-        self.assertEqual(MidiEventStream(t1, t2).str_repr(details=1),
+        self.assertEqual(
+            list(MidiEventStream(t1, t2)),
+            [('program-change', 0, 3),
+             ('program-change', 1, 4),
+             ('volume', 0, 100),
+             ('note-on', 0, 93, 127),
+             ('volume', 1, 100),
+             ('note-on', 1, 95, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 93, 127),
+             ('note-off', 1, 95, 127),
+             ('note-on', 0, 95, 127),
+             ('note-on', 1, 97, 127),
+             ('notelen-time', Rat(1, 4)),
+             ('note-off', 0, 95, 127),
+             ('note-off', 1, 97, 127)])
+        self.assertEqual(
+            MidiEventStream(t1, t2).str_repr(details=1),
             "p0:3 p1:4 v0:100 n0:93 v1:100 n1:95 d1/4 o93 o95 n0:95 n1:97 d1/4 o95 o97")
     def test_melodic_interval_2_tracks(self):
         """
@@ -251,7 +263,8 @@ class TestMidiEventStream(TmpFile):
         self.assertEqual(t1.str_repr(), "p1 v101 n64 d1/4 o64")
         self.assertEqual(t2.str_repr(), "p2 v102 d1/4 n66 d1/4 o66")
         m = MidiEventStream(t1, t2)
-        self.assertEqual(m.str_repr(1),
+        self.assertEqual(
+            m.str_repr(1),
             "p0:1 p1:2 v0:101 n0:64 d1/4 o64 v1:102 n1:66 d1/4 o66")
     def test_patch_volume_order(self):
         """
@@ -276,8 +289,8 @@ class TestMidiEventStream(TmpFile):
         t.prepend_patch(2)
         t.prepend_patch(3)
         t.note(4, 55)
-        self.assertEqual(MidiEventStream(t).str_repr(),
-                "p0:2 v0:100 n55 d1/4 o55")
+        self.assertEqual(
+            MidiEventStream(t).str_repr(), "p0:2 v0:100 n55 d1/4 o55")
     def test_set_patch(self):
         """
         If multiple set_patch is done, the last will be used.
@@ -286,8 +299,8 @@ class TestMidiEventStream(TmpFile):
         t.set_patch(2)
         t.set_patch(3)
         t.note(4, 55)
-        self.assertEqual(MidiEventStream(t).str_repr(),
-                "p0:3 v0:100 n55 d1/4 o55")
+        self.assertEqual(
+            MidiEventStream(t).str_repr(), "p0:3 v0:100 n55 d1/4 o55")
     def test_set_patch2(self):
         """
         Assert that there is not sendt a new volume event when we change patch.
@@ -297,8 +310,9 @@ class TestMidiEventStream(TmpFile):
         t.note(4, 55)
         t.set_patch(3)
         t.note(4, 57)
-        self.assertEqual(MidiEventStream(t).str_repr(),
-                "p0:2 p1:3 v0:100 n55 d1/4 o55 v1:100 n57 d1/4 o57")
+        self.assertEqual(
+            MidiEventStream(t).str_repr(),
+            "p0:2 p1:3 v0:100 n55 d1/4 o55 v1:100 n57 d1/4 o57")
     def test_set_volume(self):
         """
         Assert that there is not sendt a new pacth event when we change volume
@@ -308,13 +322,15 @@ class TestMidiEventStream(TmpFile):
         t.note(4, 55)
         t.set_volume(99)
         t.note(4, 57)
-        self.assertEqual(MidiEventStream(t).str_repr(),
-                "p0:0 p1:0 v0:98 n55 d1/4 o55 v1:99 n57 d1/4 o57")
+        self.assertEqual(
+            MidiEventStream(t).str_repr(),
+            "p0:0 p1:0 v0:98 n55 d1/4 o55 v1:99 n57 d1/4 o57")
     def test_set_bpm(self):
         t = Track()
         t.set_bpm(120)
         t.note(4, 50)
-        self.assertEqual(MidiEventStream(t).str_repr(1),
+        self.assertEqual(
+            MidiEventStream(t).str_repr(1),
             "t120/4 p0:0 v0:100 n0:50 d1/4 o50")
     def test_set_bpm2(self):
         """
@@ -325,7 +341,8 @@ class TestMidiEventStream(TmpFile):
         t.set_bpm(120)
         t.set_bpm(121)
         t.note(4, 50)
-        self.assertEqual(MidiEventStream(t).str_repr(1),
+        self.assertEqual(
+            MidiEventStream(t).str_repr(1),
             "t121/4 p0:0 v0:100 n0:50 d1/4 o50")
     def test_set_bpm3(self):
         """
@@ -338,7 +355,8 @@ class TestMidiEventStream(TmpFile):
         t2 = Track()
         t2.set_bpm(121)
         t2.note(4, 55)
-        self.assertEqual(MidiEventStream(t1, t2).str_repr(1),
+        self.assertEqual(
+            MidiEventStream(t1, t2).str_repr(1),
             "t121/4 p0:0 v0:100 n0:50 n0:55 d1/4 o50 o55")
     def test_x1(self):
         t1 = Track()
@@ -401,4 +419,3 @@ class TestChannelDevice(unittest.TestCase):
 suite = unittest.makeSuite(TestTrack)
 suite.addTest(unittest.makeSuite(TestMidiEventStream))
 suite.addTest(unittest.makeSuite(TestChannelDevice))
-

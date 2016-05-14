@@ -54,11 +54,11 @@ class Rat(object):
         return Rat(a // g, b // g)
     def __mul__(self, B):
         assert isinstance(self, Rat)
-        if type(B) == type(0):
-            g = gcd(self.m_num*B, self.m_den)
-            return Rat(self.m_num*B // g, self.m_den // g)
+        if isinstance(B, int):
+            g = gcd(self.m_num * B, self.m_den)
+            return Rat(self.m_num * B // g, self.m_den // g)
         assert isinstance(B, Rat)
-        g = gcd(self.m_num*B.m_num, self.m_den*B.m_den)
+        g = gcd(self.m_num * B.m_num, self.m_den * B.m_den)
         return Rat(self.m_num * B.m_num // g, self.m_den * B.m_den // g)
     def __truediv__(self, i):
         if isinstance(i, int):
@@ -88,5 +88,3 @@ class Rat(object):
         return self.m_num / self.m_den < B.m_num / B.m_den
     def __le__(self, B):
         return self.m_num / self.m_den <= B.m_num / B.m_den
-
-
