@@ -101,28 +101,28 @@ def split(key):
     return v[0], v[2]
 
 def parse_file_into_dict(dictionary, filename):
-    f = codecs.open(filename, "rU", "utf-8")
-    section = None
-    for lineno, line in enumerate(f):
-        line = line.strip()
-        section_m = section_re.match(line)
-        value_m = value_re.match(line)
-        comment_m = comment_re.match(line)
-        if comment_m:
-            pass
-        elif section_m:
-            section = section_m.groups()[0]
-            if section not in dictionary:
-                dictionary[section] = {}
-        elif value_m:
-            assert section
-            dictionary[section][value_m.groups()[0]] = value_m.groups()[1]
-        elif not line.strip():
-            pass
-        else:
-            raise CfgParseException(filename, lineno)
-    f.close()
-    return dictionary
+    with codecs.open(filename, "r", "utf-8") as f:
+        section = None
+        for lineno, line in enumerate(f):
+            line = line.strip()
+            section_m = section_re.match(line)
+            value_m = value_re.match(line)
+            comment_m = comment_re.match(line)
+            if comment_m:
+                pass
+            elif section_m:
+                section = section_m.groups()[0]
+                if section not in dictionary:
+                    dictionary[section] = {}
+            elif value_m:
+                assert section
+                dictionary[section][value_m.groups()[0]] = value_m.groups()[1]
+            elif not line.strip():
+                pass
+            else:
+                raise CfgParseException(filename, lineno)
+        f.close()
+        return dictionary
 
 
 def sync():
