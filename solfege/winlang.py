@@ -75,7 +75,7 @@ def _pre_3_11_win32_get_langenviron():
     assert sys.platform == 'win32'
     s = ""
     try:
-        langfile = open(os.path.join(filesystem.app_data(), "langenviron.bat"), 'rU')
+        langfile = open(os.path.join(filesystem.app_data(), "langenviron.bat"), 'r')
         s = langfile.read()
         langfile.close()
     except IOError as e:
