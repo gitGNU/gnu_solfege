@@ -312,7 +312,8 @@ def parse_tree(s, C_locale=False):
         raise OldFormatException()
 
 def load_tree(fn, C_locale=False):
-    ret = parse_tree(codecs.open(fn, "r", 'utf-8', 'replace').read(), C_locale)
+    with codecs.open(fn, "r", 'utf-8', 'replace') as f:
+        ret = parse_tree(f.read(), C_locale)
     # We store all files by absolute filename or solfege: uri internally
     ret.foreach_file(mk_abs, os.path.split(fn)[0] + os.sep)
     return ret
