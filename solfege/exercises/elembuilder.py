@@ -224,15 +224,8 @@ class Gui(abstract.LessonbasedGui):
                 for elem in question['elements']:
                     if elem not in v:
                         v.append(elem)
-            def xcmp(a, b):
-                try:
-                    try:
-                        return cmp(a['sort'], b['sort'])
-                    except KeyError:
-                        return cmp(a['name'], b['name'])
-                except ValueError:
-                    return cmp(a, b)
-            v.sort(xcmp)
+            v.sort(key=lambda e: e['sort'] if 'sort' in e
+                          else (e['name'] if 'name' in e else e))
             self.m_t.m_P.header.elements = v
         self.g_answer_button_box.empty()
         for c in self.g_answer.get_children():
