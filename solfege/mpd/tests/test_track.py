@@ -123,7 +123,7 @@ class TestMidiEventStream(TmpFile):
         }
         """)
         self.p._idx = 0
-        tracklist = mpd.music_to_tracklist(self.p.get_question()['music'].get_mpd_music_string(self.p))
+        mpd.music_to_tracklist(self.p.get_question()['music'].get_mpd_music_string(self.p))
     def test_track3(self):
         self.do_file("""
         header { random_transpose = no }

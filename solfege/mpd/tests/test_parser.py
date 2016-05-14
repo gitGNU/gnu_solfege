@@ -6,7 +6,6 @@ import unittest
 from solfege.mpd.elems import Clef, UnknownClefException, Stem, Skip, Note
 from solfege.mpd.parser import parse_to_score_object, ParseError, validate_only_notenames
 from solfege import mpd
-import solfege.mpd.lexer
 
 from solfege.mpd import Rat
 
@@ -72,7 +71,7 @@ class TestMpdParser(unittest.TestCase):
         s = "\\staff{ c4 { e \n" \
             "}"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '{')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (11, 12))
@@ -82,7 +81,7 @@ class TestMpdParser(unittest.TestCase):
         s = "\\staff{ c4 < d < e \n" \
             "}"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '<')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (15, 16))
@@ -93,7 +92,7 @@ class TestMpdParser(unittest.TestCase):
             "  c4 < d < e \n" \
             "}"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '<')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (9, 10))
@@ -103,7 +102,7 @@ class TestMpdParser(unittest.TestCase):
         s = "\\staff{ \n" \
             "  c4 d > \times 3/2"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '>')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (7, 8))
@@ -112,7 +111,7 @@ class TestMpdParser(unittest.TestCase):
     def test_parse_times_do_not_nest(self):
         s = "\\staff { c4 \\times 3/2 { \\times 3/2 { c4 c4 } } }\n"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '\\times 3/2 {')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (25, 37))
@@ -122,7 +121,7 @@ class TestMpdParser(unittest.TestCase):
         s = "   \\addvoice { \n" \
             "  c4 d }"
         try:
-            t = mpd.music_to_tracklist(s)
+            mpd.music_to_tracklist(s)
         except ParseError as e:
             self._check(e, s, '\\addvoice')
             self.assertEqual((e.m_linepos1, e.m_linepos2), (3, 12))
@@ -132,7 +131,7 @@ class TestMpdParser(unittest.TestCase):
         s = "   \\staff { \n" \
             "  c4 d } \n" \
             "\t \n"
-        t = mpd.music_to_tracklist(s)
+        mpd.music_to_tracklist(s)
     def test_relative(self):
         s = r"\staff\relative d'{ d f }"
         score = parse_to_score_object(s)
@@ -169,11 +168,10 @@ class TestMpdParser(unittest.TestCase):
         self.assertEqual(score.voice11.m_tdict[Rat(1, 2)]['elem'][0],
                           Note.new_from_string("fis''4"))
     def test_partial_bar(self):
-        s = r"\partial 4\staff\relative c'{ c d e }"
-        score = parse_to_score_object(s)
+        parse_to_score_object(r"\partial 4\staff\relative c'{ c d e }")
     def test_bar_full(self):
         try:
-            p = mpd.parser.parse_to_score_object(r"\staff{ c2. c }")
+            mpd.parser.parse_to_score_object(r"\staff{ c2. c }")
         except mpd.MpdException as e:
             self.assertEqual((e.m_lineno, e.m_linepos1, e.m_linepos2),
                               (0, 12, 13))
@@ -181,7 +179,7 @@ class TestMpdParser(unittest.TestCase):
         t = mpd.music_to_tracklist(r"\staff{ \times 2/3{c8 d e} }")
         self.assertEqual(t[0].str_repr(),
             "n48 d1/12 o48 n50 d1/12 o50 n52 d1/12 o52")
-        score = parse_to_score_object(r"\staff{ \times 2/3{c8 d e} }")
+        parse_to_score_object(r"\staff{ \times 2/3{c8 d e} }")
 
 class TestLexer(unittest.TestCase):
     def test_simplest(self):

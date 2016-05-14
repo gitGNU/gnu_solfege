@@ -4,10 +4,12 @@
 
 import unittest
 from solfege.mpd.musicalpitch import MusicalPitch, InvalidNotenameException
-from solfege.mpd.elems import *
+from solfege.mpd.elems import (Note, Voice, Score, BarProxy, RhythmStaff,
+                Rest, TimeSignature, Bar, Skip, Stem)
+from solfege.mpd.rat import Rat
+from solfege.mpd.duration import Duration
 from solfege.mpd import const
 from solfege.mpd import parser
-from solfege.mpd import performer
 from solfege import mpd
 
 def f3(s):
@@ -337,8 +339,6 @@ c4 c8 c8
         self.assertTrue(voice.is_last(Rat(1, 2)))
         self.assertTrue(voice.is_last(Rat(1, 1)))
         self.assertFalse(voice.is_last(Rat(2, 1)))
-    def test_partial_bar(self):
-        voice = self.score.voice11
 
 
 class TestNote(unittest.TestCase):
@@ -346,14 +346,14 @@ class TestNote(unittest.TestCase):
         self.score = Score()
         self.staff = self.score.add_staff() # default class is Staff
     def test_contructor(self):
-        n = Note(MusicalPitch.new_from_notename("c'"),
-                 Duration.new_from_string("4."))
+        Note(MusicalPitch.new_from_notename("c'"),
+             Duration.new_from_string("4."))
         self.assertRaises(AssertionError,
                           Note, "4.", MusicalPitch.new_from_notename("c'"))
         self.assertRaises(AssertionError,
                           Note, Duration.new_from_string("4."), "c'")
     def test_new_from_string(self):
-        n = Note.new_from_string("c'4.")
+        Note.new_from_string("c'4.")
         self.assertRaises(InvalidNotenameException, Note.new_from_string, "x")
     def test_beam(self):
         voice = self.score.voice11
@@ -362,7 +362,7 @@ class TestNote(unittest.TestCase):
         voice.append(n1)
         voice.append(n2)
         voice.beam([n1, n2])
-        voice2 = self.score.staff1.add_voice()
+        self.score.staff1.add_voice()
         n3 = Note.new_from_string("d'8")
         n4 = Note.new_from_string("d'8")
         self.assertRaises(Voice.NoteDontBelongHere, voice.beam, [n3, n4])

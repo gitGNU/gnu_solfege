@@ -13,9 +13,9 @@ class TestMisc(unittest.TestCase):
     def test_empty(self):
         sc = elems.Score()
         # This has always worked.
-        e = engravers.ScoreContext(sc)
+        engravers.ScoreContext(sc)
         sc.add_staff()
-        e = engravers.ScoreContext(sc)
+        engravers.ScoreContext(sc)
 
 class TestClefs(unittest.TestCase):
     def test_raise_on_bad_clef(self):

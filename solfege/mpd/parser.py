@@ -98,6 +98,8 @@ def parse_to_score_object(music):
     # None when not parsing notes in a tuplet. Item 0 is the ration and 1.. is the notes
     times = None
     cur_staff = None
+    # we set it just so pyflakes does not complain.
+    relto_backup = None
     # This variable is set to the duration of the pickup bar from we parse
     # \partial nn until the bar has been created.
     partial = None

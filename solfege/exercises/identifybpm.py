@@ -20,7 +20,6 @@ import logging
 import random
 
 from gi.repository import Gtk
-from gi.repository import Gdk
 
 from solfege import abstract
 from solfege import cfg
@@ -29,8 +28,6 @@ from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard
 from solfege import statistics, statisticsviewer
-
-import solfege
 
 class Teacher(abstract.Teacher):
     OK = 0
@@ -57,7 +54,7 @@ class Teacher(abstract.Teacher):
                 self.m_practise_these[bpm] = 0
     def toggle_active(self, bpm):
         self.m_practise_these[bpm] = not self.m_practise_these[bpm]
-        v = [bpm for bpm in self.m_practise_these if self.m_practise_these[bpm]]
+        v = [b for b in self.m_practise_these if self.m_practise_these[b]]
         self.set_string('active_bpms', str(v))
     def get_possible_bpms(self):
         return [n for n in list(self.m_practise_these.keys()) \
@@ -77,7 +74,6 @@ class Teacher(abstract.Teacher):
         # Lets play the tempo between 20 and 40 seconds. We cannot let
         # it play a static number of seconds, because then the user can
         # count how many beats and find out how fast it plays.
-        cc = random.random()*1.5
         for n in range(int(self.m_question / (random.random()*1.5 +1.5))):
             self.m_question_track.note(4, cfg.get_int("config/rhythm_perc"))
         self.q_status = self.QSTATUS_NEW

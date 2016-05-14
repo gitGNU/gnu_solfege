@@ -29,8 +29,6 @@ class TestRat(unittest.TestCase):
     def test_subtract(self):
         self.assertEqual(Rat(3, 4) - Rat(1, 4), Rat(1, 2))
     def test_division(self):
-        r1 = Rat(1, 2)
-        r2 = Rat(1, 2)
         self.assertEqual(Rat(1, 2) / Rat(1, 2), Rat(1, 1))
         self.assertEqual(Rat(1, 2) / Rat(2, 4), Rat(1, 1))
         self.assertEqual(Rat(1, 4) / 2, Rat(1, 8))

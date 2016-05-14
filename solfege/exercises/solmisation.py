@@ -263,7 +263,6 @@ class Gui(abstract.Gui, abstract_solmisation_addon.SolmisationAddOnGuiClass):
     def play_users_answer(self, widget):
         if self.g_rhythm_viewer.m_data:
             melody = ""
-            p = mpd.MusicalPitch()
             for k in self.g_rhythm_viewer.m_data:
                 melody += " " + mpd.transpose_notename(solmisation_notenames[k], self.m_t.m_transp) + "4"
 

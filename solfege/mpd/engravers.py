@@ -17,9 +17,6 @@
 
 import operator
 
-from gi.repository import Gtk
-from gi.repository import Pango
-from gi.repository import GdkPixbuf
 import cairo
 
 from solfege.mpd import const
@@ -959,7 +956,6 @@ class ScoreContext(object):
                         and 'properties' in staff.m_tdict[timepos]):
                     staff_context.props.update(staff.m_tdict[timepos]['properties'])
             if timepos == score.m_bars[bar_idx].end():
-                bar = score.m_bars[bar_idx]
                 for staff_context in staff_contexts:
                     if not staff_context.props['hide-barline']:
                         e = BarlineEngraver("|")

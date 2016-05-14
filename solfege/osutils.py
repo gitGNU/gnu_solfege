@@ -75,9 +75,8 @@ class BinaryBaseException(OsUtilsException):
             "Please check that the program is installed. If you did not supply "
             "the full path to the program in the preferences window (Ctrl-F12), "
             "you must make sure the program is on your PATH.") % {
-             'bin': str(binary).decode(sys.getfilesystemencoding(), 'replace'),
-             'exception': str(exception).decode(
-                 sys.getfilesystemencoding(), 'replace')}
+             'bin': binary,
+             'exception': str(exception)}
 
 class BinaryForProgramException(BinaryBaseException):
     def __init__(self, program_name, binary, exception):

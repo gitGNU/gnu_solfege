@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import textwrap
-
 from gi.repository import Gtk
 
 from solfege import abstract

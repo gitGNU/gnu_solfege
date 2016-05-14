@@ -18,7 +18,6 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import GObject
-from gi.repository import Pango
 from solfege.mpd import elems
 from solfege.mpd import engravers
 from solfege.mpd import parser
@@ -90,7 +89,6 @@ class MusicDisplayer(Gtk.ScrolledWindow):
                     self.m_callback(r['midi_int'])
     def on_draw(self, darea, ct):
         dim = engravers.dimentions[self.m_fontsize]
-        d = self.get_allocation()
         if self.m_width < self.get_allocated_width():
             self.m_width = self.get_allocated_width()
         if self.m_height < self.get_allocated_height():

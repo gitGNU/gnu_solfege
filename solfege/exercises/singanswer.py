@@ -67,7 +67,7 @@ class Gui(abstract.LessonbasedGui):
         if self.m_t.m_P.header.have_music_displayer:
             self.g_music_displayer.clear()
         try:
-            g = self.m_t.new_question()
+            self.m_t.new_question()
             self.g_flashbar.push(self.m_t.m_P.get_question().question_text)
             if isinstance(self.m_t.m_P.get_question().music, lessonfile.MpdDisplayable):
                 self.g_music_displayer.display(self.m_t.m_P.get_music(), 20)

@@ -21,8 +21,10 @@ import re
 from solfege.mpd import _exceptions
 from solfege.mpd import const
 from solfege.mpd.duration import Duration
-from solfege.mpd.requests import *
+from solfege.mpd.requests import RestRequest, SkipRequest, MusicRequest
 from solfege.mpd import elems
+from solfege.mpd import MusicalPitch
+from solfege.mpd.rat import Rat
 
 class LexerError(_exceptions.MpdException):
     def __init__(self, msg, lexer):
