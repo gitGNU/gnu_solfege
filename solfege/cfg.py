@@ -451,7 +451,7 @@ class ConfigUtils(object):
         return self._get(get_int, name)
 
     def get_int_with_default(self, name, default):
-        assert type(default) is type(0)
+        assert isinstance(default, int)
         return self.get_int(name + "=%i" % default)
 
     def get_float(self, name):

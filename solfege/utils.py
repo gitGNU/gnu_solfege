@@ -368,7 +368,7 @@ def play_perc(notelen, pitch):
 
 
 def play_music(music, tempo, patch, volume, start=None, end=None):
-    if type(tempo) == type(0):
+    if isinstance(tempo, int):
         bpm = tempo
         nl = 4
     else:

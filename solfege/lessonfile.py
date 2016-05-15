@@ -1566,7 +1566,7 @@ class DictationLessonfile(QuestionsLessonfile):
         r = []
         if 'breakpoints' in self.m_questions[self._idx]:
             r = self.m_questions[self._idx]['breakpoints']
-            if not type(r) == type([]):
+            if not isinstance(r, list):
                 r = [r]
         r = [Rat(e[0], e[1]) for e in r]
         return r

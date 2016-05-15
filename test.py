@@ -14,7 +14,7 @@ import atexit
 
 
 def f(s):
-    if type(s) == type(""):
+    if isinstance(s, str):
         print ("'%s'" % s)
     elif s is None:
         return
