@@ -58,7 +58,7 @@ def get_last_revision_id():
         stderr=subprocess.STDOUT)
     while 1:
         p.poll()
-        if p.returncode != None:
+        if p.returncode is not None:
             break
         return p.stdout.readline().strip()
     p.wait()
@@ -77,7 +77,7 @@ class Logger(object):
         p = subprocess.Popen(*args, **kwargs)
         while 1:
             p.poll()
-            if p.returncode != None:
+            if p.returncode is not None:
                 break
             while True:
                 s = p.stdout.readline()

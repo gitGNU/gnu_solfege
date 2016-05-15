@@ -1030,8 +1030,8 @@ class LogWidget(Gtk.ScrolledWindow):
             *args, **kwargs)
         while 1:
             p.poll()
-            # returncode != None means that the process has finished
-            if p.returncode != None:
+            # returncode it not None means that the process has finished
+            if p.returncode is not None:
                 break
             while 1:
                 s = p.stdout.readline()

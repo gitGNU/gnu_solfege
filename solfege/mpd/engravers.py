@@ -838,7 +838,7 @@ class _StaffCommon(list):
                             self.append(voice.m_beam)
                         # If the tuplet contain only one tone, then elem.m_tupletinfo == 'end' and
                         # voice.m_tuplet will be None
-                        if elem.m_tupletinfo == 'start' or (elem.m_tupletinfo == 'end' and voice.m_tuplet == None):
+                        if elem.m_tupletinfo == 'start' or (elem.m_tupletinfo == 'end' and voice.m_tuplet is None):
                             voice.m_tuplet = TupletEngraver(elem.m_tuplet_ratio, elem.m_tuplet_dir)
                     if 'elem' not in eng:
                         eng['elem'] = []

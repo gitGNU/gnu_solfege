@@ -510,7 +510,7 @@ class Voice(HasParent):
             end_i = v.index(bar.end())
         except ValueError:
             end_i = None
-        if start_i == None:
+        if start_i is None:
             return []
         elif end_i:
             return v[start_i:end_i]

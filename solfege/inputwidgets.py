@@ -617,7 +617,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
     def _on_button_press(self, drawingarea, event):
         # This is only set if set_first_note is called
         x, y = self.event_to_button_pos(event)
-        if x == None:
+        if x is None:
             return
         midi_int = mpd.notename_to_int(self.m_notenames[y][x])
         self._handle_tone_clicked(midi_int, event.button)

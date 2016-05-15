@@ -142,8 +142,8 @@ class HtmlSheetWriter(BaseSheetWriter):
             p = osutils.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while 1:
                 p.poll()
-                # returncode != None means that the process has finished
-                if p.returncode != None:
+                # returncode is not None means that the process has finished
+                if p.returncode is not None:
                     break
                 while 1:
                     s = p.stdout.readline()
@@ -235,8 +235,8 @@ class LatexSheetWriter(BaseSheetWriter):
             p = osutils.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while 1:
                 p.poll()
-                # returncode != None means that the process has finished
-                if p.returncode != None:
+                # returncode is not None means that the process has finished
+                if p.returncode is not None:
                     break
                 while 1:
                     s = p.stdout.readline()
@@ -256,8 +256,8 @@ class LatexSheetWriter(BaseSheetWriter):
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while 1:
                 p.poll()
-                # returncode != None means that the process has finished
-                if p.returncode != None:
+                # returncode is not None means that the process has finished
+                if p.returncode is not None:
                     break
                 while 1:
                     while Gtk.events_pending():
@@ -635,7 +635,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
                 d['title'] = section.find('title').text
             else:
                 d['title'] = ""
-            if section.find('intervals') != None:
+            if section.find('intervals') is not None:
                 d['intervals'] = eval(section.find('intervals').text, {}, {})
             else:
                 if lessonfile.infocache.get(lessonfilename, 'module') == 'harmonicinterval':

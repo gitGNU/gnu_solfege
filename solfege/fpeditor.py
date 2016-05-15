@@ -825,7 +825,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         """
         Load a file into a empty, newly created Editor object.
         """
-        assert self.m_model == None
+        assert self.m_model is None
         self.m_model = pd.load_tree(filename, C_locale=True)
         self.m_filename = filename
         #

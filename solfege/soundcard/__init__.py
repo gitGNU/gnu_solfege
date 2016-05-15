@@ -83,7 +83,7 @@ def play_mediafile(typeid, filename):
         args = [x for x in args if x != '%s']
         if not found:
             args.append(os.path.abspath(filename))
-        if _mediaplayer and _mediaplayer.poll() == None:
+        if _mediaplayer and _mediaplayer.poll() is None:
             _mediaplayer.kill()
             _mediaplaer = None
         try:
