@@ -8,7 +8,7 @@ import unittest
 import glob
 import os.path
 # We have to filter out the tests in test_cfg because it changes
-modules = [os.path.splitext(os.path.basename(x))[0] \
+modules = [os.path.splitext(os.path.basename(x))[0]
            for x in glob.glob("solfege/tests/test_*.py") if 'test_cfg' not in x]
 
 for m in modules:

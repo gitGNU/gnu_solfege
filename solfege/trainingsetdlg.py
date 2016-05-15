@@ -287,11 +287,11 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
             print("lesson {", file=f)
             filename = self.g_liststore.get_value(iter, self.STORE_FILENAME)
             print('  filename = "%s"' % filename, file=f)
-            print('  count = %i' \
+            print('  count = %i'
                 % self.g_liststore.get_value(iter, self.STORE_COUNT), file=f)
-            print('  repeat = %i' \
+            print('  repeat = %i'
                 % self.g_liststore.get_value(iter, self.STORE_REPEAT), file=f)
-            print('  delay = %i' \
+            print('  delay = %i'
                 % self.g_liststore.get_value(iter, self.STORE_DELAY), file=f)
             print("}\n", file=f)
             iter = self.g_liststore.iter_next(iter)
@@ -331,7 +331,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         iter = self.g_liststore.get_iter_first()
         while iter:
             v.append({
-                'filename': \
+                'filename':
                         str(self.g_liststore.get_value(iter, self.STORE_FILENAME)),
                 'count': self.g_liststore.get_value(iter, self.STORE_COUNT),
                 'repeat': self.g_liststore.get_value(iter, self.STORE_REPEAT),

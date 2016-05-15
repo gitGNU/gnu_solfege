@@ -60,7 +60,7 @@ class Teacher(abstract.Teacher):
         self.set_string('active_bpms', str(v))
 
     def get_possible_bpms(self):
-        return [n for n in list(self.m_practise_these.keys()) \
+        return [n for n in list(self.m_practise_these.keys())
             if self.m_practise_these[n]]
 
     def get_number_of_levels(self):

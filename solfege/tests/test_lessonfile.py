@@ -100,10 +100,10 @@ class TestParser(TmpFileBase):
         self.assertEqual(p.m_globals['tempo'], (240, 4))
 
     def test_gettext(self):
-        p = self.do_file('question {\n' \
-            '  name = _("chord|m7")\n' \
-            '  iname = _i("chord|m7")\n' \
-            '  s = _("Major")\n' \
+        p = self.do_file('question {\n'
+            '  name = _("chord|m7")\n'
+            '  iname = _i("chord|m7")\n'
+            '  s = _("Major")\n'
             '}')
         self.assertEqual(p.m_questions[0].name, "chord|m7")
         self.assertEqual(p.m_questions[0].name.cval, "chord|m7")
@@ -887,17 +887,17 @@ class TestSatb(MObjTest):
 
     def test_get_mpd_music_string(self):
         self.assertEqual(self.p.m_questions[0]['music'].get_mpd_music_string(self.p),
-            "\\staff{ \\key c \\major\\stemUp <c''> }\n" \
-            "\\addvoice{ \\stemDown <e'> }\n" \
-            "\\staff{ \\key c \\major\\clef bass \\stemUp <g>}\n" \
+            "\\staff{ \\key c \\major\\stemUp <c''> }\n"
+            "\\addvoice{ \\stemDown <e'> }\n"
+            "\\staff{ \\key c \\major\\clef bass \\stemUp <g>}\n"
             "\\addvoice{ \\stemDown <c>}")
         # FIXME Satb only works if the music object is the current selected
         # question. Can we get around this?
         self.p._idx = 1
         self.assertEqual(self.p.m_questions[1]['music'].get_mpd_music_string(self.p),
-            "\\staff{ \\key aes \\major\\stemUp <c''> }\n" \
-            "\\addvoice{ \\stemDown <as'> }\n" \
-            "\\staff{ \\key aes \\major\\clef bass \\stemUp <es'>}\n" \
+            "\\staff{ \\key aes \\major\\stemUp <c''> }\n"
+            "\\addvoice{ \\stemDown <as'> }\n"
+            "\\staff{ \\key aes \\major\\clef bass \\stemUp <es'>}\n"
             "\\addvoice{ \\stemDown <as>}")
 
     def test_play(self):

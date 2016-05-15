@@ -473,23 +473,23 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
             if self.m_string_thickness[y] == 1:
                 context.set_line_width(self.m_string_thickness[y])
                 context.set_source_rgb(LG, LG, LG)
-                context.move_to(self.m_posx, self.m_posy + self.m_neckborder \
+                context.move_to(self.m_posx, self.m_posy + self.m_neckborder
                                 + y * self.m_stringdist)
                 context.rel_line_to(self.m_neckl, 0)
                 context.stroke()
             if self.m_string_thickness[y] == 2:
                 context.set_source_rgb(1, 1, 1)
-                context.move_to(self.m_posx, self.m_posy + self.m_neckborder \
+                context.move_to(self.m_posx, self.m_posy + self.m_neckborder
                                 + y * self.m_stringdist)
                 context.rel_line_to(self.m_neckl, 0)
                 context.stroke()
                 context.set_source_rgb(LG, LG, LG)
-                context.move_to(self.m_posx, self.m_posy + self.m_neckborder \
+                context.move_to(self.m_posx, self.m_posy + self.m_neckborder
                                 + y * self.m_stringdist + 1)
                 context.rel_line_to(self.m_neckl, 0)
                 context.stroke()
             if self.m_string_thickness[y] == 3:
-                context.rectangle(self.m_posx, self.m_posy + self.m_neckborder \
+                context.rectangle(self.m_posx, self.m_posy + self.m_neckborder
                                 + y * self.m_stringdist + 1,
                                 self.m_neckl, 1)
                 context.set_source_rgb(LG, LG, LG)
@@ -497,7 +497,7 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
                 context.set_source_rgb(LG, LG, LG)
                 context.stroke()
                 context.set_source_rgb(1, 1, 1)
-                context.move_to(self.m_posx, self.m_posy + self.m_neckborder \
+                context.move_to(self.m_posx, self.m_posy + self.m_neckborder
                                 + y * self.m_stringdist)
                 context.rel_line_to(self.m_neckl, 0)
                 context.stroke()

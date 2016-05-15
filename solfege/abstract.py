@@ -490,7 +490,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         if 'repeat_arpeggio' in self._std_buttons:
             # If one or more of the questions is of musictype 'chord', then
             # we need the "Repeat arpeggio" button.
-            if [q for q in self.m_t.m_P.m_questions \
+            if [q for q in self.m_t.m_P.m_questions
                 if isinstance(q.music, lessonfile.ChordCommon)]:
                 self.g_repeat_arpeggio.show()
             else:
@@ -642,7 +642,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         Show self.config_grid if it has any visible children, otherwise
         hide it.
         """
-        if [c for c in self.g_config_grid.get_children() \
+        if [c for c in self.g_config_grid.get_children()
             if c.get_property('visible')]:
             self.g_config_grid.show()
         else:

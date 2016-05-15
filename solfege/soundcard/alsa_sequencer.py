@@ -42,7 +42,7 @@ class AlsaSequencer(SynthCommon):
             print("\tmode:       %d (%s)" % (self.m_sequencer.mode, str(self.m_sequencer.mode)))
             print("\tclient_id:  %s" % self.m_sequencer.client_id)
         self.m_port = self.m_sequencer.create_simple_port(name=self.name,
-                             type=alsaseq.SEQ_PORT_TYPE_MIDI_GENERIC \
+                             type=alsaseq.SEQ_PORT_TYPE_MIDI_GENERIC
                                   | alsaseq.SEQ_PORT_TYPE_APPLICATION,
                              caps=alsaseq.SEQ_PORT_CAP_NONE)
         self.m_queue = self.m_sequencer.create_queue(name=self.name)

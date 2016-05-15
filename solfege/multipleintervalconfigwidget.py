@@ -51,7 +51,7 @@ class IntervalCheckBox(Gtk.HBox):
         Return a list with the integer value for the intervals
         that are active.
         """
-        return [x for x in list(self.checkbox_dict.keys()) \
+        return [x for x in list(self.checkbox_dict.keys())
                 if self.checkbox_dict[x].get_active()]
 
     def set_value(self, v):
@@ -121,7 +121,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         self.g_all_int_button.connect('clicked',
             self.configure_all_like_active_interval)
         grid.attach(self.g_all_int_button, x + 2, y, 1, 1)
-        self.add_watch('number_of_intervals', lambda n, self=self: \
+        self.add_watch('number_of_intervals', lambda n, self=self:
                self.g_all_int_button.set_sensitive(self.get_int(n) != 1))
         #####
         l = Gtk.Label(_("Toggle buttons are for interval number:"))
@@ -189,7 +189,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         self.set_list('ask_for_intervals_0', list(range(-12, 0)) + list(range(1, 13)))
 
     def configure_all_like_active_interval(self, _o):
-        v = self.get_list('ask_for_intervals_%i' \
+        v = self.get_list('ask_for_intervals_%i'
                                % (self.g_int_sel_spin.get_value_as_int() - 1))
         for i in range(self.get_int('number_of_intervals')):
             self.set_string('ask_for_intervals_%i' % i, str(v))

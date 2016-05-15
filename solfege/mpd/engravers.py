@@ -178,7 +178,7 @@ class AccidentalsEngraver(Engraver):
         for y in self.m_accs:
             for acc in self.m_accs[y]:
                 ims = cairo.ImageSurface.create_from_png(
-                        fetadir + '/feta%i-accidentals-%i.png' % \
+                        fetadir + '/feta%i-accidentals-%i.png' %
                             (self.m_fontsize, acc))
                 ct.set_source_surface(ims, self.m_xpos + x,
                         int(accidental_y_offset[acc] + staff_yoffset
