@@ -56,7 +56,6 @@ class TestMisc(unittest.TestCase):
             # Interval 2 is major second
             v = utils.random_tonic_and_interval_in_key("c'", "c''", [4], "f", "natural-minor")
             n = v[0].get_octave_notename()
-            n1 = v[0].get_notename()
             self.assertTrue(n in ("f'", "gis'", "ais'", "cis'", "dis'"), v[0])
             self.assertEqual(v[1], 4)
 

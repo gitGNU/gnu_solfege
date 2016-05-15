@@ -15,10 +15,7 @@ class TestLearningTree(unittest.TestCase):
         self.assertEqual(page.m_name, 'noname')
         page2 = Page('noname', [Column()])
         self.assertEqual(len(page2), 1)
-        page3 = Page()
-
-    def test_page(self):
-        page = Page('noname')
+        Page()
 
     def test_column(self):
         # empty col
@@ -78,7 +75,6 @@ class TestLearningTree(unittest.TestCase):
                     'id1', 'id2', 'id3', ]),
             ),
         ])
-        d = p.get_use_dict()
         self.assertEqual(p.get_use_dict(), {'id1': 1, 'id2': 1, 'id3': 1})
         p[0].append(LinkList('heading', ['id1', 'id5']))
         self.assertEqual(p.get_use_dict(), {'id1': 2, 'id2': 1, 'id3': 1, 'id5': 1})

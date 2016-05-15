@@ -381,7 +381,7 @@ class SolfegeApp(cfg.ConfigUtils):
 
     def test_lessonfile(self, filename):
         self.m_test_mode = True
-        module = self.practise_lessonfile(filename)
+        self.practise_lessonfile(filename)
         solfege.win.enter_test_mode()
 
     def handle_href(self, href):

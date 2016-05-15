@@ -284,8 +284,8 @@ class TestParserTranslations(TmpFileBase, I18nSetup):
 
     def test_istr_translation_of_list(self):
         try:
-            p = self.do_file('\n'.join(['foo = "foo-C", "fo2-C"',
-                                      'foo[nb] = "foo-nb", "fo2-nb"']))
+            self.do_file('\n'.join(['foo = "foo-C", "fo2-C"',
+                                    'foo[nb] = "foo-nb", "fo2-nb"']))
         except dataparser.CanOnlyTranslateStringsException as e:
             self.assertEqual(e.m_nonwrapped_text, '\n'.join([
                  '(line 1): foo = "foo-C", "fo2-C"',
@@ -296,8 +296,8 @@ class TestParserTranslations(TmpFileBase, I18nSetup):
 
     def test_istr_translation_of_int(self):
         try:
-            p = self.do_file('\n'.join(['foo = 1',
-                                      'foo[nb] = 2']))
+            self.do_file('\n'.join(['foo = 1',
+                                    'foo[nb] = 2']))
         except dataparser.CanOnlyTranslateStringsException as e:
             self.assertEqual(e.m_nonwrapped_text, '\n'.join([
                  '(line 1): foo = 1',
@@ -576,7 +576,6 @@ class TestVoice(MObjTest):
         voice music objects ignore config/override_default_instrument
         by design.
         """
-        question = self.p.m_questions[0]
         self._test_play()
 
     def test_play_slowly(self):
@@ -809,7 +808,6 @@ class TestRvoice(MObjTest):
         rvoice music objects ignore config/override_default_instrument
         by design.
         """
-        question = self.p.m_questions[0]
         self._test_play()
 
     def test_play_slowly(self):

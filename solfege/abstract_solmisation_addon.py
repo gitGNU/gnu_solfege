@@ -100,7 +100,6 @@ class SolmisationAddOnClass:
         #s = "<b'4 g' d' g> <c''2. g' e' c>"
 
         melody = ""
-        p = mpd.MusicalPitch()
         for k in self.m_question:
             melody += " " + mpd.transpose_notename(solmisation_notenames[k], self.m_transp) + "4"
 

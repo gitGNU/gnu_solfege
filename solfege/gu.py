@@ -1207,9 +1207,6 @@ class ExceptionDialog(Gtk.Dialog):
         h = l.get_ancestor(Gtk.Viewport).size_request().height
         max_lines = 5
         lines = text.count("\n") + 1
-        # This is the space the horizontal scrollbar takes
-        scrollbar_height = (sc.get_hscrollbar().size_request().height
-            + sc.style_get_property("scrollbar-spacing"))
         if lines <= max_lines:
             # make the scrollwin so high that it can display all lines
             sc.set_size_request(-1, h)

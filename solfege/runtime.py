@@ -25,7 +25,6 @@ other initial setup tasks.
 
 import sys
 import os
-import textwrap
 
 
 def assert_python_version(required_version):

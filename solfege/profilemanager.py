@@ -205,7 +205,6 @@ class ProfileManagerBase(Gtk.Dialog):
         ret = dlg.run()
         if ret == Gtk.ResponseType.ACCEPT:
             path, column = self.g_tw.get_cursor()
-            it = self.g_liststore.get_iter(path)
             try:
                 os.rename(os.path.join(
                     filesystem.app_data(), "profiles", self.get_profile()),

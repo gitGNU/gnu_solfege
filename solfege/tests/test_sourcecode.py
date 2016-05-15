@@ -4,7 +4,6 @@
 
 
 import unittest
-import os
 
 
 class TestSourceCode(unittest.TestCase):

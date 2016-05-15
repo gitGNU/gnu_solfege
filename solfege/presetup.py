@@ -18,6 +18,8 @@
 
 import os.path
 import sys
+import textwrap
+import traceback
 
 from gi.repository import Gtk
 
@@ -33,7 +35,7 @@ def presetup(app_defaults_filename, system_filename, user_filename):
         os.makedirs(filesystem.user_data())
     try:
         cfg.initialise(app_defaults_filename, system_filename, user_filename)
-    except UnicodeDecodeError as e:
+    except UnicodeDecodeError:
         traceback.print_exc()
         print(file=sys.stderr)
         print("\n".join(textwrap.wrap(

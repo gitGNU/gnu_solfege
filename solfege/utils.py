@@ -214,7 +214,6 @@ def pitches_in_key(tonic, keytype, lowest, highest):
 
 def un_escape_url_string(s):
     r = re.compile("(%([0-9A-F][0-9A-F]))")
-    m = r.search(s)
 
     def f(m):
         return chr(eval("0x%s" % m.groups()[1]))

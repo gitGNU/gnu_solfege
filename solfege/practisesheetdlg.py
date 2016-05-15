@@ -474,7 +474,6 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             writer = HtmlSheetWriter(self.g_title.get_text())
         else:
             writer = LatexSheetWriter(self.g_title.get_text())
-        iter = self.g_liststore.get_iter_first()
         for idx, sect in enumerate(self.m_sections):
             new_section = writer.new_section(_(sect['title']), sect['line_len'])
             for question_dict in sect['questions']:
@@ -613,7 +612,6 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             self.g_title.set_text(tree.find("title").text)
         else:
             self.g_title.set_text("")
-        sheet = tree.find("sheet")
         if tree.find('output_format').text == 'latex':
             self.g_latex_radio.set_active(True)
         else:

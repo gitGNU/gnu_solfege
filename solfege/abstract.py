@@ -196,7 +196,7 @@ class MelodicIntervalTeacher(Teacher):
                 else:
                     self.m_tonika, i = utils.random_tonika_and_interval(L, H,
                             self.get_list('ask_for_intervals_0'))
-            except utils.NoPossibleIntervals as e:
+            except utils.NoPossibleIntervals:
                 raise self.ConfigureException(self.no_intervals_str % 1)
 
             self.m_question = [i]
@@ -222,7 +222,7 @@ class MelodicIntervalTeacher(Teacher):
         for counter in range(max_try):
             try:
                 try_make_question()
-            except self.ConfigureException as e:
+            except self.ConfigureException:
                 if counter == max_try - 1:
                     raise
                 else:

@@ -4,10 +4,8 @@
 # License is GPL, see file COPYING
 
 
-import os
 import unittest
 
-from solfege import dataparser
 from solfege.dataparser import Dataparser
 from solfege.lfmod import parse_tree_interpreter
 from solfege.testlib import TmpFileBase

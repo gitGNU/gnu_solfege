@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import random
-import string
 import sys
 import urllib.request, urllib.parse, urllib.error
 import urllib.request, urllib.error, urllib.parse
@@ -26,7 +24,6 @@ from gi.repository import Gtk
 from solfege import buildinfo
 from solfege import cfg
 from solfege import gu
-from solfege import utils
 
 RESPONSE_SEND = 1011
 

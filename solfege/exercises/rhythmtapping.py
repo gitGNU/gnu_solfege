@@ -25,8 +25,6 @@ from solfege import gu
 from solfege import lessonfile
 from solfege import mpd
 
-from solfege.mpd.requests import MusicRequest
-
 
 class Teacher(abstract.Teacher):
     OK = 0
@@ -55,7 +53,6 @@ class Teacher(abstract.Teacher):
         is_rhythm = isinstance(self.m_P.get_question().music,
                                lessonfile.Rhythm)
         lexer = mpd.parser.Lexer(self.m_P.get_question()[qvar].m_musicdata)
-        x = len(lexer.m_string)
         retval = []
         try:
             for toc, toc_data in lexer:

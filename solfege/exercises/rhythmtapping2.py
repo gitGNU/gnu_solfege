@@ -20,8 +20,6 @@ from solfege import lessonfile
 from solfege import mpd
 from solfege.exercises import rhythmtapping
 
-from solfege.mpd.requests import MusicRequest
-
 
 class Teacher(abstract.RhythmAddOnClass, rhythmtapping.Teacher):
 
@@ -38,7 +36,6 @@ class Teacher(abstract.RhythmAddOnClass, rhythmtapping.Teacher):
         each tap.
         """
         lexer = mpd.parser.Lexer(self.get_music_notenames(False))
-        x = len(lexer.m_string)
         retval = []
         for toc, toc_data in lexer:
             if isinstance(toc_data, mpd.requests.MusicRequest):

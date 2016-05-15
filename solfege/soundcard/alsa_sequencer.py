@@ -15,12 +15,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
 from pyalsa import alsaseq
 
 from solfege.soundcard.synth_common import SynthCommon
 from solfege.mpd.track import MidiEventStream
-from solfege import soundcard
 
 
 class AlsaSequencer(SynthCommon):

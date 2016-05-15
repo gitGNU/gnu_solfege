@@ -17,12 +17,10 @@
 
 
 import glob
-import locale
 import logging
 import os
 import random
 import re
-import stat
 import subprocess
 import sys
 import textwrap
@@ -38,7 +36,6 @@ from solfege import osutils
 from solfege import parsetree as pt
 from solfege import soundcard
 from solfege import utils
-from solfege import uuid
 from solfege import xrandom
 from solfege.dataparser import istr
 from solfege.mpd import elems
@@ -278,7 +275,7 @@ def chordname_markup_tokenizer(s):
                 mpd.MusicalPitch.new_from_notename(v[-1])
                 bass = v[-1]
                 c = "/".join(v[:-1])
-            except mpd.InvalidNotenameException as e:
+            except mpd.InvalidNotenameException:
                 bass = ""
         else:
             bass = ""
@@ -476,7 +473,6 @@ class MpdTransposable(MpdDisplayable):
         """
         assert lessonfile_ref.m_transpose
         try:
-            lex = mpd.parser.Lexer(self.m_musicdata)
             tokens = list(mpd.parser.Lexer(self.m_musicdata))
         except mpd.InvalidNotenameException as e:
             self.complete_to_musicdata_coords(lessonfile_ref, e)
@@ -756,7 +752,7 @@ class Rvoice(VoiceCommon):
         """
         try:
             delta = abs(self.get_first_pitch().m_octave_i)
-        except mpd.InvalidNotenameException as e:
+        except mpd.InvalidNotenameException:
             delta = 0
         if hasattr(exception, 'm_obj_lineno'):
             return "\n".join((self.m_musicdata.split("\n")[exception.m_obj_lineno],
@@ -984,7 +980,7 @@ class Cmdline(MusicBaseClass):
         try:
             osutils.PopenSingleton(str(self.m_musicdata).split(" "),
                    cwd=lessonfile_ref.m_location)
-        except OSError as e:
+        except OSError:
             raise osutils.RunningExecutableFailed(self.m_musicdata)
 
 
@@ -1216,7 +1212,7 @@ class QuestionsLessonfile(LessonfileCommon):
             break
         try:
             self.get_question().music.randomize()
-        except AttributeError as e:
+        except AttributeError:
             pass
         self.m_random.add(self._idx)
         self.m_prev_question = self.get_music()
@@ -2029,7 +2025,7 @@ class InfoCache(object):
 
             def on_idle_parse():
                 try:
-                    filename = next(self._lessonfiles_iterator)
+                    next(self._lessonfiles_iterator)
                     return True
                 except StopIteration:
                     logging.debug("parse_all_files(...) done.")

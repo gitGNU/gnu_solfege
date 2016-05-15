@@ -207,7 +207,6 @@ class Gui(abstract.Gui):
         return v
 
     def new_question(self, widget=None):
-        s = self.m_t.q_status
         g = self.m_t.new_question()
         if g == Teacher.ERR_CONFIG:
             solfege.win.display_error_message(

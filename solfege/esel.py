@@ -16,9 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import locale
 import logging
-import sys
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -144,7 +142,6 @@ class ExerciseView(SelectWinBase):
     def __init__(self, fields=('link',)):
         SelectWinBase.__init__(self)
         self.m_fields = fields
-        app = solfege.app
         self.g_box = Gtk.VBox(False, 0)
         self.g_box.set_border_width(gu.hig.SPACE_MEDIUM)
         self.add_with_viewport(self.g_box)
@@ -373,7 +370,6 @@ class SearchView(ExerciseView):
          ]),
         ])
         )""" % infotext
-        p = frontpage.parse_tree(page)
         self.display_data(frontpage.parse_tree(page))
         self.g_searchentry.show()
 

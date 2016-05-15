@@ -78,7 +78,7 @@ def _pre_3_11_win32_get_langenviron():
         langfile = open(os.path.join(filesystem.app_data(), "langenviron.bat"), 'r')
         s = langfile.read()
         langfile.close()
-    except IOError as e:
+    except IOError:
         # we get here for example when the file does not exist
         return None
     if s:

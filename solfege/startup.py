@@ -38,7 +38,6 @@ from solfege import gu
 from solfege import lessonfile
 from solfege import optionparser
 from solfege import osutils
-from solfege.profilemanager import ProfileManager
 from solfege import make_screenshots
 from solfege import statistics
 from solfege import tracebackwindow

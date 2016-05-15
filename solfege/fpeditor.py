@@ -89,7 +89,7 @@ class LessonFilePreviewWidget(Gtk.VBox):
                     l.set_alignment(0.0, 0.5)
                     self.g_topic_box.pack_start(l, False, False, 0)
             except (lessonfile.InfoCache.FileNotFound,
-                    lessonfile.InfoCache.FileNotLessonfile) as e:
+                    lessonfile.InfoCache.FileNotLessonfile):
                 self.g_title.set_text('')
                 self.g_module.set_text('')
                 self.g_ok_button.set_sensitive(False)
@@ -641,7 +641,6 @@ class Page(Gtk.VBox):
         section.reparent(to_column.g_section_box)
         section.m_parent = to_column
         to_column.g_section_box.set_child_packing(section, False, False, 0, Gtk.PACK_START)
-        to_section_idx = len(self.m_model[column_idx + 1])
         self.m_model[column_idx + 1].append(self.m_model[column_idx][section_idx])
         del self.m_model[column_idx][section_idx]
         self.update_buttons()
@@ -863,7 +862,6 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
 
     def save(self, w=None):
         assert self.m_filename
-        save_location = os.path.split(self.m_filename)[0] + os.sep
         fh = pd.FileHeader(1, self.m_model)
         fh.save_file(self.m_filename)
         self.set_not_modified()

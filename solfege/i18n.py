@@ -72,7 +72,7 @@ def setup(prefix, config_locale=None):
     # Gettext and gtk+ chech the variables in this order.
     try:
         locale.setlocale(locale.LC_ALL, '')
-    except locale.Error as e:
+    except locale.Error:
         print()
         print("\n".join(textwrap.wrap(
             "Failed to run locale.setlocale(locale.LC_ALL, '') "

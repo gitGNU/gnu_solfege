@@ -104,7 +104,6 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
             # Click outside the keys are ignored.
             return
         click_x = event.x - self.m_pos_x
-        x = click_x / self.m_key_w
         octave_w = 7 * self.m_key_w
         clicked_octave = int(click_x / octave_w)
         clicked_white = int((click_x % octave_w) / self.m_key_w)

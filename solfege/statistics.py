@@ -19,7 +19,6 @@
 import hashlib
 import logging
 import os
-import pickle
 import shutil
 import sqlite3
 import time

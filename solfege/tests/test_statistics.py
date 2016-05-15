@@ -7,7 +7,6 @@
 import unittest
 from solfege import statistics
 from solfege import application
-from solfege import lessonfile
 from solfege import optionparser
 from solfege.exercises import idbyname
 

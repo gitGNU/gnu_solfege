@@ -200,7 +200,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             filename = self.default_front_page
         try:
             solfege.app.m_frontpage_data = frontpage.load_tree(filename)
-        except Exception as e:
+        except Exception:
             if solfege.splash_win:
                 solfege.splash_win.hide()
             solfege.app.m_frontpage_data = frontpage.load_tree(self.default_front_page)
@@ -286,7 +286,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             if not frontpage.may_be_frontpage(fn):
                 continue
             try:
-                title = lessonfile.infocache.frontpage.get(fn, 'title')
+                lessonfile.infocache.frontpage.get(fn, 'title')
             except TypeError:
                 continue
             cur_dir = os.path.split(fn)[0]

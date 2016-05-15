@@ -58,7 +58,6 @@ class WinSynth(SynthCommon):
         # bigger magic plays slower
         magic = 1440000
         self.__driver.set_tempo(int(magic * 4 / 60))
-        v = []
         notelen = 0
         for e in midieventstream:
             if e[0] == midieventstream.TEMPO:

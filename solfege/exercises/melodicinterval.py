@@ -16,11 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from gi.repository import Gtk
-
 from solfege import abstract
-from solfege import gu
-from solfege import inputwidgets
 from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard

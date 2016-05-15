@@ -145,8 +145,6 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         label.props.halign = Gtk.Align.END
         g.attach(label, 0, 0, 1, 1)
         self.g_interval_chk = {}
-        V = self.get_list("ask_for_intervals_%i"
-                  % (self.g_int_sel_spin.get_value_as_int() - 1))
         for i in range(1, mpd.interval.max_interval + 1):
             self.g_interval_chk[i] = c = Gtk.ToggleButton(mpd.interval.short_name[i])
             c.set_name("intervalToggleButton")

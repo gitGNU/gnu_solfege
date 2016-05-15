@@ -214,7 +214,6 @@ def find_mma_executables(ignore_drives):
             try:
                 for dirname in os.listdir(drive):
                     if dirname.lower().startswith('mma'):
-                        dir = os.path.join(drive, dirname)
                         mma_py = os.path.join(drive, dirname, "mma.py")
                         if os.path.exists(mma_py):
                             retval.add(mma_py)

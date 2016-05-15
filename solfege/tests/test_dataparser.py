@@ -11,7 +11,6 @@ import codecs
 from solfege.testlib import I18nSetup, outdir, TmpFileBase
 from solfege.dataparser import *
 import solfege.parsetree as pt
-import solfege.i18n
 import os
 
 
