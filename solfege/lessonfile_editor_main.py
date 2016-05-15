@@ -44,7 +44,7 @@ class HelpWindow(Gtk.Window):
 
     def __init__(self, parent):
         Gtk.Window.__init__(self)
-        self.set_title(_("GNU Solfege lesson file editor") )
+        self.set_title(_("GNU Solfege lesson file editor"))
         self.set_default_size(400, 400)
         self.g_parent = parent
         self.vbox = Gtk.VBox()
@@ -212,7 +212,7 @@ class MainWin(Gtk.Window):
         self.m_P = EditorLessonfile()
         cvbox = Gtk.VBox()
         self.g_notebook.append_page(cvbox, Gtk.Label(label=_("Lessonfile header")))
-        ## Header section
+        # Header section
         sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         self.g_title = Gtk.Entry()
         cvbox.pack_start(gu.hig_label_widget(_("File title:", True, True, 0), self.g_title,
@@ -476,9 +476,9 @@ edit your hand written lesson files with this program.</p>
 
     def on_displayer_clicked(self, ed, steps):
         self.m_P.m_changed = True
-        notename = ("c", "d", "e", "f", "g", "a", "b")[6-(steps % 7)]
+        notename = ("c", "d", "e", "f", "g", "a", "b")[6 - (steps % 7)]
         n = mpd.MusicalPitch.new_from_notename(notename)
-        n.m_octave_i = 1-(steps // 7)
+        n.m_octave_i = 1 - (steps // 7)
         if self.g_displayer.m_cursor == 'notehead':
             if n.steps() not in self.m_chord_tones:
                 self.m_chord_tones[n.steps()] = n

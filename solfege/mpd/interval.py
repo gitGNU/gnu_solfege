@@ -209,9 +209,9 @@ class Interval:
         }
 
     def __init__(self, iname=None):
-        self.m_dir = 1 # value as to be 1 or -1 for initialised obj
-        self.m_octave = 0 # 0, 1, 2, 3 etc
-        self.m_interval = 0 # 0:unison, 1:seond, ... 6: septim
+        self.m_dir = 1  # value as to be 1 or -1 for initialised obj
+        self.m_octave = 0  # 0, 1, 2, 3 etc
+        self.m_interval = 0  # 0:unison, 1:seond, ... 6: septim
         # unison:              dim   perfect   aug
         # second:  -2:dim -1:minor 0:major   1:aug
         # third:      dim    minor   major     aug
@@ -236,7 +236,7 @@ class Interval:
 
     def errorcheck(self):
         assert 0 <= self.m_interval <= 6
-        assert -2 <= self.m_mod <= 1 # should be increased to -3 <= x <= 2
+        assert -2 <= self.m_mod <= 1  # should be increased to -3 <= x <= 2
         assert self.m_octave >= 0
         assert self.m_dir in (-1, 1)
 
@@ -266,13 +266,13 @@ class Interval:
         self.m_octave = abs(i) // 12
         self.m_mod, self.m_interval = (
                (0, 0),          # unison
-               (-1, 1), (0, 1), # second
-               (-1, 2), (0, 2), # third
+               (-1, 1), (0, 1),  # second
+               (-1, 2), (0, 2),  # third
                (0, 3),          # fourth
                (-1, 4),         # dim 5, tritone
                (0, 4),          # fifth
-               (-1, 5), (0, 5), # sixth
-               (-1, 6), (0, 6))[abs(i) % 12] # seventh
+               (-1, 5), (0, 5),  # sixth
+               (-1, 6), (0, 6))[abs(i) % 12]  # seventh
         return self
 
     def set_from_string(self, s):
@@ -335,7 +335,7 @@ class Interval:
     def __repr__(self):
         if self.m_interval in (0, 3, 4):
             return "%s%s" % ({-2: 'dd', -1: 'd', 0: 'p', 1: 'a', 2: 'aa'}[self.m_mod], self.m_interval + 1 + self.m_octave * 7)
-        return "%s%s" % ({-2: 'd', -1: 'm', 0: 'M', 1: 'a'}[self.m_mod],  (self.m_interval + 1 + self.m_octave * 7))
+        return "%s%s" % ({-2: 'd', -1: 'm', 0: 'M', 1: 'a'}[self.m_mod], (self.m_interval + 1 + self.m_octave * 7))
 
     def __eq__(self, interval):
         return self.m_dir == interval.m_dir \

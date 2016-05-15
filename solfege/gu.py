@@ -78,7 +78,7 @@ def parse_key_string(string):
         return mod, getattr(Gdk, 'KEY_%s' % s)
 
 
-def tLabel(table, x1, x2, y1, y2, text="", xalign=0.0, yalign=0.5, xoptions=Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, xpadding=0, ypadding=0):
+def tLabel(table, x1, x2, y1, y2, text="", xalign=0.0, yalign=0.5, xoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL, xpadding=0, ypadding=0):
     label = Gtk.Label(label=text)
     label.set_alignment(xalign, yalign)
     table.attach(label, x1, x2, y1, y2, xoptions=xoptions, yoptions=yoptions, xpadding=xpadding, ypadding=ypadding)
@@ -101,7 +101,7 @@ def bButton(pack_into, label, callback=None, expand=True, fill=True):
     return b
 
 
-class nSpinButton(Gtk.SpinButton, cfg.ConfigUtils):#FIXME (??what is there to fix???)
+class nSpinButton(Gtk.SpinButton, cfg.ConfigUtils):  # FIXME (??what is there to fix???)
 
     def __init__(self, exname, name, adj, climb_rate=1, digits=1):
         Gtk.SpinButton.__init__(self)
@@ -169,7 +169,7 @@ class nCheckButton(Gtk.CheckButton, cfg.ConfigUtils):
             s = "true"
         else:
             s = "false"
-        self.set_bool(self.m_name, self.get_bool(self.m_name+"="+s))
+        self.set_bool(self.m_name, self.get_bool(self.m_name + "=" + s))
         if self.get_bool(self.m_name):
             self.set_active(1)
         self._clicked_id = self.connect('toggled', self.on_clicked)
@@ -359,7 +359,7 @@ class FlashBar(Gtk.Frame):
 
     def display(self, txt, **kwargs):
         self.empty()
-        r = re.compile("(\{\w+\})") # Unicode??
+        r = re.compile("(\{\w+\})")  # Unicode??
         self.set_size_request(-1, -1)
         for child in r.split(txt):
             m = r.match(child)
@@ -371,7 +371,7 @@ class FlashBar(Gtk.Frame):
                     w.set_name("FlashBarLabel")
                 else:
                     w = lessonfilegui.new_labelobject(kwargs[varname])
-            elif child: # don't create label for empty string
+            elif child:  # don't create label for empty string
                 w = Gtk.Label(label=child)
                 w.set_name("FlashBarLabel")
             self.__content.pack_start(w, False, False, 0)
@@ -410,7 +410,7 @@ class FlashBar(Gtk.Frame):
 
 
 class hig(object):
-    SPACE_SMALL= 6
+    SPACE_SMALL = 6
     SPACE_MEDIUM = 12
     SPACE_LARGE = 18
 
@@ -591,11 +591,11 @@ class HarmonicProgressionLabel(AlignedHBox):
         vbox = Gtk.VBox(False, 0)
         t1 = Gtk.Label(label=A)
         t1.set_name("ProgressionLabelNumber")
-        t1.show();vbox.pack_start(t1, True, True, 0);
+        t1.show(); vbox.pack_start(t1, True, True, 0);
         t1.set_alignment(0, 0);
         t2 = Gtk.Label(label=B)
         t2.set_name("ProgressionLabelNumber")
-        t2.show();vbox.pack_start(t2, True, True, 0);
+        t2.show(); vbox.pack_start(t2, True, True, 0);
         t2.set_alignment(0, 0);
         self.pack_start(vbox, False, False, 0)
 
@@ -603,7 +603,7 @@ class HarmonicProgressionLabel(AlignedHBox):
         vbox = Gtk.VBox(False, 0)
         t = Gtk.Label(label=A)
         t.set_name("ProgressionLabelNumber")
-        t.show();vbox.pack_start(t, True, True, 0);
+        t.show(); vbox.pack_start(t, True, True, 0);
         t.set_alignment(0, 0);
         self.pack_start(vbox, False, False, 0)
 
@@ -707,7 +707,7 @@ def create_png_image(fn):
     Create an image by loading a png file from graphics dir
     """
     im = Gtk.Image()
-    im.set_from_file(os.path.join('graphics', fn)+'.png')
+    im.set_from_file(os.path.join('graphics', fn) + '.png')
     im.show()
     return im
 
@@ -1000,7 +1000,7 @@ class LogWidget(Gtk.ScrolledWindow):
         Gtk.ScrolledWindow.__init__(self)
         self.g_textbuffer = Gtk.TextBuffer()
         self.g_textbuffer.create_tag('h1', weight=Pango.Weight.BOLD,
-            size=16*Pango.SCALE)
+            size=16 * Pango.SCALE)
         self.g_textview = Gtk.TextView(buffer=self.g_textbuffer)
         self.add(self.g_textview)
 

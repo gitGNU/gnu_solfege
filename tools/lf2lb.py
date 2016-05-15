@@ -33,7 +33,7 @@ def so2ly(s, musicformat):
     re_staff = re.compile("\\\\staff")
     re_addvoice = re.compile("\\\\addvoice")
     v = re_staff.split(s)
-    v = filter(lambda i: i!="", v)
+    v = filter(lambda i: i != "", v)
     v = map(lambda s, r=re_addvoice: r.split(s), v)
     retval = "\\score{\n  <"
     i = ''

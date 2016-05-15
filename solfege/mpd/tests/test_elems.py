@@ -21,7 +21,7 @@ class TestScore(unittest.TestCase):
 
     def setUp(self):
         self.score = Score()
-        self.staff = self.score.add_staff() # default class is Staff
+        self.staff = self.score.add_staff()  # default class is Staff
         self.__bp = None
 
     def get_bp(self):
@@ -361,7 +361,7 @@ c4 c8 c8
         self.assertEqual(f("c4 d4"), [(48, 1.0), (50, 1.0)])
         self.assertEqual(f("c4 d2"), [(48, 1.0), (50, 2.0)])
         self.assertEqual(f("c4 d2", (120, 4)), [(48, 0.5), (50, 1.0)])
-        self.assertEqual(f(r" \times 2/3 { c4 d2 }"), [(48, 2.0/3), (50, 4.0/3)])
+        self.assertEqual(f(r" \times 2/3 { c4 d2 }"), [(48, 2.0 / 3), (50, 4.0 / 3)])
         self.assertEqual(f("c4 r8. d4"), [(48, 1.0), (-1, 0.75), (50, 1.0)])
         self.assertRaises(Voice.NotUnisonException, f, "<c4 d4>")
 
@@ -382,7 +382,7 @@ class TestNote(unittest.TestCase):
 
     def setUp(self):
         self.score = Score()
-        self.staff = self.score.add_staff() # default class is Staff
+        self.staff = self.score.add_staff()  # default class is Staff
 
     def test_contructor(self):
         Note(MusicalPitch.new_from_notename("c'"),

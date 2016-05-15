@@ -23,9 +23,9 @@ def mf_delta(i):
     while 1:
         bits = i & 0x7f
         i = i >> 7
-        v.insert(0, bits+not_first*0x80)
+        v.insert(0, bits + not_first * 0x80)
         not_first = 1
-        if i == 0: # hvis det ikke er flere bit'er igjen
+        if i == 0:  # hvis det ikke er flere bit'er igjen
             break
     vect = vect + v
     return vect
@@ -33,17 +33,17 @@ def mf_delta(i):
 
 def mf_int16(i):
     assert isinstance(i, int) and 0 <= i < 2**16
-    return [i >> 8 & 0xff, i  & 0xff]
+    return [i >> 8 & 0xff, i & 0xff]
 
 
 def mf_int24(i):
     assert isinstance(i, int) and 0 <= i < 2**24
-    return [i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
+    return [i >> 16 & 0xff, i >> 8 & 0xff, i & 0xff]
 
 
 def mf_int32(i):
     assert isinstance(i, int) and 0 <= i < 2**32
-    return [i >> 24 & 0xff, i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
+    return [i >> 24 & 0xff, i >> 16 & 0xff, i >> 8 & 0xff, i & 0xff]
 
 
 def write_int16(f, i):
@@ -68,21 +68,21 @@ def mf_tempo(n):
     n -- number of quarter tones per minute.
     """
     #    now          Code to set tempo
-    v = mf_delta(0) + [0xff, 0x51, 0x03] + mf_int24(int(500000*120/n))
+    v = mf_delta(0) + [0xff, 0x51, 0x03] + mf_int24(int(500000 * 120 / n))
     return v
 
 
 def mf_timesig(numerator, denuminator):
-    d = {0:1, 2:1, 4:2, 8:3, 16:4, 32:5, 64:6}[denuminator]
+    d = {0: 1, 2: 1, 4: 2, 8: 3, 16: 4, 32: 5, 64: 6}[denuminator]
     return mf_delta(0) + [0xff, 0x58, 0x04,
                           numerator, d,   # 4/4      2=4-del 3=8-del 4=16-del
-                          0x10, #0x18
+                          0x10,  # 0x18
                           0x08]
 
 
 def mf_program_change(chan, prg):
     assert 0 <= chan < 16
-    return mf_delta(0) + [chan+MIDI_PROGRAM_CHANGE, prg]
+    return mf_delta(0) + [chan + MIDI_PROGRAM_CHANGE, prg]
 
 
 def mf_volume_change(chan, volume):
@@ -93,12 +93,12 @@ def mf_volume_change(chan, volume):
 
 def mf_note_on(delta, chan, note, vel):
     assert 0 <= chan < 16
-    return mf_delta(delta) + [chan+MIDI_NOTE_ON, note, vel]
+    return mf_delta(delta) + [chan + MIDI_NOTE_ON, note, vel]
 
 
 def mf_note_off(delta, chan, note, vel):
     assert 0 <= chan < 16
-    return mf_delta(delta) + [chan+MIDI_NOTE_OFF, note, vel]
+    return mf_delta(delta) + [chan + MIDI_NOTE_OFF, note, vel]
 
 
 def mf_end_of_track():
@@ -130,5 +130,5 @@ class MThd:
         # the time-stamps are based upon.
         v = v + mf_int16(MThd.PPQN)
         f.write(b"MThd")
-        write_int32(f, len(v)) #chunk len
+        write_int32(f, len(v))  # chunk len
         f.write(bytes(v))

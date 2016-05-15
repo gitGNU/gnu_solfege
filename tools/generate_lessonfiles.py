@@ -29,21 +29,21 @@ header {
 
 
 ratio_dict = {
-        'm2': (16/15, "16:15"),
-        'M2': (9/8, "9:8"),
-        'm3': (6/5, "6:5"),
-        'M3': (5/4, "5:4"),
-        'p4': (4/3, "4:3"),
-        'p5': (3/2, "3:2"),
-        'm6': (8/5, "8:5"),
-        'M6': (5/3, "5:3"),
-        'm7': (16/9, "16:9"),
-        'M7': (15/8, "15:8"),
+        'm2': (16 / 15, "16:15"),
+        'M2': (9 / 8, "9:8"),
+        'm3': (6 / 5, "6:5"),
+        'M3': (5 / 4, "5:4"),
+        'p4': (4 / 3, "4:3"),
+        'p5': (3 / 2, "3:2"),
+        'm6': (8 / 5, "8:5"),
+        'M6': (5 / 3, "5:3"),
+        'm7': (16 / 9, "16:9"),
+        'M7': (15 / 8, "15:8"),
         'p8': (2, "2:1"),
-        'm9': (1 + 16/15, "1+16:15"),
-        'M9': (1 + 9/8, "1+9:8"),
-        'm10': (1 + 6/5, "1+6:5"),
-        'M10': (1 + 5/4, "1+5:4"),
+        'm9': (1 + 16 / 15, "1+16:15"),
+        'M9': (1 + 9 / 8, "1+9:8"),
+        'm10': (1 + 6 / 5, "1+6:5"),
+        'M10': (1 + 5 / 4, "1+5:4"),
         }
 
 interval_names = list(ratio_dict.keys())
@@ -129,7 +129,7 @@ def three_tones_larger_than_octave(filename):
         for c in range(13, 25):
             question(f, b, c)
     for b in range(13, 24):
-        for c in range(b+1, 25):
+        for c in range(b + 1, 25):
             question(f, b, c)
     f.close()
 
@@ -150,8 +150,8 @@ header {{
         fillnum = 4
 }}
 """.format(lesson_id, mod))
-    for s, d in enumerate((1, 9/8, 4/3, 3/2, 5/3, 15/8, 2)):
-        for label, mult in (("intonation|flat", float(mod)), ("intonation|in tune", 1), ("intonation|sharp", 1/float(mod))):
+    for s, d in enumerate((1, 9 / 8, 4 / 3, 3 / 2, 5 / 3, 15 / 8, 2)):
+        for label, mult in (("intonation|flat", float(mod)), ("intonation|in tune", 1), ("intonation|sharp", 1 / float(mod))):
             f.write("""
 question {{
  name = _i("{0}")
@@ -190,10 +190,10 @@ header {{
         lesson_heading = _("Just interval: %s") % _("{4}") + " ({5})"
         filldir = vertic
 }}
-""".format(hs, iname_to_fn(interval_name), cent, cent, #0-3
-           i.get_cname(), ratio_dict[i.get_cname_short()][1])) # 4-5
+""".format(hs, iname_to_fn(interval_name), cent, cent,  # 0-3
+           i.get_cname(), ratio_dict[i.get_cname_short()][1]))  # 4-5
     for c in range(12):
-        hz = 220 * 2 ** (c/12)
+        hz = 220 * 2 ** (c / 12)
         hz2 = hz * ratio_dict[i.get_cname_short()][0]
         for label, mult in (("intonation|flat", -cent),
                             ("intonation|in tune", 0),

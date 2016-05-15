@@ -39,8 +39,8 @@ class Teacher(abstract.Teacher):
         self.lessonfileclass = lessonfile.IdByNameLessonfile
         self.m_statistics = statistics.LessonStatistics(self)
         for s in ('vertic', 'horiz',
-                  'progression', # depcrecated, used to set labelformat
-                  'show', 'play', # at_music_start = show, play
+                  'progression',  # depcrecated, used to set labelformat
+                  'show', 'play',  # at_music_start = show, play
                   'accidentals', 'key', 'semitones', 'atonal',
             ):
             self.m_lessonfile_defs[s] = s
@@ -136,7 +136,7 @@ class Gui(abstract.LessonbasedGui):
         ###############
         self.add_random_transpose_gui(0)
         # -----------------------------------------
-        self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
+        self.g_select_questions_category_box, category_box = gu.hig_category_vbox(
             _("Questions to ask"))
         self.g_config_grid.attach(self.g_select_questions_category_box,
                                   0, 1, 3, 1)
@@ -167,7 +167,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_bb.ask_for_names_changed()
 
     def update_select_question_buttons(self):
-        #FIXME duplicate code in src/chord.py
+        # FIXME duplicate code in src/chord.py
         if self.m_t.m_custom_mode:
             self.g_select_questions_category_box.show()
             self.g_select_questions.initialize(self.m_t.m_P.header.fillnum,

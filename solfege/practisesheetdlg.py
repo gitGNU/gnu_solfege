@@ -348,8 +348,8 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
         #
         self.m_sections = []
         self.g_liststore = Gtk.ListStore(
-            GObject.TYPE_STRING, # lesson-file title
-            GObject.TYPE_STRING, # lessonfile filename, hidden column
+            GObject.TYPE_STRING,  # lesson-file title
+            GObject.TYPE_STRING,  # lessonfile filename, hidden column
         )
         self.g_treeview = Gtk.TreeView(self.g_liststore)
         self.g_treeview.set_size_request(400, 100)
@@ -521,7 +521,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             self._add_harmonicinterval_lesson(p, filename)
         elif module == 'melodicinterval':
             self._add_melodicinterval_lesson(p, filename)
-        self.g_treeview.set_cursor((len(self.m_sections)-1,))
+        self.g_treeview.set_cursor((len(self.m_sections) - 1,))
 
     def _add_idbyname_lesson(self, p, filename):
         """

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#FIXME: voice1_lowest_ylinepos and stempos in the original parser.py
+# FIXME: voice1_lowest_ylinepos and stempos in the original parser.py
 # give some alignment we need to implement here too.
 
 # FIXME: I think the StemEngraver should take care of shifting of
@@ -33,7 +33,7 @@ from solfege.mpd.rat import Rat
 from solfege.mpd.duration import Duration
 from solfege.mpd.musicalpitch import MusicalPitch
 
-#FIXME duplicate of code in Lexer
+# FIXME duplicate of code in Lexer
 re_melodic = re.compile(r"""(?x)
                              ((?P<notename>[a-zA-Z]+)
                              (?P<octave>[',]*))
@@ -100,7 +100,7 @@ class Clef(object):
         return self.clefdata[self.m_name][self.LINE]
 
     def steps_to_ylinepos(self, steps):
-        return 7-self.clefdata[self.m_name][self.POS] - steps + self.m_octaviation
+        return 7 - self.clefdata[self.m_name][self.POS] - steps + self.m_octaviation
 
     def an_to_ylinepos(self, an):
         def notename_to_ylinepos(n):
@@ -115,7 +115,7 @@ class Clef(object):
         i = notename_to_ylinepos(an)
         while i > l:
             an = an + "'"
-            i =  notename_to_ylinepos(an)
+            i = notename_to_ylinepos(an)
         while i < h:
             an = an + ","
             i = notename_to_ylinepos(an)
@@ -351,7 +351,7 @@ class Voice(HasParent):
                 # We don't have to set w_parent for the Stem and the notes
                 # here, because the Stem constructor does it.
                 self.set_elem(Stem(self, elem, stemdir), self.m_length)
-            else: # rest or skip
+            else:  # rest or skip
                 self.set_elem(elem, self.m_length)
                 elem[0].w_parent = weakref.ref(self)
             self.m_length += elem[0].m_duration.get_rat_value()
@@ -425,7 +425,7 @@ class Voice(HasParent):
                 return True
         else:
             max_free = bp.get_free_time()
-            #flytt til bar-class
+            # flytt til bar-class
             delta = elem.m_duration.get_rat_value() - self.m_tdict[timepos]['elem'][0].m_duration.get_rat_value()
 
             def fix_ties(prev_timepos, cur_timepos, next_timepos):
@@ -726,7 +726,7 @@ class Voice(HasParent):
         assert timepos in self.m_tdict
         v = sorted(self.m_tdict.keys())
         i = v.index(timepos)
-        if i +1 < len(v):
+        if i + 1 < len(v):
             return v[i + 1]
 
     def get_timelist(self):
@@ -798,7 +798,7 @@ class Bar(object):
             nt = self.m_timepos
         default_skip = Rat(1, 4)
         # pos within default skip
-        pp =  nt - int (nt / default_skip) * default_skip
+        pp = nt - int(nt / default_skip) * default_skip
         if pp != Rat(0, 1):
             # Here we add a skip so that the next column will be X times
             # default_skip
@@ -1219,7 +1219,7 @@ class Score(object):
             start = s1.m_bars[-1].end()
         else:
             start = Rat(0, 1)
-        s2.create_shortcuts() # FIXME why?
+        s2.create_shortcuts()  # FIXME why?
         for staff_idx, staff in enumerate(s1.m_staffs):
             for voice_idx in range(len(staff.m_voices)):
                 for k in s2.m_staffs[staff_idx].m_voices[voice_idx].m_tdict:

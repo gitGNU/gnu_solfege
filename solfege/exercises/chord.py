@@ -117,7 +117,7 @@ class Gui(abstract.LessonbasedGui):
         self.config_box.set_spacing(gu.PAD_SMALL)
         self.add_random_transpose_gui()
         # -----------------------------------------
-        self.g_select_questions_category_box, category_box= gu.hig_category_vbox(
+        self.g_select_questions_category_box, category_box = gu.hig_category_vbox(
             _("Chord types to ask"))
         self.config_box.pack_start(self.g_select_questions_category_box, True, True, 0)
         self.g_select_questions = QuestionNameCheckButtonTable(self.m_t)
@@ -191,7 +191,7 @@ class Gui(abstract.LessonbasedGui):
             xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL,
             xpadding=0, ypadding=gu.PAD_SMALL)
         # The vertical separator between columns
-        for idx in range(len(self.m_t.m_P.header.qprops)-1):
+        for idx in range(len(self.m_t.m_P.header.qprops) - 1):
             self.g_atable.attach(Gtk.VSeparator(),
             idx * 2 + 1, idx * 2 + 2, 0, trows,
             xoptions=Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.FILL,

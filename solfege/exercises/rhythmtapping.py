@@ -105,17 +105,17 @@ class Teacher(abstract.Teacher):
             # The user can tap in any tempo since he will only se the music.
             # First we change the lists so that the time between the
             # first two taps are 1.0, and the other proportionally to this.
-            question = [q/question[0] for q in question]
+            question = [q / question[0] for q in question]
             answer = []
             for x, i in enumerate(self.m_taps[1:]):
-                answer.append(self.m_taps[x+1] - self.m_taps[x])
-            answer = [a/answer[0] for a in answer]
+                answer.append(self.m_taps[x + 1] - self.m_taps[x])
+            answer = [a / answer[0] for a in answer]
             for idx in range(len(answer)):
                 retval.append(question[idx] / answer[idx])
         else:
             # Has to tap in the same tempo as the music played.
             for x, i in enumerate(self.m_taps[1:]):
-                a = self.m_taps[x+1] - self.m_taps[x]
+                a = self.m_taps[x + 1] - self.m_taps[x]
                 retval.append(a / question[x])
         return retval
 
@@ -126,7 +126,7 @@ class Teacher(abstract.Teacher):
         to the user describing how acourately the rhythm was tapped.
         """
         score = self.get_score()
-        max_diff = max([abs(1.0-f) for f in score])
+        max_diff = max([abs(1.0 - f) for f in score])
         limit = self.get_float("accuracy")
         if max_diff < limit:
             s = "OK: %.2f < %.2f" % (max_diff, limit)

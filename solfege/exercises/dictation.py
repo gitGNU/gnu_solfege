@@ -169,7 +169,7 @@ class Gui(abstract.LessonbasedGui):
             for i in range(len(tmp) - 1):
                 btn = self.create_pixmap_button()
                 btn.show()
-                btn.connect('clicked', f, tmp[i], tmp[i+1])
+                btn.connect('clicked', f, tmp[i], tmp[i + 1])
                 self.g_partbox.pack_start(btn, True, True, 0)
         # q_status is QSTATUS_NO if the question is invalid (from the lessonfile)
         if self.m_t.q_status == self.QSTATUS_NO:

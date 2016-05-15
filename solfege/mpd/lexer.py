@@ -59,9 +59,9 @@ class Lexer:
     re_relative = re.compile(r"\\relative\s+(([a-zA-Z]+)([',]*))", re.UNICODE)
     re_transpose = re.compile(r"\\transpose\s+(([a-zA-Z]+)([',]*))", re.UNICODE)
     re_rest = re.compile(r"(r)([\d]*)(\.*)", re.UNICODE)
-        #FIXME we are a little more strict than Lilypond, since ~ has to
+        # FIXME we are a little more strict than Lilypond, since ~ has to
         # be before ]
-        #FIXME don't use named regex if we don't need it.
+        # FIXME don't use named regex if we don't need it.
     re_melodic = re.compile(r"""(?x)
                              ((?P<notename>[a-zA-Z]+)
                              (?P<octave>[',]*))
@@ -160,7 +160,7 @@ class Lexer:
                 if numdots:
                     raise LexerError('Need a digit before dots. Write "%(goodcode)s", not "%(badcode)s".' % {
                         'badcode': m.group().strip(),
-                        'goodcode':'%s%i%s' % (resttype, self.m_notelen.m_nh, dots)
+                        'goodcode': '%s%i%s' % (resttype, self.m_notelen.m_nh, dots)
                         },
                         self)
             if notelen is 0:
@@ -181,7 +181,7 @@ class Lexer:
                 if numdots:
                     raise LexerError('Need a digit before dots. Write "%(goodcode)s", not "%(badcode)s".' % {
                         'badcode': m.group().strip(),
-                        'goodcode':'s%i%s' % (self.m_notelen.m_nh, dots)
+                        'goodcode': 's%i%s' % (self.m_notelen.m_nh, dots)
                         }, self)
             if skiplen is 0:
                 return self.SKIP, SkipRequest(skiplen, numdots)
@@ -208,7 +208,7 @@ class Lexer:
                 if dots:
                     raise LexerError('Need a digit before dots. Write "%(goodcode)s", not "%(badcode)s".' % {
                         'badcode': m.group().strip(),
-                        'goodcode':'%s%i%s' % (notename, self.m_notelen.m_nh, dots)
+                        'goodcode': '%s%i%s' % (notename, self.m_notelen.m_nh, dots)
                         }, self)
             n = MusicRequest(notename, notelen, numdots)
             return self.NOTE, n
@@ -265,7 +265,7 @@ class Lexer:
         if self.m_idx == len(self.m_string):
             raise StopIteration
         self.m_idx += 1
-        return self.m_string[self.m_idx-1], None
+        return self.m_string[self.m_idx - 1], None
 
     def get_error_location(self):
         """

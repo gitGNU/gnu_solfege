@@ -68,7 +68,7 @@ class Gui(rhythmtapping.Gui, abstract.RhythmAddOnGuiClass):
             self.show_answer()
         elif self.m_t.m_P.header.at_question_start == 'play':
             self.m_t.play_question()
-            #if 'cuemusic' in self.m_t.m_P.get_question():
+            # if 'cuemusic' in self.m_t.m_P.get_question():
             #    self.display_music('cuemusic')
         else:
             # Have to do it this way because both lesson files with question

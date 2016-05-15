@@ -37,7 +37,7 @@ def _i(s):
     """
     ns = _(s)
     if ns == s:
-        return "%s" %(s.split('|')[-1])
+        return "%s" % (s.split('|')[-1])
     else:
         return "%s" % ns
 

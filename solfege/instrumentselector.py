@@ -32,7 +32,7 @@ class MidiInstrumentMenu(Gtk.Menu):
         self.m_callback = callback
         for x in range(len(soundcard.instrument_names)):
             if x % 8 == 0:
-                menuitem = Gtk.MenuItem(soundcard.instrument_sections[x//8])
+                menuitem = Gtk.MenuItem(soundcard.instrument_sections[x // 8])
                 submenu = Gtk.Menu()
                 self.append(menuitem)
                 menuitem.set_submenu(submenu)
@@ -126,7 +126,7 @@ class InstrumentConfigurator(Gtk.VBox, cfg.ConfigUtils):
         hbox.set_spacing(gu.PAD_SMALL)
 
         sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
-        self.g_instrsel_high = FramedInstrumentSelector(_("Highest:"), exname, 'highest_instrument',sizegroup)
+        self.g_instrsel_high = FramedInstrumentSelector(_("Highest:"), exname, 'highest_instrument', sizegroup)
         hbox.pack_start(self.g_instrsel_high, False, False, 0)
         if num == 3:
             self.g_instrsel_middle = FramedInstrumentSelector(_("Middle:"),

@@ -64,15 +64,15 @@ class SimpleTable(Gtk.VBox):
         label.set_markup("<b>%s</b>" % self.m_heading)
         self.pack_start(label, True, True, 0)
         for idx, (cell1, cell2) in enumerate(self.m_data):
-            table.attach(label_from_key(self.m_statistics, cell1), 1, 2, idx*2+1, idx*2+2,
+            table.attach(label_from_key(self.m_statistics, cell1), 1, 2, idx * 2 + 1, idx * 2 + 2,
                          xoptions=Gtk.AttachOptions.SHRINK, xpadding=2)
-            table.attach(Gtk.Label(label=cell2), 3, 4, idx*2+1, idx*2+2,
+            table.attach(Gtk.Label(label=cell2), 3, 4, idx * 2 + 1, idx * 2 + 2,
                          xoptions=Gtk.AttachOptions.SHRINK, xpadding=2)
         for idx in range(len(self.m_data) + 1):
-            table.attach(Gtk.HSeparator(), 0, 5, idx*2, idx*2+1, xoptions=Gtk.AttachOptions.FILL)
-        table.attach(Gtk.VSeparator(), 0, 1, 0, idx*2+2, xoptions=Gtk.AttachOptions.SHRINK)
-        table.attach(Gtk.VSeparator(), 2, 3, 0, idx*2+2, xoptions=Gtk.AttachOptions.SHRINK)
-        table.attach(Gtk.VSeparator(), 4, 5, 0, idx*2+2, xoptions=Gtk.AttachOptions.SHRINK)
+            table.attach(Gtk.HSeparator(), 0, 5, idx * 2, idx * 2 + 1, xoptions=Gtk.AttachOptions.FILL)
+        table.attach(Gtk.VSeparator(), 0, 1, 0, idx * 2 + 2, xoptions=Gtk.AttachOptions.SHRINK)
+        table.attach(Gtk.VSeparator(), 2, 3, 0, idx * 2 + 2, xoptions=Gtk.AttachOptions.SHRINK)
+        table.attach(Gtk.VSeparator(), 4, 5, 0, idx * 2 + 2, xoptions=Gtk.AttachOptions.SHRINK)
         self.pack_start(table, False, False, 0)
         self.show_all()
 
@@ -96,12 +96,12 @@ class MatrixTable(Gtk.VBox):
         frame.add(t)
         keys = st.get_keys(True)
         for x in range(len(keys)):
-            t.attach(Gtk.VSeparator(), x*2+1, x*2+2, 0, len(keys)*2)
-        for x in range(len(keys)-1):
-            t.attach(Gtk.HSeparator(), 0, len(keys)*2+1, x*2+1, x*2+2)
+            t.attach(Gtk.VSeparator(), x * 2 + 1, x * 2 + 2, 0, len(keys) * 2)
+        for x in range(len(keys) - 1):
+            t.attach(Gtk.HSeparator(), 0, len(keys) * 2 + 1, x * 2 + 1, x * 2 + 2)
         for y, key in enumerate(keys):
             l = label_from_key(st, key)
-            t.attach(l, 0, 1, y*2, y*2+1, xpadding=gu.PAD)
+            t.attach(l, 0, 1, y * 2, y * 2 + 1, xpadding=gu.PAD)
             for x, skey in enumerate(keys):
                 try:
                     s = st_data[key][skey]
@@ -110,7 +110,7 @@ class MatrixTable(Gtk.VBox):
                 l = Gtk.Label(label=s)
                 if x == y:
                     l.set_name('BoldText')
-                t.attach(l, x*2+2, x*2+3, y*2, y*2+1, xpadding=gu.PAD)
+                t.attach(l, x * 2 + 2, x * 2 + 3, y * 2, y * 2 + 1, xpadding=gu.PAD)
         self.show_all()
 
 
@@ -134,24 +134,24 @@ class PercentagesTable(Gtk.Frame):
         # 7  +-----------------------------------------
         for k, l, x in (('session', _("Session"), 2), ('today', _("Today"), 5),
                      ('last7', _("Last 7 days"), 8), ('total', _("Total"), 11)):
-            table.attach(Gtk.Label(label=l), x, x+2, 0, 1,
+            table.attach(Gtk.Label(label=l), x, x + 2, 0, 1,
                          xpadding=gu.PAD_SMALL, ypadding=gu.PAD_SMALL)
             b = Gtk.VBox(False, 0)
-            table.attach(b, x, x+1, 6, 7)
-            self.boxdict[k+'percent'] = b
+            table.attach(b, x, x + 1, 6, 7)
+            self.boxdict[k + 'percent'] = b
             b = Gtk.VBox(False, 0)
-            table.attach(b, x+1, x+2, 6, 7)
-            self.boxdict[k+'count'] = b
+            table.attach(b, x + 1, x + 2, 6, 7)
+            self.boxdict[k + 'count'] = b
             l = Gtk.Label()
-            table.attach(l, x, x+1, 4, 5)
-            self.m_totals[k+'percent'] = l
+            table.attach(l, x, x + 1, 4, 5)
+            self.m_totals[k + 'percent'] = l
             l = Gtk.Label()
-            table.attach(l, x+1, x+2, 4, 5)
-            self.m_totals[k+'count'] = l
+            table.attach(l, x + 1, x + 2, 4, 5)
+            self.m_totals[k + 'count'] = l
         for x in (2, 5, 8, 11):
-            table.attach(Gtk.Label(label=_("Percent")), x, x+1, 1, 2,
+            table.attach(Gtk.Label(label=_("Percent")), x, x + 1, 1, 2,
                          xpadding=gu.PAD_SMALL, ypadding=gu.PAD_SMALL)
-            table.attach(Gtk.Label(label=_("Count")), x+1, x+2, 1, 2,
+            table.attach(Gtk.Label(label=_("Count")), x + 1, x + 2, 1, 2,
                          xpadding=gu.PAD_SMALL, ypadding=gu.PAD_SMALL)
         l = Gtk.Label(label=_("Total"))
         l.set_alignment(0.0, 0.5)
@@ -174,30 +174,30 @@ class PercentagesTable(Gtk.Frame):
             for o in box.get_children():
                 o.destroy()
         for sk, seconds in (('session', 0),
-                       ('today', 60*60*24),
-                       ('last7', 60*60*24*7),
+                       ('today', 60 * 60 * 24),
+                       ('last7', 60 * 60 * 24 * 7),
                        ('total', -1)):
             num_guess = statistics.get_num_guess(seconds)
             if num_guess == 0:
-                self.m_totals[sk+'percent'].set_text("-")
+                self.m_totals[sk + 'percent'].set_text("-")
             else:
-                self.m_totals[sk+'percent'].set_text("%.0f%%" %
+                self.m_totals[sk + 'percent'].set_text("%.0f%%" %
                    (statistics.get_num_correct(seconds) / num_guess * 100))
-            self.m_totals[sk+'count'].set_text(str(num_guess))
+            self.m_totals[sk + 'count'].set_text(str(num_guess))
         for k in statistics.get_keys(True):
             l = label_from_key(statistics, k)
             self.boxdict['keys'].pack_start(l, True, True, 0)
             for sk, seconds in (('session', 0),
-                       ('today', 60*60*24),
-                       ('last7', 60*60*24*7),
+                       ('today', 60 * 60 * 24),
+                       ('last7', 60 * 60 * 24 * 7),
                        ('total', -1)):
                 num_guess = statistics.get_num_guess_for_key(seconds, k)
                 if num_guess == 0:
-                    self.boxdict[sk+'percent'].pack_start(Gtk.Label("-"), True, True, 0)
+                    self.boxdict[sk + 'percent'].pack_start(Gtk.Label("-"), True, True, 0)
                 else:
-                    self.boxdict[sk+'percent'].pack_start(
+                    self.boxdict[sk + 'percent'].pack_start(
                         Gtk.Label("%.0f%%" % (statistics.get_num_correct_for_key(seconds, k) / num_guess * 100)), False, False, 0)
-                self.boxdict[sk+'count'].pack_start(Gtk.Label(str(num_guess)), True, True, 0)
+                self.boxdict[sk + 'count'].pack_start(Gtk.Label(str(num_guess)), True, True, 0)
         self.show_all()
 
 
@@ -278,8 +278,8 @@ class StatisticsViewer(Gtk.ScrolledWindow):
         if self.m_statistics.m_t.m_P.header.statistics_matrices == 'enabled':
             expander.set_expanded(True)
             for heading, seconds in ((_("Session"), 0),
-                                     (_("Today"), 60*60*24),
-                                     (_("Last 7 days"), 60*60*24*7),
+                                     (_("Today"), 60 * 60 * 24),
+                                     (_("Last 7 days"), 60 * 60 * 24 * 7),
                                      (_("Total"), -1)):
                 table = MatrixTable(heading,
                                     self.m_statistics.get_statistics(seconds),
@@ -297,8 +297,8 @@ class StatisticsViewer(Gtk.ScrolledWindow):
         self.update()
 
     def clear(self):
-        #UGH why cant we just destroy the children of g_tables??!!
-        #for c in self.g_tables.children():
+        # UGH why cant we just destroy the children of g_tables??!!
+        # for c in self.g_tables.children():
         #    c.destroy()
         self.g_tables.destroy()
         self.g_tables = Gtk.VBox(False, 0)

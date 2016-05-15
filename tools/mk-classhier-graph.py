@@ -83,7 +83,7 @@ class_re = re.compile("""
     (?P<parentlist>
     (.*?)  # The first parent
     (,(.*?))* # unknown number of more parents
-    )\))?:)""", re.VERBOSE)#(\(*?\))")
+    )\))?:)""", re.VERBOSE)  # (\(*?\))")
 
 db = ClassDb()
 
@@ -119,7 +119,7 @@ def do_file(fn):
                     continue
                 if p.startswith("Gtk."):
                     continue
-                mname = os.path.join(mod_split(modulename)[0], mod_split(p)[0])+".py"
+                mname = os.path.join(mod_split(modulename)[0], mod_split(p)[0]) + ".py"
                 if mod_split(p)[0] and not os.path.exists(mname):
                     print "DROPPING", p
                     continue

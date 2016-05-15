@@ -37,7 +37,7 @@ def parse_build_log():
                 print "Errors, probably from docbook:"
                 print "=============================="
                 stack = ['docbook']
-            if len(stack) < 2 or (len(stack) == 2 and stack[1]!= curlang):
+            if len(stack) < 2 or (len(stack) == 2 and stack[1] != curlang):
                 if len(stack) == 2 and stack[1] != curlang:
                     stack[1] = curlang
                 else:
@@ -97,16 +97,16 @@ def update_configure_ac(new_revid, version):
     s = f.read()
     f.close()
     m = re.search("REVISION_ID=\"(.*?)\"", s)
-    s = s[:m.start()+len("REVISION_ID=\"")] + new_revid + s[m.end()-1:]
+    s = s[:m.start() + len("REVISION_ID=\"")] + new_revid + s[m.end() - 1:]
     m = re.search("MAJOR_VERSION=.*?$", s, re.MULTILINE)
-    s = s[:m.start()+len("MAJOR_VERSION=")] + version.split(".")[0] + s[m.end():]
+    s = s[:m.start() + len("MAJOR_VERSION=")] + version.split(".")[0] + s[m.end():]
     m = re.search("MINOR_VERSION=.*?$", s, re.MULTILINE)
-    s = s[:m.start()+len("MINOR_VERSION=")] + version.split(".")[1] + s[m.end():]
+    s = s[:m.start() + len("MINOR_VERSION=")] + version.split(".")[1] + s[m.end():]
     m = re.search("PATCH_LEVEL=.*?$", s, re.MULTILINE)
-    s = s[:m.start()+len("PATCH_LEVEL=")] + ".".join(version.split(".")[2:]) + s[m.end():]
+    s = s[:m.start() + len("PATCH_LEVEL=")] + ".".join(version.split(".")[2:]) + s[m.end():]
 
     m = re.search("AC_INIT\(\[GNU Solfege\],\[.*?\]", s, re.MULTILINE)
-    s = s[:m.start()+len("AC_INIT([GNU Solfege],[")] + version + s[m.end()-1:]
+    s = s[:m.start() + len("AC_INIT([GNU Solfege],[")] + version + s[m.end() - 1:]
 
     f = open(os.path.join(distdir, "configure.ac"), "w")
     f.write(s)

@@ -190,7 +190,7 @@ class ProfileManagerBase(Gtk.Dialog):
                 try:
                     os.makedirs(pdir)
                     self.g_liststore.append((dlg.g_entry.get_text(),))
-                    self.g_tw.set_cursor((len(self.g_liststore)-1,))
+                    self.g_tw.set_cursor((len(self.g_liststore) - 1,))
                 except OSError as e:
                     gu.display_exception_message(e)
         dlg.destroy()

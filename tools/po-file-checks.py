@@ -56,7 +56,7 @@ class Entry(object):
         self.m_msgid = data['msgid']
         self.m_msgstr = data['msgstr']
         self.m_comment = data['comment']
-        if not "".join(self.m_msgstr):#self.m_msgstr == ['']:
+        if not "".join(self.m_msgstr):  # self.m_msgstr == ['']:
             self.m_status = 'untranslated'
         if not self.m_msgid:
             self.m_status = 'heading'
@@ -69,9 +69,9 @@ class Entry(object):
                 self.m_msgstr[idx] = '\n'
         self.m_msgstr_string = "".join(self.m_msgstr)
         #    translated = 'heading'
-        #if not "\n".join(retval['msgstr']):
+        # if not "\n".join(retval['msgstr']):
         #    translated = 'untranslated'
-        #return translated, obsolete, retval
+        # return translated, obsolete, retval
 
     def is_header(self):
         return not self.m_msgid

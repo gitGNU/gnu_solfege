@@ -113,7 +113,7 @@ class RhythmViewer(Gtk.Frame):
     def add_rhythm_element(self, i):
         assert len(self.m_data) <= self.m_num_notes
         if len(self.g_box.get_children()) >= self.m_num_notes:
-            self.g_box.get_children()[self.m_num_notes-1].destroy()
+            self.g_box.get_children()[self.m_num_notes - 1].destroy()
         vbox = Gtk.VBox()
         vbox.show()
 #        im = gu.create_rhythm_image(const.RHYTHMS[i])
@@ -131,7 +131,7 @@ class RhythmViewer(Gtk.Frame):
                 self.g_box.get_children()[-2].destroy()
                 self.g_face.destroy()
                 self.g_face = None
-            self.g_box.get_children()[len(self.m_data)-1].destroy()
+            self.g_box.get_children()[len(self.m_data) - 1].destroy()
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
             del self.m_data[-1]
 
@@ -267,7 +267,7 @@ class Gui(abstract.Gui, abstract_solmisation_addon.SolmisationAddOnGuiClass):
     def select_element_cb(self, button, element_num):
         super(Gui, self).select_element_cb(button, element_num)
         self.m_answer_buttons[element_num].set_sensitive(button.get_active())
-        #self.update_answer_buttons()
+        # self.update_answer_buttons()
 
     def on_backspace(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_SOLVED:

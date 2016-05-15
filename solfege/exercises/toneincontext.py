@@ -126,7 +126,7 @@ class Teacher(abstract.Teacher):
                 if not self.m_custom_mode:
                     self.m_statistics.add_wrong(self.m_tone, answer)
                 self.q_status = self.QSTATUS_WRONG
-            #if solfege.app.m_test_mode:
+            # if solfege.app.m_test_mode:
             #    self.maybe_auto_new_question()
 
     def give_up(self):
@@ -150,11 +150,11 @@ def fill_table(button_class, table):
     for p, x in ((0, 1), (1, 3), (3, 6), (4, 8), (5, 10)):
         b = button_class(labels[x])
         buttons[x] = b
-        table.attach(b, p*4+2, (p+1)*4+2, 0, 1)
+        table.attach(b, p * 4 + 2, (p + 1) * 4 + 2, 0, 1)
     for p, x in enumerate((0, 2, 4, 5, 7, 9, 11, 12)):
         b = button_class(labels[x])
         buttons[x] = b
-        table.attach(b, p*4, (p+1)*4, 1, 2)
+        table.attach(b, p * 4, (p + 1) * 4, 1, 2)
     return buttons
 
 
@@ -216,8 +216,8 @@ class Gui(abstract.Gui):
                 # If we are running in custom mode, then the user can
                 # select himself what intervals to practise. And then
                 # we have to reset the exercise.
-                #self.on_end_practise()
-                #self.on_start_practise()
+                # self.on_end_practise()
+                # self.on_start_practise()
                 self.cancel_question()
         self.add_watch('tones', _ff)
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
@@ -268,7 +268,7 @@ class Gui(abstract.Gui):
         super(Gui, self).on_start_practise()
         if self.m_t.m_custom_mode:
             self.g_tone_selector.show()
-            #self.g_random.show()
+            # self.g_random.show()
             self.g_tones_category.show()
             for w in self.g_cadences.get_children():
                 w.destroy()
@@ -288,7 +288,7 @@ class Gui(abstract.Gui):
             self.g_tone_selector.hide()
             self.g_tones_category.hide()
             self.g_cadences_category.hide()
-            #self.g_random.hide()
+            # self.g_random.hide()
         for key, button in list(self.g_buttons.items()):
             button.set_sensitive(False)
         self.set_bool('tone_in_cadence', self.m_t.m_P.header.tone_in_cadence)

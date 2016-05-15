@@ -98,7 +98,7 @@ class Gui(abstract.Gui):
                 raise
         s = r"\staff{"
         for n in self.m_t.m_question:
-            s =  s + " " + n
+            s = s + " " + n
         s = s + "}"
         self.g_music_displayer.display(s,
                                  self.get_int('config/feta_font_size=20'))

@@ -22,7 +22,7 @@ from solfege import cfg
 class Random(object):
 
     def __init__(self, choices):
-        #TODO add assert that all choices are unique
+        # TODO add assert that all choices are unique
         self.m_choices = choices
         self.m_choice_count = len(choices) * [0]
         # The number of randoms generated
@@ -44,7 +44,7 @@ class Random(object):
         maxval = 0.0
         for v in data:
             if v[1] != 0.0:
-                v[2] = 1/pow(v[1], cfg.get_float("app/randomness"))
+                v[2] = 1 / pow(v[1], cfg.get_float("app/randomness"))
                 maxval = max(maxval, v[2])
         # Give the questions that has not been asked any times, twice as
         # big chance to be asked as the question that has been asked

@@ -62,7 +62,7 @@ class TestLearningTree(unittest.TestCase):
         p = Page('noname', [
             Column(
                 LinkList('heading', [
-                    'id1', 'id2', 'id3',]),
+                    'id1', 'id2', 'id3', ]),
             ),
         ])
         self.assertEqual(list(p.iterate_filenames()),
@@ -75,7 +75,7 @@ class TestLearningTree(unittest.TestCase):
         p = Page('noname', [
             Column(
                 LinkList('heading', [
-                    'id1', 'id2', 'id3',]),
+                    'id1', 'id2', 'id3', ]),
             ),
         ])
         d = p.get_use_dict()
@@ -87,7 +87,7 @@ class TestLearningTree(unittest.TestCase):
         p = Page('noname', [
             Column(
                 LinkList('heading', [
-                    'id1', 'id2', 'id3',]),
+                    'id1', 'id2', 'id3', ]),
             ),
         ])
         p[0].append(LinkList('heading2', ['id1', 'id5']))

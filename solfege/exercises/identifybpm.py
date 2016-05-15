@@ -79,7 +79,7 @@ class Teacher(abstract.Teacher):
         # Lets play the tempo between 20 and 40 seconds. We cannot let
         # it play a static number of seconds, because then the user can
         # count how many beats and find out how fast it plays.
-        for n in range(int(self.m_question / (random.random()*1.5 +1.5))):
+        for n in range(int(self.m_question / (random.random() * 1.5 + 1.5))):
             self.m_question_track.note(4, cfg.get_int("config/rhythm_perc"))
         self.q_status = self.QSTATUS_NEW
         return self.OK

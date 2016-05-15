@@ -79,7 +79,7 @@ class Teacher(abstract.Teacher):
         return True
 
     def get_music_string(self):
-        return r"\staff{ \clef %(clef)s \stemUp %(low)s %(high)s"% {
+        return r"\staff{ \clef %(clef)s \stemUp %(low)s %(high)s" % {
             'clef': self.m_P.header.clef,
             'high': (self.m_low_pitch + self.m_interval).get_octave_notename(),
             'low': self.m_low_pitch.get_octave_notename(),

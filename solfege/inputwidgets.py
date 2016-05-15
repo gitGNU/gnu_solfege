@@ -148,7 +148,7 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
         context.save()
         for oct in range(self.m_num_octaves):
             for n in (0, 1, 3, 4, 5):
-                context.rectangle(pos_x + oct*7*self.m_key_w + (n+1-self.m_black_w/2) * self.m_key_w,
+                context.rectangle(pos_x + oct * 7 * self.m_key_w + (n + 1 - self.m_black_w / 2) * self.m_key_w,
                             pos_y,
                             self.m_key_w * self.m_black_w, self.m_black_h)
                 context.set_source_rgb(0, 0, 0)
@@ -160,7 +160,7 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
             acc = n.m_accidental_i
             step = n.steps() - self.m_lowest_c.steps()
             if acc == 0:
-                context.arc(pos_x + (step + 0.5) * self.m_key_w, self.m_white_h-(self.m_white_h - self.m_black_h) / 2,
+                context.arc(pos_x + (step + 0.5) * self.m_key_w, self.m_white_h - (self.m_white_h - self.m_black_h) / 2,
                             self.m_key_w * 0.35, 0, 2 * math.pi)
             else:
                 context.arc(pos_x + (step + 0.5 + 0.5 * acc) * self.m_key_w, self.m_black_h * 0.5,
@@ -189,7 +189,7 @@ class PianoOctaveWithAccelName(PianoKeyboard):
         for idx, n in enumerate((0, 2, 4, 5, 7, 9, 11)):
             context.new_path()
             text_w = context.text_extents(self.m_keys[n])[4]
-            context.move_to(self.m_pos_x + idx*self.m_key_w + self.m_key_w / 2 - text_w / 2, self.m_black_h + (self.m_white_h - self.m_black_h) / 2 + text_h / 2)
+            context.move_to(self.m_pos_x + idx * self.m_key_w + self.m_key_w / 2 - text_w / 2, self.m_black_h + (self.m_white_h - self.m_black_h) / 2 + text_h / 2)
             context.text_path(self.m_keys[n])
             context.fill()
             context.stroke()
@@ -201,7 +201,7 @@ class PianoOctaveWithAccelName(PianoKeyboard):
             if n:
                 context.new_path()
                 text_w = context.text_extents(self.m_keys[n])[4]
-                context.move_to(self.m_pos_x + (idx + 1)*self.m_key_w - text_w/2, self.m_black_h * 0.8)
+                context.move_to(self.m_pos_x + (idx + 1) * self.m_key_w - text_w / 2, self.m_black_h * 0.8)
                 context.text_path(self.m_keys[n])
                 context.set_source_rgb(1, 1, 1)
                 context.fill()
@@ -256,7 +256,7 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         if self.get_bool('disable_unused_intervals'):
             self.set_sensitivity(self.get_sensitive_buttons())
         else:
-            self.set_sensitivity(list(range(mpd.interval.max_interval+1)))
+            self.set_sensitivity(list(range(mpd.interval.max_interval + 1)))
 
     def set_sensitivity(self, make_active):
         for x in range(1, mpd.interval.max_interval + 1):
@@ -270,7 +270,7 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         txt = mpd.Interval.new_from_int(nr).get_name()
         self.m_buttons[nr] = b = Gtk.Button(txt)
         b.connect('clicked',
-                  lambda s, nr=nr, self=self:self.m_callback(1, nr, None))
+                  lambda s, nr=nr, self=self: self.m_callback(1, nr, None))
         b.connect('button-press-event', self._abc, nr)
         b.set_vexpand(True)
         b.set_hexpand(True)
@@ -373,18 +373,18 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         for x in self.m_fretdist:
             tmp = tmp + x
             self.m_xlist.append(tmp)
-        tmp = self.m_neckborder + self.m_stringdist/2
+        tmp = self.m_neckborder + self.m_stringdist / 2
         self.m_ylist = [tmp]
-        for y in range(self.m_numstring-1):
+        for y in range(self.m_numstring - 1):
             tmp = tmp + self.m_stringdist
             self.m_ylist.append(tmp)
         for x in self.m_fretdist:
             self.m_neckl = self.m_neckl + x
         self.m_neckl = self.m_neckl + 2
         self.m_neckw = self.m_neckborder \
-                       + (self.m_numstring-1)*self.m_stringdist \
+                       + (self.m_numstring - 1) * self.m_stringdist \
                        + 1 + self.m_neckborder
-        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
+        self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.POINTER_MOTION_MASK | Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
         self.connect('draw', self.draw)
         self.m_mouse_pos = None, None
         self.connect('motion-notify-event', self.on_motion_notify_event)
@@ -421,8 +421,8 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         self.m_posy = int((self.get_allocated_height() - self.m_neckw) / 2) + 0.5
         context.set_line_width(1.2)
         context.save()
-        LG = 0.75 # white grey
-        DG = 0.66 # dark grey
+        LG = 0.75  # white grey
+        DG = 0.66  # dark grey
         # fret board
         context.rectangle(self.m_posx, self.m_posy, self.m_neckl, self.m_neckw)
         context.fill_preserve()
@@ -449,7 +449,7 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         context.stroke()
         context.restore()
         #
-        #FRETS
+        # FRETS
         context.save()
         for w in self.m_fretdist[1:]:
             px = px + w
@@ -506,7 +506,7 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
             # The white dots on a guitar
             context.save()
             for x, y in ((3, 2), (5, 2), (7, 2), (9, 2), (12, 1), (12, 3)):
-                context.arc(self.m_posx + self.m_xlist[x] - self.m_fretdist[x]/2,
+                context.arc(self.m_posx + self.m_xlist[x] - self.m_fretdist[x] / 2,
                             self.m_posy + self.m_ylist[y],
                             4.5, 0, math.pi * 2)
                 context.set_source_rgb(1, 1, 1)
@@ -519,8 +519,8 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
             for idx in range(len(self.m_stringtuning)):
                 if self.m_stringtuning[idx] <= note < self.m_stringtuning[idx] + len(self.m_fretdist):
                     x = note - self.m_stringtuning[idx]
-                    context.arc(self.m_posx + self.m_xlist[x]-self.m_fretdist[x]/2,
-                        self.m_posy + self.m_ylist[idx]-self.m_stringdist/2,
+                    context.arc(self.m_posx + self.m_xlist[x] - self.m_fretdist[x] / 2,
+                        self.m_posy + self.m_ylist[idx] - self.m_stringdist / 2,
                         7, 0, math.pi * 2)
                     context.set_source_rgb(*self.mark_color[color])
                     context.fill_preserve()
@@ -530,8 +530,8 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         # Dot following mouse cursor
         if self.m_mouse_pos != (None, None):
             context.save()
-            context.arc(self.m_posx + self.m_xlist[self.m_mouse_pos[0]]-self.m_fretdist[self.m_mouse_pos[0]]/2,
-                        self.m_posy + self.m_ylist[self.m_mouse_pos[1]]-self.m_stringdist/2,
+            context.arc(self.m_posx + self.m_xlist[self.m_mouse_pos[0]] - self.m_fretdist[self.m_mouse_pos[0]] / 2,
+                        self.m_posy + self.m_ylist[self.m_mouse_pos[1]] - self.m_stringdist / 2,
                         5, 0, math.pi * 2)
             context.set_source_rgb(1, 0, 0)
             context.fill_preserve()
@@ -605,12 +605,12 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
         Returns (Col. row)
         """
         for y in range(self.m_by):
-          if self.m_bb + self.m_posy + y * self.m_button_ydist - self.m_button_radius < event.y < self.m_bb + self.m_posy + (y+1) * self.m_button_ydist - self.m_button_radius :
+          if self.m_bb + self.m_posy + y * self.m_button_ydist - self.m_button_radius < event.y < self.m_bb + self.m_posy + (y + 1) * self.m_button_ydist - self.m_button_radius:
             for x in range(self.m_bx):
                 # button center
                 cx = self.m_bb + self.m_posx + x * self.m_button_xdist + (y + 1) % 2 * self.m_button_radius
                 cy = self.m_bb + self.m_posy + y * self.m_button_ydist
-                if math.sqrt((event.x-cx)**2+(event.y-cy)**2)<self.m_button_radius:
+                if math.sqrt((event.x - cx)**2 + (event.y - cy)**2) < self.m_button_radius:
                     return x, y
         return None, None
 
@@ -637,8 +637,8 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
         context.save()
         context.move_to(posx, posy)
         for x, y in ((w, 0),
-                     (0, self.m_button_ydist * by), # right btn
-                     (-self.m_button_xdist, self.m_button_ydist), #right btn
+                     (0, self.m_button_ydist * by),  # right btn
+                     (-self.m_button_xdist, self.m_button_ydist),  # right btn
                      (-w + self.m_button_xdist * 2, 0),
                      (-self.m_button_xdist, -self.m_button_ydist),
                      (0, -self.m_button_ydist * by),
@@ -654,7 +654,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
         context.save()
         for row_idx, row in enumerate(self.m_notenames):
             for col_idx, notename in enumerate(row):
-                context.arc(bb + posx + col_idx * self.m_button_xdist + (row_idx+1) % 2 * self.m_button_radius,
+                context.arc(bb + posx + col_idx * self.m_button_xdist + (row_idx + 1) % 2 * self.m_button_radius,
                             bb + posy + row_idx * self.m_button_ydist,
                             self.m_button_radius, 0, 2 * math.pi)
                 if notename[1:][:2] in ('is', 'es'):
@@ -674,7 +674,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
                     mark_idx = -1
 
                 if mark_idx != -1:
-                    context.arc(bb + posx + col_idx * self.m_button_xdist + (row_idx+1) % 2 * self.m_button_radius,
+                    context.arc(bb + posx + col_idx * self.m_button_xdist + (row_idx + 1) % 2 * self.m_button_radius,
                             bb + posy + row_idx * self.m_button_ydist,
                             5, 0, 2 * math.pi)
                     context.set_source_rgb(*self.mark_color[self.m_marks[mark_idx][1]])

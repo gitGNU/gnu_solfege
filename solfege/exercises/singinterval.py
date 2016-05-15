@@ -210,7 +210,7 @@ class Gui(abstract.Gui):
                 return
         self._new_question()
 
-    def new_question(self, widget=None):#called by 'new last was correct' and from
+    def new_question(self, widget=None):  # called by 'new last was correct' and from
                  # teacher when we get a new question automatically.
         if self.m_t.q_status == self.QSTATUS_NEW:
             self.m_t.guessed_correct()

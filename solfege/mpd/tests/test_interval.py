@@ -20,20 +20,20 @@ class TestInterval(unittest.TestCase):
                 ('p8', 0, 1, 0, 12, 8),
                 ('d8', 0, 1, -1, 11, 8),
                 ('a8', 0, 1, 1, 13, 8),
-                ('p11', 3, 1, 0, 17, 11), # octave + fourth
-                ('p12', 4, 1, 0, 19, 12), # octave + fifth
-                ('p15', 0, 2, 0, 24, 15), # 2*octave
-                ('d15', 0, 2, -1, 23, 15), # 2*octave
-                ('a15', 0, 2, 1, 25, 15), # 2*octave
+                ('p11', 3, 1, 0, 17, 11),  # octave + fourth
+                ('p12', 4, 1, 0, 19, 12),  # octave + fifth
+                ('p15', 0, 2, 0, 24, 15),  # 2*octave
+                ('d15', 0, 2, -1, 23, 15),  # 2*octave
+                ('a15', 0, 2, 1, 25, 15),  # 2*octave
                 ('m2', 1, 0, -1, 1, 2),
                 ('M2', 1, 0, 0, 2, 2),
                 ('M3', 2, 0, 0, 4, 3),
                 ('M6', 5, 0, 0, 9, 6),
                 ('M9', 1, 1, 0, 14, 9),
-                ('m10', 2, 1, -1, 15, 10), # tenth
-                ('M13', 5, 1, 0, 21, 13), # octave + sixth
-                ('m14', 6, 1, -1, 22, 14), # octave + seventh
-                ('M16', 1, 2, 0, 26, 16), # 2*octave + second
+                ('m10', 2, 1, -1, 15, 10),  # tenth
+                ('M13', 5, 1, 0, 21, 13),  # octave + sixth
+                ('m14', 6, 1, -1, 22, 14),  # octave + seventh
+                ('M16', 1, 2, 0, 26, 16),  # 2*octave + second
                 ):
             n = Interval(s)
             self.assertEqual((n.m_interval, n.m_octave, n.m_mod), (a, b, c))
@@ -44,18 +44,18 @@ class TestInterval(unittest.TestCase):
     def test_addition(self):
         a = MusicalPitch.new_from_notename("c'")
         b = Interval("m2")
-        self.assertEqual((a+b).get_octave_notename(), "des'")
+        self.assertEqual((a + b).get_octave_notename(), "des'")
 
     def test_add_d5(self):
         a = MusicalPitch.new_from_notename("b")
         b = Interval("-d5")
-        self.assertEqual((a+b).get_octave_notename(), "eis")
+        self.assertEqual((a + b).get_octave_notename(), "eis")
         a = MusicalPitch.new_from_notename("bis")
         b = Interval("-d5")
-        self.assertEqual((a+b).get_octave_notename(), "eisis")
+        self.assertEqual((a + b).get_octave_notename(), "eisis")
         a = MusicalPitch.new_from_notename("bisis")
         b = Interval("-d5")
-        self.assertEqual((a+b).get_octave_notename(), "fisis")
+        self.assertEqual((a + b).get_octave_notename(), "fisis")
 
     def test_new_from_int(self):
         for x in range(-12, 12):

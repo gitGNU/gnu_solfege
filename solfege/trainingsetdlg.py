@@ -77,11 +77,11 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         self.g_named_tracks = Gtk.CheckButton(_("Name files by questions"))
         hbox.pack_start(self.g_named_tracks, False, False, 0)
         self.g_liststore = Gtk.ListStore(
-            GObject.TYPE_STRING, # filename
-            GObject.TYPE_STRING, # visible exercise name
-            GObject.TYPE_INT, # count
-            GObject.TYPE_INT, # repeat
-            GObject.TYPE_INT) # delay
+            GObject.TYPE_STRING,  # filename
+            GObject.TYPE_STRING,  # visible exercise name
+            GObject.TYPE_INT,  # count
+            GObject.TYPE_INT,  # repeat
+            GObject.TYPE_INT)  # delay
         self.g_treeview = Gtk.TreeView(self.g_liststore)
         self.g_treeview.set_size_request(400, 100)
         self.g_treeview.connect('cursor-changed',
@@ -153,7 +153,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
            if self.g_liststore.remove(iter):
                self.g_treeview.set_cursor(self.g_liststore.get_path(iter))
            elif path[0] > 0:
-               self.g_treeview.set_cursor((path[0]-1,))
+               self.g_treeview.set_cursor((path[0] - 1,))
            else:
                self.g_ui_manager.get_widget("/ExportToolbar/Remove").set_sensitive(False)
 

@@ -23,7 +23,7 @@ from solfege.mpd import const
 from solfege.mpd import elems
 
 START_NOTE = 'start-note'
-STOP_NOTE  = 'stop-note'
+STOP_NOTE = 'stop-note'
 
 
 class MidiPerformer(object):
@@ -100,7 +100,7 @@ class MidiPerformer(object):
         for k in keys:
             delta = None
             if k != Rat(0, 1):
-                delta = k-prev_time
+                delta = k - prev_time
             prev_time = k
             for e in D[k]:
                 if e[1] == START_NOTE:

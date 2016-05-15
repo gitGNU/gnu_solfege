@@ -457,8 +457,8 @@ class TestMusic(MObjTest):
 
     def test_play_slowly(self):
         question = self.p.m_questions[0]
-        #test.py TestMusic viser at det ikke blir generert riktig instrument
-        #for ovelser som progressions-2 (harmonicprogressiondictation)
+        # test.py TestMusic viser at det ikke blir generert riktig instrument
+        # for ovelser som progressions-2 (harmonicprogressiondictation)
         question['music'].play_slowly(self.p, question)
         self.assertEqual(soundcard.synth.flush_testdata(1),
             "t30/4 p0:0 v0:100 n0:72 n0:64 n0:48 d1/4 o72 o64 o48")
@@ -893,7 +893,7 @@ class TestSatb(MObjTest):
             "\\addvoice{ \\stemDown <c>}")
         # FIXME Satb only works if the music object is the current selected
         # question. Can we get around this?
-        self.p._idx  = 1
+        self.p._idx = 1
         self.assertEqual(self.p.m_questions[1]['music'].get_mpd_music_string(self.p),
             "\\staff{ \\key aes \\major\\stemUp <c''> }\n" \
             "\\addvoice{ \\stemDown <as'> }\n" \
@@ -1123,7 +1123,7 @@ class TestLessonfileQuestion(MObjTest, I18nSetup):
         self.assertEqual(self.p.m_questions[0].name.cval, "untranslated")
         self.assertEqual(self.p.m_questions[1].name, "dur")
         self.assertEqual(self.p.m_questions[1].name.cval, "major")
-        self.assertRaises(AttributeError, lambda : self.p.m_questions[2].name)
+        self.assertRaises(AttributeError, lambda: self.p.m_questions[2].name)
 
     def test_setattr(self):
         q = dataparser.Question()

@@ -19,19 +19,19 @@ s.seq_start_timer()
 #s.seq_start_note(devnum, chan, 60, 90)
 #s.seq_stop_note(devnum, chan, 60, 90)
 
-#for i in range(500):
+# for i in range(500):
 #        s.seq_start_note(devnum, chan, 60 + i % 10, 90)
 #        s.seq_delta_time(25)
 #        s.seq_stop_note(devnum, chan, 60 + i % 10, 90)
 s.seq_set_patch(0, 0, 63)
 s.seq_set_patch(0, 1, 63)
 for i in range(500):
-        s.seq_start_note(devnum, 0, 60 + (i*2) % 10, 90)
+        s.seq_start_note(devnum, 0, 60 + (i * 2) % 10, 90)
         s.seq_delta_time(25)
-        s.seq_stop_note(devnum, 0, 60 + (i*2) % 10, 90)
-        s.seq_start_note(devnum, 1, 60 + (i*2) % 10 + 1, 90)
+        s.seq_stop_note(devnum, 0, 60 + (i * 2) % 10, 90)
+        s.seq_start_note(devnum, 1, 60 + (i * 2) % 10 + 1, 90)
         s.seq_delta_time(25)
-        s.seq_stop_note(devnum, 1, 60 + (i*2) % 10 + 1, 90)
+        s.seq_stop_note(devnum, 1, 60 + (i * 2) % 10 + 1, 90)
 
 
 s.seqbuf_dump()

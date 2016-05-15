@@ -72,7 +72,7 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
                 def remove_timeout(self=self):
                     self.m_timeout_handle = None
                     self.g_view.new_question()
-                self.m_timeout_handle = GObject.timeout_add(int(self.get_float('seconds_before_new_question')*1000),  remove_timeout)
+                self.m_timeout_handle = GObject.timeout_add(int(self.get_float('seconds_before_new_question') * 1000), remove_timeout)
 
     def end_practise(self):
         if self.m_timeout_handle:
@@ -223,7 +223,7 @@ class MelodicIntervalTeacher(Teacher):
             try:
                 try_make_question()
             except self.ConfigureException as e:
-                if counter == max_try -1:
+                if counter == max_try - 1:
                     raise
                 else:
                     continue
@@ -656,7 +656,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             else:
                 self.g_statview.set_sensitive(True)
                 self.g_statview.set_tooltip_text("")
-        except AttributeError: # not all exercises has g_statview
+        except AttributeError:  # not all exercises has g_statview
             pass
 
     def on_key_press_event(self, widget, event):
@@ -669,7 +669,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
 
     def keymatch(self, event, cfname):
         a, b = gu.parse_key_string(self.get_string(cfname))
-        return ((event.get_state() & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.MOD1_MASK)) == a) and (event.keyval == b)
+        return ((event.get_state() & (Gdk.ModifierType.CONTROL_MASK | Gdk.ModifierType.SHIFT_MASK | Gdk.ModifierType.MOD1_MASK)) == a) and (event.keyval == b)
 
     def setup_statisticsviewer(self, viewclass, heading):
         self.g_statview = viewclass(self.m_t.m_statistics, heading)
@@ -713,7 +713,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         m = gu.ExceptionDialog(exception)
         idx = self.m_t.m_P._idx
         if idx is not None:
-            m.add_text(_('Please check question number %(idx)i in the lesson file "%(lf)s".') % {'idx': self.m_t.m_P._idx+1, 'lf': self.m_t.m_P.m_filename})
+            m.add_text(_('Please check question number %(idx)i in the lesson file "%(lf)s".') % {'idx': self.m_t.m_P._idx + 1, 'lf': self.m_t.m_P.m_filename})
         if 'm_nonwrapped_text' in dir(exception):
             m.add_nonwrapped_text(exception.m_nonwrapped_text)
         if 'm_mpd_badcode' in dir(exception) and exception.m_mpd_badcode:
@@ -913,7 +913,7 @@ class IntervalGui(Gui):
             self.g_scaletype.set_sensitive(checkbutton.get_active())
         check = gu.nCheckButton(self.m_exname, 'lock-to-key',
             _("Lock intervals to key"),
-            callback = toggle_lock_to_key_sensitivity)
+            callback=toggle_lock_to_key_sensitivity)
         check.props.halign = Gtk.Align.END
         self.g_notename = gu.nComboBox(self.m_exname, 'lock-to-key-note',
             mpd.MusicalPitch.new_from_int(60).get_user_notename(),
@@ -968,7 +968,7 @@ class IntervalGui(Gui):
                 'minor9', 'major9', 'minor10', 'major10']
         self.m_key_bindings = {}
         for idx in range(len(keys)):
-            self.m_key_bindings['interval_input/'+keys[idx]] = lambda idx=idx, self=self: self.click_on_interval(self.keyboard_accel, idx+1, None)
+            self.m_key_bindings['interval_input/' + keys[idx]] = lambda idx=idx, self=self: self.click_on_interval(self.keyboard_accel, idx + 1, None)
 
     def repeat_question(self, *w):
         self.m_t.play_question()

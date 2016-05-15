@@ -9,7 +9,7 @@ cfg.initialise("default.config", None, filesystem.rcfile())
 from solfege import soundcard
 from solfege.mpd import Track
 
-## This works nice with ALSA and OSS emulation with SB Live card:
+# This works nice with ALSA and OSS emulation with SB Live card:
 soundcard.initialise_external_midiplayer()
 #soundcard.initialise_devicefile("/dev/sequencer2", 2)
 
@@ -50,4 +50,4 @@ soundcard.synth.play_track(t)
 import sys
 print "press <enter>"
 sys.stdin.readline()
-#soundcard.synth.close()
+# soundcard.synth.close()

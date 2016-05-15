@@ -113,7 +113,7 @@ ________________________________________________________________________________
     logwin.write("Or start solfege this way:\n")
     logwin.write("$ PYTHONPATH=%s solfege\n" % os.path.join(pdir, "pyalsa-%s" % pyalsa_ver))
     logwin.write("\nOr install it so that it is found automatically:")
-    logwin.write(("\n$ cd %(pdir)s/pyalsa-" % locals())+pyalsa_ver)
+    logwin.write(("\n$ cd %(pdir)s/pyalsa-" % locals()) + pyalsa_ver)
     logwin.write("\n$ sudo python setup.py install")
     logwin.write("\n\nOr if you don't have sudo setup:")
     logwin.write('\n$ su -c "python setup.py install"')

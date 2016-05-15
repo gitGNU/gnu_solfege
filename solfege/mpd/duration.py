@@ -54,7 +54,7 @@ class Duration:
         m = Duration.tre.match(string)
         if not m:
             raise Duration.BadStringException(string)
-        return Duration(int(m.groups()[0]),  len(m.groups()[1]))
+        return Duration(int(m.groups()[0]), len(m.groups()[1]))
 
     def __lt__(self, B):
         """

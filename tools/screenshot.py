@@ -29,9 +29,9 @@ def do_file(fn, width):
     #x, y = get_image_dim(fn)
     run("pngnq -n 16 -f %s" % fn)
     run("mv %s-nq8.png %s" % (f, fn))
-    #if not width:
+    # if not width:
     #    width = 510
-    #if x > width:
+    # if x > width:
     #    run("convert -scale %i %s %s-resized.png" % (width, fn, f))
     #    run("mv %s-resized.png %s" % (f, fn))
     #run("pngquant -nofs 8 %s" % fn)

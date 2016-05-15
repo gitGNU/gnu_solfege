@@ -109,23 +109,23 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
                 channel, note, vel = e[1:4]
                 voice = self.alloc_voice(channel, note)
                 if voice is not None:
-                    #FIXME ugly hack for percussion. This will break if
+                    # FIXME ugly hack for percussion. This will break if
                     # we play polyphonic music with very many voices
-                    if channel == 9:#voice == 31:
+                    if channel == 9:  # voice == 31:
                         voice = 9
                     solfege_c_midi.seq_start_note(self.m_devnum, voice, note, vel)
             elif e[0] == midieventstream.NOTE_OFF:
                 channel, note, vel = e[1:4]
                 voice = self.free_voice(channel, note)
                 if voice is not None:
-                    #FIXME, see 10 lines up
-                    if channel == 9:#voice == 31:
+                    # FIXME, see 10 lines up
+                    if channel == 9:  # voice == 31:
                         voice = 9
                     solfege_c_midi.seq_stop_note(self.m_devnum, voice, note, vel)
             elif e[0] == midieventstream.NOTELEN_TIME:
                 # 96 is a const, also used in soundcard.initialize that
                 # I don't understand.
-                solfege_c_midi.seq_delta_time(int(int(96*e[1]) * 60.0 * self.__tempo[1] / self.__tempo[0]))
+                solfege_c_midi.seq_delta_time(int(int(96 * e[1]) * 60.0 * self.__tempo[1] / self.__tempo[0]))
             elif e[0] == midieventstream.SET_PATCH:
                 self.set_patch(e[1], e[2])
             elif e[0] == midieventstream.BENDER:

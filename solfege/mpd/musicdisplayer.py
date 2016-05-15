@@ -38,7 +38,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
 
         self.add_with_viewport(self.g_d)
         self.g_d.connect("draw", self.on_draw)
-        self.g_d.add_events(Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK|Gdk.EventMask.POINTER_MOTION_MASK)
+        self.g_d.add_events(Gdk.EventMask.EXPOSURE_MASK | Gdk.EventMask.BUTTON_RELEASE_MASK | Gdk.EventMask.BUTTON_PRESS_MASK | Gdk.EventMask.POINTER_MOTION_MASK)
         self.g_d.connect("button_press_event", self.on_button_press_event)
 
         self.m_width = self.m_height = 0
@@ -53,7 +53,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
             self.m_engravers = engravers.ScoreContext(sc).m_contexts
         self.g_d.queue_draw()
         dim = engravers.dimentions[20]
-        self.set_size_request(self.get_size_request()[0], numstaff*dim.staff_spacing+dim.first_staff_ypos)
+        self.set_size_request(self.get_size_request()[0], numstaff * dim.staff_spacing + dim.first_staff_ypos)
 
     def display(self, music, fontsize, last_timepos=None):
         """Exception handling should be done by the caller."""
@@ -76,17 +76,17 @@ class MusicDisplayer(Gtk.ScrolledWindow):
                     self.m_width = max(self.m_width, max([e.m_xpos for e in eng if not isinstance(e, (engravers.BeamEngraver, engravers.TupletEngraver, engravers.TieEngraver))]))
                     if not isinstance(eng[-1], engravers.BarlineEngraver):
                         self.m_width += 20
-            self.m_height = len(self.m_engravers)*dim.staff_spacing+dim.first_staff_ypos
+            self.m_height = len(self.m_engravers) * dim.staff_spacing + dim.first_staff_ypos
         else:
             # We get here if we try to display a score with no staffs.
             self.m_width = 100
             self.m_height = dim.staff_spacing + dim.first_staff_ypos
         self.set_size_request(self.get_size_request()[0], self.m_height)
-        self.g_d.set_size_request(self.m_width, self.m_height-4)
+        self.g_d.set_size_request(self.m_width, self.m_height - 4)
         self.g_d.queue_draw()
 
     def add_clickable_region(self, x, y, w, h, midi_int):
-        self.m_clickables.append({'x':x, 'y':y, 'w':w, 'h':h,
+        self.m_clickables.append({'x': x, 'y': y, 'w': w, 'h': h,
                                   'midi_int': midi_int})
 
     def on_button_press_event(self, arg1, event):
@@ -112,7 +112,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
         ct.set_line_width(1.0)
         for staff in self.m_engravers:
             if staff.m_label:
-                ct.select_font_face("Sans 12") #FIXME font selection dont work
+                ct.select_font_face("Sans 12")  # FIXME font selection dont work
                 ct.move_to(5, staff_centrum - engravers.dim20.linespacing * 6)
                 ct.show_text(staff.m_label)
                 ct.stroke()

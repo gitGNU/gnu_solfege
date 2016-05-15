@@ -46,7 +46,7 @@ def presetup(app_defaults_filename, system_filename, user_filename):
     except cfg.CfgParseException as e:
         i18n.setup(".")
         a, b = os.path.split(user_filename)
-        renamed_fn = os.path.join(a, "BAD-"+b)
+        renamed_fn = os.path.join(a, "BAD-" + b)
         m = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL, Gtk.MessageType.ERROR,
                 Gtk.ButtonsType.NONE,
                 _("Parsing %s failed") % filesystem.rcfile())

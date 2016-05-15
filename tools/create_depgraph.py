@@ -81,7 +81,7 @@ def name_of_imported(info, importname):
     """
     if "." not in importname:
         return "%s.%s" % (info.m_location, importname)
-    else:#if importname.count(".") == 1:
+    else:  # if importname.count(".") == 1:
         package, modulename = importname.split(".")
         assert package in solfege_modules
         return importname
@@ -241,4 +241,4 @@ if options.do_all:
     dot.main([])
     subprocess.call(('dot', '-T', 'png', '-o', 'classhier.png', 'ut.dots'))
     subprocess.call(('eog', 'classhier.png'))
-    #os.remove('ut.dots')
+    # os.remove('ut.dots')

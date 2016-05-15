@@ -128,27 +128,27 @@ class NoQuestionsConfiguredException(LessonfileException):
 # The keys in the dict say how many steps up or down in the
 # circle of fifths we go if we transpose.
 _keys_to_interval = {
-              -10: '-M6', #c -> eses
-               -9: '-a2', #c -> beses
-               -8: '-a5', #c -> fes
-               -7: '-a1', #c -> ces
-               -6: '-a4', #c -> ges
-               -5: 'm2', # c -> des
-               -4: '-M3',# c -> as
-               -3: 'm3', # c -> es
-               -2: '-M2', # c -> bes
-               -1: 'p4', # c -> f
+              -10: '-M6',  # c -> eses
+               -9: '-a2',  # c -> beses
+               -8: '-a5',  # c -> fes
+               -7: '-a1',  # c -> ces
+               -6: '-a4',  # c -> ges
+               -5: 'm2',  # c -> des
+               -4: '-M3',  # c -> as
+               -3: 'm3',  # c -> es
+               -2: '-M2',  # c -> bes
+               -1: 'p4',  # c -> f
                 0: 'p1',
-                1: '-p4', # c -> g,
-                2: 'M2', # c -> d
-                3: '-m3',# c -> a
-                4: 'M3', # c -> e
-                5: '-m2', # c -> b
-                6: 'a4', # c -> fis
-                7: 'a1', #c -> cis
-                8: 'a5', # c -> gis
-                9: 'a2', # c -> dis
-                10: 'M6', # c -> ais
+                1: '-p4',  # c -> g,
+                2: 'M2',  # c -> d
+                3: '-m3',  # c -> a
+                4: 'M3',  # c -> e
+                5: '-m2',  # c -> b
+                6: 'a4',  # c -> fis
+                7: 'a1',  # c -> cis
+                8: 'a5',  # c -> gis
+                9: 'a2',  # c -> dis
+                10: 'M6',  # c -> ais
             }
 
 
@@ -240,7 +240,7 @@ def rnc_markup_tokenizer(s):
                           (?P<p2>[^\d\s-]*)
                           (?P<p3>[^\s-]*)
                           (?P<sep>(\s*-\s*|\s*))""",
-                       re.VERBOSE|re.UNICODE)
+                       re.VERBOSE | re.UNICODE)
     i = 0
     retval = []
     while i < len(s):
@@ -415,7 +415,7 @@ class MpdParsable(MusicBaseClass):
     def _mpd_err_context(self, exception, lessonfile_ref):
         m = self.get_mpd_music_string(lessonfile_ref)
         v = m.split("\n")
-        v = textwrap.wrap("Bad input to the music object of type %s made the parser fail to parse the following generated music code:" % self.__class__.__name__.lower(), 50) + v[:exception.m_lineno+1] + [" " * exception.m_linepos1 + "^" * (exception.m_linepos2 - exception.m_linepos1)] + v[exception.m_lineno+1:]
+        v = textwrap.wrap("Bad input to the music object of type %s made the parser fail to parse the following generated music code:" % self.__class__.__name__.lower(), 50) + v[:exception.m_lineno + 1] + [" " * exception.m_linepos1 + "^" * (exception.m_linepos2 - exception.m_linepos1)] + v[exception.m_lineno + 1:]
         return "\n".join(v)
 
     def complete_to_musicdata_coords(self, lessonfile_ref, exception):
@@ -526,7 +526,7 @@ class Chord(ChordCommon):
                r"  ragged-last = ##t "\
                r'  \context { \Staff \remove "Time_signature_engraver" } '\
                r" }"\
-               r"}"  % music
+               r"}" % music
 
     def get_lilypond_code_first_note(self, lessonfile_ref):
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
@@ -580,7 +580,7 @@ class Chord(ChordCommon):
     def play_slowly(self, lessonfile_ref, question):
         tempo = lessonfile_ref.get_tempo_of_question(question)
         self.__play(lessonfile_ref, question,
-                (tempo[0] /2, tempo[1]))
+                (tempo[0] / 2, tempo[1]))
 
     def __play(self, lessonfile_ref, question, tempo):
         assert isinstance(lessonfile_ref, LessonfileCommon)
@@ -703,7 +703,7 @@ class Rvoice(VoiceCommon):
             if lessonfile_ref.header.random_transpose[0]:
                 return "\\staff\\transpose %s\\relative %s{\n%s\n}" % (
                     lessonfile_ref.m_transpose.get_octave_notename(),
-                    errpitch,#self.get_first_pitch().get_octave_notename(),
+                    errpitch,  # self.get_first_pitch().get_octave_notename(),
                     lex.m_string
                     )
             # no translation
@@ -779,7 +779,7 @@ class Satb(ChordCommon):
             raise MusicObjectException("Satb music should be divided into 4 parts by the '|' character")
         if [x for x in self.m_musicdata.split("|") if not x.strip()]:
             raise MusicObjectException("Satb music does not allow an empty voice")
-        #FIXME BUG BUG BUG this only works for the currently active question
+        # FIXME BUG BUG BUG this only works for the currently active question
         if 'key' in lessonfile_ref.get_question():
             k = lessonfile_ref.get_question()['key']
         else:
@@ -807,7 +807,7 @@ class Satb(ChordCommon):
                 if cfg.get_string('user/sex') == 'female':
                     track.note(4, mpd.notename_to_int(n))
                 else:
-                    track.note(4, mpd.notename_to_int(n)-12)
+                    track.note(4, mpd.notename_to_int(n) - 12)
         for x in 2, 3:
             s = voices[x].strip().split(" ")
             for n in s:
@@ -816,7 +816,7 @@ class Satb(ChordCommon):
                 if cfg.get_string('user/sex') == 'male':
                     track.note(4, mpd.notename_to_int(n))
                 else:
-                    track.note(4, mpd.notename_to_int(n)+12)
+                    track.note(4, mpd.notename_to_int(n) + 12)
         soundcard.synth.play_track(track)
 
     def get_err_context(self, exception, lessonfile_ref):
@@ -1126,7 +1126,7 @@ class LessonfileCommon(object):
         # to be lists since it is used a a normal boolean for other
         # variables.
         if self.header.random_transpose in (True, False):
-            self.header.random_transpose = [self.header.random_transpose,]
+            self.header.random_transpose = [self.header.random_transpose, ]
         if self.header.random_transpose[0] == True:
             self.header.random_transpose = ['key', -5, 5]
         # Backward compatability to handle old style
@@ -1262,7 +1262,7 @@ class QuestionsLessonfile(LessonfileCommon):
         low, high = self.header.random_transpose[1:3]
         tone, minmaj = key.split()
         k = mpd.MusicalPitch.new_from_notename(tone).get_octave_notename()
-        #FIXME this list say what key signatures are allowed in sing-chord
+        # FIXME this list say what key signatures are allowed in sing-chord
         # lesson files. Get the correct values and document them.
         kv = ['des', 'aes', 'ees', 'bes', 'f', 'c',
               'g', 'd', 'a', 'e', 'b', 'fis', 'cis', 'gis']
@@ -1281,7 +1281,7 @@ class QuestionsLessonfile(LessonfileCommon):
             n_down = low
             n_up = high
         interv = mpd.Interval()
-        interv.set_from_string(_keys_to_interval[random.choice(list(range(n_down, n_up+1)))])
+        interv.set_from_string(_keys_to_interval[random.choice(list(range(n_down, n_up + 1)))])
         return mpd.MusicalPitch.new_from_notename("c'") + interv
 
     def iterate_questions_with_unique_names(self):
@@ -1524,7 +1524,7 @@ class TestSupport(object):
         """
         m = re.match("([\d\.]+)%", self.header.test_requirement)
         if m:
-            return float(m.groups()[0])/100.0
+            return float(m.groups()[0]) / 100.0
         else:
             return 0.9
 
@@ -1548,7 +1548,7 @@ class TestSupport(object):
         """
         Return True if the test is compleded.
         """
-        return self.m_test_idx == len(self.m_test_questions) -1
+        return self.m_test_idx == len(self.m_test_questions) - 1
 
 
 class HeaderLessonfile(LessonfileCommon):
@@ -1598,7 +1598,7 @@ class DictationLessonfile(QuestionsLessonfile):
         Select the next question. Do nothing if we are on the last question.
         """
         assert self._idx is not None
-        if self._idx < len(self.m_questions) -1:
+        if self._idx < len(self.m_questions) - 1:
             self._idx = self._idx + 1
 
     def select_first(self):
@@ -1819,7 +1819,7 @@ class IdPropertyLessonfile(QuestionsLessonfile):
                     if varname == 'inversion':
                         if question[varname] == 0:
                             question[varname] = istr(_("root position"))
-                            question[varname].cval= "root position"
+                            question[varname].cval = "root position"
                         elif type(question[varname]) == int \
                             and question[varname] > 0:
                             i = question[varname]
@@ -1848,7 +1848,7 @@ class IdPropertyLessonfile(QuestionsLessonfile):
                 self.m_discards.append("\n".join(textwrap.wrap(ngettext(
                     'Discarding question %(questionidx)i from the lesson file "%(filename)s" because of a missing variable: %(var)s',
                     'Discarding question %(questionidx)i from the lesson file "%(filename)s" because of some missing variables: %(var)s',
-                    len(missing_props)) %  {'questionidx': idx, 'filename': self.m_filename, 'var': ", ".join(missing_props)})))
+                    len(missing_props)) % {'questionidx': idx, 'filename': self.m_filename, 'var': ", ".join(missing_props)})))
                 self.m_questions[idx] = None
         self.m_questions = [q for q in self.m_questions if q is not None]
 
@@ -1887,7 +1887,7 @@ class ElembuilderLessonfile(QuestionsLessonfile):
                     if type(e) == istr:
                         v.append({'name': e.cval, 'label': e.cval})
                     elif type(e) == LabelObject:
-                        v.append({'name':e, 'label': e})
+                        v.append({'name': e, 'label': e})
                     else:
                         v.append(e)
                 question['elements'] = v
@@ -2103,7 +2103,7 @@ def parse_lesson_file_header(filename):
 
     Return None if we find no header block.
     """
-    r = re.compile("header\s*{.*?}", re.MULTILINE|re.DOTALL)
+    r = re.compile("header\s*{.*?}", re.MULTILINE | re.DOTALL)
     # We cannot read the whole file, since we don't know what the user
     # have placed in the directory. It could be a whole DVD iso image.
     # The actual size we read, 40k, is mentioned in the user manual,

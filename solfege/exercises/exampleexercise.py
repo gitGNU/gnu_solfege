@@ -55,8 +55,8 @@ class Teacher(abstract.Teacher):
         Return: 1 if correct, None if wrong
         """
         assert self.q_status not in (self.QSTATUS_NO, self.QSTATUS_GIVE_UP)
-        if 1: # add test
-            #if self.q_status == self.QSTATUS_NEW \
+        if 1:  # add test
+            # if self.q_status == self.QSTATUS_NEW \
             #        and not self.m_custom_mode:
             #    #self.m_statistics.add_correct(some value)
             self.maybe_auto_new_question()
@@ -64,7 +64,7 @@ class Teacher(abstract.Teacher):
             return 1
         else:
             if self.q_status == self.QSTATUS_NEW:
-                #if not self.m_custom_mode:
+                # if not self.m_custom_mode:
                 #    self.m_statistics.add_wrong(some value, some value)
                 self.q_status = self.QSTATUS_WRONG
             if solfege.app.m_test_mode:
@@ -92,7 +92,7 @@ class Gui(abstract.Gui):
         # practice_box #
         ################
         self.std_buttons_add(
-            ('new', None), #add callback
+            ('new', None),  # add callback
             ('give_up', self.give_up),
         )
         self.g_flashbar = gu.FlashBar()

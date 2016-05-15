@@ -208,7 +208,7 @@ class Gui(abstract.Gui):
         hbox = gu.bHBox(self.g_intervalconfig_box, False)
         hbox.pack_start(Gtk.Label(_("Last interval:")), False, False,
                         padding=gu.PAD_SMALL)
-        self.g_rdbs.append (pack_rdbs(hbox, self.update_last))
+        self.g_rdbs.append(pack_rdbs(hbox, self.update_last))
         self.g_last_interval_up = nIntervalCheckBox(self.m_exname,
                      'last_interval_up')
         self.g_intervalconfig_box.pack_start(self.g_last_interval_up, False, False, 0)

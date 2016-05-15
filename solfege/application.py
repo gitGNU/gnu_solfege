@@ -472,7 +472,7 @@ class SolfegeApp(cfg.ConfigUtils):
             tempo is a dict of two integers
             """
             track = mpd.Track()
-            track.set_bpm(*tempo)#self.get_int('config/default_bpm'))
+            track.set_bpm(*tempo)  # self.get_int('config/default_bpm'))
             track.note(mpd.Rat(n, 4), 80, 0)
             soundcard.synth.play_track(track)
         track_idx = 0
@@ -577,7 +577,7 @@ class SolfegeApp(cfg.ConfigUtils):
                             # because we don't want to display this error for
                             # every single file.
                             output_format = 'midi'
-                            solfege.win.display_error_message2("External program must have failed", "The file in %(from)s format was not generated from the %(to)s file as expected. Please check your setup in the preferences window (CTRL-F12)." % {'to':to_format.upper(), 'from': from_format.upper()})
+                            solfege.win.display_error_message2("External program must have failed", "The file in %(from)s format was not generated from the %(to)s file as expected. Please check your setup in the preferences window (CTRL-F12)." % {'to': to_format.upper(), 'from': from_format.upper()})
                     except (TypeError, KeyError):
                         solfege.win.display_error_message2("%(from)s to %(to)s config error", "There was a format string error. Will not generate WAV files. Please check the app/midi_to_wav_cmd config variable." % {'from': from_format, 'to': to_format})
                         output_format = 'midi'

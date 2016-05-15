@@ -89,10 +89,10 @@ def parse_to_score_object(music):
     relative_mode = None
     relto = None
     transpose_pitch = None
-    TOPLEVEL = 1#'toplevel'
-    NOTES = 2#'notes'
-    START_OF_CHORD = 3#'start-of-chord'
-    CHORD = 4#'chord'
+    TOPLEVEL = 1  # 'toplevel'
+    NOTES = 2  # 'notes'
+    START_OF_CHORD = 3  # 'start-of-chord'
+    CHORD = 4  # 'chord'
     context = TOPLEVEL
     score = elems.Score()
     chord_duration = None
@@ -186,7 +186,7 @@ def parse_to_score_object(music):
         elif toc == '{':
             if (context == TOPLEVEL):
                 context = NOTES
-                #if not cur_staff.m_coldict[Rat(0, 1)].m_keysignature:
+                # if not cur_staff.m_coldict[Rat(0, 1)].m_keysignature:
                 # FIXME dont understand
                 if transpose_pitch:
                     k = (transpose_pitch.get_notename(), 'major')

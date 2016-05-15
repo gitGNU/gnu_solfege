@@ -130,7 +130,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
         # ubuntu 10.04 and +4 on MS Windows XP.
         h = self.g_box.size_request().height + 4
         if h > Gdk.Screen.height() * 0.8:
-            h = int(Gdk.Screen.height() *0.8)
+            h = int(Gdk.Screen.height() * 0.8)
         self.set_size_request(w, h if h > self.m_min_height else self.m_min_height)
         # Then we check if we have to move the app window higher up on the
         # screen so that the whole window is visible.
@@ -141,7 +141,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
 
 class ExerciseView(SelectWinBase):
 
-    def __init__(self,  fields=('link',)):
+    def __init__(self, fields=('link',)):
         SelectWinBase.__init__(self)
         self.m_fields = fields
         app = solfege.app

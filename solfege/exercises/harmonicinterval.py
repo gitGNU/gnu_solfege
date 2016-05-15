@@ -66,7 +66,7 @@ class Teacher(abstract.Teacher):
                 old_toptone = old_tonika + self.m_interval
             self.m_P.next_test_question()
             self.m_interval = self.m_P.m_test_questions[self.m_P.m_test_idx]
-            #FIXME use tone pitch range from preferences window.
+            # FIXME use tone pitch range from preferences window.
             self.m_tonika = mpd.MusicalPitch()
             # Do this loop to make sure two questions in a row does not have
             # the same top or bottom tone.
@@ -146,7 +146,7 @@ class Teacher(abstract.Teacher):
         if self.q_status == self.QSTATUS_NO:
             return
         low_tone = self.m_tonika.semitone_pitch()
-        high_tone = (self.m_tonika+self.m_interval).semitone_pitch()
+        high_tone = (self.m_tonika + self.m_interval).semitone_pitch()
         t1, t2 = utils.new_2_tracks()
         t1.note(4, low_tone)
         t2.note(4, high_tone)
@@ -289,7 +289,7 @@ class Gui(abstract.IntervalGui):
             g = self.m_t.new_question(self.g_input.m_lowest_tone,
                                       self.g_input.m_highest_tone)
 
-        if g == Teacher.OK: # new question, everything is OK
+        if g == Teacher.OK:  # new question, everything is OK
             self.std_buttons_new_question()
             self.g_input.set_first_note(self.m_t.m_tonika)
 
@@ -304,7 +304,7 @@ class Gui(abstract.IntervalGui):
                     raise
                 return
             self.g_flashbar.clear()
-            #inputwidget 0 is always the buttons.
+            # inputwidget 0 is always the buttons.
             if self.get_int('inputwidget') == 0:
                 self.g_input.grab_focus_first_sensitive_button()
         elif g == Teacher.ERR_PICKY:

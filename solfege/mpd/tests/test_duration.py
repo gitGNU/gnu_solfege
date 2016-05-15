@@ -32,12 +32,12 @@ class TestDuration(unittest.TestCase):
         self.assertEqual(d.get_rat_value(), Rat(3, 8))
 
     def test_misc(self):
-        d1=Duration(4, 0, Rat(1, 1))
-        d2=Duration(4, 1, Rat(1, 1))
+        d1 = Duration(4, 0, Rat(1, 1))
+        d2 = Duration(4, 1, Rat(1, 1))
         self.assertFalse(d1 == d2)
         self.assertEqual(d1.get_rat_value(), Rat(1, 4))
         self.assertEqual(d2.get_rat_value(), Rat(3, 8))
-        d3=Duration(4, 2, Rat(2, 3))
+        d3 = Duration(4, 2, Rat(2, 3))
         self.assertEqual(d3.get_rat_value(), Rat(7, 24))
 
 suite = unittest.makeSuite(TestDuration)

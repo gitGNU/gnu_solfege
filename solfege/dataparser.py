@@ -66,7 +66,7 @@ NEW_re = re.compile("""(?:
                         ("(.*?)")| #string
                         (\w[\[\]\w-]*) #name
                 )""",
-                      re.VERBOSE|re.MULTILINE|re.DOTALL|re.UNICODE)
+                      re.VERBOSE | re.MULTILINE | re.DOTALL | re.UNICODE)
 
 LI_INTEGER = NEW_re.match("-3").lastindex
 LI_FLOAT = NEW_re.match("3.3").lastindex
@@ -107,7 +107,7 @@ class istr(str):
         Handle format strings in translated strings:
         _("%i. inversion") % 2
         """
-        i=istr(str(self) % other)
+        i = istr(str(self) % other)
         i.cval = self.cval % other
         return i
 
@@ -233,7 +233,7 @@ def read_encoding_marker_from_string(string):
         m = r.match(line)
         if m:
             return m.groups()[0]
-        c +=1
+        c += 1
         if c == 2:
             break
 
@@ -307,16 +307,16 @@ class Lexer:
         ret = ""
         lineno = self.m_tokens[lexer_pos][TOKEN_LINENO]
         x = self.m_tokens[lexer_pos][TOKEN_IDX]
-        while x > 0 and self.m_src[x-1] != "\n":
+        while x > 0 and self.m_src[x - 1] != "\n":
             x -= 1
         linestart_idx = x
         erridx_in_line = self.m_tokens[lexer_pos][TOKEN_IDX] - linestart_idx
         if lineno > 1:
-            ret += "\n(line %i): %s" % (lineno-1, self.get_line(lineno-2))
+            ret += "\n(line %i): %s" % (lineno - 1, self.get_line(lineno - 2))
         if lineno > 0:
-            ret += "\n(line %i): %s" % (lineno, self.get_line(lineno-1))
+            ret += "\n(line %i): %s" % (lineno, self.get_line(lineno - 1))
         ret += "\n(line %i): %s" % (lineno + 1, self.get_line(lineno))
-        ret += "\n" + " " * (erridx_in_line + len("(line %i): " % (lineno+1))) + "^"
+        ret += "\n" + " " * (erridx_in_line + len("(line %i): " % (lineno + 1))) + "^"
         return ret.strip()
 
     def get_tokenize_err_context(self):
@@ -324,7 +324,7 @@ class Lexer:
         return a string with the last part of the file that we were able
         to tokenize. Used by UnableToTokenizeException
         """
-        return self._err_context_worker(len(self.m_tokens)-1)
+        return self._err_context_worker(len(self.m_tokens) - 1)
 
     def get_err_context(self, pos):
         return self._err_context_worker(pos)
@@ -346,29 +346,29 @@ class Lexer:
         else:
             i1 = 0
         linestr = "(line %i):" % (l2 + 1)
-        return ("(line %i): %s\n" % (l2 , self.get_line(l2-1))
+        return ("(line %i): %s\n" % (l2, self.get_line(l2 - 1))
               + "%s %s\n" % (linestr, self.get_line(l2))
               + " " * (i1 + len(linestr) + 1) + "^" * (i2 - i1))
 
     def peek(self, forward=0):
-        return self.m_tokens[self.pos+forward]
+        return self.m_tokens[self.pos + forward]
 
     def peek_type(self, forward=0):
-        return self.m_tokens[self.pos+forward][TOKEN_TYPE]
+        return self.m_tokens[self.pos + forward][TOKEN_TYPE]
 
     def peek_string(self, forward=0):
-        return self.m_tokens[self.pos+forward][TOKEN_STRING]
+        return self.m_tokens[self.pos + forward][TOKEN_STRING]
 
     def scan_any(self):
         """scan the next token"""
         self.pos += 1
-        return self.m_tokens[self.pos-1][TOKEN_STRING]
+        return self.m_tokens[self.pos - 1][TOKEN_STRING]
 
     def scan(self, t=None):
         """t is the type of token we expect"""
         if self.m_tokens[self.pos][TOKEN_TYPE] == t:
             self.pos += 1
-            return self.m_tokens[self.pos-1][TOKEN_STRING]
+            return self.m_tokens[self.pos - 1][TOKEN_STRING]
         else:
             # Tested in TestLexer.test_scan
             raise DataparserSyntaxError(self.m_parser(), self.pos,
@@ -474,8 +474,8 @@ class Dataparser:
         raise DataparserSyntaxError(self, self._lexer.pos, "Parse error")
 
     def include(self):
-        self._lexer.scan_any() # scan include
-        self._lexer.scan_any() # scan (
+        self._lexer.scan_any()  # scan include
+        self._lexer.scan_any()  # scan (
         try:
             filename = self._lexer.scan('STRING')
         except:
@@ -494,7 +494,7 @@ class Dataparser:
         return pt.IncludeStatement(p.tree)
 
     def _import_worker(self, fn1, fn2):
-        self._lexer.scan_any() # scan the 'import' or 'rimport' keyword
+        self._lexer.scan_any()  # scan the 'import' or 'rimport' keyword
         mod_filename = self._lexer.scan_any()
         if (self._lexer.peek_type() == 'NAME'
             and self._lexer.peek_string() == 'as'):
@@ -524,11 +524,11 @@ class Dataparser:
     def assignment(self):
         """NAME "=" expression ("," expression)* """
         npos = self._lexer.pos
-        name = self._lexer.scan_any()#('NAME')
+        name = self._lexer.scan_any()  # ('NAME')
         if name in self.reserved_words:
             # do "question = 1" to raise this exception.
             raise AssignmentToReservedWordException(self, npos, name)
-        self._lexer.scan_any()#('=')
+        self._lexer.scan_any()  # ('=')
         fpos = self._lexer.pos
         expressionlist = self.expressionlist()
         m = self.m_translation_re.match(name)
@@ -606,14 +606,14 @@ class Dataparser:
                 name += "." + self._lexer.scan('NAME')
             return pt.Identifier(name)
         else:
-            #print "FIXME: have no idea how to raise this exception"
+            # print "FIXME: have no idea how to raise this exception"
             raise DataparserSyntaxError(self, npos + 1,
                 "Expected STRING, INTEGER or NAME+'('")
 
     def functioncall(self):
         """functioncall: NAME "(" expressionlist ")" """
         npos = self._lexer.pos
-        name = self._lexer.scan_any()#'NAME')
+        name = self._lexer.scan_any()  # 'NAME')
         self._lexer.scan('(')
         if self._lexer.peek_type() == ')':
             # functioncall()
@@ -630,7 +630,7 @@ class Dataparser:
     def block(self):
         """block: NAME "{" assignments"}" """
         block = pt.Block(self._lexer.scan_any())
-        self._lexer.scan_any() # scan '{'
+        self._lexer.scan_any()  # scan '{'
         # FIXME this is not nice, but we need it since we have
         # allowed question blocks with the shortcut where they
         # omit "music ="

@@ -30,7 +30,7 @@ class TestClefs(unittest.TestCase):
             self.assertRaises(elems.UnknownClefException, f)
 
     def test_clefs(self):
-        testdata =        [('violin', 6),
+        testdata = [('violin', 6),
                            ('treble', 6),
                            ('G', 6),
                            ('G2', 6),

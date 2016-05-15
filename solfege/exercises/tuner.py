@@ -61,6 +61,6 @@ class Gui(abstract.Gui):
         return True
 
     def on_end_practise(self):
-        #Gtk.idle_remove(self.__idle_tag)
+        # Gtk.idle_remove(self.__idle_tag)
         GObject.source_remove(self.__idle_tag)
         soundcard.solfege_c_midi.dsp_close()

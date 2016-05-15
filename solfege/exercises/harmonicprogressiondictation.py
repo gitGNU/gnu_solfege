@@ -100,7 +100,7 @@ class Gui(abstract.LessonbasedGui):
                 self.g_flashbar.flash(_("Wrong"))
                 self.std_buttons_answer_wrong()
 
-    def show_answer(self, widget=None):#FIXME rename to show_music??
+    def show_answer(self, widget=None):  # FIXME rename to show_music??
         if self.m_t.q_status != self.QSTATUS_NO:
             self.g_music_displayer.display(self.m_t.m_P.get_music(),
                                self.get_int('config/feta_font_size=20'))

@@ -137,7 +137,7 @@ class Gui(abstract.LessonbasedGui):
                 w.destroy()
         self.m_users_answer = []
         self.m_t.new_question()
-        #if 'show' in self.m_t.m_P.header.at_question_start \
+        # if 'show' in self.m_t.m_P.header.at_question_start \
         #    and 'play' in self.m_t.m_P.header.at_question_start:
         if self.m_t.m_P.header.have_music_displayer:
             self.g_music_displayer.clear(self.m_t.m_P.header.music_displayer_stafflines)
@@ -232,7 +232,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_answer_button_box.set_sensitive(False)
 
     def on_start_practise(self):
-        self.m_t.m_custom_mode = False # FIXME
+        self.m_t.m_custom_mode = False  # FIXME
         super(Gui, self).on_start_practise()
         if self.m_t.m_P.header.elements == 'auto':
             v = []

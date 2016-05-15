@@ -92,7 +92,7 @@ class DisplaytestWindow(Gtk.Window):
 
 #soundcard.initialise_devicefile("/dev/sequencer", 0)
 #soundcard.initialise_devicefile("/dev/music", 0)
-#soundcard.initialise_using_fake_synth()
+# soundcard.initialise_using_fake_synth()
 soundcard.initialise_external_midiplayer()
 
 w = DisplaytestWindow()

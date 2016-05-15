@@ -60,8 +60,8 @@ class OSSSequencer2Synth(oss_common.AbstractSynth):
                 else:
                     if t > 511:
                         logging.debug("devmusicsynth.py: warning: bpm > 511")
-                    m.sndctl_tmr_timebase(96*2)
-                    m.sndctl_tmr_tempo(int(t/2))
+                    m.sndctl_tmr_timebase(96 * 2)
+                    m.sndctl_tmr_tempo(int(t / 2))
             elif e[0] == midieventstream.NOTE_ON:
                 m.seq_start_note(self.m_devnum, e[1], e[2], e[3])
             elif e[0] == midieventstream.NOTE_OFF:
@@ -69,7 +69,7 @@ class OSSSequencer2Synth(oss_common.AbstractSynth):
             elif e[0] == midieventstream.NOTELEN_TIME:
                 # 96 is a const, also used in soundcard.initialize that
                 # I don't understand.
-                m.seq_delta_time(int(96*4*e[1]))
+                m.seq_delta_time(int(96 * 4 * e[1]))
             elif e[0] == midieventstream.SET_PATCH:
                 m.seq_set_patch(self.m_devnum, e[1], e[2])
             elif e[0] == midieventstream.BENDER:

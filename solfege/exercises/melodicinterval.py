@@ -165,7 +165,7 @@ class Gui(abstract.IntervalGui):
             if not self.m_t.m_tonika:
                 return
             i = mpd.Interval()
-            if (not midi_int # buttons interface does not set midi_int. And
+            if (not midi_int  # buttons interface does not set midi_int. And
                              # since it assumes all intervals go up, we have
                              # to check and set the direction.
                 and self.m_t.m_question[0] < 0):
@@ -202,7 +202,7 @@ class Gui(abstract.IntervalGui):
             self.g_input.forget_last_tone()
             return
         self.m_answer.append(interval)
-        d = self.m_t.m_question[len(self.m_answer)-1]
+        d = self.m_t.m_question[len(self.m_answer) - 1]
         md = d // d
         if self.g_input.know_directions():
             md = 1
@@ -264,7 +264,7 @@ class Gui(abstract.IntervalGui):
                 return
             self.std_buttons_new_question()
             self.g_flashbar.clear()
-            #inputwidget 0 is always the buttons.
+            # inputwidget 0 is always the buttons.
             if self.get_int('inputwidget') == 0:
                 self.g_input.grab_focus_first_sensitive_button()
 

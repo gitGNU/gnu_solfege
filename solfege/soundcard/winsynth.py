@@ -36,7 +36,7 @@ class WinSynth(SynthCommon):
             devnum = 0
             logging.error("WinSynth.__init__: No MIDI output devices available on %i. Retrying with devNum 0", devnum)
             self.__driver = winmidi.Winmidi(devnum)
-        self.m_type_major = "win32" #FIXME
+        self.m_type_major = "win32"  # FIXME
         self.m_devnum = devnum
         if verbose_init:
             logging.debug("Solfege will use Windows multimedia output.")

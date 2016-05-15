@@ -24,19 +24,19 @@ RHYTHMS = ("c4", "c8 c8", "c16 c16 c16 c16", "c8 c16 c16",
            "r16 c16 c16 c16", "r8 r16 c16", "r16 c8.",
            "c12 c12 c12", "r12 c12 c12",
            "c12 r12 c12", "c12 c12 r12", "r12 r12 c12", "r12 c12 r12",
-           "c4.", "c4 c8", # 22, 23
-           "c8 c4", "c8 c8 c8", # 24, 25
-           "c4 c16 c16", # 26
-           "c16 c16 c4", # 27
-           "c8 c8 c16 c16", #28
-           "c8 c16 c16 c8", #29
-           "c16 c16 c8 c8", #30
-           "c8 c16 c16 c16 c16", #31
-           "c16 c16 c8 c16 c16", #32
-           "c16 c16 c16 c16 c8", #33
-           "c16 c16 c16 c16 c16 c16", #34
+           "c4.", "c4 c8",  # 22, 23
+           "c8 c4", "c8 c8 c8",  # 24, 25
+           "c4 c16 c16",  # 26
+           "c16 c16 c4",  # 27
+           "c8 c8 c16 c16",  # 28
+           "c8 c16 c16 c8",  # 29
+           "c16 c16 c8 c8",  # 30
+           "c8 c16 c16 c16 c16",  # 31
+           "c16 c16 c8 c16 c16",  # 32
+           "c16 c16 c16 c16 c8",  # 33
+           "c16 c16 c16 c16 c16 c16",  # 34
 )
 
-solmisation_syllables = ["SO,","SI,","LU,","LA,","LI,","TU,","TI,","DO","DI","RU","RE","RI","MU","MI","FA","FI","SU","SO","SI","LU","LA","LI","TU","TI","DO'","DI'","RU'","RE'","RI'","MU'","MI'","FA'","FI'","SU'","SO'"]
+solmisation_syllables = ["SO,", "SI,", "LU,", "LA,", "LI,", "TU,", "TI,", "DO", "DI", "RU", "RE", "RI", "MU", "MI", "FA", "FI", "SU", "SO", "SI", "LU", "LA", "LI", "TU", "TI", "DO'", "DI'", "RU'", "RE'", "RI'", "MU'", "MI'", "FA'", "FI'", "SU'", "SO'"]
 
-solmisation_notenames = ["g","gis","aes","a","ais","bes","b","c'","cis'","des'","d'","dis'","ees'","e'", "f'","fis'","ges'","g'","gis'","aes'","a'","ais'","bes'","b'","c''","cis''","des''","d''","dis''","ees''","e''", "f''","fis''","ges''","g''"]
+solmisation_notenames = ["g", "gis", "aes", "a", "ais", "bes", "b", "c'", "cis'", "des'", "d'", "dis'", "ees'", "e'", "f'", "fis'", "ges'", "g'", "gis'", "aes'", "a'", "ais'", "bes'", "b'", "c''", "cis''", "des''", "d''", "dis''", "ees''", "e''", "f''", "fis''", "ges''", "g''"]

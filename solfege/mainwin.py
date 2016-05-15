@@ -206,7 +206,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             solfege.app.m_frontpage_data = frontpage.load_tree(self.default_front_page)
             self.set_string('app/frontpage', self.default_front_page)
             gu.dialog_ok(_("Loading front page '%s' failed. Using default page." % filename),
-                secondary_text = "\n".join(traceback.format_exception(*sys.exc_info())))
+                secondary_text="\n".join(traceback.format_exception(*sys.exc_info())))
             if solfege.splash_win:
                 solfege.splash_win.show()
         self.display_frontpage()
@@ -428,14 +428,14 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         a.set_copyright("Copyright (C) 2013 Tom Cato Amundsen and others")
         a.set_license("\n".join((solfege.application.solfege_copyright, solfege.application.warranty)))
         # Using set_license_type causes the app to print warnings.
-        #a.set_license_type(Gtk.License.GPL_3_0)
+        # a.set_license_type(Gtk.License.GPL_3_0)
         a.set_authors(["Tom Cato Amundsen",
               'Giovanni Chierico %s' % _("(some lessonfiles)"),
               'Michael Becker %s' % _("(some lessonfiles)"),
               'Joe Lee %s' % _("(sound code for the MS Windows port)"),
               'Steve Lee %s' % _("(ported winmidi.c to gcc)"),
               'Thibaus Cousin %s' % _("(spec file for SuSE 8.2)"),
-              'David Coe %s' %_("(spec file cleanup)"),
+              'David Coe %s' % _("(spec file cleanup)"),
               'David Petrou %s' % _("(testing and portability fixes for FreeBSD)"),
               'Han-Wen Nienhuys %s' % _("(the music font from Lilypond)"),
               'Jan Nieuwenhuizen %s' % _("(the music font from Lilypond)"),
@@ -475,8 +475,8 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                 if solfege.splash_win:
                     solfege.splash_win.hide()
                 do_move = gu.dialog_yesno(_('In Solfege 3.9.0, the location where Solfege look for lesson files you have created was changed. The files has to be moved from "%(old)s" and into the folder "%(gnu)s" in your "%(doc)s" folder.\nMay I move the files automatically for you now?' % {
-                    'doc':  os.path.split(os.path.split(filesystem.user_data())[0])[1],
-                    'gnu':  os.path.join(filesystem.appname, 'lessonfiles'),
+                    'doc': os.path.split(os.path.split(filesystem.user_data())[0])[1],
+                    'gnu': os.path.join(filesystem.appname, 'lessonfiles'),
                     'old': os.path.join(filesystem.get_home_dir(), "lessonfiles"),
                   }), parent=self)
                 if do_move:
@@ -654,7 +654,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         except KeyError:
             return
         if (event.type == Gdk.EventType.KEY_PRESS
-            and event.get_state() & Gdk.ModifierType.MOD1_MASK == Gdk.ModifierType.MOD1_MASK# Alt key
+            and event.get_state() & Gdk.ModifierType.MOD1_MASK == Gdk.ModifierType.MOD1_MASK  # Alt key
             and event.keyval in (Gdk.KEY_KP_Left, Gdk.KEY_Left)
             and self.m_history
             and not solfege.app.m_test_mode):

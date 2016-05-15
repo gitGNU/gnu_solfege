@@ -110,7 +110,7 @@ class RhythmViewer(Gtk.Frame):
     def add_rhythm_element(self, i):
         assert len(self.m_data) <= self.m_num_beats
         if len(self.g_box.get_children()) >= self.m_num_beats:
-            self.g_box.get_children()[self.m_num_beats-1].destroy()
+            self.g_box.get_children()[self.m_num_beats - 1].destroy()
         vbox = Gtk.VBox(False, 0)
         vbox.show()
         im = gu.create_rhythm_image(const.RHYTHMS[i])
@@ -127,7 +127,7 @@ class RhythmViewer(Gtk.Frame):
                 self.g_box.get_children()[-2].destroy()
                 self.g_face.destroy()
                 self.g_face = None
-            self.g_box.get_children()[len(self.m_data)-1].destroy()
+            self.g_box.get_children()[len(self.m_data) - 1].destroy()
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
             del self.m_data[-1]
 
@@ -210,7 +210,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         self.practise_box.pack_start(Gtk.HBox(False, 0), False, False,
                                      padding=gu.PAD_SMALL)
         self.g_rhythm_viewer = RhythmViewer(self)
-        #FIXME the value 52 is dependant on the theme used
+        # FIXME the value 52 is dependant on the theme used
         self.g_rhythm_viewer.set_size_request(-1, 52)
         self.g_rhythm_viewer.create_holders()
         hbox.pack_start(self.g_rhythm_viewer, True, True, 0)

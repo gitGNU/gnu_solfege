@@ -122,7 +122,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
             self.configure_all_like_active_interval)
         grid.attach(self.g_all_int_button, x + 2, y, 1, 1)
         self.add_watch('number_of_intervals', lambda n, self=self: \
-               self.g_all_int_button.set_sensitive(self.get_int(n)!=1))
+               self.g_all_int_button.set_sensitive(self.get_int(n) != 1))
         #####
         l = Gtk.Label(_("Toggle buttons are for interval number:"))
         self._children.append(l)
@@ -146,7 +146,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         g.attach(label, 0, 0, 1, 1)
         self.g_interval_chk = {}
         V = self.get_list("ask_for_intervals_%i"
-                  % (self.g_int_sel_spin.get_value_as_int()-1))
+                  % (self.g_int_sel_spin.get_value_as_int() - 1))
         for i in range(1, mpd.interval.max_interval + 1):
             self.g_interval_chk[i] = c = Gtk.ToggleButton(mpd.interval.short_name[i])
             c.set_name("intervalToggleButton")
@@ -173,7 +173,7 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         self._children.append(b)
         grid.attach(b, x, y + 3, 4, 1)
         b.connect('clicked', self.reset_to_default)
-        self._watch_interval(self.get_int('cur_edit_interval')-1)
+        self._watch_interval(self.get_int('cur_edit_interval') - 1)
 
     def show(self):
         for c in self._children:
@@ -186,11 +186,11 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
     def reset_to_default(self, _o):
         self.set_int('cur_edit_interval', 1)
         self.set_int('number_of_intervals', 1)
-        self.set_list('ask_for_intervals_0', list(range(-12, 0))+list(range(1, 13)))
+        self.set_list('ask_for_intervals_0', list(range(-12, 0)) + list(range(1, 13)))
 
     def configure_all_like_active_interval(self, _o):
         v = self.get_list('ask_for_intervals_%i' \
-                               % (self.g_int_sel_spin.get_value_as_int()-1))
+                               % (self.g_int_sel_spin.get_value_as_int() - 1))
         for i in range(self.get_int('number_of_intervals')):
             self.set_string('ask_for_intervals_%i' % i, str(v))
 
@@ -214,13 +214,13 @@ class MultipleIntervalConfigWidget(cfg.ConfigUtils):
         self.g_int_sel_spin.update()
 
     def on_int_sel_spin(self, spin):
-        self._watch_interval(spin.get_value_as_int()-1)
-        self.update_togglebuttons(spin.get_value_as_int()-1)
+        self._watch_interval(spin.get_value_as_int() - 1)
+        self.update_togglebuttons(spin.get_value_as_int() - 1)
 
     def update_togglebuttons(self, i):
         self.m_ignore_iclick = 1
         v = self.get_list('ask_for_intervals_%i' % i)
-        for i in list(range(mpd.interval.min_interval, 0))+list(range(1, mpd.interval.max_interval + 1)):
+        for i in list(range(mpd.interval.min_interval, 0)) + list(range(1, mpd.interval.max_interval + 1)):
             self.g_interval_chk[i].set_active(i in v)
         self.m_ignore_iclick = 0
 

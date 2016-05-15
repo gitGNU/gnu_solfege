@@ -35,7 +35,7 @@ solfege_version = buildinfo.VERSION_STRING
 
 import os
 import sys
-prefix =  os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))[0]
+prefix = os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))[0]
 
 if sys.argv[0] == './lessonfile_editor.py':
         datadir = "."

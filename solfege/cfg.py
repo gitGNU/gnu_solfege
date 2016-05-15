@@ -85,7 +85,7 @@ from solfege import filesystem
 
 # match both "section-name" and "user:dir/module"
 section_re = re.compile("^\[([\w\:\/-_]*?)\]")
-value_re = re.compile(  "^([\w-]*?)=(.*)")
+value_re = re.compile("^([\w-]*?)=(.*)")
 comment_re = re.compile("#.*")
 
 _blocked_watches = {}
@@ -179,7 +179,7 @@ def set_float(key, val):
     oldval = get_string(key)
     data[section][k] = str(val)
     if key in _watches and (oldval != get_string(key)):
-        if key in  _blocked_watches and _blocked_watches[key] > 0:
+        if key in _blocked_watches and _blocked_watches[key] > 0:
             return
         for cb in list(_watches[key].values()):
             cb(key)
@@ -265,7 +265,7 @@ def get_bool(key):
 
 def del_key(key):
     section, k = split(key)
-    #FIXME watches
+    # FIXME watches
     if section not in data:
         return
     if k not in data[section]:
@@ -276,7 +276,7 @@ def del_key(key):
 
 
 def del_section(section):
-    #FIXME watches
+    # FIXME watches
     if section not in data:
         # Trying to delete a deleted section
         return
@@ -438,7 +438,7 @@ class ConfigUtils(object):
     ######
 
     def _get(self, func, name, default=""):
-        return func(self._expand_name(name)+default)
+        return func(self._expand_name(name) + default)
 
     def get_string(self, name):
         r = self._get(get_string, name)
@@ -452,7 +452,7 @@ class ConfigUtils(object):
 
     def get_int_with_default(self, name, default):
         assert type(default) is type(0)
-        return self.get_int(name+"=%i" % default)
+        return self.get_int(name + "=%i" % default)
 
     def get_float(self, name):
         return self._get(get_float, name)

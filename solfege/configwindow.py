@@ -67,7 +67,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         self.connect('response', self.apply_and_close)
         # We do this so that the window is only hidden when the
         # user click on the close button provided by the window manager.
-        self.connect('delete-event', self.on_destroy)#lambda w, e: True)
+        self.connect('delete-event', self.on_destroy)  # lambda w, e: True)
 
         hbox = Gtk.HBox()
         hbox.set_spacing(gu.hig.SPACE_LARGE)
@@ -131,8 +131,8 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             Gtk.Adjustment(self.get_int('config/default_bpm'), 10, 500, 1, 10))
         self.g_arpeggio_bpm = gu.nSpinButton('config', 'arpeggio_bpm',
             Gtk.Adjustment(self.get_int('config/arpeggio_bpm'), 10, 500, 1, 10))
-        for text, widget in [(_("_Default:") ,self.g_default_bpm),
-                             (_("A_rpeggio:") ,self.g_arpeggio_bpm)]:
+        for text, widget in [(_("_Default:"), self.g_default_bpm),
+                             (_("A_rpeggio:"), self.g_arpeggio_bpm)]:
             label = Gtk.Label(_("BPM"))
             tempo_hbox.pack_start(
                 gu.hig_label_widget(text, [widget, label], None),
@@ -608,7 +608,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         self.g_fakesynth_radio = gu.RadioButton(None, _("_No sound"), None)
         page_vbox.pack_start(self.g_fakesynth_radio, False, False, 0)
 
-        ### ALSA
+        # ALSA
         self.m_gui_client_port = False
         hbox = gu.bHBox(page_vbox, False)
         self.g_alsa_radio = gu.RadioButton(self.g_fakesynth_radio,
@@ -640,7 +640,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         # We need to create the menu outside the popup. If not it
         # will be garbagecollecte before we can show it.
         self.g_alsa_popupmenu = Gtk.Menu()
-        ### OSS
+        # OSS
         hbox = gu.bHBox(page_vbox, False)
         self.g_device_radio = gu.RadioButton(self.g_fakesynth_radio,
               _("Use OSS _device"), None)
@@ -691,7 +691,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
         self.g_synth = Gtk.ComboBoxText()
         if winmidi:
             for devname in winmidi.output_devices():
-                #FIXME workaround of the bug
+                # FIXME workaround of the bug
                 # http://code.google.com/p/solfege/issues/detail?id=12
                 if devname is None:
                     self.g_synth.append_text("FIXME bug #12")
@@ -736,7 +736,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
             self.g_device_radio.set_active(True)
 
     def apply_and_close(self, w, response):
-        if response ==  Gtk.ResponseType.DELETE_EVENT:
+        if response == Gtk.ResponseType.DELETE_EVENT:
             self.set_gui_from_config()
         elif response == Gtk.ResponseType.HELP:
             solfege.app.handle_href("preferences-window.html")
@@ -796,7 +796,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                     return -1
             else:
                 return -1
-        else: # no sound
+        else:  # no sound
             assert self.g_fakesynth_radio.get_active()
             soundcard.initialise_using_fake_synth(0)
         if self.g_midiplayer_radio.get_active():
@@ -850,7 +850,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
     def update_old_statistics_info(self):
         path = os.path.join(filesystem.app_data(), 'statistics')
         if os.path.exists(path):
-            count = 1 # count app_data()/statistics too
+            count = 1  # count app_data()/statistics too
         else:
             count = 0
         for dirpath, dirnames, filenames in os.walk(path):

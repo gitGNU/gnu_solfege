@@ -660,7 +660,7 @@ class Page(Gtk.VBox):
             num_sects = len(column.g_section_box.get_children())
             for sect_idx, section in enumerate(column.g_section_box.get_children()):
                 section.g_move_up_btn.set_sensitive(sect_idx != 0)
-                section.g_move_down_btn.set_sensitive(sect_idx != num_sects -1)
+                section.g_move_down_btn.set_sensitive(sect_idx != num_sects - 1)
                 section.g_move_left_btn.set_sensitive(col_idx != 0)
                 if [col for col in self.g_column_box.get_children() if not col.g_section_box.get_children()] and col_idx == num_cols - 1:
                     section.g_move_right_btn.set_sensitive(False)

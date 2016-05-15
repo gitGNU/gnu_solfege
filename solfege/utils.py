@@ -239,16 +239,16 @@ def freq_to_notename_cent(freq):
         while e > freq:
             e = e / 2
     else:
-        while e < freq/2:
+        while e < freq / 2:
             e = e * 2
     d = freq / e
     v = 12 * math.log(d) / math.log(2)
     i = int(v)
-    cent = (v-i) * 100
+    cent = (v - i) * 100
     n = ('a', 'ais', 'b', 'c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis')
     if cent > 50:
-        return n[(i+1) % 12], cent-100
-    return n[int(v)], (v-int(v)) * 100
+        return n[(i + 1) % 12], cent - 100
+    return n[int(v)], (v - int(v)) * 100
 
 
 def compare_version_strings(A, B):
@@ -288,13 +288,13 @@ def string_get_line_at(s, idx):
     character, then we consider this char the last character of the line.
     """
     start = idx
-    while start > 0 and s[start -1] != "\n":
+    while start > 0 and s[start - 1] != "\n":
         start -= 1
     end = idx
     if s[end] != "\n":
-        while end < len(s) -1 and s[end + 1] != "\n":
+        while end < len(s) - 1 and s[end + 1] != "\n":
             end += 1
-    return s[start:end+1].strip("\n")
+    return s[start:end + 1].strip("\n")
 
 
 def new_track():

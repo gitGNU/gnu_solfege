@@ -182,7 +182,7 @@ def write_if_changed(filename, contents):
         equal = contents == old_contents
     except IOError:
         equal = False
-    pngfilename = filename[:-2]+'png'
+    pngfilename = filename[:-2] + 'png'
     if not equal:
         outfile = codecs.open(filename, 'w', 'utf-8')
         outfile.write(contents)
@@ -217,7 +217,7 @@ elif options.png_targets:
     ret = []
     for lang in [x for x in os.listdir("help") if os.path.isdir(os.path.join("help", x))]:
         for fn in ly_files:
-            ret.append(os.path.join("help", lang, "ly", fn[:-2]+"png"))
+            ret.append(os.path.join("help", lang, "ly", fn[:-2] + "png"))
     print " ".join(ret)
 elif options.outfile:
     lang = options.outfile.split(os.sep)[1]

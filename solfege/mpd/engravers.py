@@ -56,10 +56,10 @@ class dim20:
     staff_spacing = 100
     ledger_left = -4
     ledger_right = 14
-    accidental_widths = { -2: 12, -1: 7, 0: 5, 1: 8, 2: 8}
+    accidental_widths = {-2: 12, -1: 7, 0: 5, 1: 8, 2: 8}
     clef_yoffset = {
         'G': -38 + 3 * linespacing,
-        'F':  -8 + 3 * linespacing,
+        'F': -8 + 3 * linespacing,
         'C': -15 + 3 * linespacing,
     }
 
@@ -140,7 +140,7 @@ class TimeSignatureEngraver(Engraver):
 
 class TieEngraver(Engraver):
 
-    def __init__(self,  note1, note2):
+    def __init__(self, note1, note2):
         Engraver.__init__(self)
         self.m_note1 = note1
         self.m_note2 = note2
@@ -152,7 +152,7 @@ class TieEngraver(Engraver):
         w = p2 - p1 - dim.xshift
         w = max(w, dim.xshift)
         ct.arc((p1 + (p2 - p1) / 2),
-               int(staff_yoffset + dim.linespacing * (self.m_note2.m_ypos-1) / 2 + 3),
+               int(staff_yoffset + dim.linespacing * (self.m_note2.m_ypos - 1) / 2 + 3),
                int(w), 30 * 3.14 / 180, 150 * 3.14 / 180)
         ct.stroke()
 
@@ -178,11 +178,11 @@ class AccidentalsEngraver(Engraver):
         for y in self.m_accs:
             for acc in self.m_accs[y]:
                 ims = cairo.ImageSurface.create_from_png(
-                        fetadir+'/feta%i-accidentals-%i.png' % \
+                        fetadir + '/feta%i-accidentals-%i.png' % \
                             (self.m_fontsize, acc))
                 ct.set_source_surface(ims, self.m_xpos + x,
                         int(accidental_y_offset[acc] + staff_yoffset
-                         + dimentions[self.m_fontsize].linespacing*y/2
+                         + dimentions[self.m_fontsize].linespacing * y / 2
                          + accidental_y_offset[acc]))
                 x += dimentions[self.m_fontsize].accidental_widths[acc] + 1
         ct.paint()
@@ -197,8 +197,8 @@ class KeySignatureEngraver(Engraver):
         self.m_accidentals = mpdutils.key_to_accidentals(key)
 
     def get_width(self):
-        #FIXME this value depends on the fontsize, and on what kind of
-        #accidental we are drawing. A sharp is wider that a flat.
+        # FIXME this value depends on the fontsize, and on what kind of
+        # accidental we are drawing. A sharp is wider that a flat.
         return len(self.m_accidentals) * 10 + len(self.m_old_accidentals) * 6 + 8
 
     def engrave(self, ct, staff_yoffset):
@@ -210,7 +210,7 @@ class KeySignatureEngraver(Engraver):
                 continue
             ypos = self.m_clef.an_to_ylinepos(acc)
             dolist.append((0, x, ypos))
-            #FIXME see FIXME msg in .get_width
+            # FIXME see FIXME msg in .get_width
             x += 6
         # accidentals
         for acc in self.m_accidentals:
@@ -224,7 +224,7 @@ class KeySignatureEngraver(Engraver):
                 ktype = 1
             ypos = self.m_clef.an_to_ylinepos(acc)
             dolist.append((ktype, x, ypos))
-            #FIXME see FIXME msg in .get_width
+            # FIXME see FIXME msg in .get_width
             x += 10
         for ktype, x, ypos in dolist:
             ims = cairo.ImageSurface.create_from_png(
@@ -274,7 +274,7 @@ class NoteheadEngraver(Engraver):
         for n in range(self.m_numdots):
             ims = cairo.ImageSurface.create_from_png(
                 fetadir + '/feta20-dots-dot.png')
-            ct.set_source_surface(ims, int(self.m_xpos + dim.xshift * (self.m_shift + 1.5 + n/2.0)),
+            ct.set_source_surface(ims, int(self.m_xpos + dim.xshift * (self.m_shift + 1.5 + n / 2.0)),
                 -3 + staff_yoffset + dim.linespacing * self.m_ypos / 2)
         ct.paint()
 
@@ -327,11 +327,11 @@ class TupletEngraver(Engraver):
         bottom = []
         for s in self.m_stems:
             if s.m_stemdir == const.UP:
-                top.append(min(s.m_yposes)-7)
-                bottom.append(max(s.m_yposes)+1)
+                top.append(min(s.m_yposes) - 7)
+                bottom.append(max(s.m_yposes) + 1)
             else:
                 top.append(min(s.m_yposes))
-                bottom.append(max(s.m_yposes)+5)
+                bottom.append(max(s.m_yposes) + 5)
         self.m_t = min(top) - 2
         self.m_b = max(bottom) + 2
         self.m_xpos1 = self.m_stems[0].m_xpos - 2
@@ -347,9 +347,9 @@ class TupletEngraver(Engraver):
             y = min(staff_yoffset - dim.linespacing * 3,
                    staff_yoffset + self.m_t * dim.linespacing / 2)
             d = 1
-        else: # == const.DOWN
+        else:  # == const.DOWN
             y = max(staff_yoffset + dim.linespacing * 5,
-                    staff_yoffset + self.m_b * dim.linespacing /2)
+                    staff_yoffset + self.m_b * dim.linespacing / 2)
             d = -1
         self.m_xpos1 += 0.5
         self.m_xpos2 += 0.5
@@ -453,8 +453,8 @@ class BeamEngraver(Engraver):
         beamw = 3
         beaml = 10
         for y in range(beamw):
-            ct.move_to(x1, y1 + y*d)
-            ct.line_to(x2, y1 + y*d)
+            ct.move_to(x1, y1 + y * d)
+            ct.line_to(x2, y1 + y * d)
         for stem in self.m_stems:
             stem._beam_done = 8
 
@@ -463,30 +463,30 @@ class BeamEngraver(Engraver):
                 ct.move_to(stem.m_xpos, y1 + y + beamnum * d * beamw * 2)
                 ct.line_to(stem.m_xpos + xdir * beaml, y1 + y + beamnum * d * beamw * 2)
         for nl, yc in ((16, 0), (32, 1), (64, 2)):
-            for i in range(len(self.m_stems)-1):
+            for i in range(len(self.m_stems) - 1):
                 if self.m_stems[i].m_duration.m_nh >= nl \
-                        and self.m_stems[i+1].m_duration.m_nh >= nl:
+                        and self.m_stems[i + 1].m_duration.m_nh >= nl:
                     for y in range(beamw):
-                        ct.move_to(self.m_stems[i].m_xpos, d*beamw*yc*2 + y1 + y + d*beamw*2)
-                        ct.line_to(self.m_stems[i+1].m_xpos, d*beamw*yc*2 + y1 + y + d*beamw*2)
+                        ct.move_to(self.m_stems[i].m_xpos, d * beamw * yc * 2 + y1 + y + d * beamw * 2)
+                        ct.line_to(self.m_stems[i + 1].m_xpos, d * beamw * yc * 2 + y1 + y + d * beamw * 2)
                     self.m_stems[i]._beam_done = nl
-                    self.m_stems[i+1]._beam_done = nl
+                    self.m_stems[i + 1]._beam_done = nl
                 if self.m_stems[i].m_duration.m_nh >= nl \
-                      and self.m_stems[i+1].m_duration.m_nh <= nl/2 \
+                      and self.m_stems[i + 1].m_duration.m_nh <= nl / 2 \
                       and self.m_stems[i]._beam_done < nl:
                     if i == 0:
                         stemdir = 1
                     else:
-                        if self.m_stems[i-1].m_duration.m_nh < \
-                           self.m_stems[i+1].m_duration.m_nh:
+                        if self.m_stems[i - 1].m_duration.m_nh < \
+                           self.m_stems[i + 1].m_duration.m_nh:
                             stemdir = 1
                         else:
                             stemdir = -1
-                    short_beam(self.m_stems[i], stemdir, yc+1, d)
+                    short_beam(self.m_stems[i], stemdir, yc + 1, d)
                     self.m_stems[i]._beam_done = nl
             if self.m_stems[-1].m_duration.m_nh >= nl \
-                    and self.m_stems[-1]._beam_done <= nl/2:
-                short_beam(self.m_stems[-1], -1, yc+1, d)
+                    and self.m_stems[-1]._beam_done <= nl / 2:
+                short_beam(self.m_stems[-1], -1, yc + 1, d)
         ct.stroke()
 
 
@@ -553,13 +553,13 @@ class StemEngraver(Engraver):
                     fetadir + '/feta%i-flags-%s.png' %
                     (self.m_fontsize, self.get_flag(const.UP)))
                 ct.set_source_surface(ims, self.m_xpos,
-                    int(staff_yoffset - self.m_stemlen + self.m_yposes[0] * dim.linespacing/2))
+                    int(staff_yoffset - self.m_stemlen + self.m_yposes[0] * dim.linespacing / 2))
             else:
                 ims = cairo.ImageSurface.create_from_png(
                     fetadir + '/feta%i-flags-%s.png'
                     % (self.m_fontsize, self.get_flag(const.DOWN)))
                 ct.set_source_surface(ims, self.m_xpos,
-                    int(staff_yoffset + 4 + self.m_yposes[-1] * dim.linespacing/2))
+                    int(staff_yoffset + 4 + self.m_yposes[-1] * dim.linespacing / 2))
             ct.paint()
         ct.restore()
         # draw stem
@@ -581,7 +581,7 @@ class StemEngraver(Engraver):
 
     def get_flag(self, stemdir):
         assert self.m_duration.m_nh > 4
-        return {8:{const.UP: FLAG_8UP,
+        return {8: {const.UP: FLAG_8UP,
                    const.DOWN: FLAG_8DOWN},
                 16: {const.UP: FLAG_16UP,
                      const.DOWN: FLAG_16DOWN},
@@ -647,13 +647,13 @@ class LedgerLineEngraver(Engraver):
     def engrave(self, ct, staff_yoffset):
         dim = dimentions[self.m_fontsize]
         if self.m_up:
-            for y in range(self.m_up):#FIXME use rel_line_to
-                ct.move_to(self.m_xpos+dim.ledger_left, (-y-3) * dim.linespacing + staff_yoffset)
-                ct.line_to(self.m_xpos+dim.ledger_right, (-y-3) * dim.linespacing + staff_yoffset)
+            for y in range(self.m_up):  # FIXME use rel_line_to
+                ct.move_to(self.m_xpos + dim.ledger_left, (-y - 3) * dim.linespacing + staff_yoffset)
+                ct.line_to(self.m_xpos + dim.ledger_right, (-y - 3) * dim.linespacing + staff_yoffset)
         if self.m_down:
             for y in range(self.m_down):
-                ct.move_to(self.m_xpos+dim.ledger_left, (y+3) * dim.linespacing + staff_yoffset)
-                ct.line_to(self.m_xpos+dim.ledger_right, (y+3) * dim.linespacing + staff_yoffset)
+                ct.move_to(self.m_xpos + dim.ledger_left, (y + 3) * dim.linespacing + staff_yoffset)
+                ct.line_to(self.m_xpos + dim.ledger_right, (y + 3) * dim.linespacing + staff_yoffset)
         ct.stroke()
 
     def __str__(self):
@@ -674,7 +674,7 @@ class RestEngraver(Engraver):
         self.m_type = {1: 0, 2: 1, 4: 2, 8: 3, 16: 4, 32: 5, 64: 6}[dur.m_nh]
 
     def get_width(self):
-        #FIXME write me!
+        # FIXME write me!
         return 20
 
     def engrave(self, ct, staff_yoffset):
@@ -684,16 +684,16 @@ class RestEngraver(Engraver):
         else:
             my = 0
         ims = cairo.ImageSurface.create_from_png(
-            fetadir+'/feta%i-rests-%i.png' % (self.m_fontsize, self.m_type))
+            fetadir + '/feta%i-rests-%i.png' % (self.m_fontsize, self.m_type))
         ct.set_source_surface(
             ims, self.m_xpos,
-            int(staff_yoffset - my + dim.linespacing*self.m_ypos / 2 - 4))
+            int(staff_yoffset - my + dim.linespacing * self.m_ypos / 2 - 4))
         ct.paint()
         for n in range(self.m_dots):
-            ims = cairo.ImageSurface.create_from_png(fetadir+'/feta20-dots-dot.xpm')
+            ims = cairo.ImageSurface.create_from_png(fetadir + '/feta20-dots-dot.xpm')
             ct.set_source_surface(
-                int(self.m_xpos+dim.xshift*(1.5+n/2.0)),
-                -3 + staff_yoffset + dim.linespacing*self.m_ypos/2)
+                int(self.m_xpos + dim.xshift * (1.5 + n / 2.0)),
+                -3 + staff_yoffset + dim.linespacing * self.m_ypos / 2)
             ct.paint()
 
     def __str__(self):
@@ -757,7 +757,7 @@ class _StaffCommon(list):
         }
         beams = []
         for timepos in timeposes:
-            if (bar_idx < len(staff.w_parent().m_bars) -1
+            if (bar_idx < len(staff.w_parent().m_bars) - 1
                   and timepos == staff.w_parent().m_bars[bar_idx + 1].m_timepos):
                 bar_idx += 1
             if timepos not in self.m_engravers:
@@ -911,7 +911,7 @@ class StaffContext(_StaffCommon):
         that exist in the key signature `key`.
         """
         self.m_accidentals_info = {}
-        for step in range(MusicalPitch.LOWEST_STEPS, MusicalPitch.HIGHEST_STEPS+1):
+        for step in range(MusicalPitch.LOWEST_STEPS, MusicalPitch.HIGHEST_STEPS + 1):
             self.m_accidentals_info[step] = 0
         for a in mpdutils.key_to_accidentals(key):
             n = MusicalPitch.new_from_notename(a)
@@ -947,7 +947,7 @@ class StaffContext(_StaffCommon):
         noteheads = []
         for elem in elements:
             noteheads.append(NoteheadEngraver(
-            0, # shift,
+            0,  # shift,
             clef.steps_to_ylinepos(elem.m_musicalpitch.steps()),  # ypos,
             elem.m_musicalpitch,
             elem.m_duration))
@@ -973,8 +973,8 @@ class RhythmStaffContext(_StaffCommon):
         2: The stem engraver
         """
         notehead = NoteheadEngraver(
-            0, # shift,
-            0, # ypos,
+            0,  # shift,
+            0,  # ypos,
             elem[0].m_musicalpitch,
             elem[0].m_duration)
         return [notehead], StemEngraver([notehead], elem[0].m_duration, elem.m_stemdir, False)

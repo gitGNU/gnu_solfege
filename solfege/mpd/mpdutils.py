@@ -39,7 +39,7 @@ def notename_to_int(n):
 def key_to_accidentals(key):
     i = ['aeses', 'eeses', 'beses', 'fes', 'ces', 'ges', 'des', 'aes',
          'ees', 'bes', 'f', 'c', 'g', 'd', 'a', 'e', 'b', 'fis', 'cis',
-         'gis', 'dis', 'ais', 'eis', 'bis'].index(key[0])-11
+         'gis', 'dis', 'ais', 'eis', 'bis'].index(key[0]) - 11
     if key[1] == 'minor':
         i = i - 3
     if i > 0:
@@ -58,7 +58,7 @@ def key_to_accidentals(key):
             retval.append(a)
         else:
             del retval[retval.index(a)]
-            retval.append(a+m)
+            retval.append(a + m)
     return retval
 
 
@@ -95,4 +95,4 @@ def find_possible_first_note(music):
                     i += len(m.group("chordstart"))
                     return i, i + len(m.group('pitchname'))
             elif r == re_list[-1]:
-                return i, i+1
+                return i, i + 1

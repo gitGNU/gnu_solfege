@@ -16,7 +16,7 @@ def do_file(filename):
     def func(r):
         years = r.group('years')
         if '2011' not in years:
-            years ="%s, 2011" % years
+            years = "%s, 2011" % years
         return r.group('left') + years + r.group('right')
     s2 = r.sub(func, s)
     if s2 != s:
@@ -29,7 +29,7 @@ def motto(filename):
     f = file(filename, 'r')
     s = f.read()
     f.close()
-    s2 = s.replace('ear trai'+'ning for GNOME', 'free ear training software')
+    s2 = s.replace('ear trai' + 'ning for GNOME', 'free ear training software')
     if s2 != s:
         f = file(filename, 'w')
         f.write(s2)

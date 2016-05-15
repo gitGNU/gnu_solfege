@@ -116,7 +116,7 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
         b.set_sensitive(question.active)
         b.add(lessonfilegui.new_labelobject(question.name))
         b.show_all()
-        self.attach(b, self.m_x, self.m_x+1, self.m_y, self.m_y+1)
+        self.attach(b, self.m_x, self.m_x + 1, self.m_y, self.m_y + 1)
         b.connect('clicked', callback)
         b.connect('button_release_event', callback)
         self.conditional_newline()
@@ -159,7 +159,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
         b.m_cname = question.name.cval
         b.add(lessonfilegui.new_labelobject(question.name))
         b.show_all()
-        self.attach(b, self.m_x, self.m_x+1, self.m_y, self.m_y+1)
+        self.attach(b, self.m_x, self.m_x + 1, self.m_y, self.m_y + 1)
         self.conditional_newline()
         return b
 
@@ -168,7 +168,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
         Set the content of the 'ask_for_names' config variable based on
         the active status of the check buttons.
         """
-        v= []
+        v = []
         for i in range(len(self.m_name_list)):
             if self.m_button_dict[self.m_name_list[i]].get_active():
                 v.append(i)
@@ -221,8 +221,8 @@ class RandomTransposeDialog(Gtk.Dialog):
         hbox = gu.bHBox(vbox)
         hbox.pack_start(self.m_buttons['accidentals'], True, True, 0)
         self.m_spins['accidentals'] = [
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -7, 7, 1, 1)),# 0.0, 0),
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -7, 7, 1, 1))]#, 0.0, 0)]
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -7, 7, 1, 1)),  # 0.0, 0),
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -7, 7, 1, 1))]  # , 0.0, 0)]
         spin_sg.add_widget(self.m_spins['accidentals'][0])
         spin_sg.add_widget(self.m_spins['accidentals'][1])
         hbox.pack_start(self.m_spins['accidentals'][0], True, True, 0)
@@ -236,8 +236,8 @@ class RandomTransposeDialog(Gtk.Dialog):
         hbox = gu.bHBox(vbox)
         hbox.pack_start(self.m_buttons['key'], True, True, 0)
         self.m_spins['key'] = [
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1)),# 0.0, 0),
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1))]#, 0.0, 0)]
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1)),  # 0.0, 0),
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1))]  # , 0.0, 0)]
         hbox.pack_start(self.m_spins['key'][0], True, True, 0)
         hbox.pack_start(self.m_spins['key'][1], True, True, 0)
         gu.SpinButtonRangeController(self.m_spins['key'][0],
@@ -249,8 +249,8 @@ class RandomTransposeDialog(Gtk.Dialog):
         hbox = gu.bHBox(vbox)
         hbox.pack_start(self.m_buttons['atonal'], True, True, 0)
         self.m_spins['atonal'] = [
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1)),# 0.0, 0),
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1))]#, 0.0, 0)]
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1)),  # 0.0, 0),
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -10, 10, 1, 1))]  # , 0.0, 0)]
         hbox.pack_start(self.m_spins['atonal'][0], True, True, 0)
         hbox.pack_start(self.m_spins['atonal'][1], True, True, 0)
         gu.SpinButtonRangeController(self.m_spins['atonal'][0],
@@ -262,8 +262,8 @@ class RandomTransposeDialog(Gtk.Dialog):
         hbox = gu.bHBox(vbox)
         hbox.pack_start(self.m_buttons['semitones'], True, True, 0)
         self.m_spins['semitones'] = [
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -100, 100, 1, 1)),#, 0.0, 0),
-            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -100, 100, 1, 1))]#, 0.0, 0)]
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -100, 100, 1, 1)),  # , 0.0, 0),
+            Gtk.SpinButton(adjustment=Gtk.Adjustment(0, -100, 100, 1, 1))]  # , 0.0, 0)]
         hbox.pack_start(self.m_spins['semitones'][0], True, True, 0)
         hbox.pack_start(self.m_spins['semitones'][1], True, True, 0)
         gu.SpinButtonRangeController(self.m_spins['semitones'][0],

@@ -127,7 +127,7 @@ class TestDataParser(TmpFileBase):
             self.do_file("b")
         except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEqual("(line 1): b\n"+
+            self.assertEqual("(line 1): b\n" +
                               "           ^",
                               e.m_nonwrapped_text)
             self.assertEqual(e.m_token, ('EOF', None, 1, 0))
@@ -139,7 +139,7 @@ class TestDataParser(TmpFileBase):
             self.do_file("a)")
         except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEqual("(line 1): a)\n"+
+            self.assertEqual("(line 1): a)\n" +
                               "           ^",
                               e.m_nonwrapped_text)
             self.assertEqual(e.m_token, (')', ')', 1, 0))
@@ -153,9 +153,9 @@ class TestDataParser(TmpFileBase):
 """)
         except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEqual("(line 1): #comment\n"+
-                              "(line 2):   XYZ\n"+
-                              "(line 3): \n"+
+            self.assertEqual("(line 1): #comment\n" +
+                              "(line 2):   XYZ\n" +
+                              "(line 3): \n" +
                               "          ^",
                               e.m_nonwrapped_text)
         else:
@@ -169,8 +169,8 @@ class TestDataParser(TmpFileBase):
 
         except DataparserSyntaxError as e:
             self.assertRaisedIn('statement')
-            self.assertEqual("(line 1): #comment\n"+
-                              "(line 2):   A)\n"+
+            self.assertEqual("(line 1): #comment\n" +
+                              "(line 2):   A)\n" +
                               "             ^",
                               e.m_nonwrapped_text)
         else:
@@ -227,7 +227,7 @@ class TestDataParser(TmpFileBase):
         except CanOnlyTranslateStringsException as e:
             self.assertEqual(e.m_nonwrapped_text,
                '(line 1): foo[no] = "foo-no", "blabla" \n'
-               +'                    ^')
+               + '                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
 
@@ -237,7 +237,7 @@ class TestDataParser(TmpFileBase):
         except CanOnlyTranslateStringsException as e:
             self.assertEqual(e.m_nonwrapped_text,
                '(line 1): foo[no] = 8\n'
-               +'                    ^')
+               + '                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
 
@@ -292,7 +292,7 @@ class TestDataParser(TmpFileBase):
 
     def test_named_block(self):
         p = self.do_file('element I { label = "label-I" } '
-                      +'element II { label = "label-II" }')
+                      + 'element II { label = "label-II" }')
         self.assertEqual(len(p.tree), 2)
         self.assertEqual(len(p.tree[0]), 1)
         self.assertEqual(len(p.tree[1]), 1)
@@ -309,7 +309,7 @@ class TestIstr(I18nSetup):
         self.assertTrue(isinstance(s, str))
 
     def test_add_translations1(self):
-        #i18n.langs: nb_NO, nb, C
+        # i18n.langs: nb_NO, nb, C
         # name = "Yes"
         # name[no] = "Ja"
         s = "Yes"
@@ -321,7 +321,7 @@ class TestIstr(I18nSetup):
         self.assertEqual(s, 'Ja!')
 
     def test_add_translations2(self):
-        #i18n.langs: nb_NO, nb, C
+        # i18n.langs: nb_NO, nb, C
         # name = "Yes"
         # name[no] = "Ja"
         s = "Yes"

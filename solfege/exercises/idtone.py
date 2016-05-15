@@ -34,7 +34,7 @@ import solfege
 
 
 class Teacher(abstract.Teacher):
-    #FIXME the following lines
+    # FIXME the following lines
     OK, ERR_PICKY, ERR_TONES = list(range(3))
     ERR_PICKY = 1
     ERR_CONFIG = 2
@@ -44,7 +44,7 @@ class Teacher(abstract.Teacher):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
         self.m_statistics = statistics.IdToneStatistics(self)
-        self.m_ask_tones =   {}
+        self.m_ask_tones = {}
         self.m_question = None
         self.m_custom_mode = False
 
@@ -68,13 +68,13 @@ class Teacher(abstract.Teacher):
 
         v = []
         for n in mpd.MusicalPitch.notenames:
-            v.extend([n] * self.get_int(n+"_weight"))
+            v.extend([n] * self.get_int(n + "_weight"))
         if not v:
             return self.ERR_CONFIG
         self.m_question = random.choice(v)
         v = []
         for n in self.OCTAVES:
-            if self.get_bool("octave"+str(n)):
+            if self.get_bool("octave" + str(n)):
                 v.append(n)
         if not v:
             return self.ERR_CONFIG
@@ -108,7 +108,7 @@ class Teacher(abstract.Teacher):
         t1.note(8, 71)
         t2 = utils.new_track()
         t2.notelen_time(4)
-        t2.note(4, mpd.notename_to_int(self.m_question)+self.m_octave*12)
+        t2.note(4, mpd.notename_to_int(self.m_question) + self.m_octave * 12)
         soundcard.synth.play_track(t1, t2)
 
     def spank_me(self):
@@ -156,25 +156,25 @@ class Gui(abstract.Gui):
             label = Gtk.Label(label=mpd.MusicalPitch.new_from_notename(n).get_user_notename())
             label.set_name("Heading2")
             label.set_alignment(0.2, 1.0)
-            table.attach(label, x, x+2, 0, 1, xoptions=Gtk.AttachOptions.FILL)
-            b = gu.nSpinButton(self.m_exname, n+"_weight",
+            table.attach(label, x, x + 2, 0, 1, xoptions=Gtk.AttachOptions.FILL)
+            b = gu.nSpinButton(self.m_exname, n + "_weight",
                       Gtk.Adjustment(1, 0, 1000, 1, 10), digits=0)
-            table.attach(b, x, x+2, 1, 2, xoptions=Gtk.AttachOptions.FILL)
+            table.attach(b, x, x + 2, 1, 2, xoptions=Gtk.AttachOptions.FILL)
         for x, n in [(0, 'c'), (2, 'd'), (4, 'e'), (6, 'f'),
                       (8, 'g'), (10, 'a'), (12, 'b')]:
             label = Gtk.Label(label=mpd.MusicalPitch.new_from_notename(n).get_user_notename())
             label.set_name("Heading2")
             label.set_alignment(0.35, 1.0)
-            table.attach(label, x, x+2, 2, 3, xoptions=Gtk.AttachOptions.FILL)
-            b = gu.nSpinButton(self.m_exname, n+"_weight",
+            table.attach(label, x, x + 2, 2, 3, xoptions=Gtk.AttachOptions.FILL)
+            b = gu.nSpinButton(self.m_exname, n + "_weight",
                    Gtk.Adjustment(1, 0, 1000, 1, 10), digits=0)
-            table.attach(b, x, x+2, 3, 4, xoptions=Gtk.AttachOptions.FILL)
+            table.attach(b, x, x + 2, 3, 4, xoptions=Gtk.AttachOptions.FILL)
 
         self.g_octaves_select = hbox = Gtk.HBox()
         self.g_config_grid.attach(hbox, 0, 1, 3, 1)
         hbox.pack_start(Gtk.Label(_("Octave:")), False, False, padding=4)
         for oct in self.m_t.OCTAVES:
-            b = gu.nCheckButton(self.m_exname, "octave"+str(oct), str(oct),
+            b = gu.nCheckButton(self.m_exname, "octave" + str(oct), str(oct),
                                 default_value=1)
             hbox.pack_start(b, False, False, 0)
         #############

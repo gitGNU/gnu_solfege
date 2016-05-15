@@ -17,27 +17,27 @@
 ###
 ################################################################################
 ###
-### The code below follows, as closely as I could manage, Theodore
-### Tso's C code of libuuid's file gen_uuid.c distributed with
-### package e2fsprogs
+# The code below follows, as closely as I could manage, Theodore
+# Tso's C code of libuuid's file gen_uuid.c distributed with
+# package e2fsprogs
 ###
-### enabling "psyco" considerably improves the performance of this code
+# enabling "psyco" considerably improves the performance of this code
 ###
-### public API:
+# public API:
 ###
-###	uuid.generate()
-###	uuid.generate_random()
-###	uuid.generate_time()
+# uuid.generate()
+# uuid.generate_random()
+# uuid.generate_time()
 ###
-###	uuid.linux_generate()
+# uuid.linux_generate()
 ###
-###	uuid.py_generate()
-###	uuid.py_generate_random()
-###	uuid.py_generate_time()
+# uuid.py_generate()
+# uuid.py_generate_random()
+# uuid.py_generate_time()
 ###
-###	uuid.set_method(USE_MAC|USE_SHA|USE_RANDOM)
+# uuid.set_method(USE_MAC|USE_SHA|USE_RANDOM)
 ###
-### these functions return a new uuid string on each invocation.
+# these functions return a new uuid string on each invocation.
 ###
 ################################################################################
 
@@ -72,9 +72,9 @@ Hint: enabling psyco considerably improves the performance of the pure
 python implementation.
 """
 
-__all__ = ["generate","generate_random","generate_time",
-           "py_generate","py_generate_random","py_generate_time",
-           "set_method","USE_MAC","USE_RANDOM","USE_SHA"]
+__all__ = ["generate", "generate_random", "generate_time",
+           "py_generate", "py_generate_random", "py_generate_time",
+           "set_method", "USE_MAC", "USE_RANDOM", "USE_SHA"]
 
 import os
 import datetime
@@ -88,13 +88,13 @@ _now = datetime.datetime.now
 
 
 def _gettimeofday():
-    d=_now()
-    return int(_mktime(d.timetuple())),d.microsecond
+    d = _now()
+    return int(_mktime(d.timetuple())), d.microsecond
 
 _random_reader = None
 _random_init = False
 
-if hasattr(os,"urandom"):
+if hasattr(os, "urandom"):
     try:
         os.urandom(8)
         _random_reader = os.urandom
@@ -109,18 +109,18 @@ def _get_random_reader():
         try:
             import random
             try:
-                _random_reader = open("/dev/urandom","rb").read
+                _random_reader = open("/dev/urandom", "rb").read
             except:
-                _random_reader = os.fdopen(os.open("/dev/random",os.O_RDONLY|os.O_NONBLOCK),"rb").read
-            sec,usec = _gettimeofday()
+                _random_reader = os.fdopen(os.open("/dev/random", os.O_RDONLY | os.O_NONBLOCK), "rb").read
+            sec, usec = _gettimeofday()
             random.seed((os.getpid() << 16) ^ os.getuid() ^ sec ^ usec)
         except:
             pass
         _random_init = True
-    sec,usec = _gettimeofday()
+    sec, usec = _gettimeofday()
     i = (sec ^ usec) & 0x1F
-    while i>0:
-        _randint(0,_maxint)
+    while i > 0:
+        _randint(0, _maxint)
         i -= 1
     return _random_reader
 
@@ -130,7 +130,7 @@ _fmt_2 = ">2B"
 
 
 def _randomize_byte(b):
-    return b ^ ((_randint(0,_maxint) >> 7) & 0xFF)
+    return b ^ ((_randint(0, _maxint) >> 7) & 0xFF)
 
 
 def _get_random_bytes(n):
@@ -143,48 +143,48 @@ def _get_random_bytes(n):
             if loose_counter > 10:
                 break
             loose_counter += 1
-    d = n-len(buf)
-    if d>0:
-        buf += '\0'*d
-    if n==16:
+    d = n - len(buf)
+    if d > 0:
+        buf += '\0' * d
+    if n == 16:
         fmt = _fmt_16
-    elif n==6:
+    elif n == 6:
         fmt = _fmt_6
-    elif n==2:
+    elif n == 2:
         fmt = _fmt_2
     else:
         fmt = ">%sB" % n
-    return _pack(fmt,*tuple(map(_randomize_byte,_unpack(fmt,buf))))
+    return _pack(fmt, *tuple(map(_randomize_byte, _unpack(fmt, buf))))
 
 
 def _uuid_unpack(buf):
-    return _unpack(">IHHH6s",buf)
+    return _unpack(">IHHH6s", buf)
 
 
 def _uuid_unpack_fully(buf):
-    return _unpack(">IHHHBBBBBB",buf)
+    return _unpack(">IHHHBBBBBB", buf)
 
 
-def _uuid_pack(low,mid,hi,seq,node):
-    return _pack(">IHHH6s",low,mid,hi,seq,node)
+def _uuid_pack(low, mid, hi, seq, node):
+    return _pack(">IHHH6s", low, mid, hi, seq, node)
 
 
 def _uuid_unparse(uu):
-    low,mid,hi,seq,b5,b4,b3,b2,b1,b0 = _uuid_unpack_fully(uu)
-    return "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x" % (low,mid,hi,seq>>8,seq&0xFF,b5,b4,b3,b2,b1,b0)
+    low, mid, hi, seq, b5, b4, b3, b2, b1, b0 = _uuid_unpack_fully(uu)
+    return "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x" % (low, mid, hi, seq >> 8, seq & 0xFF, b5, b4, b3, b2, b1, b0)
 
 
 def _uuid_generate_random():
     buf = _get_random_bytes(16)
-    low,mid,hi_and_version,seq,node = _uuid_unpack(buf)
+    low, mid, hi_and_version, seq, node = _uuid_unpack(buf)
     seq = (seq & 0x3FFF) | 0x8000
     hi_and_version = (hi_and_version & 0x0FFF) | 0x4000
-    return _uuid_pack(low,mid,hi_and_version,seq,node)
+    return _uuid_pack(low, mid, hi_and_version, seq, node)
 
 
 def _backtick(pgm):
     try:
-        i,o = os.popen4(pgm)
+        i, o = os.popen4(pgm)
         i.close()
         return o.read()
     except:
@@ -192,7 +192,7 @@ def _backtick(pgm):
 
 
 def _decode_hex(s):
-    return int(s,16)
+    return int(s, 16)
 
 
 def _get_mac_address():
@@ -201,22 +201,22 @@ def _get_mac_address():
     m = r.search(_backtick("/sbin/ifconfig"))
     if m:
         s = m.group(1)
-        return list(map(_decode_hex,s.split(":")))
+        return list(map(_decode_hex, s.split(":")))
     m = r.search(_backtick("ifconfig"))
     if m:
         s = m.group(1)
-        return list(map(_decode_hex,s.split(":")))
+        return list(map(_decode_hex, s.split(":")))
     r = re.compile("Physical Address.*: (..:..:..:..:..:..)")
     m = r.search(_backtick("ipconfig /all"))
     if m:
         s = m.group(1)
-        return list(map(_decode_hex,s.split(":")))
+        return list(map(_decode_hex, s.split(":")))
     return None
 
 
 def _get_6bytes(mac=None):
     try:
-        import sha,getpass,socket,time
+        import sha, getpass, socket, time
         buf = sha.new()
         if mac:
             buf.update("%c%c%c%c%c%c " % tuple(mac))
@@ -224,13 +224,13 @@ def _get_6bytes(mac=None):
         buf.update("@%s" % socket.gethostname())
         buf.update(" %s" % os.getpid())
         buf.update(" %s" % time.strftime("%Y-%m-%d %H:%M:%S %Z"))
-        return list(map(ord,buf.digest()[0:6]))
+        return list(map(ord, buf.digest()[0:6]))
     except:
         return None
 
-USE_MAC    = 0
+USE_MAC = 0
 USE_RANDOM = 1
-USE_SHA    = 2
+USE_SHA = 2
 
 _common_suffix_method = USE_MAC
 _static_time_buf = None
@@ -247,7 +247,7 @@ def _set_common_suffix():
         if _common_suffix_method == USE_SHA:
             suf = _get_6bytes(suf)
         if suf:
-            _static_time_buf = _pack(_fmt_6,*suf)
+            _static_time_buf = _pack(_fmt_6, *suf)
         else:
             _static_time_buf = _get_random_bytes(6)
             # I don't know how to set the multicast bit
@@ -274,10 +274,10 @@ def _uuid_generate_time():
     global _static_time_buf
     if not _static_time_buf:
         _set_common_suffix()
-    mid,low,seq = _get_clock()
+    mid, low, seq = _get_clock()
     seq = seq | 0x8000
     hi = (mid >> 16) | 0x1000
-    return _uuid_pack(low,mid,hi,seq,_static_time_buf)
+    return _uuid_pack(low, mid, hi, seq, _static_time_buf)
 
 _static_last_sec = 0
 _static_last_msec = 0
@@ -287,17 +287,17 @@ _static_clock_seq = 0
 
 
 def _get_clock():
-    global _static_last_sec,_static_last_msec,_static_adjustment,_static_clock_seq
-    sec,msec = _gettimeofday()
+    global _static_last_sec, _static_last_msec, _static_adjustment, _static_clock_seq
+    sec, msec = _gettimeofday()
     try_again = True
     while try_again:
         try_again = False
-        if _static_last_sec==0 and _static_last_msec==0:
-            _static_clock_seq = _unpack(">H",_get_random_bytes(2))[0] & 0x1FFF
+        if _static_last_sec == 0 and _static_last_msec == 0:
+            _static_clock_seq = _unpack(">H", _get_random_bytes(2))[0] & 0x1FFF
             _static_last_sec = sec - 1
             _static_last_msec = msec
         if sec < _static_last_sec or ((sec == _static_last_sec) and (msec < _static_last_msec)):
-            _static_clock_seq = (_static_clock_seq+1) & 0x1FFF
+            _static_clock_seq = (_static_clock_seq + 1) & 0x1FFF
             _static_adjustment = 0
             _static_last_sec = sec
             _static_last_msec = msec
@@ -310,10 +310,10 @@ def _get_clock():
             _static_adjustment = 0
             _static_last_sec = sec
             _static_last_msec = msec
-    clock_reg = msec*10 + _static_adjustment
-    clock_reg = (clock_reg + sec*10000000) & 0xFFFFFFFFFFFFFFFF
+    clock_reg = msec * 10 + _static_adjustment
+    clock_reg = (clock_reg + sec * 10000000) & 0xFFFFFFFFFFFFFFFF
     clock_reg = (clock_reg + (((0x01B21DD2) << 32) + 0x13814000)) & 0xFFFFFFFFFFFFFFFF
-    return (clock_reg >> 32),(clock_reg & 0xFFFFFFFF),_static_clock_seq
+    return (clock_reg >> 32), (clock_reg & 0xFFFFFFFF), _static_clock_seq
 
 
 def _uuid_generate():
@@ -366,33 +366,33 @@ def libuuid_generate():
     """Generate a UUID with libuuid using the best available method.
     This will raise an exception if libuuid is not available.
     """
-    buf = _pack(">16s","")
-    out = _pack(">37s","")
-    _libuuid.call("uuid_generate",buf)
-    _libuuid.call("uuid_unparse",buf,out)
-    return _unpack(">36sB",out)[0]
+    buf = _pack(">16s", "")
+    out = _pack(">37s", "")
+    _libuuid.call("uuid_generate", buf)
+    _libuuid.call("uuid_unparse", buf, out)
+    return _unpack(">36sB", out)[0]
 
 
 def libuuid_generate_random():
     """Generate a UUID with libuuid using a high-quality source of randomness.
     This will raise an exception if libuuid is not available.
     """
-    buf = _pack(">16s","")
-    out = _pack(">37s","")
-    _libuuid.call("uuid_generate_random",buf)
-    _libuuid.call("uuid_unparse",buf,out)
-    return _unpack(">36sB",out)[0]
+    buf = _pack(">16s", "")
+    out = _pack(">37s", "")
+    _libuuid.call("uuid_generate_random", buf)
+    _libuuid.call("uuid_unparse", buf, out)
+    return _unpack(">36sB", out)[0]
 
 
 def libuuid_generate_time():
     """Generate a UUID with libuuid by mixing time and MAC address.
     This will raise an exception if libuuid is not available.
     """
-    buf = _pack(">16s","")
-    out = _pack(">37s","")
-    _libuuid.call("uuid_generate_time",buf)
-    _libuuid.call("uuid_unparse",buf,out)
-    return _unpack(">36sB",out)[0]
+    buf = _pack(">16s", "")
+    out = _pack(">37s", "")
+    _libuuid.call("uuid_generate_time", buf)
+    _libuuid.call("uuid_unparse", buf, out)
+    return _unpack(">36sB", out)[0]
 
 
 def linux_generate():
@@ -426,10 +426,10 @@ else:
         generate_time = py_generate_time
 
 if __name__ == '__main__':
-    import getopt,sys
+    import getopt, sys
     gen = generate
-    opts,args = getopt.getopt(sys.argv[1:],"rth",["help"])
-    for o,v in opts:
+    opts, args = getopt.getopt(sys.argv[1:], "rth", ["help"])
+    for o, v in opts:
         if o == "-t":
             gen = generate_time
         elif o == "-r":

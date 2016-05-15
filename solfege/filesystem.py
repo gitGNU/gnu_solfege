@@ -106,7 +106,7 @@ def get_home_dir():
         return _get_home_dir()
 
 
-#FIXME remove??
+# FIXME remove??
 def expanduser(s):
     return s.replace("~", get_home_dir())
 

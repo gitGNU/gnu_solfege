@@ -27,7 +27,7 @@ from solfege import soundcard
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
-    #UGH should we do this here
+    # UGH should we do this here
 
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
@@ -133,9 +133,9 @@ class Gui(abstract.LessonbasedGui):
         t = Gtk.Table(1, 1, 1)
         vbox.pack_start(t, True, True, 0)
         self.g_source = Gtk.VBox()
-        t.attach(self.g_source, 0, 1, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        t.attach(self.g_source, 0, 1, 0, 1, Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL)
         self.g_answer = Gtk.VBox()
-        t.attach(self.g_answer, 1, 2, 0, 1, Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL)
+        t.attach(self.g_answer, 1, 2, 0, 1, Gtk.AttachOptions.EXPAND | Gtk.AttachOptions.FILL)
         self.g_redo = Gtk.Button("<<<")
         self.g_redo.connect('clicked', lambda o, self=self: self.fill_stacking_frame())
         vbox.pack_end(self.g_redo, False, False, 0)
