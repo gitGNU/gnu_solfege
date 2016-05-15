@@ -26,7 +26,7 @@ import sys, getopt, colorsys, imp, md5
 
 class pydepgraphdot:
 
-    def main(self,argv):    
+    def main(self,argv):
         opts,args = getopt.getopt(argv,'',['mono'])
         self.colored = 1
         for o,v in opts:
@@ -47,7 +47,7 @@ class pydepgraphdot:
                 if not p.has_key(v):
                     p[v] = {}
                     
-        f = self.get_output_file()                    
+        f = self.get_output_file()
                     
         f.write('digraph G {\n')
         #f.write('concentrate = true;\n')
@@ -137,7 +137,7 @@ class pydepgraphdot:
     def weight(self,a,b):
         # Return the weight of the dependency from a to b. Higher weights
         # usually have shorter straighter edges. Return 1 if it has normal weight.
-        # A value of 4 is usually good for ensuring that a related pair of modules 
+        # A value of 4 is usually good for ensuring that a related pair of modules
         # are drawn next to each other. This is a default policy - please override.
         #
         if b.split('.')[-1].startswith('_'):

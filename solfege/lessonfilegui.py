@@ -114,7 +114,7 @@ class LabelObjectBox(gu.AlignedHBox):
         Return a HBox that presents a label with the label names
         separated by "-".
         """
-        gu.AlignedHBox.__init__(self) 
+        gu.AlignedHBox.__init__(self)
         self.setup_pre()
         for i, k in enumerate(v):
             if k in lf.m_elements:

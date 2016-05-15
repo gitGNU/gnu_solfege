@@ -76,7 +76,7 @@ def do_assignment(mod, statement, local_namespace, global_namespace, in_header,
                 if in_header and statement.left == 'module':
                     local_namespace[str(statement.left)] = str(statement.right)
                     return
-            local_namespace[str(statement.left)] = statement.right.evaluate(local_namespace, global_namespace) 
+            local_namespace[str(statement.left)] = statement.right.evaluate(local_namespace, global_namespace)
 
 
 def do_module(block, mod, included=False):

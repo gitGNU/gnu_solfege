@@ -29,7 +29,7 @@ class TestMisc(unittest.TestCase):
 
     def test_random_tonika_and_interval_in_key(self):
         for x in range(1000):
-            # Interval 6 is tritonus. Only f as lower tone 
+            # Interval 6 is tritonus. Only f as lower tone
             v = utils.random_tonic_and_interval_in_key("c'", "c''", [6], "c", "major")
             n = v[0].get_octave_notename()
             self.assertTrue(n in ("f'", "b'", "f''"))

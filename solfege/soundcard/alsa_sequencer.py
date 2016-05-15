@@ -135,7 +135,7 @@ def get_connection_list():
             portinfo = sequencer.get_port_info(portid, clientid)
             type = portinfo['type']
             caps = portinfo['capability']
-            if (type & alsaseq.SEQ_PORT_TYPE_MIDI_GENERIC 
+            if (type & alsaseq.SEQ_PORT_TYPE_MIDI_GENERIC
                 or type & alsaseq.SEQ_PORT_TYPE_APPLICATION) and \
                     caps & (alsaseq.SEQ_PORT_CAP_WRITE | alsaseq.SEQ_PORT_CAP_SUBS_WRITE):
                 retval.append((clientid, portid, clientname, portname,

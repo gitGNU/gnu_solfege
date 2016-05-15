@@ -12,8 +12,8 @@ from solfege import i18n
 i18n.setup(".")
 from solfege import statistics
 
-print 
-print "\n".join(textwrap.wrap( 
+print
+print "\n".join(textwrap.wrap(
  "The hash value is calculated using solfege.statistics.hash_of_lessonfile(filename). "
  "This is the sha1 hash value of the file after lines starting with # and empty "
  "lines have been removed."))

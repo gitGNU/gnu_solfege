@@ -201,7 +201,7 @@ class DB(object):
         for t in ('lessonfiles', 'sessions', 'sessioninfo', 'variables'):
             if t not in tables:
                 missing_table = True
-                break    
+                break
         else:
             missing_table = False
         # This is a sanity check. If one of the tables are missing, then
