@@ -21,8 +21,8 @@ In addition to the names in this file, only this is public in
 the mpd module:
 
   Classes:
-	MusicalPitch
-	MusicDisplayer
+    MusicalPitch
+    MusicDisplayer
 """
 
 
