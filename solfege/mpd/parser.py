@@ -214,7 +214,7 @@ def parse_to_score_object(music):
                 last_pos = timepos
                 timepos = timepos + chord_duration.get_rat_value()
                 chord_duration = None
-                relto = relto_backup;
+                relto = relto_backup
                 relto_backup = None
                 context = NOTES
             else:

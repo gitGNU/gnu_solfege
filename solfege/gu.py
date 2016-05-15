@@ -591,20 +591,23 @@ class HarmonicProgressionLabel(AlignedHBox):
         vbox = Gtk.VBox(False, 0)
         t1 = Gtk.Label(label=A)
         t1.set_name("ProgressionLabelNumber")
-        t1.show(); vbox.pack_start(t1, True, True, 0);
-        t1.set_alignment(0, 0);
+        t1.show()
+        vbox.pack_start(t1, True, True, 0)
+        t1.set_alignment(0, 0)
         t2 = Gtk.Label(label=B)
         t2.set_name("ProgressionLabelNumber")
-        t2.show(); vbox.pack_start(t2, True, True, 0);
-        t2.set_alignment(0, 0);
+        t2.show()
+        vbox.pack_start(t2, True, True, 0)
+        t2.set_alignment(0, 0)
         self.pack_start(vbox, False, False, 0)
 
     def oneline(self, A):
         vbox = Gtk.VBox(False, 0)
         t = Gtk.Label(label=A)
         t.set_name("ProgressionLabelNumber")
-        t.show(); vbox.pack_start(t, True, True, 0);
-        t.set_alignment(0, 0);
+        t.show()
+        vbox.pack_start(t, True, True, 0)
+        t.set_alignment(0, 0)
         self.pack_start(vbox, False, False, 0)
 
     def bigchar(self, A):
