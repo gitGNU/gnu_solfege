@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import locale
 import logging.handlers
 import os
@@ -109,6 +108,7 @@ if options.warranty:
 
 sys.stderr = tracebackwindow.TracebackWindow(options.show_gtk_warnings)
 
+
 def do_profiles():
     return (os.path.isdir(os.path.join(filesystem.app_data(), 'profiles'))
            and os.listdir(os.path.join(filesystem.app_data(), 'profiles')))
@@ -178,6 +178,7 @@ def start_gui(datadir):
     if options.screenshots:
         make_screenshots.make_screenshots()
 
+
 def start_app(datadir):
     global splash_win
     if not options.no_splash:
@@ -201,4 +202,3 @@ def start_app(datadir):
         Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
     GObject.timeout_add(1, start_gui, datadir)
     Gtk.main()
-

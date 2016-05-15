@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import os
 import tempfile
 
@@ -23,13 +22,16 @@ from solfege.soundcard.synth_common import SynthCommon
 from solfege.mpd.track import MidiEventStream
 from solfege import soundcard
 
+
 def ms_win_kill(pid):
     import win32api
     handle = win32api.OpenProcess(1, 0, pid)
     return (0 != win32api.TerminateProcess(handle, 0))
 
+
 class MidiFileSynth(SynthCommon):
     NUM_CHANNELS = 16
+
     def __init__(self, verbose_init):
         SynthCommon.__init__(self)
         self.m_type_major = "Midifile"
@@ -38,6 +40,7 @@ class MidiFileSynth(SynthCommon):
         if verbose_init:
             print("Solfege will use an external midiplayer program.")
             print("tmpfile:", self.m_tmpfilename)
+
     def close(self):
         try:
             if os.path.exists(self.m_tmpfilename):
@@ -46,11 +49,13 @@ class MidiFileSynth(SynthCommon):
             pass
             # We ignore this error because it seems to be easiest right now.
             # FIXME
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, midieventstream):
         midieventstream.create_midifile(self.m_tmpfilename)
         soundcard.play_mediafile('midi', self.m_tmpfilename)
+
     def stop(self):
         self.play_midieventstream(MidiEventStream())
-

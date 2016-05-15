@@ -15,12 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 class History:
+
     def __init__(self):
         self.m_list = []
         self.m_idx = -1
         self.m_lock = 0
+
     def add(self, data):
         """
         Add history at the current position. Data after the current
@@ -34,22 +35,27 @@ class History:
         if not self.m_list or self.m_list[-1][0] != data:
             self.m_list.append([data, None])
             self.m_idx = self.m_idx + 1
+
     def set_adj_of_current(self, adj):
         if self.m_lock:
             raise Exception("Called set_adj_of_current when locked.")
         self.m_list[self.m_idx][1] = adj
+
     def back(self):
         if self.m_idx > 0:
             self.m_idx = self.m_idx - 1
+
     def forward(self):
         if self.m_idx + 1 < len(self.m_list):
             self.m_idx = self.m_idx + 1
+
     def get_current(self):
         if self.m_idx >= 0:
             return self.m_list[self.m_idx]
+
     def lock(self):
         "Do not record any history"
         self.m_lock = 1
+
     def unlock(self):
         self.m_lock = 0
-

@@ -8,7 +8,9 @@ from solfege.soundcard.exporter import MidiExporter
 from solfege.mpd.track import Track
 from solfege.testlib import outdir
 
+
 class TestMidiExporter(unittest.TestCase):
+
     def test_empty(self):
         m = MidiExporter()
         m.start_export(os.path.join(outdir, "a.mid"))
@@ -16,6 +18,7 @@ class TestMidiExporter(unittest.TestCase):
         # We don't generate a file if no music has been played
         # since start_export()
         self.assertFalse(os.path.exists(os.path.join(outdir, "a.mid")))
+
     def test_export_track(self):
         t = Track()
         t.start_note(50, 120)
@@ -26,4 +29,3 @@ class TestMidiExporter(unittest.TestCase):
         os.remove(os.path.join(outdir, "a.mid"))
 
 suite = unittest.makeSuite(TestMidiExporter)
-

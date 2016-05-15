@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 from gi.repository import GObject
 from gi.repository import Gtk
 
@@ -32,21 +30,25 @@ from solfege.multipleintervalconfigwidget import nIntervalCheckBox
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     ERR_NO_INTERVALLS = 2
     ERR_NOTERANGE = 3
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IntervalsLessonfile
         self.m_statistics = statistics.HarmonicIntervalStatistics(self)
         self.m_tonika = None
         self.m_interval = None
+
     def enter_test_mode(self):
         self.m_custom_mode = False
         self.m_statistics.enter_test_mode()
         self.m_P.enter_test_mode()
+
     def new_question(self, L, H):
         """
         Return values:
@@ -113,6 +115,7 @@ class Teacher(abstract.Teacher):
         assert self.m_tonika
         self.q_status = self.QSTATUS_NEW
         return Teacher.OK
+
     def guess_answer(self, answer):
         """
         Return: 1 if correct, None if wrong
@@ -132,11 +135,13 @@ class Teacher(abstract.Teacher):
                 self.q_status = self.QSTATUS_WRONG
             if solfege.app.m_test_mode:
                 self.maybe_auto_new_question()
+
     def give_up(self):
         """This function is only called *after* the user already has
         answered wrong once, so the statistics are already updated.
         """
         self.q_status = self.QSTATUS_GIVE_UP
+
     def play_question(self):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -147,6 +152,7 @@ class Teacher(abstract.Teacher):
         t2.note(4, high_tone)
         soundcard.synth.play_track(t1, t2)
         return 1
+
     def play_melodic(self):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -155,6 +161,7 @@ class Teacher(abstract.Teacher):
         t2.note(4, 0, 0)
         t2.note(4, (self.m_tonika + self.m_interval).semitone_pitch())
         soundcard.synth.play_track(t1, t2)
+
     def start_practise(self):
         self.m_custom_mode = bool(not self.m_P.header.intervals)
         if self.m_P.header.intervals:
@@ -164,8 +171,10 @@ class Teacher(abstract.Teacher):
         self.m_tonika = None
         self.m_interval = None
 
+
 class Gui(abstract.IntervalGui):
     lesson_heading = _("Identify the interval")
+
     def __init__(self, teacher):
         abstract.IntervalGui.__init__(self, teacher)
         ################
@@ -204,6 +213,7 @@ class Gui(abstract.IntervalGui):
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                    _("Harmonic interval"))
         self.select_inputwidget()
+
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: %s")
@@ -211,8 +221,10 @@ class Gui(abstract.IntervalGui):
             self.m_t.give_up()
             self.g_input.mark_note(int(self.m_t.m_tonika + self.m_t.m_interval), 2)
             self.std_buttons_give_up()
+
     def get_interval_input_list(self):
         return self.get_list('intervals')
+
     def click_on_interval(self, mouse_button, interval, midi_int):
         if mouse_button in (1, self.keyboard_accel):
             # Do nothing if the user clicks on the anwer buttons or on
@@ -259,6 +271,7 @@ class Gui(abstract.IntervalGui):
             t1.note(4, self.m_t.m_tonika.semitone_pitch())
             t2.note(4, (self.m_t.m_tonika + interval).semitone_pitch())
             soundcard.synth.play_track(t1, t2)
+
     def new_question(self, _o=None):
         """This function is called when you click on the 'New interval'
         button, or when you use the key bindings. So it can be called even
@@ -279,6 +292,7 @@ class Gui(abstract.IntervalGui):
         if g == Teacher.OK: # new question, everything is OK
             self.std_buttons_new_question()
             self.g_input.set_first_note(self.m_t.m_tonika)
+
             def exception_cleanup():
                 self.m_t.end_practise()
                 self.std_buttons_exception_cleanup()
@@ -301,9 +315,11 @@ class Gui(abstract.IntervalGui):
             self.g_flashbar.clear()
             self.g_flashbar.flash(
                     _("You have to select some intervals to practise."))
+
     def repeat_melodic(self, *w):
         self.m_t.play_melodic()
         self.g_input.grab_focus_first_sensitive_button()
+
     def on_start_practise(self):
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()
@@ -320,10 +336,12 @@ class Gui(abstract.IntervalGui):
         else:
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New interval' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_flashbar.clear()
         self.g_input.clear()
+
     def enter_test_mode(self):
         self.m_saved_q_auto = self.get_bool('new_question_automatically')
         self.m_saved_s_new = self.get_float('seconds_before_new_question')
@@ -334,6 +352,7 @@ class Gui(abstract.IntervalGui):
         self.g_repeat_melodic.hide()
         self.g_cancel_test.show()
         self.g_give_up.hide()
+
     def exit_test_mode(self):
         self.set_bool('new_question_automatically', self.m_saved_q_auto)
         self.set_float('seconds_before_new_question', self.m_saved_s_new)

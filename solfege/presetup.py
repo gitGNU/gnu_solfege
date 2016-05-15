@@ -25,6 +25,7 @@ from solfege import cfg
 from solfege import filesystem
 from solfege import i18n
 
+
 def presetup(app_defaults_filename, system_filename, user_filename):
     if not os.path.exists(filesystem.app_data()):
         os.makedirs(filesystem.app_data())
@@ -63,4 +64,3 @@ def presetup(app_defaults_filename, system_filename, user_filename):
     # MIGRATION from 2.9.2 to 2.9.3
     if cfg.get_string("app/lc_messages") == 'C (english)':
         cfg.set_string("app/lc_messages", "C")
-

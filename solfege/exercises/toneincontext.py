@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import logging
 import random
 
@@ -37,7 +35,9 @@ from solfege.mpd import elems
 labels = ['1', '♯1/♭2', '2', '♯2/♭3', '3', '4', '♯4/♭5',
           '5', '♯5/6♭', '6', '♯6/♭7', '7', '1']
 
+
 class ToneInKeyStatistics(statistics.LessonStatistics):
+
     def key_to_pretty_name(self, key):
         return labels[int(key)]
 
@@ -46,11 +46,13 @@ class Teacher(abstract.Teacher):
     OK = 0
     ERR_NO_CADENCES = 1
     ERR_NO_CADENCES_IN_FILE = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
         self.m_transpose = mpd.MusicalPitch()
         self.m_statistics = ToneInKeyStatistics(self)
+
     def new_question(self):
         """
         Return OK or ERR_NO_CADENCES
@@ -69,6 +71,7 @@ class Teacher(abstract.Teacher):
                 return self.ERR_NO_CADENCES_IN_FILE
             self.m_cadence = random.choice(self.m_P.blocklists['cadence'])
         return self.OK
+
     def play_question(self):
         cadence = self.m_cadence['music'][:]
         p = mpd.MusicalPitch.new_from_notename("c'") + self.m_tone
@@ -106,6 +109,7 @@ class Teacher(abstract.Teacher):
         tr[0].prepend_bpm(t[0], t[1])
         tr[-1].prepend_patch(instr)
         soundcard.synth.play_track(*tr)
+
     def guess_answer(self, answer):
         if answer == 12:
             answer = 0
@@ -124,8 +128,10 @@ class Teacher(abstract.Teacher):
                 self.q_status = self.QSTATUS_WRONG
             #if solfege.app.m_test_mode:
             #    self.maybe_auto_new_question()
+
     def give_up(self):
         self.m_qstatus = self.QSTATUS_GIVE_UP
+
     def start_practise(self):
         self.m_custom_mode = bool(not self.m_P.header.tones)
         if not self.m_custom_mode:
@@ -153,6 +159,7 @@ def fill_table(button_class, table):
 
 
 class nConfigButtons(Gtk.Table, cfg.ConfigUtils):
+
     def __init__(self, exname, name):
         Gtk.Table.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
@@ -162,6 +169,7 @@ class nConfigButtons(Gtk.Table, cfg.ConfigUtils):
             button.connect('toggled', self.on_toggled)
         for key in self.get_list('tones'):
             self.g_buttons[key].set_active(True)
+
     def on_toggled(self, *w):
         self.set_list(self.m_varname,
             [k for k in list(self.g_buttons.keys()) if self.g_buttons[k].get_active()])
@@ -169,6 +177,7 @@ class nConfigButtons(Gtk.Table, cfg.ConfigUtils):
 
 class Gui(abstract.Gui):
     lesson_heading = _("Tone in context")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         t = Gtk.Table()
@@ -201,6 +210,7 @@ class Gui(abstract.Gui):
         self.g_cadences.show()
         self.g_config_grid.attach(self.g_cadences_category, 0, 3, 1, 1)
         #
+
         def _ff(var):
             if self.m_t.m_custom_mode:
                 # If we are running in custom mode, then the user can
@@ -212,9 +222,11 @@ class Gui(abstract.Gui):
         self.add_watch('tones', _ff)
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                    _("Tone in cadence"))
+
     def cancel_question(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()
+
     def new_question(self, *w):
         i = self.m_t.new_question()
         if i == Teacher.OK:
@@ -227,12 +239,14 @@ class Gui(abstract.Gui):
         elif i == Teacher.ERR_NO_CADENCES_IN_FILE:
             solfege.win.display_error_message2("No cadences in file",
                 self.m_t.m_P.m_filename)
+
     def give_up(self, *w):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: %s")
                  % labels[self.m_t.m_tone])
             self.m_t.give_up()
             self.std_buttons_give_up()
+
     def on_left_click(self, button, tone_int):
         if self.m_t.q_status == self.QSTATUS_SOLVED:
             if self.m_t.guess_answer(tone_int):
@@ -248,6 +262,7 @@ class Gui(abstract.Gui):
                 self.std_buttons_answer_wrong()
                 if self.get_bool("config/auto_repeat_question_if_wrong_answer"):
                     self.m_t.play_question()
+
     def on_start_practise(self):
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()
@@ -283,6 +298,7 @@ class Gui(abstract.Gui):
         self.g_flashbar.require_size([
                 _("Correct, but you have already solved this question"),
                 _("Wrong, but you have already solved this question")])
+
     def on_cadences_toggled(self, btn, key):
         self.cancel_question()
         self.m_t.m_cadences[key] = btn.get_active()

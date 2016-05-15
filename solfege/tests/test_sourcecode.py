@@ -6,7 +6,7 @@
 import unittest
 import os
 
+
 class TestSourceCode(unittest.TestCase):
     pass
 suite = unittest.makeSuite(TestSourceCode)
-

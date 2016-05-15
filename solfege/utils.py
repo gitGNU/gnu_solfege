@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import math
 import random
 import re
@@ -26,8 +25,10 @@ from solfege import soundcard
 
 from solfege.mpd.const import DEFAULT_VELOCITY
 
+
 def cmp(a, b):
     return (a > b) - (a < b)
+
 
 def mangle_email(email):
     email = email.replace("@", " ,, ")
@@ -196,6 +197,7 @@ key_data = {
                    'pitches': (0, 2, 4, 6, 8, 10)},
 }
 
+
 def pitches_in_key(tonic, keytype, lowest, highest):
     """
     Return a set of the pitches (int values corresponding to
@@ -213,9 +215,11 @@ def pitches_in_key(tonic, keytype, lowest, highest):
 def un_escape_url_string(s):
     r = re.compile("(%([0-9A-F][0-9A-F]))")
     m = r.search(s)
+
     def f(m):
         return chr(eval("0x%s" % m.groups()[1]))
     return r.sub(f, s)
+
 
 def _str_to_dict(s):
     D = {}
@@ -227,6 +231,7 @@ def _str_to_dict(s):
     for k in D:
         D[k] = un_escape_url_string(D[k])
     return D
+
 
 def freq_to_notename_cent(freq):
     e = 440.0
@@ -244,6 +249,7 @@ def freq_to_notename_cent(freq):
     if cent > 50:
         return n[(i+1) % 12], cent-100
     return n[int(v)], (v-int(v)) * 100
+
 
 def compare_version_strings(A, B):
     """
@@ -290,6 +296,7 @@ def string_get_line_at(s, idx):
             end += 1
     return s[start:end+1].strip("\n")
 
+
 def new_track():
     t1 = mpd.Track()
     t1.set_bpm(cfg.get_int('config/default_bpm'))
@@ -297,11 +304,13 @@ def new_track():
     t1.set_patch(cfg.get_int('config/preferred_instrument'))
     return t1
 
+
 def new_percussion_track():
     t1 = mpd.PercussionTrack()
     t1.set_bpm(cfg.get_int('config/default_bpm'))
     t1.set_volume(cfg.get_int('config/preferred_instrument_volume'))
     return t1
+
 
 def new_2_tracks():
     if cfg.get_bool('config/override_default_instrument'):
@@ -320,6 +329,7 @@ def new_2_tracks():
     t2.set_patch(instr_high)
     t2.set_volume(instr_high_volume)
     return t1, t2
+
 
 def new_3_tracks():
     if cfg.get_bool('config/override_default_instrument'):
@@ -344,15 +354,18 @@ def new_3_tracks():
     t3.set_volume(instr_high_volume)
     return t1, t2, t3
 
+
 def play_note(notelen, pitch):
     t = new_track()
     t.note(notelen, pitch, DEFAULT_VELOCITY)
     soundcard.synth.play_track(t)
 
+
 def play_perc(notelen, pitch):
     t = new_percussion_track()
     t.note(notelen, pitch)
     soundcard.synth.play_track(t)
+
 
 def play_music(music, tempo, patch, volume, start=None, end=None):
     if type(tempo) == type(0):
@@ -366,6 +379,7 @@ def play_music(music, tempo, patch, volume, start=None, end=None):
     [track.prepend_patch(patch) for track in tracklist]
     [track.prepend_volume(volume) for track in tracklist]
     soundcard.synth.play_track(*tracklist)
+
 
 def play_music3(music, tempo, instrument, start=None, end=None):
     """
@@ -386,4 +400,3 @@ def play_music3(music, tempo, instrument, start=None, end=None):
     tracklist[-1].prepend_patch(instrument[0])
     tracklist[-1].prepend_volume(instrument[1])
     soundcard.synth.play_track(*tracklist)
-

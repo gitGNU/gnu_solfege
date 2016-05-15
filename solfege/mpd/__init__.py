@@ -51,12 +51,14 @@ except AttributeError:
 finally:
     del solfege
 
+
 def music_to_tracklist(music, start=None, end=None):
     """
     return a list of tracks, where track[0] use only channel 0,
     track[1] only use channel 1 etc.
     """
     return score_to_tracks(parse_to_score_object(music), start, end)
+
 
 def music_to_track(music, start=None, end=None):
     tracklist = score_to_tracks(parse_to_score_object(music), start, end)
@@ -81,8 +83,10 @@ def transpose_notename(n, t):
     # 10 11 septim
     return int_to_octave_notename(notename_to_int(n) + t)
 
+
 def compare_notenames(n1, n2):
     return notename_to_int(n1) - notename_to_int(n2)
+
 
 def select_clef(s):
     """
@@ -103,4 +107,3 @@ def select_clef(s):
         return "violin"
     else:
         return "bass"
-

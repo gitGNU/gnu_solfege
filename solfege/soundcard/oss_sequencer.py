@@ -20,6 +20,7 @@ from solfege.soundcard import oss_common
 from solfege.soundcard import solfege_c_midi
 from solfege.mpd.track import MidiEventStream
 
+
 class OSSSequencerSynth(oss_common.AbstractSynth):
     """
     This class wrap /dev/sequencer, so we can use it the same
@@ -33,9 +34,11 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
             we ALWAYS have 16 channels, but the number
             of voices depend on your hardware.
     """
+
     def __init__(self, device, devnum, verbose_init):
         oss_common.AbstractSynth.__init__(self, device, devnum, verbose_init)
         self.__tempo = (60, 4)
+
     def reset(self):
         # list of available voices, number depends on the soundcard.
         # AWE32 and GUS has 32, OPL3: 18, OPL2: 9
@@ -55,6 +58,7 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
         self.m_channel_dict = {}
         for x in range(self.NUM_CHANNELS):
             self.m_channel_dict[x] = {}
+
     def alloc_voice(self, chan, note):
         """
         Return None if there are no available voices or
@@ -79,6 +83,7 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
         assert note not in self.m_channel_dict[chan]
         self.m_channel_dict[chan][note] = voice
         return voice
+
     def free_voice(self, chan, note):
         if note not in self.m_channel_dict[chan]:
             return None
@@ -86,10 +91,13 @@ class OSSSequencerSynth(oss_common.AbstractSynth):
         self.m_voices.append(voice)
         del self.m_channel_dict[chan][note]
         return voice
+
     def set_patch(self, chan, patch):
         self.m_channel_patches[chan] = patch
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, midieventstream):
         solfege_c_midi.sndctl_seq_reset()
         self.reset()

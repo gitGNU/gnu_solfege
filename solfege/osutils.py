@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import os
 import re
 import signal
@@ -53,22 +51,27 @@ def get_drives():
 class OsUtilsException(Exception):
     pass
 
+
 class RunningExecutableFailed(OsUtilsException):
+
     def __init__(self, cmd):
         OsUtilsException.__init__(self,
           _("Running the command %s failed.") % cmd)
+
 
 class ExecutableDoesNotExist(OsUtilsException):
     """
     We should raise this exception if os.system fails and returns
     anything else than 0.
     """
+
     def __init__(self, cmd):
         OsUtilsException.__init__(self,
           _("The executable '%s' does not exist.") % cmd)
 
 
 class BinaryBaseException(OsUtilsException):
+
     def __init__(self, binary, exception):
         OsUtilsException.__init__(self)
         self.msg2 = _("Tried `%(bin)s`:\n\n\t%(exception)s\n\n"
@@ -78,18 +81,24 @@ class BinaryBaseException(OsUtilsException):
              'bin': binary,
              'exception': str(exception)}
 
+
 class BinaryForProgramException(BinaryBaseException):
+
     def __init__(self, program_name, binary, exception):
         BinaryBaseException.__init__(self, binary, exception)
         self.msg1 = _("Failed to execute a binary for %s") % program_name
 
+
 class BinaryForMediaPlayerException(BinaryBaseException):
+
     def __init__(self, typeid, binary, exception):
         BinaryBaseException.__init__(self, binary, exception)
         self.msg1 = _("Failed to execute media player for %s files") % typeid.upper()
 
+
 class BinaryForMediaConvertorException(BinaryBaseException):
     r = re.compile("app/(?P<from>[a-z0-9]+)_to_(?P<to>[a-z0-9]+)_cmd")
+
     def __init__(self, varname, binary, exception):
         BinaryBaseException.__init__(self, binary, exception)
         m = self.r.match(varname)
@@ -113,8 +122,10 @@ if sys.version_info < (2, 6):
         We define this class because Popen.kill was added in Python 2.6,
         and we want to run with 2.5 too.
         """
+
         def __init__(self, *args, **kwargs):
             subprocess.Popen.__init__(self, *args, **kwargs)
+
         def kill(self):
             if sys.platform == 'win32':
                 # http://code.activestate.com/recipes/347462/
@@ -127,6 +138,7 @@ if sys.version_info < (2, 6):
                 self.wait()
 else:
     Popen = subprocess.Popen
+
 
 class PopenSingleton(object):
     """
@@ -217,6 +229,7 @@ def find_mma_executables(ignore_drives):
                 continue
     return retval
 
+
 def find_csound_executables():
     """
     Return a list of possible csound executables.
@@ -230,4 +243,3 @@ def find_csound_executables():
         if os.path.exists(fn):
             retval.add(fn)
     return retval
-

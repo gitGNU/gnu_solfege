@@ -20,6 +20,7 @@ def gcd(a, b):
         a, b = b, a % b
     return a
 
+
 class Rat(object):
     __slots__ = ('m_num', 'm_den')
     """
@@ -27,17 +28,22 @@ class Rat(object):
     only the features needed for the the soundcard and mpd
     module included in Solfege.
     """
+
     def __init__(self, num, den=1):
         assert isinstance(num, int)
         assert isinstance(den, int)
         self.m_num = num
         self.m_den = den
+
     def clone(self):
         return Rat(self.m_num, self.m_den)
+
     def __repr__(self):
         return "(Rat %i/%i)" % (self.m_num, self.m_den)
+
     def __str__(self):
         return "(Rat %i/%i)" % (self.m_num, self.m_den)
+
     def __add__(self, B):
         assert isinstance(self, Rat)
         assert isinstance(B, Rat)
@@ -45,6 +51,7 @@ class Rat(object):
         b = self.m_den * B.m_den
         g = gcd(a, b)
         return Rat(a // g, b // g)
+
     def __sub__(self, B):
         assert isinstance(self, Rat)
         assert isinstance(B, Rat)
@@ -52,6 +59,7 @@ class Rat(object):
         b = self.m_den * B.m_den
         g = gcd(a, b)
         return Rat(a // g, b // g)
+
     def __mul__(self, B):
         assert isinstance(self, Rat)
         if isinstance(B, int):
@@ -60,12 +68,14 @@ class Rat(object):
         assert isinstance(B, Rat)
         g = gcd(self.m_num * B.m_num, self.m_den * B.m_den)
         return Rat(self.m_num * B.m_num // g, self.m_den * B.m_den // g)
+
     def __truediv__(self, i):
         if isinstance(i, int):
             i = Rat(i, 1)
         r = Rat(self.m_num * i.m_den, self.m_den * i.m_num)
         g = gcd(r.m_num, r.m_den)
         return Rat(r.m_num // g, r.m_den // g)
+
     def __rmul__(self, B):
         """ called when integer * Rat
         """
@@ -74,17 +84,23 @@ class Rat(object):
         a = self.m_num * B
         g = gcd(a, self.m_den)
         return Rat(a // g, self.m_den // g)
+
     def __int__(self):
         return self.m_num // self.m_den
+
     def __float__(self):
         return self.m_num / self.m_den
+
     def __hash__(self):
         return hash((self.m_num, self.m_den))
+
     def __eq__(self, B):
         if B is None:
             return False
         return self.m_num / self.m_den == B.m_num / B.m_den
+
     def __lt__(self, B):
         return self.m_num / self.m_den < B.m_num / B.m_den
+
     def __le__(self, B):
         return self.m_num / self.m_den <= B.m_num / B.m_den

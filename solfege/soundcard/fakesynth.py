@@ -18,18 +18,23 @@
 import logging
 
 from solfege.mpd.track import MidiEventStream
+
+
 class Synth:
     NUM_CHANNELS = 16
+
     def __init__(self, verbose_init):
         logging.debug("Solfege will use fakesynth")
         self.m_type_major = "Fake"
+
     def close(self):
         pass
+
     def stop(self):
         pass
+
     def play_track(self, *tracks):
         logging.debug("FakeSynth.play_track()")
         for e in MidiEventStream(*tracks):
             logging.debug(str(e))
         logging.debug("")
-

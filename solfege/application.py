@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import errno
 import locale
 import logging
@@ -162,7 +161,6 @@ def check_rcfile():
             if i > 0:
                 cfg.set_int("%s/inputwidget" % ex, i + 1)
 
-
     cfg.set_int("app/rcfileversion", rcfileversion)
     try:
         a = mpd.notename_to_int(cfg.get_string("user/lowest_pitch"))
@@ -177,6 +175,7 @@ def check_rcfile():
 
 
 class SolfegeApp(cfg.ConfigUtils):
+
     def __init__(self, options):
         """
         options -- command line options parsed by optparse
@@ -196,6 +195,7 @@ class SolfegeApp(cfg.ConfigUtils):
             if os.path.isdir(os.path.join('help', lang)):
                 self.m_userman_language = lang
                 break
+
     def setup_sound(self):
         if sys.platform == 'win32' and \
                     cfg.get_string("sound/type") == "sequencer-device":
@@ -280,6 +280,7 @@ class SolfegeApp(cfg.ConfigUtils):
                 break
             else:
                 cfg.set_string("programs/mma", "")
+
     def display_sound_init_error_message(self, e):
         if isinstance(e, soundcard.SoundInitException):
             solfege.win.display_error_message(
@@ -305,6 +306,7 @@ class SolfegeApp(cfg.ConfigUtils):
                 "the preferences window.\n\n"
                 "It is also possible that the OS sound setup is incorrect."
                 % str(e).decode(locale.getpreferredencoding(), 'replace'))
+
     def please_help_me(self):
         if isinstance(solfege.win.get_view(), abstract.Gui):
             # If the view visible is an exercise, when we check if the
@@ -315,9 +317,11 @@ class SolfegeApp(cfg.ConfigUtils):
                 # if not, we display help page named the same as the
                 # exercise module
                 self.handle_href('%s.html' % solfege.win.m_viewer)
+
     def show_exercise_theory(self):
         if self.m_teachers[self.m_running_exercise].m_P.header.theory:
             solfege.win.display_docfile("%s.html" % self.m_teachers[self.m_running_exercise].m_P.header.theory)
+
     def _practise_lessonfile(self, filename, urlobj=None):
         """
         return the module name.
@@ -345,6 +349,7 @@ class SolfegeApp(cfg.ConfigUtils):
         self.m_teachers[module].g_view = solfege.win.box_dict[module]
         solfege.win.show_help_on_current()
         return module
+
     def practise_lessonfile(self, filename):
         def cleanup():
             module = lessonfile.infocache.get(filename, 'module')
@@ -373,10 +378,12 @@ class SolfegeApp(cfg.ConfigUtils):
         if w:
             w.set_sensitive(bool(self.m_teachers[module].m_P.header.theory))
         return module
+
     def test_lessonfile(self, filename):
         self.m_test_mode = True
         module = self.practise_lessonfile(filename)
         solfege.win.enter_test_mode()
+
     def handle_href(self, href):
         u = urlparse(href)
         if u.scheme:
@@ -386,12 +393,14 @@ class SolfegeApp(cfg.ConfigUtils):
                 solfege.win.display_error_message2(_("Error opening web browser"), str(e))
         else:
             solfege.win.display_docfile(u.path)
+
     def create_teacher(self, modulename):
         """
         Create the teacher in 'modulename' and add it to self.m_teachers.
         """
         m = self.import_module(modulename)
         self.m_teachers[modulename] = m.Teacher(modulename)
+
     def import_module(self, modulename):
         """
         If prefixed with "solfege:"
@@ -419,6 +428,7 @@ class SolfegeApp(cfg.ConfigUtils):
         else:
             m = __import__("solfege.exercises.%s" % modulename, fromlist=("solfege.exercises.%s" % modulename,), level=0)
         return m
+
     def reset_exercise(self, w=None):
         """
         Call on_end_practise, and then on_start_practise in
@@ -427,6 +437,7 @@ class SolfegeApp(cfg.ConfigUtils):
         if isinstance(solfege.win.get_view(), abstract.Gui):
             solfege.win.get_view().on_end_practise()
             solfege.win.get_view().on_start_practise()
+
     def quit_program(self):
         if isinstance(solfege.win.get_view(), abstract.Gui):
             g = solfege.win.get_view()
@@ -449,6 +460,7 @@ class SolfegeApp(cfg.ConfigUtils):
         if soundcard.synth:
             soundcard.synth.close()
         shutil.rmtree(lessonfile.MusicBaseClass.temp_dir, True)
+
     def export_training_set(self, export_data, export_dir, output_format,
                             name_track_by_question):
         """
@@ -526,6 +538,7 @@ class SolfegeApp(cfg.ConfigUtils):
                 else:
                     logging.warning("export_training_set:ignoring exercise with module='%s'", module)
 #####
+
                 def do_convert(from_format, to_format):
                     """
                     Return False if we think the convert failed.
@@ -581,6 +594,7 @@ class SolfegeApp(cfg.ConfigUtils):
                     del self.m_abort_export
                     return
         reportlib.HtmlReport(report, os.path.join(export_dir, "toc.html"))
+
     def sheet_gen_questions(self, count, sdict):
         """
         count -- how many questions should we generate. We use this value
@@ -599,6 +613,7 @@ class SolfegeApp(cfg.ConfigUtils):
             assert module in ('harmonicinterval', 'melodicinterval')
             for x in self._sheet_gen_question_interval(module, p, count, sdict):
                 yield x
+
     def _sheet_gen_question_idbyname(self, p, count, sdict):
         """
         yield count dicts, where each dict contain the data needed to
@@ -626,6 +641,7 @@ class SolfegeApp(cfg.ConfigUtils):
                 ret['answer']['music'] = p.get_lilypond_code()
                 ret['question']['music'] = p.get_lilypond_code_first_note()
                 yield ret
+
     def _sheet_gen_question_interval(self, module, p, count, sdict):
         # FIXME in the idbyname we count how many times each question
         # has been selected, to get an even selection. We don't do it
@@ -673,4 +689,3 @@ class SolfegeApp(cfg.ConfigUtils):
                     teacher.m_tonika.get_octave_notename(),
                     (teacher.m_tonika + teacher.m_interval).get_octave_notename())
                 yield ret
-

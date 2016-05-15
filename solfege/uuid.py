@@ -86,6 +86,7 @@ from sys import maxsize as _maxint
 
 _now = datetime.datetime.now
 
+
 def _gettimeofday():
     d=_now()
     return int(_mktime(d.timetuple())),d.microsecond
@@ -100,6 +101,7 @@ if hasattr(os,"urandom"):
         _random_init = True
     except:
         pass
+
 
 def _get_random_reader():
     global _random_reader, _random_init
@@ -126,8 +128,10 @@ _fmt_16 = ">16B"
 _fmt_6 = ">6B"
 _fmt_2 = ">2B"
 
+
 def _randomize_byte(b):
     return b ^ ((_randint(0,_maxint) >> 7) & 0xFF)
+
 
 def _get_random_bytes(n):
     reader = _get_random_reader()
@@ -152,18 +156,23 @@ def _get_random_bytes(n):
         fmt = ">%sB" % n
     return _pack(fmt,*tuple(map(_randomize_byte,_unpack(fmt,buf))))
 
+
 def _uuid_unpack(buf):
     return _unpack(">IHHH6s",buf)
+
 
 def _uuid_unpack_fully(buf):
     return _unpack(">IHHHBBBBBB",buf)
 
+
 def _uuid_pack(low,mid,hi,seq,node):
     return _pack(">IHHH6s",low,mid,hi,seq,node)
+
 
 def _uuid_unparse(uu):
     low,mid,hi,seq,b5,b4,b3,b2,b1,b0 = _uuid_unpack_fully(uu)
     return "%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x" % (low,mid,hi,seq>>8,seq&0xFF,b5,b4,b3,b2,b1,b0)
+
 
 def _uuid_generate_random():
     buf = _get_random_bytes(16)
@@ -171,6 +180,7 @@ def _uuid_generate_random():
     seq = (seq & 0x3FFF) | 0x8000
     hi_and_version = (hi_and_version & 0x0FFF) | 0x4000
     return _uuid_pack(low,mid,hi_and_version,seq,node)
+
 
 def _backtick(pgm):
     try:
@@ -180,8 +190,10 @@ def _backtick(pgm):
     except:
         return ""
 
+
 def _decode_hex(s):
     return int(s,16)
+
 
 def _get_mac_address():
     import re
@@ -200,6 +212,7 @@ def _get_mac_address():
         s = m.group(1)
         return list(map(_decode_hex,s.split(":")))
     return None
+
 
 def _get_6bytes(mac=None):
     try:
@@ -222,6 +235,7 @@ USE_SHA    = 2
 _common_suffix_method = USE_MAC
 _static_time_buf = None
 
+
 def _set_common_suffix():
     global _static_time_buf
     if _common_suffix_method == USE_RANDOM:
@@ -239,6 +253,7 @@ def _set_common_suffix():
             # I don't know how to set the multicast bit
             # so I am leaving that out
 
+
 def set_method(meth):
     """Set the method to be used to generate the common suffix of uuids
     when py_generate_time is invoked.  The argument can be one of the
@@ -254,6 +269,7 @@ def set_method(meth):
     _common_suffix_method = meth
     _set_common_suffix()
 
+
 def _uuid_generate_time():
     global _static_time_buf
     if not _static_time_buf:
@@ -268,6 +284,7 @@ _static_last_msec = 0
 _static_adjustment = 0
 _MAX_ADJUSTMENT = 10
 _static_clock_seq = 0
+
 
 def _get_clock():
     global _static_last_sec,_static_last_msec,_static_adjustment,_static_clock_seq
@@ -298,11 +315,13 @@ def _get_clock():
     clock_reg = (clock_reg + (((0x01B21DD2) << 32) + 0x13814000)) & 0xFFFFFFFFFFFFFFFF
     return (clock_reg >> 32),(clock_reg & 0xFFFFFFFF),_static_clock_seq
 
+
 def _uuid_generate():
     if _get_random_reader():
         return _uuid_generate_random()
     else:
         return _uuid_generate_time()
+
 
 def py_generate():
     """Generate a UUID using the best available method.
@@ -312,10 +331,12 @@ def py_generate():
     """
     return _uuid_unparse(_uuid_generate())
 
+
 def py_generate_time():
     """Generate a UUID by mixing time and MAC address.
     """
     return _uuid_unparse(_uuid_generate_time())
+
 
 def py_generate_random():
     """Generate a UUID using a high-quality source of randomness.
@@ -340,6 +361,7 @@ except:
 # they are never uniquified nor hashed, and they are thrown away as soon as
 # possible.  I think this is actually safe.  If I am wrong, please let me know.
 
+
 def libuuid_generate():
     """Generate a UUID with libuuid using the best available method.
     This will raise an exception if libuuid is not available.
@@ -349,6 +371,7 @@ def libuuid_generate():
     _libuuid.call("uuid_generate",buf)
     _libuuid.call("uuid_unparse",buf,out)
     return _unpack(">36sB",out)[0]
+
 
 def libuuid_generate_random():
     """Generate a UUID with libuuid using a high-quality source of randomness.
@@ -360,6 +383,7 @@ def libuuid_generate_random():
     _libuuid.call("uuid_unparse",buf,out)
     return _unpack(">36sB",out)[0]
 
+
 def libuuid_generate_time():
     """Generate a UUID with libuuid by mixing time and MAC address.
     This will raise an exception if libuuid is not available.
@@ -369,6 +393,7 @@ def libuuid_generate_time():
     _libuuid.call("uuid_generate_time",buf)
     _libuuid.call("uuid_unparse",buf,out)
     return _unpack(">36sB",out)[0]
+
 
 def linux_generate():
     """Generate a UUID by reading from /proc/sys/kernel/random/uuid.

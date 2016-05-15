@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import random
 
 from gi.repository import GObject
@@ -29,18 +28,22 @@ from solfege import soundcard
 from solfege import utils
 from solfege.multipleintervalconfigwidget import nIntervalCheckBox
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     ERR_CONFIGURE = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
         for s in 'harmonic', 'melodic':
             self.m_lessonfile_defs[s] = s
         self.m_custom_mode = False
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
+
     def new_question(self):
         """
         Return a true value if a new question was created otherwise false.
@@ -66,6 +69,7 @@ class Teacher(abstract.Teacher):
                           mpd.MusicalPitch().randomize("f", "f'")]
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def play_question(self):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -87,6 +91,7 @@ class Teacher(abstract.Teacher):
             t2.notelen_time(4)
             t2.note(4, self.m_tonikas[1] + self.m_intervals[1])
         soundcard.synth.play_track(t1, t2)
+
     def play_first_interval(self, w):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -100,6 +105,7 @@ class Teacher(abstract.Teacher):
             t2.notelen_time(4)
             t2.note(4, self.m_tonikas[0] + self.m_intervals[0])
         soundcard.synth.play_track(t1, t2)
+
     def play_last_interval(self, w):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -113,6 +119,7 @@ class Teacher(abstract.Teacher):
             t2.notelen_time(4)
             t2.note(4, self.m_tonikas[1] + self.m_intervals[1])
         soundcard.synth.play_track(t1, t2)
+
     def guess_answer(self, c):
         """
         argument c:
@@ -129,8 +136,10 @@ class Teacher(abstract.Teacher):
             self.q_status = self.QSTATUS_WRONG
         return a
 
+
 class Gui(abstract.Gui):
     lesson_heading = _("Compare intervals")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         self._ignore_events = 0
@@ -220,18 +229,21 @@ class Gui(abstract.Gui):
         self.g_config_grid.show_all()
         self.add_watch('first_interval_type', self._watch_1_cb)
         self.add_watch('last_interval_type', self._watch_2_cb)
+
     def _watch_1_cb(self, name):
         self._ignore_events = 1
         self.g_rdbs[0][self.get_string('first_interval_type')].set_active(1)
         self.g_first_interval_down.set_sensitive(
                 self.get_string('first_interval_type') == 'melodic')
         self._ignore_events = 0
+
     def _watch_2_cb(self, name):
         self._ignore_events = 1
         self.g_rdbs[1][self.get_string('last_interval_type')].set_active(1)
         self.g_last_interval_down.set_sensitive(
                 self.get_string('last_interval_type') == 'melodic')
         self._ignore_events = 0
+
     def update_first(self, button):
         """
         Called when the type of interval is changed.
@@ -240,6 +252,7 @@ class Gui(abstract.Gui):
             return
         self.set_string('first_interval_type', button.m_idir)
         self.g_first_interval_down.set_sensitive(button.m_idir == 'melodic')
+
     def update_last(self, button):
         """
         Called when the type of interval has changed.
@@ -248,6 +261,7 @@ class Gui(abstract.Gui):
             return
         self.set_string('last_interval_type', button.m_idir)
         self.g_last_interval_down.set_sensitive(button.m_idir == 'melodic')
+
     def guess_answer(self, g):
         if self.m_t.q_status == self.QSTATUS_NO:
             return
@@ -270,6 +284,7 @@ class Gui(abstract.Gui):
                 if self.get_bool("config/auto_repeat_question_if_wrong_answer"):
                     self.m_t.play_question()
                 self.std_buttons_answer_wrong()
+
     def give_up(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.m_t.give_up()
@@ -285,6 +300,7 @@ class Gui(abstract.Gui):
                 s = _("First interval is largest")
             self.g_flashbar.push(_("The answer is: %s") % s)
             self.show_intervals()
+
     def show_intervals(self, widget=None):
         tv = [self.get_string('first_interval_type'),
                 self.get_string('last_interval_type')]
@@ -302,6 +318,7 @@ class Gui(abstract.Gui):
         m = m + music[1]
         self.g_music_displayer.display(m,
               self.get_int('config/feta_font_size=20'))
+
     def new_question(self, widget=None):
         self.g_music_displayer.clear()
         q = self.m_t.new_question()
@@ -323,6 +340,7 @@ class Gui(abstract.Gui):
         else:
             assert q == Teacher.ERR_CONFIGURE
             self.g_flashbar.flash(_("You have to configure the exercise properly"))
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         #
@@ -364,6 +382,7 @@ class Gui(abstract.Gui):
             self.g_intervalconfig_box.show()
         else:
             self.g_intervalconfig_box.hide()
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_first_is_largest.set_sensitive(False)
@@ -372,4 +391,3 @@ class Gui(abstract.Gui):
         self.std_buttons_end_practise()
         self.g_music_displayer.clear()
         self.g_flashbar.clear()
-

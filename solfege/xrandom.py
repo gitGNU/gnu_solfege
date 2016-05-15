@@ -15,12 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import random
 from solfege import cfg
 
+
 class Random(object):
+
     def __init__(self, choices):
         #TODO add assert that all choices are unique
         self.m_choices = choices
@@ -28,10 +28,12 @@ class Random(object):
         # The number of randoms generated
         self.m_count = 0
         self.m_last_choices = []
+
     def reset(self):
         self.m_last_choices = []
         self.m_choice_count = len(self.m_choices) * [0]
         self.m_count = 0
+
     def get_random_by_random_data(self, available_choices):
         not_selected_factor = 2
         data = []
@@ -51,6 +53,7 @@ class Random(object):
             if v[1] == 0.0:
                 v[2] = maxval * not_selected_factor
         return data
+
     def random_by_random(self, available_choices):
         """
         Select by random, but make it more likely that choices that
@@ -69,6 +72,7 @@ class Random(object):
             if selectval < v[3]:
                 return v[0]
         return data[-1][0]
+
     def random_by_random2(self, available_choices):
         """
         Select by random, but make it more likely that choices that
@@ -91,6 +95,7 @@ class Random(object):
             if selectval < v[3]:
                 return v[0]
         return data[-1][0]
+
     def random_by_selection(self, available_choices):
         """
         The smallest randomness value is 1
@@ -105,10 +110,10 @@ class Random(object):
             if v:
                 return random.choice(v)
         return random.choice(self.m_choices)
+
     def add(self, idx):
         self.m_choice_count[idx] += 1
         self.m_count += 1
         self.m_last_choices.append(idx)
         if len(self.m_last_choices) > len(self.m_choices) * 2:
             self.m_last_choices.pop(0)
-

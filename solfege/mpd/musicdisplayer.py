@@ -23,7 +23,9 @@ from solfege.mpd import engravers
 from solfege.mpd import parser
 from solfege.mpd.rat import Rat
 
+
 class MusicDisplayer(Gtk.ScrolledWindow):
+
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
         self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.NEVER)
@@ -40,6 +42,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
         self.g_d.connect("button_press_event", self.on_button_press_event)
 
         self.m_width = self.m_height = 0
+
     def clear(self, numstaff=1):
         if numstaff == 0:
             self.m_engravers = []
@@ -51,6 +54,7 @@ class MusicDisplayer(Gtk.ScrolledWindow):
         self.g_d.queue_draw()
         dim = engravers.dimentions[20]
         self.set_size_request(self.get_size_request()[0], numstaff*dim.staff_spacing+dim.first_staff_ypos)
+
     def display(self, music, fontsize, last_timepos=None):
         """Exception handling should be done by the caller."""
         score = parser.parse_to_score_object(music)
@@ -58,9 +62,11 @@ class MusicDisplayer(Gtk.ScrolledWindow):
         self.m_engravers = sc.m_contexts
         self.m_fontsize = fontsize
         self._display()
+
     def display_score(self, score):
         self.m_engravers = engravers.ScoreContext(score).m_contexts
         self._display()
+
     def _display(self):
         dim = engravers.dimentions[self.m_fontsize]
         if self.m_engravers:
@@ -78,15 +84,18 @@ class MusicDisplayer(Gtk.ScrolledWindow):
         self.set_size_request(self.get_size_request()[0], self.m_height)
         self.g_d.set_size_request(self.m_width, self.m_height-4)
         self.g_d.queue_draw()
+
     def add_clickable_region(self, x, y, w, h, midi_int):
         self.m_clickables.append({'x':x, 'y':y, 'w':w, 'h':h,
                                   'midi_int': midi_int})
+
     def on_button_press_event(self, arg1, event):
         if self.m_callback:
             for r in self.m_clickables:
                 if r['x'] < event.x < r['x'] + r['w'] \
                    and r['y'] < event.y < r['y'] + r['h']:
                     self.m_callback(r['midi_int'])
+
     def on_draw(self, darea, ct):
         dim = engravers.dimentions[self.m_fontsize]
         if self.m_width < self.get_allocated_width():
@@ -133,24 +142,29 @@ class MusicDisplayer(Gtk.ScrolledWindow):
 
 
 class ChordEditor(MusicDisplayer):
+
     def __init__(self):
         MusicDisplayer.__init__(self)
         self._yp = None
         self.g_d.connect("button_release_event", self.on_button_release_event)
         self.g_d.connect("event", self.on_event)
         self.m_cursor = None
+
     def set_cursor(self, cursor):
         self.m_cursor = cursor
+
     def on_button_release_event(self, arg1, event):
         dim = engravers.dimentions[self.m_fontsize]
         dist = int((event.y - dim.first_staff_ypos) / dim.linespacing * 2)
         self.emit('clicked', dist)
+
     def on_event(self, drawingarea, event):
         if event.type == Gdk.MOTION_NOTIFY:
             dim = engravers.dimentions[self.m_fontsize]
             dist = int((event.y - dim.first_staff_ypos) / dim.linespacing * 2)
             self._yp = dist
             self.queue_draw()
+
     def on_expose_event(self, darea, event):
         MusicDisplayer.on_expose_event(self, darea, event)
         dim = engravers.dimentions[self.m_fontsize]
@@ -167,5 +181,3 @@ class ChordEditor(MusicDisplayer):
 
 GObject.signal_new('clicked', ChordEditor, GObject.SignalFlags.RUN_FIRST,
     None, (GObject.TYPE_PYOBJECT,))
-
-

@@ -16,9 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
-
 import codecs
 import glob
 import logging
@@ -29,8 +26,10 @@ from solfege import lessonfile
 
 import solfege
 
+
 class FrontPageException(Exception):
     pass
+
 
 class OldFormatException(FrontPageException):
     pass
@@ -42,16 +41,20 @@ def mk_rel(filename, save_location):
         return filename[len(save_location):]
     return filename
 
+
 def mk_abs(filename, save_location):
     if not lessonfile.is_uri(filename) and not os.path.isabs(filename):
         return os.path.join(save_location, filename)
     return filename
 
+
 def escape(s):
     return s.replace("\\", "\\\\").replace("'", "\\'").replace('"', '\\"')
 
+
 def get_front_pages_list(debug):
     files = []
+
     def is_frontpage(fn):
             # no subdirs
             if not os.path.isfile(fn):
@@ -62,6 +65,7 @@ def get_front_pages_list(debug):
             if os.path.split(fn)[1] == "Makefile":
                 return False
             return True
+
     def add_subdir(subdir):
         if os.path.isdir(subdir):
             v = [os.path.join(subdir, fn) for fn in os.listdir(subdir)]
@@ -86,21 +90,25 @@ def get_front_pages_list(debug):
 
 
 class _TreeCommon(list):
+
     def __init__(self, items=[]):
         if isinstance(items, _TreeCommon):
             list.__init__(self, [items])
         else:
             list.__init__(self, items)
+
     def dump(self, stream, level=0):
         print("%s%s([" % (" " * level, self.__class__.__name__), file=stream)
         self.dump_children(stream, level)
         print("%s ])," % (" " * level), file=stream)
+
     def dump_children(self, stream, level):
         for child in self:
             if isinstance(child, _TreeCommon):
                 child.dump(stream, level + 1)
             else:
                 print("%su'%s'," % (" " * (level + 1), escape(child)), file=stream)
+
     def iterate_filenames(self):
         """
         Yield the filenames of each lesson that has been added to this
@@ -112,6 +120,7 @@ class _TreeCommon(list):
                     yield c
             if isinstance(child, str):
                 yield child
+
     def get_use_dict(self):
         """
         Return a dict where the keys are the filename of lessons used
@@ -122,6 +131,7 @@ class _TreeCommon(list):
         for filename in self.iterate_filenames():
             retval[filename] = retval.get(filename, 0) + 1
         return retval
+
     def iterate_topics_for_file(self, filename):
         for child in self:
             if isinstance(child, (Page, Column, LinkList)):
@@ -129,12 +139,14 @@ class _TreeCommon(list):
                     yield c
             elif child == filename:
                 yield self.m_name
+
     def iterate_flattened(self):
         for child in self:
             yield child
             if not isinstance(child, str):
                 for subchild in child.iterate_flattened():
                     yield subchild
+
     @staticmethod
     def tests_in_sub(sub):
         if isinstance(sub, str):
@@ -146,6 +158,7 @@ class _TreeCommon(list):
             if _TreeCommon.tests_in_sub(child):
                 return True
         return False
+
     def foreach_file(self, callback, data=None):
         try:
             for idx, child in enumerate(self):
@@ -158,6 +171,7 @@ class _TreeCommon(list):
                         self[idx] = callback(self[idx])
         except TypeError:
             pass
+
     def get_topic_of_lesson_file(self, filename):
         """
         Return the title of the first topic where filename is linked.
@@ -166,40 +180,53 @@ class _TreeCommon(list):
         for x in self.iterate_topics_for_file(filename):
             return x
 
+
 class _NamedTreeCommon(_TreeCommon):
+
     def __init__(self, name='', listitems=[]):
         assert isinstance(name, str)
         _TreeCommon.__init__(self, listitems)
         self.m_name = name
+
     def dump(self, stream, level=0):
         print("%s%s(_(u'%s'), [" % (" " * level, self.__class__.__name__, escape(self.m_name)), file=stream)
         self.dump_children(stream, level)
         print("%s ])," % (" " * level), file=stream)
 
+
 class LinkList(_NamedTreeCommon):
     """
     A list of links leading to exercises or new pages.
     """
+
     def append(self, item):
         assert isinstance(item, (str, Page))
         super(LinkList, self).append(item)
+
     def __str__(self):
         return "LinkList(_('%s')# len: %i)" % (self.m_name, len(self))
 
+
 class Column(_TreeCommon):
+
     def add_linklist(self, heading):
         self.append(LinkList(heading))
         return self[-1]
+
     def __str__(self):
         return "Column(#len: %i)" % len(self)
 
+
 class Page(_NamedTreeCommon):
+
     def __init__(self, name='', listitems=[]):
         assert isinstance(name, str)
         _NamedTreeCommon.__init__(self, name, listitems)
         self.m_modified = False
+
     def __repr__(self):
         return "<Page name=%s>" % self.m_name
+
     def get(self, path):
         """
         Return the element pointed to by path.
@@ -208,6 +235,7 @@ class Page(_NamedTreeCommon):
         for idx in path[1:]:
             elem = elem[idx]
         return elem
+
     def is_empty(self):
         """
         Return True if all columns are empty or only contain empty sections.
@@ -218,18 +246,24 @@ class Page(_NamedTreeCommon):
                     return False
         return True
 
+
 class Paragraph(object):
+
     def __init__(self, text):
         self.m_text = text
 
+
 class FileHeader(_TreeCommon):
+
     def __init__(self, version, page):
         _TreeCommon.__init__(self, [page])
         self.m_version = version
+
     def dump(self, stream, level=0):
         print("%s%s(%s, " % (" " * level, self.__class__.__name__, self.m_version), file=stream)
         self.dump_children(stream, level)
         print("%s )" % (" " * level), file=stream)
+
     def save_file(self, filename):
         """
         Rules:
@@ -311,10 +345,10 @@ def parse_tree(s, C_locale=False):
     else:
         raise OldFormatException()
 
+
 def load_tree(fn, C_locale=False):
     with codecs.open(fn, "r", 'utf-8', 'replace') as f:
         ret = parse_tree(f.read(), C_locale)
     # We store all files by absolute filename or solfege: uri internally
     ret.foreach_file(mk_abs, os.path.split(fn)[0] + os.sep)
     return ret
-

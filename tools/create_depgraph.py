@@ -15,7 +15,9 @@ solfege_modules = ('solfege')
 # The values are the module names, for example solfege.application.SolfegeApp
 deps = {}
 
+
 class ModuleInfo(object):
+
     def __init__(self, fn):
         assert os.path.isfile(fn)
         head, tail = os.path.split(fn)
@@ -38,6 +40,8 @@ re3 = re.compile("^(?P<imp>import)\s+(?P<module>\w[\.\w]+)\s+as\s+(?P<asmodule>\
 re5 = re.compile("^from\s+(?P<module>\w[\.\w]+)\s+import\s+(?P<imodule>\w[\.\w]+)\s+as\s+(?P<asmodule>\w[\.\w]+)$")
 re6 = re.compile("^from\s+(?P<module>solfege(\.\w+)*)\s+import\s+((?P<modulelist>((\w[\.\w]+,\s*)*)\w[\.\w]+)|\*)$")
 re_comma = re.compile(",\s*")
+
+
 def test_re():
     m = re2.match("import app")
     assert m.group('imp') == 'import'
@@ -71,6 +75,7 @@ def test_re():
     assert m.group('module') == 'solfege.mpd.rat'
     assert m.group('modulelist') == 'Rat'
 
+
 def name_of_imported(info, importname):
     """
     """
@@ -85,6 +90,7 @@ def name_of_imported(info, importname):
 def test_name_of_imported():
     info = ModuleInfo("solfege/application.py")
     assert name_of_imported(info, "abstract") == "solfege.abstract"
+
 
 def usage_of_module(info):
     f = open(info.m_filename, 'rU')
@@ -133,6 +139,7 @@ def usage_of_module(info):
                     deps[info.m_modulename].m_usage.add(name_of_imported(info, m.group('module')))
                 continue
             print "line::::", line
+
 
 def do_file(fn):
     global deps
@@ -235,4 +242,3 @@ if options.do_all:
     subprocess.call(('dot', '-T', 'png', '-o', 'classhier.png', 'ut.dots'))
     subprocess.call(('eog', 'classhier.png'))
     #os.remove('ut.dots')
-

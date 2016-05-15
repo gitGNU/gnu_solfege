@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from solfege import abstract
 from solfege import lessonfile
 from solfege import mpd
@@ -23,12 +22,16 @@ from solfege.exercises import rhythmtapping
 
 from solfege.mpd.requests import MusicRequest
 
+
 class Teacher(abstract.RhythmAddOnClass, rhythmtapping.Teacher):
+
     def __init__(self, exname):
         rhythmtapping.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
+
     def play_question(self):
         self.play_rhythm(self.get_music_string())
+
     def get_timedelta_list(self):
         """
         Return a list of the number of seconds between it should be between
@@ -44,12 +47,15 @@ class Teacher(abstract.RhythmAddOnClass, rhythmtapping.Teacher):
                 retval[-1] += float(toc_data.m_duration.get_rat_value()) * 4 / self.m_P.header.bpm * 60
         return retval
 
+
 class Gui(rhythmtapping.Gui, abstract.RhythmAddOnGuiClass):
     please_tap_str = _("Please tap the rhythm.")
+
     def __init__(self, teacher):
         rhythmtapping.Gui.__init__(self, teacher)
         self.add_select_elements_gui(self.g_config_grid, row=0)
         self.add_select_num_beats_gui(self.g_config_grid, row=1)
+
     def do_at_question_start_show_play(self):
         """
         It will show and/or play music based on
@@ -73,9 +79,11 @@ class Gui(rhythmtapping.Gui, abstract.RhythmAddOnGuiClass):
             if 'show' in self.m_t.m_P.header.at_question_start \
                 and 'play' in self.m_t.m_P.header.at_question_start:
                 self.show_answer()
+
     def on_repeat(self, widget):
         self.m_t.play_question()
         self.g_tap.grab_focus()
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = bool(self.m_t.m_P.header.configurable_rhythm_elements)
         super(Gui, self).on_start_practise()

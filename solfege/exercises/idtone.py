@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import random
 import os
 
@@ -33,12 +32,14 @@ from solfege import utils
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     #FIXME the following lines
     OK, ERR_PICKY, ERR_TONES = list(range(3))
     ERR_PICKY = 1
     ERR_CONFIG = 2
     OCTAVES = [-2, -1, 0, 1, 2, 3]
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
@@ -46,6 +47,7 @@ class Teacher(abstract.Teacher):
         self.m_ask_tones =   {}
         self.m_question = None
         self.m_custom_mode = False
+
     def new_question(self):
         """
         Return values:
@@ -79,6 +81,7 @@ class Teacher(abstract.Teacher):
         self.m_octave = random.choice(v)
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def guess_answer(self, notename):
         if notename == self.m_question:
             if self.q_status == self.QSTATUS_NEW:
@@ -90,13 +93,16 @@ class Teacher(abstract.Teacher):
             if self.q_status == self.QSTATUS_NEW:
                 self.m_statistics.add_wrong(self.m_question, notename)
                 self.q_status = self.QSTATUS_WRONG
+
     def play_question(self):
         if self.q_status == self.QSTATUS_NO:
             return
         utils.play_note(4,
             mpd.notename_to_int(self.m_question) + self.m_octave * 12)
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
+
     def spank_me_play_question(self):
         t1 = utils.new_percussion_track()
         t1.note(8, 71)
@@ -104,10 +110,13 @@ class Teacher(abstract.Teacher):
         t2.notelen_time(4)
         t2.note(4, mpd.notename_to_int(self.m_question)+self.m_octave*12)
         soundcard.synth.play_track(t1, t2)
+
     def spank_me(self):
         utils.play_perc(4, 71)
 
+
 class Gui(abstract.Gui):
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
 
@@ -116,6 +125,7 @@ class Gui(abstract.Gui):
         self.g_piano = inputwidgets.PianoOctaveWithAccelName(
                        self.on_answer_from_user, self.get_accel_key_list())
         self.g_piano.m_visible_accels = not self.get_bool('hide_piano_accels')
+
         def update_accels(*ignore):
             self.g_piano.m_keys = self.get_accel_key_list()
             self.g_piano.queue_draw()
@@ -171,6 +181,7 @@ class Gui(abstract.Gui):
         self._add_auto_new_question_gui(row=4)
         #############
         b = gu.nCheckButton('idtone', 'hide_piano_accels', _("Hide _piano keyboard shortcuts"), False)
+
         def show_hide_accels(checkbutton):
             self.g_piano.m_visible_accels = not b.get_active()
         b.connect('clicked', show_hide_accels)
@@ -186,6 +197,7 @@ class Gui(abstract.Gui):
         ##############
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                    _("Identify tone"))
+
     def get_accel_key_list(self):
         v = []
         for k in mpd.MusicalPitch.notenames:
@@ -193,6 +205,7 @@ class Gui(abstract.Gui):
                 = lambda self=self, k=k: self.on_answer_from_user(k)
             v.append(self.get_string('tone_%s_ak' % k))
         return v
+
     def new_question(self, widget=None):
         s = self.m_t.q_status
         g = self.m_t.new_question()
@@ -214,9 +227,11 @@ _("""You have to select some tones practise. Do this on the config page by setti
                 if not self.standard_exception_handler(e, cleanup):
                     raise
         self.set_percentage_label()
+
     def flash_and_play_first_tone(self):
         self.g_flashbar.flash(_("First tone is %s") % mpd.MusicalPitch.new_from_notename(self.m_t.m_question).get_user_notename())
         self.m_t.play_question()
+
     def on_answer_from_user(self, notename):
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_flashbar.flash(_("Click 'New tone' to begin."))
@@ -249,14 +264,17 @@ _("""You have to select some tones practise. Do this on the config page by setti
                     if not self.standard_exception_handler(e):
                         raise
         self.set_percentage_label()
+
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: %s")
                 % mpd.MusicalPitch.new_from_notename(self.m_t.m_question).get_user_notename())
             self.m_t.give_up()
             self.std_buttons_give_up()
+
     def set_percentage_label(self):
         self.g_percentage.set_text("%.1f %%" % (self.m_t.m_statistics.get_percentage_correct()))
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = not (
                 ('white_keys_weight' in self.m_t.m_P.header)
@@ -318,10 +336,10 @@ _("""You have to select some tones practise. Do this on the config page by setti
             _("Click 'New tone' to begin."))
         self.std_buttons_start_practise()
         self.m_t.q_status = self.QSTATUS_NO
+
     def on_end_practise(self):
         if self.m_t.m_custom_mode:
             self.set_list('custom_mode_cfg', [self.get_float('%s_weight' % x)
                          for x in mpd.MusicalPitch.notenames])
         self.m_t.end_practise()
         self.std_buttons_end_practise()
-

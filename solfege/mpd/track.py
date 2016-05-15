@@ -25,6 +25,7 @@ set_patch_delay = 0
 
 
 class EventBase(object):
+
     def __init__(self):
         self.m_time = None
 
@@ -33,6 +34,7 @@ class EventBase(object):
 
 
 class NoteEventBase(EventBase):
+
     def __init__(self, pitch, velocity):
         EventBase.__init__(self)
         assert 0 <= pitch
@@ -44,16 +46,19 @@ class NoteEventBase(EventBase):
 
 
 class NoteOnEvent(NoteEventBase):
+
     def __init__(self, pitch, velocity):
         NoteEventBase.__init__(self, pitch, velocity)
 
 
 class NoteOffEvent(NoteEventBase):
+
     def __init__(self, pitch, velocity):
         NoteEventBase.__init__(self, pitch, velocity)
 
 
 class Delay(EventBase):
+
     def __init__(self, duration):
         """
         duration is a Rat. Rat(1, 4) denotes a quarter-note.
@@ -66,6 +71,7 @@ class Delay(EventBase):
 
 
 class SetPatchEvent(EventBase):
+
     def __init__(self, patch):
         EventBase.__init__(self)
         assert 0 <= patch < 128
@@ -76,6 +82,7 @@ class SetPatchEvent(EventBase):
 
 
 class SetVolumeEvent(EventBase):
+
     def __init__(self, volume):
         EventBase.__init__(self)
         assert 0 <= volume < 256
@@ -87,6 +94,7 @@ class SetVolumeEvent(EventBase):
 
 
 class TempoEvent(EventBase):
+
     def __init__(self, bpm, notelen):
         EventBase.__init__(self)
         assert isinstance(bpm, int)
@@ -115,6 +123,7 @@ class MidiEventStream(object):
         percussion_MIDI_channel = 9
 
         class MidiChannel(object):
+
             def __init__(self, number):
                 self.m_number = number
                 self.m_tones = set()
@@ -439,6 +448,7 @@ class Track:
     Right now there are no code that checks that this is true while
     adding notes.
     """
+
     def txtdump(self):
         for event in self.m_v:
             print(event)
@@ -584,5 +594,6 @@ class Track:
 
 
 class PercussionTrack(Track):
+
     def __init__(self):
         Track.__init__(self)

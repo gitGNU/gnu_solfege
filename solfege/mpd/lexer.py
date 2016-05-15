@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import re
 
 from solfege.mpd import _exceptions
@@ -26,7 +25,9 @@ from solfege.mpd import elems
 from solfege.mpd import MusicalPitch
 from solfege.mpd.rat import Rat
 
+
 class LexerError(_exceptions.MpdException):
+
     def __init__(self, msg, lexer):
         _exceptions.MpdException.__init__(self, msg)
         self.m_lineno, self.m_linepos1, self.m_linepos2 = lexer.get_error_location()
@@ -74,6 +75,7 @@ class Lexer:
     re_partial = re.compile(r"\\partial\s+(?P<len>[\d]+)(?P<dots>\.*)", re.UNICODE)
     re_key = re.compile(r"\\key\s+([a-z]+)\s*\\(major|minor)", re.UNICODE)
     re_times = re.compile(r"\\times\s+(\d+)\s*/\s*(\d+)\s*{", re.UNICODE)
+
     def __init__(self, s):
         if not isinstance(s, str):
             s = s.decode("utf-8")
@@ -82,8 +84,10 @@ class Lexer:
         self.m_notelen = Duration(4, 0)
         self.m_idx = 0
         self.m_last_idx = None
+
     def __iter__(self):
         return self
+
     @staticmethod
     def to_string(v):
         ret = []
@@ -134,6 +138,7 @@ class Lexer:
             if 'm_mpd_badcode' not in dir(e):
                 e.m_lineno, e.m_linepos1, e.m_linepos2 = self.get_error_location()
             raise
+
     def _next(self):
         # Doing this while loop inside the exception clause is a little
         # faster than using a regular expression.
@@ -261,6 +266,7 @@ class Lexer:
             raise StopIteration
         self.m_idx += 1
         return self.m_string[self.m_idx-1], None
+
     def get_error_location(self):
         """
         Return a tuple
@@ -280,6 +286,7 @@ class Lexer:
         while line_end < len(self.m_string) and self.m_string[line_end] != '\n':
             line_end += 1
         return (lineno, self.m_last_idx - line_start, self.m_idx - line_start)
+
     def set_first_pitch(self, pitch):
         """
         Modify the first pitch of the music.
@@ -289,5 +296,3 @@ class Lexer:
             if toc == Lexer.NOTE:
                 self.m_string = self.m_string[:self.m_last_idx] + "%s%s" % (pitch.get_octave_notename(), toc_data.m_duration.as_mpd_string() if toc_data.m_duration else "") + self.m_string[self.m_idx:]
                 break
-
-

@@ -48,6 +48,8 @@ if sys.platform == 'win32':
     import winsound
 
 _mediaplayer = None
+
+
 def _kill_mediaplayer():
     """
     We need to do this atexit to avoid some text about an ignored
@@ -57,6 +59,7 @@ def _kill_mediaplayer():
         _mediaplayer.kill()
         _mediaplayer.wait()
 atexit.register(_kill_mediaplayer)
+
 
 def play_mediafile(typeid, filename):
     global _mediaplayer
@@ -102,6 +105,7 @@ def initialise_winsynth(synthnum, verbose_init=0):
     solfege.mpd.track.set_patch_delay = cfg.get_int("app/set_patch_delay")
     synth = winsynth.WinSynth(synthnum, verbose_init)
 
+
 def initialise_alsa_sequencer(port, verbose_init=0):
     """
     This function should only be called if the pyalsa module is available.
@@ -133,10 +137,12 @@ def initialise_devicefile(devicefile, devicenum=0, verbose_init=0):
                                                 verbose_init)
     solfege.mpd.track.set_patch_delay = cfg.get_int("app/set_patch_delay")
 
+
 def initialise_using_fake_synth(verbose_init=None):
     global synth
     import solfege.soundcard.fakesynth
     synth = solfege.soundcard.fakesynth.Synth(verbose_init)
+
 
 def start_export(filename):
     global midiexporter, _saved_synth, synth
@@ -146,6 +152,7 @@ def start_export(filename):
     _saved_synth = synth
     synth = midiexporter
     midiexporter.start_export(filename)
+
 
 def end_export():
     global midiexporter, _saved_synth, synth
@@ -302,6 +309,7 @@ instrument_names = (
     "applause", # 126
     "gunshot") # 127
 
+
 def find_midi_instrument_number(instr_name):
     """
     Try to find the integer representing the instrument instr_name.
@@ -367,12 +375,13 @@ percussion_names = [
         "Open Triangle"]
 
 first_percussion_int_value = 35
+
+
 def percussionname_to_int(name):
     assert isinstance(name, str)
     return percussion_names.index(name) + first_percussion_int_value
 
+
 def int_to_percussionname(i):
     assert isinstance(i, int)
     return percussion_names[i - first_percussion_int_value]
-
-

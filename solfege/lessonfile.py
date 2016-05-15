@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import glob
 import locale
 import logging
@@ -55,6 +54,7 @@ _abs_exercises_dir = os.path.join(os.getcwd(), exercises_dir) + os.sep
 
 solfege_uri = "solfege:"
 
+
 def uri_expand(url):
     """
     Convert from solfege: URI to normal file name.
@@ -63,6 +63,7 @@ def uri_expand(url):
     if url.startswith(solfege_uri):
         url = os.path.join(exercises_dir, url[len(solfege_uri):])
     return url
+
 
 def mk_uri(filename):
     """
@@ -79,35 +80,45 @@ def mk_uri(filename):
             return ("solfege:%s" % filename[len("%s%s" % (exercises_dir, os.sep)):]).replace(os.sep, "/")
     return filename
 
+
 def is_uri(filename):
     return filename.startswith(solfege_uri)
+
 
 class LessonfileException(Exception):
     pass
 
+
 class MusicObjectException(LessonfileException):
     pass
 
+
 class LessonfileParseException(Exception):
     pass
+
 
 class NoQuestionsInFileException(LessonfileParseException):
     """
     Raised by find_random_question if the lesson file contains
     no questions at all.
     """
+
     def __init__(self, lessonfilename):
         LessonfileParseException.__init__(self, _("The lesson file contains no questions"))
 
+
 class FileNotFound(LessonfileException):
+
     def __init__(self, filename):
         LessonfileException.__init__(self, _("The external file '%s' was not found") % filename)
+
 
 class NoQuestionsConfiguredException(LessonfileException):
     """
     This exception is raised by select_random_question if the user has
     unselected all the questions available in the lesson file.
     """
+
     def __init__(self):
         LessonfileException.__init__(self,
             _("No questions selected"),
@@ -151,29 +162,38 @@ def load_text(parser, filename):
     f.close()
     return s
 
+
 class nrandom(object):
+
     def __init__(self, v):
         if len(v) == 1 and type(v[0]) == list:
             v = v[0]
         self.m_list = v
         self.randomize()
+
     def __str__(self):
         return self.m_list[self.m_idx]
+
     def randomize(self):
         self.m_idx = random.randint(0, len(self.m_list) - 1)
+
 
 class prandom(nrandom):
     """
     Every call to __str__ will randomize.
     """
+
     def __str__(self):
         self.randomize()
         return self.m_list[self.m_idx]
 
+
 class LabelObject(object):
+
     def __init__(self, labeltype, labeldata):
         self.m_labeltype = labeltype
         self.m_labeldata = labeldata
+
     def __getattr__(self, name):
         if name == 'cval':
             return (self.m_labeltype, self.m_labeldata)
@@ -232,6 +252,7 @@ def rnc_markup_tokenizer(s):
         i += m.end()
     return retval
 
+
 def chordname_markup_tokenizer(s):
     """
     s argument is a string of white-space separated chords.
@@ -274,7 +295,9 @@ def chordname_markup_tokenizer(s):
             retval.append(('ERR', '', '', ''))
     return retval
 
+
 class _Header(dict):
+
     def __init__(self, headerdict):
         dict.__init__(self, headerdict)
         for key, value in (
@@ -296,6 +319,7 @@ class _Header(dict):
                            ):
             if key not in self:
                 self[key] = value
+
     def __getattr__(self, name):
         """
         This function let us write
@@ -309,8 +333,10 @@ class _Header(dict):
         if name in self:
             return self[name]
         return istr("")
+
     def __setattr__(self, name, value):
         self[name] = value
+
 
 class MusicBaseClass(object):
     """
@@ -323,8 +349,10 @@ class MusicBaseClass(object):
     this is Mma.
     """
     temp_dir = None
+
     def __init__(self, musicdata):
         self.m_musicdata = musicdata
+
     def get_mpd_music_string(self, lessonfile_ref):
         return "%s:%s" % (self.__class__.__name__, self.m_musicdata)
 
@@ -335,6 +363,7 @@ class MpdParsable(MusicBaseClass):
     that can play the music if the subclass implements get_mpd_music_string.
     Music classes with more special needs will overwrite these play methods.
     """
+
     def play(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         instrument = lessonfile_ref.get_instruments(question, 1)
@@ -359,6 +388,7 @@ class MpdParsable(MusicBaseClass):
             raise
         if _test_mode:
             return self.get_mpd_music_string(lessonfile_ref)
+
     def play_slowly(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         instrument = lessonfile_ref.get_instrument(question)
@@ -368,6 +398,7 @@ class MpdParsable(MusicBaseClass):
             tempo, instrument[0], instrument[1])
         if _test_mode:
             return self.get_mpd_music_string(lessonfile_ref)
+
     def get_err_context(self, exception, lessonfile_ref):
         """
         This functions expect exception.m_lineno, .m_linepos1 and .m_linepos2
@@ -380,11 +411,13 @@ class MpdParsable(MusicBaseClass):
             return "\n".join((self.m_musicdata.split("\n")[exception.m_obj_lineno],
             " " * exception.m_linepos1 + "^" * (exception.m_linepos2 - exception.m_linepos1)))
         return self._mpd_err_context(exception, lessonfile_ref)
+
     def _mpd_err_context(self, exception, lessonfile_ref):
         m = self.get_mpd_music_string(lessonfile_ref)
         v = m.split("\n")
         v = textwrap.wrap("Bad input to the music object of type %s made the parser fail to parse the following generated music code:" % self.__class__.__name__.lower(), 50) + v[:exception.m_lineno+1] + [" " * exception.m_linepos1 + "^" * (exception.m_linepos2 - exception.m_linepos1)] + v[exception.m_lineno+1:]
         return "\n".join(v)
+
     def complete_to_musicdata_coords(self, lessonfile_ref, exception):
         """
         The string from m_musicdata should always begin
@@ -402,6 +435,7 @@ class MpdParsable(MusicBaseClass):
             # added music code, not in the m_musicdata code.
             return
         exception.m_obj_lineno = exception.m_lineno - 1
+
     def get_score(self, lessonfile_ref, as_name=None):
         """
         Return a elems.Score object of the music object. Report the variable
@@ -421,6 +455,7 @@ class MpdDisplayable(MpdParsable):
 
 
 class MpdTransposable(MpdDisplayable):
+
     def get_first_pitch(self):
         lexer = mpd.parser.Lexer(self.m_musicdata)
         for toc, toc_data in lexer:
@@ -432,6 +467,7 @@ class MpdTransposable(MpdDisplayable):
         raise MusicObjectException("%s\n%s" %
             ("get_first_pitch() could not find a musical pitch in the music data:",
              "\n".join(v)))
+
     def get_musicdata_transposed(self, lessonfile_ref):
         """
         Return m_musicdata, but transposed relative to
@@ -449,6 +485,7 @@ class MpdTransposable(MpdDisplayable):
             if isinstance(toc_data, mpd.requests.MusicRequest):
                 toc_data.m_pitch.transpose_by_musicalpitch(lessonfile_ref.m_transpose)
         return mpd.parser.Lexer.to_string(tokens)
+
     def relative_transpose_musicdata(self, lessonfile_ref):
         """
         Also remove octave changes from the first tone.
@@ -473,7 +510,9 @@ class MpdTransposable(MpdDisplayable):
 class ChordCommon(MpdTransposable):
     pass
 
+
 class Chord(ChordCommon):
+
     def get_lilypond_code(self, lessonfile_ref):
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
             music = r"  { <%s> }" % self.get_musicdata_transposed(lessonfile_ref)
@@ -488,12 +527,14 @@ class Chord(ChordCommon):
                r'  \context { \Staff \remove "Time_signature_engraver" } '\
                r" }"\
                r"}"  % music
+
     def get_lilypond_code_first_note(self, lessonfile_ref):
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
             return r"{ %s }" % self.get_musicdata_transposed(lessonfile_ref).split()[0]
         return r"\transpose c' %s{ %s }" % (
             lessonfile_ref.m_transpose.get_octave_notename(),
             self.m_musicdata.split()[0])
+
     def get_mpd_music_string(self, lessonfile_ref):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
@@ -503,11 +544,13 @@ class Chord(ChordCommon):
                 % (lessonfile_ref.m_transpose.get_octave_notename(),
                    self.m_musicdata)
         return "\\staff{<\n%s\n>}" % self.m_musicdata
+
     def strip_trailing_digits(self, s):
         # Used by get_music_as_notename_list
         while '0' <= s[-1] <= '9':
             s = s[:-1]
         return s
+
     def get_music_as_notename_list(self, lessonfile_ref):
         """
         This method will validate the notenames, and raise a
@@ -526,15 +569,19 @@ class Chord(ChordCommon):
         except mpd.InvalidNotenameException as e:
             e.m_obj_lineno, e.m_linepos1, e.m_linepos2 = mpd.parser.validate_only_notenames(self.m_musicdata)
             raise
+
     def get_music_as_notename_string(self, lessonfile_ref):
         return " ".join(self.get_music_as_notename_list(lessonfile_ref))
+
     def play(self, lessonfile_ref, question):
         self.__play(lessonfile_ref, question,
                     lessonfile_ref.get_tempo_of_question(question))
+
     def play_slowly(self, lessonfile_ref, question):
         tempo = lessonfile_ref.get_tempo_of_question(question)
         self.__play(lessonfile_ref, question,
                 (tempo[0] /2, tempo[1]))
+
     def __play(self, lessonfile_ref, question, tempo):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         instrument = lessonfile_ref.get_instruments(question, 3)
@@ -556,6 +603,7 @@ class Chord(ChordCommon):
             t2.stop_note(mpd.notename_to_int(notename))
         t3.note(4, mpd.notename_to_int(nlist[-1]))
         soundcard.synth.play_track(t1, t2, t3)
+
     def play_arpeggio(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         # We have a problem here because the music need to know
@@ -582,10 +630,13 @@ class Chord(ChordCommon):
         t3.note(4, mpd.notename_to_int(nlist[-1]))
         soundcard.synth.play_track(t1, t2, t3)
 
+
 class VoiceCommon(MpdTransposable):
     pass
 
+
 class Voice(VoiceCommon):
+
     def get_lilypond_code(self, lessonfile_ref):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
@@ -595,6 +646,7 @@ class Voice(VoiceCommon):
                 lessonfile_ref.m_transpose.get_octave_notename(),
                 self.m_musicdata)
         return r"{ %s }" % self.m_musicdata
+
     def get_lilypond_code_first_note(self, lessonfile_ref):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         s = r"\score{" \
@@ -618,6 +670,7 @@ class Voice(VoiceCommon):
                 self.m_musicdata,
                 )
         return s % ("", self.get_first_pitch().get_octave_notename(), self.m_musicdata)
+
     def get_mpd_music_string(self, lessonfile_ref):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         if lessonfile_ref.header.random_transpose[0] == 'atonal':
@@ -628,7 +681,9 @@ class Voice(VoiceCommon):
                    self.m_musicdata)
         return "\\staff{\n%s\n}" % self.m_musicdata
 
+
 class Rvoice(VoiceCommon):
+
     def get_mpd_music_string(self, lessonfile_ref):
         """
         Since get_mpd_music_string is used by error handling, it can not
@@ -666,10 +721,12 @@ class Rvoice(VoiceCommon):
         # no translation
         return "\\staff\\relative %s{\n%s\n}" \
           % (self.get_first_pitch().get_octave_notename(), lex.m_string)
+
     def get_lilypond_code(self, lessonfile_ref):
         return r"\transpose c' %s\relative c{ %s }" % (
             lessonfile_ref.m_transpose.get_octave_notename(),
             self.m_musicdata)
+
     def get_lilypond_code_first_note(self, lessonfile_ref):
         return r"\score{" \
                r" \new Staff<<"\
@@ -682,6 +739,7 @@ class Rvoice(VoiceCommon):
             self.get_first_pitch().get_octave_notename(),
             self.m_musicdata,
             )
+
     def get_err_context(self, exception, lessonfile_ref):
         """
         This functions expect exception.m_lineno, .m_linepos1 and .m_linepos2
@@ -707,11 +765,13 @@ class Rvoice(VoiceCommon):
 
 
 class Satb(ChordCommon):
+
     def __init__(self, musicdata):
         ChordCommon.__init__(self, musicdata)
         if "\n" in self.m_musicdata:
             self._m_orig_musicdata = self.m_musicdata
             self.m_musicdata = self.m_musicdata.replace("\n", "")
+
     def get_mpd_music_string(self, lessonfile_ref):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         v = [n.strip() for n in self.m_musicdata.split('|')]
@@ -734,6 +794,7 @@ class Satb(ChordCommon):
             music = music.replace(r"\addvoice",
                       r"\addvoice\transpose %s" % lessonfile_ref.m_transpose.get_octave_notename())
         return music
+
     def play_arpeggio(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         track = utils.new_track()
@@ -757,6 +818,7 @@ class Satb(ChordCommon):
                 else:
                     track.note(4, mpd.notename_to_int(n)+12)
         soundcard.synth.play_track(track)
+
     def get_err_context(self, exception, lessonfile_ref):
         """
         Return a twoline string showing what caused the exception.
@@ -784,8 +846,10 @@ class Satb(ChordCommon):
 
 
 class PercBaseClass(MpdParsable):
+
     def get_mpd_music_string(self, lessonfile_ref):
         return "\\rhythmstaff{\n%s\n}" % self.m_musicdata
+
     def _gen_track(self, lessonfile_ref, question):
         try:
             score = mpd.parser.parse_to_score_object(self.get_mpd_music_string(lessonfile_ref))
@@ -797,11 +861,13 @@ class PercBaseClass(MpdParsable):
         track.prepend_bpm(lessonfile_ref.get_tempo()[0],
                           lessonfile_ref.get_tempo()[1])
         return track
+
     def play(self, lessonfile_ref, question):
         soundcard.synth.play_track(self._gen_track(lessonfile_ref, question))
 
 
 class Rhythm(PercBaseClass):
+
     def get_mpd_music_string(self, lessonfile_ref):
         v = list(mpd.parser.Lexer(self.m_musicdata))
         for idx, (toc_type, toc) in enumerate(v):
@@ -816,10 +882,13 @@ class Rhythm(PercBaseClass):
 class Percussion(PercBaseClass):
     pass
 
+
 class _MusicExternalPlayer(MusicBaseClass):
+
     def __init__(self, typeid, musicdata):
         MusicBaseClass.__init__(self, musicdata)
         self.m_typeid = typeid
+
     def play(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         musicfile = os.path.join(lessonfile_ref.m_location, self.m_musicdata)
@@ -827,14 +896,19 @@ class _MusicExternalPlayer(MusicBaseClass):
             soundcard.play_mediafile(self.m_typeid, musicfile)
         else:
             raise FileNotFound(musicfile)
+
     def get_err_context(self, exception, lessonfile_ref):
         return ""
 
+
 class Midifile(_MusicExternalPlayer):
+
     def __init__(self, musicdata):
         _MusicExternalPlayer.__init__(self, 'midi', musicdata)
 
+
 class Mma(MusicBaseClass):
+
     def __init__(self, *v):
         """
         Mma is constructed in one of two ways:
@@ -856,12 +930,14 @@ class Mma(MusicBaseClass):
             self.m_groove = v[0]
             mmacode = v[1]
         MusicBaseClass.__init__(self, mmacode)
+
     def randomize(self):
         try:
             if self.m_groove:
                self.m_groove.randomize()
         except AttributeError:
             pass
+
     def play(self, lessonfile_ref, question):
         infile = os.path.join(self.temp_dir, 'f.mma')
         outfile = os.path.join(self.temp_dir, 'f.mid')
@@ -882,19 +958,27 @@ class Mma(MusicBaseClass):
                 cfg.get_string("programs/mma"), e)
         soundcard.play_mediafile('midi', os.path.join(self.temp_dir, 'f.mid'))
 
+
 class Wavfile(_MusicExternalPlayer):
+
     def __init__(self, musicdata):
         _MusicExternalPlayer.__init__(self, 'wav', musicdata)
 
+
 class Mp3file(_MusicExternalPlayer):
+
     def __init__(self, musicdata):
         _MusicExternalPlayer.__init__(self, 'mp3', musicdata)
 
+
 class Oggfile(_MusicExternalPlayer):
+
     def __init__(self, musicdata):
         _MusicExternalPlayer.__init__(self, 'ogg', musicdata)
 
+
 class Cmdline(MusicBaseClass):
+
     def play(self, lessonfile_ref, question):
         assert isinstance(lessonfile_ref, LessonfileCommon)
         try:
@@ -903,9 +987,12 @@ class Cmdline(MusicBaseClass):
         except OSError as e:
             raise osutils.RunningExecutableFailed(self.m_musicdata)
 
+
 class CSound(MusicBaseClass):
+
     def __init__(self, orc, sco):
         MusicBaseClass.__init__(self, (orc, sco))
+
     def play(self, lessonfile_ref, question):
         with open(os.path.join(self.temp_dir, "in.orc"), 'w') as outfile:
             outfile.write(self.m_musicdata[0])
@@ -924,6 +1011,7 @@ class CSound(MusicBaseClass):
 
 
 class Music(MpdTransposable):
+
     def get_mpd_music_string(self, lessonfile_ref):
         if lessonfile_ref.header.random_transpose[0]:
             s = self.m_musicdata.replace(r'\staff',
@@ -932,6 +1020,7 @@ class Music(MpdTransposable):
                r'\addvoice\transpose %s' % lessonfile_ref.m_transpose.get_octave_notename())
             return s
         return self.m_musicdata
+
     def get_err_context(self, exception, lessonfile_ref):
         """
         Return a twoline string showing what caused the exception.
@@ -952,6 +1041,7 @@ class Music(MpdTransposable):
                 last = exception.m_linepos2 - delta
         return "\n".join((self.m_musicdata.split("\n")[exception.m_lineno],
             " " * first + "^" * (last - first)))
+
     def complete_to_musicdata_coords(self, lessonfile_ref, exception):
         # These two lines are just for extra checking...
         assert not hasattr(exception, '_coords_done')
@@ -960,6 +1050,7 @@ class Music(MpdTransposable):
 
 
 class Music3(Music):
+
     def play(self, lessonfile_ref, question):
         """
         Play the music with different instrument for the top and bottom voice.
@@ -970,6 +1061,7 @@ class Music3(Music):
             lessonfile_ref.get_tempo(),
             lessonfile_ref.get_instruments(question, 3))
 
+
 def parse_test_def(s):
     m = re.match("(\d+)\s*x", s)
     count = int(m.groups()[0])
@@ -977,6 +1069,7 @@ def parse_test_def(s):
 
 
 class LessonfileCommon(object):
+
     def __init__(self, module_predefs=None, header_defaults=None):
         self.m_prev_question = None
         # This variable stores the directory the lesson file is located in.
@@ -994,6 +1087,7 @@ class LessonfileCommon(object):
             self.m_header_defaults = {}
         else:
             self.m_header_defaults = header_defaults
+
     def parse_file(self, filename):
         """Parse the file named filename. Set these variables:
         self.header     a Header instance
@@ -1008,6 +1102,7 @@ class LessonfileCommon(object):
         with open(uri_expand(filename), 'r', encoding=e) as f:
             s = f.read()
         self.parse_string(s, really_filename=filename)
+
     def parse_string(self, s, really_filename=None):
         """
         See parse_file docstring.
@@ -1042,6 +1137,7 @@ class LessonfileCommon(object):
         # Some variables does only make sense if we have a music displayer
         if self.header.at_question_start:
             self.header.have_music_displayer = True
+
     def get_lessonfile(self, s, really_filename):
         """
         This is the parsetree interpreter.
@@ -1067,9 +1163,11 @@ class LessonfileCommon(object):
 
 
 class QuestionsLessonfile(LessonfileCommon):
+
     def __init__(self, module_predefs=None, header_defaults=None):
         LessonfileCommon.__init__(self, module_predefs, header_defaults)
         self.m_discards = []
+
     def select_random_question(self):
         """
         Select a new question by random. It will use the music in the
@@ -1122,6 +1220,7 @@ class QuestionsLessonfile(LessonfileCommon):
             pass
         self.m_random.add(self._idx)
         self.m_prev_question = self.get_music()
+
     def find_random_transpose(self):
         """
         Return a MusicalPitch representing a suggested random
@@ -1141,6 +1240,7 @@ class QuestionsLessonfile(LessonfileCommon):
         else:
             retval = self._xxx_find_random_transpose(key)
         return retval
+
     def semitone_find_random_transpose(self):
         """
         Called to find random transposition in "semitone" mode.
@@ -1150,6 +1250,7 @@ class QuestionsLessonfile(LessonfileCommon):
         return mpd.MusicalPitch().randomize(
               mpd.transpose_notename("c'", self.header.random_transpose[1]),
               mpd.transpose_notename("c'", self.header.random_transpose[2]))
+
     def _xxx_find_random_transpose(self, key):
         """
         Called to create random transposition in "accidentals" or "key" mode.
@@ -1182,6 +1283,7 @@ class QuestionsLessonfile(LessonfileCommon):
         interv = mpd.Interval()
         interv.set_from_string(_keys_to_interval[random.choice(list(range(n_down, n_up+1)))])
         return mpd.MusicalPitch.new_from_notename("c'") + interv
+
     def iterate_questions_with_unique_names(self):
         """Iterate the questions in the lessonfile, but only yield the
         first question if several questions have the same name. The
@@ -1192,6 +1294,7 @@ class QuestionsLessonfile(LessonfileCommon):
             if 'name' in question and question.name.cval not in names:
                 names[question.name.cval] = 1
                 yield question
+
     def get_unique_cnames(self):
         """Return a list of all cnames in the file, in the same order
         as they appear in the file. Only list each cname once, even if
@@ -1202,12 +1305,14 @@ class QuestionsLessonfile(LessonfileCommon):
             if 'name' in question and question.name.cval not in names:
                 names.append(question.name.cval)
         return names
+
     def get_question(self):
         """
         Return the currently selected question.
         """
         assert self._idx is not None
         return self.m_questions[self._idx]
+
     def get_tempo(self):
         """
         Return the tempo of the currently selected question
@@ -1216,16 +1321,19 @@ class QuestionsLessonfile(LessonfileCommon):
         if 'tempo' in self.m_questions[self._idx]:
             return self.m_questions[self._idx]['tempo']
         return self.m_globals['tempo']
+
     def get_tempo_of_question(self, question):
         if 'tempo' in question:
             return question['tempo']
         return self.m_globals['tempo']
+
     def get_name(self):
         """
         Return the translated name of the currently selected question.
         """
         assert self._idx is not None
         return self.m_questions[self._idx].name
+
     def get_cname(self):
         """
         The 'cname' of a question is the C locale of the question name.
@@ -1234,12 +1342,15 @@ class QuestionsLessonfile(LessonfileCommon):
         """
         assert self._idx is not None
         return self.m_questions[self._idx].name.cval
+
     def get_lilypond_code(self):
         assert self._idx is not None
         return self.m_questions[self._idx].music.get_lilypond_code(self)
+
     def get_lilypond_code_first_note(self):
         assert self._idx is not None
         return self.m_questions[self._idx].music.get_lilypond_code_first_note(self)
+
     def get_music(self, varname='music'):
         """
         Return the music for the currently selected question. This is complete
@@ -1253,6 +1364,7 @@ class QuestionsLessonfile(LessonfileCommon):
         """
         assert self._idx is not None
         return self.m_questions[self._idx][varname].get_mpd_music_string(self)
+
     def get_music_as_notename_list(self, varname):
         """
         Return a list of notenames from the variabale VARNAME in the
@@ -1261,6 +1373,7 @@ class QuestionsLessonfile(LessonfileCommon):
         """
         assert self._idx is not None
         return self.get_question()[varname].get_music_as_notename_list(self)
+
     def get_music_as_notename_string(self, varname):
         """
         Return a string with notenames representing the question currently
@@ -1268,6 +1381,7 @@ class QuestionsLessonfile(LessonfileCommon):
         header.random_transpose is set.
         """
         return " ".join(self.get_music_as_notename_list(varname))
+
     def get_score(self, varname='music'):
         """
         Return the elems.Score object of the music in the variable named
@@ -1277,15 +1391,18 @@ class QuestionsLessonfile(LessonfileCommon):
         musicobj = self.m_questions[self._idx][varname]
         assert isinstance(musicobj, MpdParsable)
         return musicobj.get_score(self, as_name=varname)
+
     def has_question(self):
         """
         Return True if a question is selected.
         """
         return self._idx is not None
+
     def parse_string(self, s, really_filename=None):
         super(QuestionsLessonfile, self).parse_string(s, really_filename)
         if not self.m_questions:
             raise NoQuestionsInFileException(self.m_filename)
+
     def play_question(self, question=None, varname='music'):
         """Play the question. Play the current question if question is none.
         varname is the name of the variable that contains the music.
@@ -1303,12 +1420,15 @@ class QuestionsLessonfile(LessonfileCommon):
             if 'm_mpd_badcode' not in dir(e):
                 e.m_mpd_badcode = question[varname].get_err_context(e, self)
             raise
+
     def play_question_slowly(self, question=None, varname='music'):
         if not question:
             question = self.get_question()
         question[varname].play_slowly(self, question)
+
     def play_question_arpeggio(self, varname='music'):
         self.get_question()[varname].play_arpeggio(self, self.get_question())
+
     def get_instrument(self, question):
         """
         Music objects that will use the "config/preferred_instrument"
@@ -1329,6 +1449,7 @@ class QuestionsLessonfile(LessonfileCommon):
                 print("Warning: Invalid instrument name '%s' in lesson file:" % retval[0], e, file=sys.stderr)
                 retval[0] = cfg.get_int('config/preferred_instrument')
         return retval
+
     def get_instruments(self, question, count):
         """
         Music objects that want 2 or 3 of the instruments we can configure
@@ -1360,6 +1481,7 @@ class QuestionsLessonfile(LessonfileCommon):
                     print("Warning: Invalid instrument name '%s' in lesson file:" % retval[idx], e, file=sys.stderr)
                     retval[idx] = cfg.get_int('config/preferred_instrument')
         return retval
+
     def discard_questions_without_name(self):
         # Delete questions that does not have a name
         q = self.m_questions
@@ -1370,6 +1492,7 @@ class QuestionsLessonfile(LessonfileCommon):
                 continue
             else:
                 self.m_questions.append(question)
+
     def implements_music_displayer_stafflines(self):
         if 'music_displayer_stafflines' not in self.header:
             self.header.music_displayer_stafflines = 1
@@ -1380,17 +1503,20 @@ class TestSupport(object):
     Lessonfile classes can add this class to the list of classes it
     inherits from if the exercise want to have tests.
     """
+
     def _generate_test_questions(self):
         count, t = parse_test_def(self.header.test)
         q = list(range(len(self.m_questions))) * count
         random.shuffle(q)
         return q
+
     def get_test_num_questions(self):
         """
         Return the number of questions in the running test.
         This method is undefined if not running a test.
         """
         return len(self.m_questions) * parse_test_def(self.header.test)[0]
+
     def get_test_requirement(self):
         """
         Return the amount of exercises that has to be correct to
@@ -1401,9 +1527,11 @@ class TestSupport(object):
             return float(m.groups()[0])/100.0
         else:
             return 0.9
+
     def enter_test_mode(self):
         self.m_test_questions = self._generate_test_questions()
         self.m_test_idx = -1
+
     def next_test_question(self):
         assert self.m_test_idx < len(self.m_test_questions)
         self.m_test_idx += 1
@@ -1415,11 +1543,13 @@ class TestSupport(object):
                 self.m_transpose = self.find_random_transpose()
                 if old != self.m_transpose:
                     break
+
     def is_test_complete(self):
         """
         Return True if the test is compleded.
         """
         return self.m_test_idx == len(self.m_test_questions) -1
+
 
 class HeaderLessonfile(LessonfileCommon):
     """
@@ -1428,7 +1558,9 @@ class HeaderLessonfile(LessonfileCommon):
     """
     pass
 
+
 class DictationLessonfile(QuestionsLessonfile):
+
     def get_breakpoints(self):
         assert self._idx is not None
         r = []
@@ -1438,6 +1570,7 @@ class DictationLessonfile(QuestionsLessonfile):
                 r = [r]
         r = [Rat(e[0], e[1]) for e in r]
         return r
+
     def get_clue_end(self):
         assert self._idx is not None
         if 'clue_end' in self.m_questions[self._idx]:
@@ -1445,10 +1578,12 @@ class DictationLessonfile(QuestionsLessonfile):
                 return Rat(*self.m_questions[self._idx]['clue_end'])
             except TypeError:
                 raise LessonfileException("The 'clue_end' variable was not well formed")
+
     def get_clue_music(self):
         assert self._idx is not None
         if 'clue_music' in self.m_questions[self._idx]:
             return self.m_questions[self._idx]['clue_music']
+
     def select_previous(self):
         """
         Select the previous question. Do nothing if we are on the first
@@ -1457,6 +1592,7 @@ class DictationLessonfile(QuestionsLessonfile):
         assert self._idx is not None
         if self._idx > 0:
             self._idx = self._idx - 1
+
     def select_next(self):
         """
         Select the next question. Do nothing if we are on the last question.
@@ -1464,11 +1600,13 @@ class DictationLessonfile(QuestionsLessonfile):
         assert self._idx is not None
         if self._idx < len(self.m_questions) -1:
             self._idx = self._idx + 1
+
     def select_first(self):
         """
         Select the first question.
         """
         self._idx = 0
+
 
 class SingChordLessonfile(QuestionsLessonfile):
     pass
@@ -1480,6 +1618,7 @@ class RhythmDictation2Lessonfile(QuestionsLessonfile):
     method. Lots of the other methods from QuestionsLessonfile does
     not make sense to use in the class.
     """
+
     def parse_string(self, s, really_filename=None):
         LessonfileCommon.parse_string(self, s, really_filename)
         if not self.m_questions:
@@ -1491,6 +1630,7 @@ class RhythmDictation2Lessonfile(QuestionsLessonfile):
                 question['bars'] = [question['bars']]
             if not isinstance(question['elements'], list):
                 question['elements'] = [question['elements']]
+
     def generate_random_question(self):
         def rat_len_of_digits(digits):
             """
@@ -1535,12 +1675,15 @@ class RhythmDictation2Lessonfile(QuestionsLessonfile):
                 count += 1
             if count == max_count:
                 raise LessonfileException("Bad elements variable in the lessonfile. Too long elements.")
+
     def play_question(self):
         tracks = mpd.score_to_tracks(self.m_question_score)
         tracks[0].prepend_bpm(*self.m_questions[self._idx]['tempo'])
         soundcard.synth.play_track(*tracks)
 
+
 class NameIntervalLessonfile(HeaderLessonfile):
+
     def parse_string(self, s, really_filename=None):
         super(NameIntervalLessonfile, self).parse_string(s, really_filename)
         iquality = []
@@ -1573,7 +1716,9 @@ class NameIntervalLessonfile(HeaderLessonfile):
                 raise LessonfileParseException("The length of the lesson file header variable 'tones' has to be 2")
             self.header.tones = [mpd.MusicalPitch.new_from_notename(n) for n in self.header.tones]
 
+
 class IdByNameLessonfile(QuestionsLessonfile, TestSupport):
+
     def parse_string(self, s, really_filename=None):
         super(IdByNameLessonfile, self).parse_string(s, really_filename)
         # Also, if some questions has cuemusic, then we need the displayer
@@ -1588,7 +1733,9 @@ class IdByNameLessonfile(QuestionsLessonfile, TestSupport):
         self.discard_questions_without_name()
         self.implements_music_displayer_stafflines()
 
+
 class SingAnswerLessonfile(QuestionsLessonfile):
+
     def parse_string(self, s, really_filename=None):
         super(SingAnswerLessonfile, self).parse_string(s, really_filename)
         v = [q for q in self.m_questions if 'question_text' not in q]
@@ -1597,17 +1744,20 @@ class SingAnswerLessonfile(QuestionsLessonfile):
                 'index': self.m_questions.index(v[0]),
                 'filename': self.m_filename})
 
+
 class IntervalsLessonfile(HeaderLessonfile, TestSupport):
     """
     Common lesson file class for some interval exercises.
     We inherit from TestSupport, but overwrites some methods from it.
     """
+
     def get_test_num_questions(self):
         count, t = parse_test_def(self.header.test)
         if self.header.intervals:
             return len(self.header.intervals) * count
         else:
             return len(self.header.ask_for_intervals_0) * count
+
     def enter_test_mode(self):
         count, t = parse_test_def(self.header.test)
         if self.header.intervals:
@@ -1616,10 +1766,13 @@ class IntervalsLessonfile(HeaderLessonfile, TestSupport):
             self.m_test_questions = self.header.ask_for_intervals_0 * count
         random.shuffle(self.m_test_questions)
         self.m_test_idx = -1
+
     def next_test_question(self):
         self.m_test_idx += 1
 
+
 class IdPropertyLessonfile(QuestionsLessonfile):
+
     def parse_string(self, s, really_filename=None):
         """
         Call IdPropertyLessonfile.parse_string and set the self.m_props dict.
@@ -1699,7 +1852,9 @@ class IdPropertyLessonfile(QuestionsLessonfile):
                 self.m_questions[idx] = None
         self.m_questions = [q for q in self.m_questions if q is not None]
 
+
 class ChordLessonfile(IdPropertyLessonfile):
+
     def parse_string(self, s, really_filename=None):
         super(ChordLessonfile, self).parse_string(
         s.replace("header {",
@@ -1712,6 +1867,7 @@ class ChordLessonfile(IdPropertyLessonfile):
 
 
 class ElembuilderLessonfile(QuestionsLessonfile):
+
     def parse_string(self, s, really_filename=None):
         super(ElembuilderLessonfile, self).parse_string(s, really_filename)
         # We need the name variable for statistics
@@ -1746,23 +1902,30 @@ class ElembuilderLessonfile(QuestionsLessonfile):
 
 
 class InfoCache(object):
+
     class InfoCacheException(IOError):
         pass
+
     class FileNotFound(InfoCacheException):
         pass
+
     class FileNotLessonfile(InfoCacheException):
         pass
+
     class FrontPageCache(object):
         OLD_FORMAT = 1
         PARSE_ERROR = 2
+
         def __init__(self):
             self._data = {}
+
         def get(self, filename, field):
             if filename not in self._data:
                 self.parse_file(filename)
             elif os.path.getmtime(filename) != self._data[filename]['mtime']:
                 self.parse_file(filename)
             return self._data[filename][field]
+
         def parse_file(self, filename):
             from solfege import frontpage
             try:
@@ -1773,14 +1936,17 @@ class InfoCache(object):
                 self._data[filename] = self.OLD_FORMAT
             except frontpage.FrontPageException:
                 self._data[filename] = self.PARSE_ERROR
+
         def iter_old_format_files(self):
             for filename, value in list(self._data.items()):
                 if value == self.OLD_FORMAT:
                     yield filename
+
     def __init__(self):
         self._data = {}
         self._dir_mtime = {}
         self.frontpage = self.FrontPageCache()
+
     def get(self, filename, field):
         """
         filename is either a solfege: uri or an absolute file name.
@@ -1794,6 +1960,7 @@ class InfoCache(object):
         if filename not in self._data or self._data[filename]['mtime'] < mtime:
             self.parse_file(filename, mtime)
         return self._data[filename][field]
+
     def parse_file(self, filename, mtime=None):
         assert is_uri(filename) or os.path.isabs(filename)
         p = parse_lesson_file_header(uri_expand(filename))
@@ -1819,6 +1986,7 @@ class InfoCache(object):
             raise self.FileNotLessonfile(filename)
         if not self._data[filename]['title']:
             self._data[filename]['title'] = "error: empty string as title in '%s'" % filename
+
     def iter_parse_all_files(self):
         """
         Parse the files and put then in the cache.
@@ -1830,6 +1998,7 @@ class InfoCache(object):
             yield filename
         for filename in self.iter_user_files():
             yield filename
+
     def _iter_files(self, *path):
         """
         Parse and put into the cache all lesson files in the directories
@@ -1848,6 +2017,7 @@ class InfoCache(object):
                     except self.FileNotLessonfile:
                         continue
                     yield filename
+
     def parse_all_files(self, when_idle):
         """
         Parse all standard lesson files and the user_lessonfiles.
@@ -1856,6 +2026,7 @@ class InfoCache(object):
         logging.debug("parse_all_files(when_idle=%s)", when_idle)
         if when_idle:
             self._lessonfiles_iterator = self.iter_parse_all_files()
+
             def on_idle_parse():
                 try:
                     filename = next(self._lessonfiles_iterator)
@@ -1869,9 +2040,11 @@ class InfoCache(object):
             GObject.idle_add(on_idle_parse)
         else:
             list(self.iter_parse_all_files())
+
     def update_modified_files(self):
         self.cond_parse_dir(filesystem.user_lessonfiles())
         self.cond_parse_dir(os.path.join(exercises_dir, "lesson-files"))
+
     def cond_parse_dir(self, dir):
         """
         Check the mtime of the files in dir if dirs mtime has changed
@@ -1898,6 +2071,7 @@ class InfoCache(object):
                     except self.InfoCacheException:
                         logging.debug(" exception, not parsed: %s", fn)
                         pass
+
     def iter_user_files(self, only_user_collection=False):
         """
         Put the data from the lesson files below ~/.solfege/exercises/
@@ -1956,4 +2130,3 @@ def parse_lesson_file_header(filename):
     finally:
         pt.Identifier.check_ns = check_ns
     return p
-

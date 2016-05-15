@@ -18,7 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import random
 
 from gi.repository import Gtk
@@ -33,6 +32,7 @@ from solfege.const import solmisation_syllables, solmisation_notenames
 
 class SolmisationAddOnClass:
     elements = list(range(35))
+
     def new_question(self):
         """returns:
             self.ERR_PICKY : if the question is not yet solved and the
@@ -58,6 +58,7 @@ class SolmisationAddOnClass:
         self.q_status = self.QSTATUS_NEW
         self.m_transp = random.randint(-5, 6)
         return self.OK
+
     def get_music_notenames(self, count_in):
         """
         Return a string with the notenames of the current question.
@@ -109,12 +110,14 @@ class SolmisationAddOnClass:
             result = melody
 
         return result
+
     def get_music_string(self):
         """
             Return a complete mpd string of the current question that can
             be feed to utils.play_music.
             """
         return r"\staff{ \time 1000000/4 %s}" % self.get_music_notenames(True)
+
     def play(self, rhythm):
         """
         rhythm is a string. Example: 'c4 c8 c8 c4'
@@ -137,6 +140,7 @@ class SolmisationAddOnClass:
 
 
 class SolmisationAddOnGuiClass(object):
+
     def add_select_elements_gui(self, row):
         self.g_element_frame = frame = Gtk.Frame(label=_("Choose tones"))
         self.g_config_grid.attach(frame, 0, row, 3, 1)

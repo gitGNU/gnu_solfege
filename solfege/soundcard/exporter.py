@@ -17,14 +17,19 @@
 
 from solfege.mpd.track import MidiEventStream
 
+
 class MidiExporter(object):
+
     def __init__(self):
         self.m_filename = None
         self.m_stream_list = []
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, stream):
         self.m_stream_list.append(stream)
+
     def start_export(self, filename):
         """
         Call this method if you want to write the next call to play_track
@@ -33,9 +38,9 @@ class MidiExporter(object):
         assert self.m_filename is None
         self.m_filename = filename
         self.m_stream_list = []
+
     def end_export(self):
         if self.m_stream_list:
             self.m_stream_list[0].create_midifile(self.m_filename, self.m_stream_list[1:])
             self.m_filename = None
             del self.m_stream_list
-

@@ -55,6 +55,7 @@ if sys.platform == 'win32':
 # folder in the "My Documents" folder, and one folder in "Application Data"
 appname = "GNU Solfege"
 
+
 def _get_home_dir():
     ''' Try to find user's home directory, otherwise return current directory.'''
     path1 = os.path.expanduser("~")
@@ -109,6 +110,7 @@ def get_home_dir():
 def expanduser(s):
     return s.replace("~", get_home_dir())
 
+
 def user_data():
     """
     Return the full path name of a directory where solfege  by default will suggest to
@@ -141,6 +143,7 @@ def rcfile():
     else:
         return os.path.expanduser("~/.solfegerc")
 
+
 def app_data():
     """
     Return the full path name of the directory that will store files
@@ -150,4 +153,3 @@ def app_data():
         return os.path.join(winreg.get_appdata(), appname)
     else:
         return os.path.expanduser("~/.solfege")
-

@@ -41,10 +41,13 @@ from solfege.mpd import const
 from solfege.mpd import _exceptions
 from solfege.mpd import elems
 
+
 class ParseError(_exceptions.MpdException):
+
     def __init__(self, msg, lexer):
         _exceptions.MpdException.__init__(self, msg)
         self.m_lineno, self.m_linepos1, self.m_linepos2 = lexer.get_error_location()
+
 
 def musicalpitch_relative(first, second):
     """
@@ -75,6 +78,7 @@ def musicalpitch_relative(first, second):
 
 
 class TimeSignature:
+
     def __init__(self, num, den):
         self.m_num = num
         self.m_den = den
@@ -300,8 +304,6 @@ def parse_to_score_object(music):
         else:
             raise ParseError(toc, lexer)
     return score
-
-
 
 
 def validate_only_notenames(s):

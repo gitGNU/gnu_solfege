@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import Gtk
 
 from solfege import abstract
@@ -24,6 +23,7 @@ from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard
 from solfege.specialwidgets import QuestionNameCheckButtonTable
+
 
 class Teacher(abstract.Teacher):
     OK = 0
@@ -35,11 +35,13 @@ class Teacher(abstract.Teacher):
     # QSTATUS_GIVE_UP  after 'Give Up' has been pressed.
     CORRECT = 1
     ALL_CORRECT = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.ChordLessonfile
         for s in 'accidentals', 'key', 'semitones', 'atonal':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         """
         return OK or ERR_PICKY
@@ -54,8 +56,10 @@ class Teacher(abstract.Teacher):
         self.m_solved = {}.fromkeys(list(self.m_P.m_props.keys()), False)
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
+
     def guess_property(self, property_name, value):
         """
         GUI guarantees that this method will not be called after it has
@@ -77,6 +81,7 @@ class Teacher(abstract.Teacher):
 
 
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         ################
@@ -119,6 +124,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_select_questions.initialize(4, 0)
         category_box.pack_start(self.g_select_questions, False, False, 0)
         self.g_select_questions.show()
+
     def update_select_question_buttons(self):
         """
         The g_select_questions widget is used in m_custom_mode to select which
@@ -136,6 +142,7 @@ class Gui(abstract.LessonbasedGui):
         else:
             self.g_select_questions_category_box.hide()
             self.g_select_questions.initialize(0, 0)
+
     def update_answer_buttons(self, obj=None):
         """
         Only columns with question properties that are actually used
@@ -195,6 +202,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_repeat.set_sensitive(False)
         self.g_repeat_arpeggio.set_sensitive(False)
         self.g_give_up.set_sensitive(False)
+
     def update_gui_after_lessonfile_change(self):
         self.g_music_displayer.clear()
         self.update_select_question_buttons()
@@ -204,6 +212,7 @@ class Gui(abstract.LessonbasedGui):
             self.set_lesson_heading(_("Identify the chord"))
         self.g_new.set_sensitive(True)
         self.update_answer_buttons()
+
     def on_prop_button_clicked(self, button):
         if self.m_t.q_status != self.QSTATUS_NEW:
             return
@@ -221,6 +230,7 @@ class Gui(abstract.LessonbasedGui):
                 self.all_guessed_correct()
         else:
             self.g_flashbar.flash(_("Wrong"))
+
     def on_prop_button_right_clicked(self, button, event):
         """
         Search for a question in the lesson file with the same properties
@@ -252,11 +262,13 @@ class Gui(abstract.LessonbasedGui):
                     if not self.standard_exception_handler(e):
                         raise
                 return
+
     def all_guessed_correct(self):
         self.run_exception_handled(self.show_answer)
         self.g_new.set_sensitive(True)
         self.g_new.grab_focus()
         self.g_give_up.set_sensitive(False)
+
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()
@@ -287,6 +299,7 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = self.get_bool('gui/expert_mode')
         for question in self.m_t.m_P.m_questions:
@@ -300,6 +313,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_new.grab_focus()
         self.g_flashbar.delayed_flash(self.short_delay,
             _("Click 'New chord' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_music_displayer.clear()
@@ -307,6 +321,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_repeat.set_sensitive(False)
         self.g_repeat_arpeggio.set_sensitive(False)
         self.g_give_up.set_sensitive(False)
+
     def give_up(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_NEW:
             self.m_t.give_up()
@@ -319,6 +334,7 @@ class Gui(abstract.LessonbasedGui):
                         button.get_children()[0].set_name('BoldText')
                     else:
                         button.get_children()[0].set_name('')
+
     def show_answer(self):
         """
         Show the answer in the music displayer. All callers must check
@@ -334,4 +350,3 @@ class Gui(abstract.LessonbasedGui):
         else:
             # Same as the comment above applies here too.
             self.g_music_displayer.display(self.m_t.m_P.get_music(), fontsize)
-

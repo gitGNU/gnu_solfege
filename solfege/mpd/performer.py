@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import operator
 
 from solfege.mpd.rat import Rat
@@ -26,14 +25,18 @@ from solfege.mpd import elems
 START_NOTE = 'start-note'
 STOP_NOTE  = 'stop-note'
 
+
 class MidiPerformer(object):
+
     def __init__(self, score):
         self.m_score = score
+
     def get_all_tpos_keys(self):
         t = set()
         for staff in self.m_score.m_staffs:
             [t.add(timepos) for timepos in staff.get_timeposes()]
         return sorted(t)
+
     def get_tracks(self, start=None, end=None):
         """
         Return a list of Track and/or PercussionTrack objects needed to play
@@ -52,6 +55,7 @@ class MidiPerformer(object):
             assert start is not None and end is not None
             return self.get_tracks_of(
                 [i for i in self.get_all_tpos_keys() if start <= i < end])
+
     def get_event_dict(self, voice, kv):
         """
         Return a dict that tell us where every note in the voice starts
@@ -86,6 +90,7 @@ class MidiPerformer(object):
                         D[stop_pos].append((i, STOP_NOTE, n.m_musicalpitch.semitone_pitch()))
                     i = i + 1
         return D
+
     def generate_track_for_voice(self, voice, kv, tracktype):
         D = self.get_event_dict(voice, kv)
         keys = list(D.keys())
@@ -108,6 +113,7 @@ class MidiPerformer(object):
                     ms.stop_note(e[2], const.DEFAULT_VELOCITY)
                 delta = None
         return ms
+
     def get_tracks_of(self, kv):
         """
         Create and return a list of Tracks
@@ -120,6 +126,6 @@ class MidiPerformer(object):
                         PercussionTrack if staff.__class__ == elems.RhythmStaff else Track))
         return tracks
 
+
 def score_to_tracks(score, start=None, end=None):
     return MidiPerformer(score).get_tracks(start, end)
-

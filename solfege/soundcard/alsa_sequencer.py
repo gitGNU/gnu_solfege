@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import sys
 from pyalsa import alsaseq
 
@@ -26,6 +25,7 @@ from solfege import soundcard
 
 class AlsaSequencer(SynthCommon):
     name = "solfege-alsa.py"
+
     def __init__(self, clientport, verbose_init):
         SynthCommon.__init__(self)
         self.m_type_major = "ALSA"
@@ -48,8 +48,10 @@ class AlsaSequencer(SynthCommon):
         self.m_queue = self.m_sequencer.create_queue(name = self.name)
         self.m_clientport = clientport
         self.m_sequencer.connect_ports((self.m_sequencer.client_id, self.m_port), clientport)
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, midieventstream):
         # We don't start at the very beginning. This to give the sequencer
         # a little time to get ready.
@@ -110,11 +112,14 @@ class AlsaSequencer(SynthCommon):
 
         # make sure that the sequencer sees all our events
         self.m_sequencer.drain_output()
+
     def close(self):
         print("close: FIXME")
+
     def stop(self):
         self.m_sequencer.stop_queue(self.m_queue)
         self.m_sequencer.drain_output()
+
 
 def get_connection_list():
     sequencer = alsaseq.Sequencer(name = 'default',
@@ -136,4 +141,3 @@ def get_connection_list():
                 retval.append((clientid, portid, clientname, portname,
                     "%i:%i %s %s" % (clientid, portid, clientname, portname)))
     return retval
-

@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import solfege
 
 
@@ -52,7 +51,9 @@ from gi.repository import Gdk
 
 from solfege import i18n
 
+
 class SplashWin(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self, Gtk.WindowType.POPUP)
         self.set_position(Gtk.WindowPosition.CENTER)
@@ -69,6 +70,7 @@ class SplashWin(Gtk.Window):
         self.g_infolabel = Gtk.Label(label='')
         vbox.pack_start(self.g_infolabel, True, True, 0)
         self.show_all()
+
     def show_progress(self, txt):
         self.g_infolabel.set_text(txt)
         while Gtk.events_pending():
@@ -91,7 +93,9 @@ from solfege.trainingsetdlg import TrainingSetDialog
 from solfege.practisesheetdlg import PractiseSheetDialog
 from solfege import filesystem
 
+
 class MusicViewerWindow(Gtk.Dialog):
+
     def __init__(self):
         Gtk.Dialog.__init__(self)
         self.set_default_size(500, 300)
@@ -101,6 +105,7 @@ class MusicViewerWindow(Gtk.Dialog):
         b.grab_focus()
         self.connect('destroy', solfege.win.close_musicviewer)
         self.show_all()
+
     def display_music(self, music):
         fontsize = cfg.get_int('config/feta_font_size=20')
         self.g_music_displayer.display(music, fontsize)
@@ -109,6 +114,7 @@ class MusicViewerWindow(Gtk.Dialog):
 class MainWin(Gtk.Window, cfg.ConfigUtils):
     default_front_page = os.path.join(lessonfile.exercises_dir, 'learningtree.txt')
     debug_front_page = os.path.join(lessonfile.exercises_dir, 'debugtree.txt')
+
     def __init__(self, options, datadir):
         Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
         self._vbox = Gtk.VBox()
@@ -140,12 +146,14 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.main_box = Gtk.VBox()
         self.main_box.show()
         self._vbox.pack_start(self.main_box, True, True, 0)
+
     def get_view(self):
         """
         Return the view that is currently visible.
         Raise KeyError if no view has yet been added.
         """
         return self.box_dict[self.m_viewer]
+
     def add_view(self, view, name):
         """
         Hide the current view.
@@ -158,6 +166,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.main_box.pack_start(self.box_dict[name], True, True, 0)
         self.box_dict[name].show()
         self.m_viewer = name
+
     def show_view(self, name):
         """
         Return False if the view does not exist.
@@ -170,12 +179,14 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.m_viewer = name
         self.box_dict[name].show()
         return True
+
     def change_frontpage(self, filename):
         """
         Change to a different frontpage file.
         """
         self.set_string('app/frontpage', filename)
         self.load_frontpage()
+
     def load_frontpage(self):
         """
         Load the front page file set in the config database into
@@ -199,6 +210,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             if solfege.splash_win:
                 solfege.splash_win.show()
         self.display_frontpage()
+
     def setup_menu(self):
         self.m_action_groups['Exit'].add_actions([
           ('FileMenu', None, _('_File')),
@@ -257,6 +269,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         hdlbox.add(self.g_ui_manager.get_widget('/Menubar'))
         self._vbox.pack_start(hdlbox, False, False, 0)
         self.m_help_on_current_merge_id = None
+
     def create_frontpage_menu(self):
         """
         Create, or update if already existing, the submenu that let the
@@ -290,6 +303,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         s += "</menu></menu></menubar>"
         self.m_action_groups['NotExit'].add_actions(actions)
         self.m_frontpage_merge_id = self.g_ui_manager.add_ui_from_string(s)
+
     def show_help_on_current(self):
         """
         Show the menu entries for the exercise help and music theory
@@ -306,6 +320,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
     </placeholder>
   </menu>
 </menubar>""")
+
     def hide_help_on_current(self):
         """
         Hide the menu entries for the help and music theory pages on the
@@ -315,6 +330,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             return
         self.g_ui_manager.remove_ui(self.m_help_on_current_merge_id)
         self.m_help_on_current_merge_id = None
+
     def display_error_message2(self, text, secondary_text):
         """
         This is the new version of display_error_message, and it will
@@ -339,6 +355,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             solfege.splash_win.show()
             while Gtk.events_pending():
                 Gtk.main_iteration()
+
     def display_error_message(self, msg, title=None, secondary_text=None):
         if solfege.splash_win and solfege.splash_win.props.visible:
             solfege.splash_win.hide()
@@ -360,6 +377,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             solfege.splash_win.show()
             while Gtk.events_pending():
                 Gtk.main_iteration()
+
     def show_path_info(self, w):
         if not self.g_path_info_dlg:
             self.g_path_info_dlg = Gtk.Dialog(_("_File locations").replace("_", ""), self,
@@ -386,6 +404,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             box2.pack_start(gu.hig_label_widget("pyalsa:", Gtk.Label(label=str(alsaseq)), sizegroup), False, False, 0)
             box2.pack_start(gu.hig_label_widget("PYTHONHOME", Gtk.Label(os.environ.get('PYTHONHOME', 'Not defined')), sizegroup), False, False, 0)
             self.g_path_info_dlg.show_all()
+
             def f(*w):
                 self.g_path_info_dlg.hide()
                 return True
@@ -394,8 +413,10 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             sc.set_size_request(min(vbox.size_request().width + gu.hig.SPACE_LARGE * 2,
                                     Gdk.Screen.width() * 0.9),
                                 vbox.size_request().height)
+
     def setup_pyalsa(self, widget):
         download_pyalsa.download()
+
     def show_about_window(self, widget):
         pixbuf = self.render_icon('solfege-icon', Gtk.IconSize.DIALOG)
         a = self.g_about_window = Gtk.AboutDialog()
@@ -429,11 +450,13 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             a.set_translator_credits(_("SOLFEGETRANSLATORS"))
         self.g_about_window.run()
         self.g_about_window.destroy()
+
     def do_tree_editor(self, *v):
         """
         Open a front page editor editing the current front page.
         """
         fpeditor.Editor.edit_file(self.get_string("app/frontpage"))
+
     def post_constructor(self):
         self.m_frontpage_merge_id = None
         self.create_frontpage_menu()
@@ -499,6 +522,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         for filename in lessonfile.infocache.frontpage.iter_old_format_files():
             gu.dialog_ok(_("Cannot load front page file"), None,
                 _("The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
+
     def activate_exercise(self, module, urlobj=None):
         self.show_view(module)
         # We need this test because not all exercises use a notebook.
@@ -509,6 +533,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             else:
                 self.get_view().g_notebook.set_current_page(0)
         self.set_title("Solfege - " + self.get_view().m_t.m_P.header.title)
+
     def display_docfile(self, fn):
         """
         Display the HTML file named by fn in the help browser window.
@@ -521,6 +546,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             webbrowser.open(filename)
         except Exception as e:
             self.display_error_message2(_("Error opening web browser"), str(e))
+
     def display_user_exercises(self, w):
         col = frontpage.Column()
         page = frontpage.Page(_('User exercises'), col)
@@ -546,6 +572,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             if linklist:
                 col.append(linklist)
         self.display_frontpage(page)
+
     def display_recent_exercises(self, w):
         data = frontpage.Page(_('Recent exercises'),
             [frontpage.Column(
@@ -553,6 +580,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                    solfege.db.recent(8))])])
         self.display_frontpage(data, show_topics=True)
         self.get_view().g_searchbox.hide()
+
     def display_recent_tests(self, w):
         data = frontpage.Page(_('Recent tests'),
             [frontpage.Column(
@@ -560,6 +588,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                    solfege.db.recent_tests(8))])])
         self.display_testpage(data, show_topics=True)
         self.get_view().g_searchbox.hide()
+
     def display_testpage(self, data=None, show_topics=False):
         """
         Display the front page of the data  in solfege.app.m_frontpage_data
@@ -574,10 +603,12 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             data = solfege.app.m_frontpage_data
         self.trim_history(self.get_view(), data)
         self.get_view().display_data(data, show_topics=show_topics)
+
     def on_search_all_exercises(self, widget=None):
         self.set_title("GNU Solfege")
         if not self.show_view('searchview'):
             self.add_view(SearchView(_('Search the exercise titles of all lesson files found by the program, not just the active front page with sub pages.')), 'searchview')
+
     def display_frontpage(self, data=None, show_topics=False):
         """
         Display the front page of the data  in solfege.app.m_frontpage_data
@@ -595,6 +626,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             data = solfege.app.m_frontpage_data
         self.trim_history(self.get_view(), data)
         self.get_view().display_data(data, show_topics=show_topics)
+
     def trim_history(self, new_viewer, new_page):
         # First check if the page we want to display is in m_history.
         # If so, we will trunkate history after it.
@@ -602,8 +634,10 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             if (new_viewer != viewer) or (new_page == page):
                 self.m_history = self.m_history[:i]
                 break
+
     def history_handler(self, *w):
         self.m_history.append(w)
+
     def initialise_exercise(self, teacher):
         """
         Create a Gui object for the exercise and add it to
@@ -613,6 +647,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.get_view().hide()
         m = solfege.app.import_module(teacher.m_exname)
         self.add_view(m.Gui(teacher), teacher.m_exname)
+
     def on_key_press_event(self, widget, event):
         try:
             view = self.get_view()
@@ -633,6 +668,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
                     break
             return True
         view.on_key_press_event(widget, event)
+
     def run_startup_profile_manager(self):
         """
         Select a user profile to use. Return its name.
@@ -647,6 +683,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             return profile
         else:
             self.quit_program()
+
     def open_profile_manager(self, widget=None):
         p = ChangeProfileDialog(self, solfege.app.m_options.profile)
         if p.run() == Gtk.ResponseType.ACCEPT:
@@ -666,6 +703,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         solfege.db = statistics.DB(None, profile=prof)
         cfg.set_string("app/last_profile", prof)
         self.display_frontpage()
+
     def open_preferences_window(self, widget=None):
         if not self.g_config_window:
             self.g_config_window = ConfigWindow()
@@ -674,6 +712,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             self.g_config_window.update_old_statistics_info()
             self.g_config_window.update_statistics_info()
             self.g_config_window.show()
+
     def quit_program(self, *w):
         can_quit = True
         for dlg in list(gu.EditorDialogBase.instance_dict.values()):
@@ -687,14 +726,17 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
             Gtk.main_quit()
         else:
             return True
+
     def display_in_musicviewer(self, music):
         if not self.g_musicviewer_window:
             self.g_musicviewer_window = MusicViewerWindow()
             self.g_musicviewer_window.show()
         self.g_musicviewer_window.display_music(music)
+
     def close_musicviewer(self, widget=None):
         self.g_musicviewer_window.destroy()
         self.g_musicviewer_window = None
+
     def enter_test_mode(self):
         if 'enter_test_mode' not in dir(self.get_view()):
             gu.dialog_ok(_("The '%s' exercise module does not support test yet." % self.m_viewer))
@@ -704,6 +746,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.get_view().g_notebook.get_nth_page(0).reparent(self.main_box)
         self.get_view().g_notebook.hide()
         self.get_view().enter_test_mode()
+
     def exit_test_mode(self):
         solfege.app.m_test_mode = False
         self.m_action_groups['NotExit'].set_sensitive(True)
@@ -714,11 +757,11 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.get_view().g_notebook.get_nth_page(0).show()
         self.get_view().g_notebook.set_current_page(0)
         self.get_view().exit_test_mode()
+
     def new_training_set_editor(self, widget):
         dlg = TrainingSetDialog()
         dlg.show_all()
+
     def new_practisesheet_editor(self, widget):
         dlg = PractiseSheetDialog()
         dlg.show_all()
-
-

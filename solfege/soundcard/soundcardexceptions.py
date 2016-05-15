@@ -17,22 +17,27 @@
 
 import os
 
+
 class SoundInitException(Exception):
     pass
 
+
 class SyscallException(SoundInitException):
+
     def __init__(self, msg, n):
         SoundInitException.__init__(self)
         self.m_msg = msg
         self.m_errno = n
+
     def __str__(self):
         return self.m_msg + "\n%s" % os.strerror(self.m_errno)
 
+
 class SeqNoSynthsException(SoundInitException):
+
     def __init__(self, dev):
         SoundInitException.__init__(self)
         self.m_dev = dev
+
     def __str__(self):
         return "SNDCTL_SEQ_NRSYNTHS report that there are no synths on %s." % self.m_dev
-
-

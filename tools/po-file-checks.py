@@ -11,9 +11,12 @@ import os
 ok_different_mapping_key = (
   "notenameformat|%(notename)s%(oct)s",
 )
+
+
 class Entry(object):
     # translated status: UNTRANS, FUZZY, TRANS
     # obsolete: True / False
+
     def __init__(self, s):
         s = s.strip("\n")
         msgid_re = re.compile('(msgid|#~ msgid) "(?P<id>.*?)"\s*$')
@@ -69,8 +72,10 @@ class Entry(object):
         #if not "\n".join(retval['msgstr']):
         #    translated = 'untranslated'
         #return translated, obsolete, retval
+
     def is_header(self):
         return not self.m_msgid
+
     def get_status(self):
         """
         'translated'
@@ -81,14 +86,18 @@ class Entry(object):
         if self.m_obsolete:
             return 'obsolete'
         return self.m_status
+
     def get_msgid(self):
         return self.m_msgid_string
         return " ".join(self.m_msgid)
+
     def get_msgstr(self):
         return self.m_msgstr_string
         return " ".join(self.m_msgstr)
 
+
 class TestEntry(unittest.TestCase):
+
     def test_escaped_qoute(self):
         s = """
 #: solfege/dictation.py:197
@@ -99,6 +108,7 @@ msgstr "Il file \"%s\"."
 """
         e = Entry(s)
         self.assertEqual(e.get_msgstr(), "Il file \"%s\".")
+
 
 def string_to_entry_list(s):
     """
@@ -114,6 +124,7 @@ def string_to_entry_list(s):
         v.append(e)
     return v
 
+
 def parse_string(s):
     """
     This function will return a dict with some statistics about the entries.
@@ -124,6 +135,7 @@ def parse_string(s):
         dicts[e.get_status()] += 1
     del dicts['heading']
     return dicts
+
 
 def parse_file(filename):
     return parse_string(file(filename, 'r').read())
@@ -146,6 +158,7 @@ def find_string_formatting(s):
         m = r.search(s[start:])
     return ret
 
+
 def find_string_formatting_mapping_keys(s):
     s = re.sub("%\s*%", "", s)
     r = re.compile("\%(\((?P<name>\w*)\))?(?P<notname>(\.?\d+)?[^\s\(])")
@@ -158,20 +171,27 @@ def find_string_formatting_mapping_keys(s):
         m = r.search(s[start:])
     return ret
 
+
 class TestFindStringFormatting(unittest.TestCase):
+
     def test_simplest(self):
         for n in ("%s", "%f", "%.2d", "%03d"):
             self.assertEqual(find_string_formatting(n), [n])
+
     def test_complex(self):
         self.assertEqual(find_string_formatting("abc %.1f%%\n def %.1f%%"), ['%.1f', '%.1f'])
+
     def test_common_po_bugs(self):
         self.assertNotEqual(find_string_formatting("%.1f%.\n"), ['%.1f'])
+
     def test_double_percent(self):
         self.assertEqual(find_string_formatting("%s %% %f"), ['%s', '%f'])
         self.assertEqual(find_string_formatting("%s % % %f"), ['%s', '%f'])
         self.assertEqual(find_string_formatting("%s %\t\t% %f"), ['%s', '%f'])
+
     def test_ignore(self):
         self.assertEqual(find_string_formatting("%(name)s"), [])
+
     def test_xxx(self):
         msgid = """
 Test completed!
@@ -185,6 +205,7 @@ Požadované skóre bylo%.1f% %.
 """
         self.assertEqual(find_string_formatting(msgid),
                          find_string_formatting(msgstr))
+
     def test_mapping(self):
         v1 = find_string_formatting_mapping_keys("%(name)s %(bla).1f X")
         v2 = find_string_formatting_mapping_keys("%(bla).1f X X %(name)s ")

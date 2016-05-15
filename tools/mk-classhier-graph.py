@@ -12,14 +12,19 @@ if len(sys.argv) == 1 or sys.argv[1] == '-h':
     print
     sys.exit(0)
 
+
 class ClassInfo(object):
+
     def __init__(self, module, name):
         self.module = module
         self.name = name
 
+
 class ClassDb(object):
+
     def __init__(self):
         self.db = {}
+
     def add_classdef(self, mod, name):
         """
         mod - the module the class is defined in
@@ -28,6 +33,7 @@ class ClassDb(object):
         if mod not in self.db:
             self.db[mod] = {}
         self.db[mod][name] = []
+
     def add_class_parent(self, mod, name, parent):
         """
         mod - the module the class is defined in
@@ -35,8 +41,10 @@ class ClassDb(object):
         parent - a (mod, name) tuple of one parent
         """
         self.db[mod][name].append(parent)
+
     def has_class(self, mod, name):
         return mod in self.db and name in self.db[mod]
+
     def write(self, filename, filetype):
         def fmt(mod, cls):
             return cls
@@ -79,6 +87,7 @@ class_re = re.compile("""
 
 db = ClassDb()
 
+
 def mod_split(modulename):
     """
     Split the complete modulename into (package, modulename) tuple
@@ -86,9 +95,12 @@ def mod_split(modulename):
     v = modulename.split(".")
     return ".".join(modulename.split(".")[:-1]), v[-1]
 
+
 def mod_to_filename(mod):
     " solfege.abstract => solfege/abstract.py"
     return mod.replace(".", "/") + ".py"
+
+
 def do_file(fn):
     modulename = fn[:-3].replace("/", ".")
     package = mod_split(modulename)[0]

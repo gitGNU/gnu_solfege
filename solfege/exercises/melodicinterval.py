@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import Gtk
 
 from solfege import abstract
@@ -31,22 +30,27 @@ from solfege.multipleintervalconfigwidget import MultipleIntervalConfigWidget
 
 import solfege
 
+
 class Teacher(abstract.MelodicIntervalTeacher):
+
     def __init__(self, exname):
         abstract.MelodicIntervalTeacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IntervalsLessonfile
         self.m_statistics = statistics.IntervalStatistics(self)
         self.m_timeout_handle = None
         self.m_custom_mode = False
+
     def enter_test_mode(self):
         self.m_custom_mode = False
         self.m_statistics.enter_test_mode()
         self.m_P.enter_test_mode()
+
     def give_up(self):
         """This function is only called *after* the user already has
         answered wrong once, so the statistics are already updated.
         """
         self.q_status = self.QSTATUS_GIVE_UP
+
     def guess_answer(self, answer, directions=None):
         """
         return TRUE value if correct
@@ -72,6 +76,7 @@ class Teacher(abstract.MelodicIntervalTeacher):
             if solfege.app.m_test_mode:
                 self.maybe_auto_new_question()
             self.q_status = self.QSTATUS_WRONG
+
     def start_practise(self):
         # First, we have to empty the cfg database because we will
         # copy the values from the lesson header.
@@ -96,8 +101,10 @@ class Teacher(abstract.MelodicIntervalTeacher):
         self.m_question = []
         self.m_tonika = None
 
+
 class Gui(abstract.IntervalGui):
     lesson_heading = _("Identify the interval")
+
     def __init__(self, teacher):
         abstract.IntervalGui.__init__(self, teacher)
         self.std_buttons_add(('give_up', self.give_up))
@@ -117,6 +124,7 @@ class Gui(abstract.IntervalGui):
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                     _("Melodic interval"))
         self.select_inputwidget()
+
         def _f(watchvar):
             # The variables being watched by this function will change
             # when we switch lesson files or when we are in expert mode and
@@ -128,6 +136,7 @@ class Gui(abstract.IntervalGui):
         for i in range(self.get_int('maximum_number_of_intervals')):
             self.add_watch('ask_for_intervals_%i' % i, _f)
         self.add_watch('number_of_intervals', _f)
+
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             if len(self.m_t.m_question) == 1:
@@ -138,6 +147,7 @@ class Gui(abstract.IntervalGui):
             self.m_t.give_up()
             self.std_buttons_give_up()
             self.g_input.mark_note(int(self.m_t.m_tonika + self.m_t.m_question[0]), 2)
+
     def get_interval_input_list(self):
         v = []
         for x in range(self.get_int('number_of_intervals')):
@@ -146,6 +156,7 @@ class Gui(abstract.IntervalGui):
                     v.append(abs(i))
         v.sort()
         return v
+
     def click_on_interval(self, mouse_button, interval, midi_int):
         """The key bindings are also directed here.
         """
@@ -219,6 +230,7 @@ class Gui(abstract.IntervalGui):
         if solfege.app.m_test_mode and self.m_t.m_P.is_test_complete():
             self.do_test_complete()
             return
+
     def new_question(self, _o=None):
         self.msg = ""
         self.m_number_of_intervals_in_question \
@@ -240,6 +252,7 @@ class Gui(abstract.IntervalGui):
             if ret == Teacher.ERR_PICKY:
                self.g_flashbar.flash(_("You have to solve this question first."))
             self.g_input.set_first_note(self.m_t.m_tonika)
+
             def exception_cleanup():
                 self.m_t.end_practise()
                 self.std_buttons_exception_cleanup()
@@ -254,6 +267,7 @@ class Gui(abstract.IntervalGui):
             #inputwidget 0 is always the buttons.
             if self.get_int('inputwidget') == 0:
                 self.g_input.grab_focus_first_sensitive_button()
+
     def on_start_practise(self):
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()
@@ -270,11 +284,13 @@ class Gui(abstract.IntervalGui):
         else:
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New interval' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()
         self.g_input.clear()
         self.g_flashbar.clear()
+
     def enter_test_mode(self):
         self.m_saved_q_auto = self.get_bool('new_question_automatically')
         self.m_saved_s_new = self.get_float('seconds_before_new_question')
@@ -284,6 +300,7 @@ class Gui(abstract.IntervalGui):
         self.g_new.set_label(_("_Start test"))
         self.g_cancel_test.show()
         self.g_give_up.hide()
+
     def exit_test_mode(self):
         self.set_bool('new_question_automatically', self.m_saved_q_auto)
         self.set_float('seconds_before_new_question', self.m_saved_s_new)

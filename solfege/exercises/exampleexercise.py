@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 from gi.repository import GObject
 from gi.repository import Gtk
 
@@ -30,23 +28,28 @@ from solfege import utils
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     ERR_NO_INTERVALLS = 2
     ERR_NOTERANGE = 3
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IntervalsLessonfile
         self.m_statistics = statistics.HarmonicIntervalStatistics(self)
         self.m_tonika = None
+
     def enter_test_mode(self):
         self.m_custom_mode = False
         self.m_statistics.enter_test_mode()
         self.m_P.enter_test_mode()
+
     def new_question(self, L, H):
         self.q_status = self.QSTATUS_NEW
         return Teacher.OK
+
     def guess_answer(self, answer):
         """
         Return: 1 if correct, None if wrong
@@ -66,18 +69,23 @@ class Teacher(abstract.Teacher):
                 self.q_status = self.QSTATUS_WRONG
             if solfege.app.m_test_mode:
                 self.maybe_auto_new_question()
+
     def give_up(self):
         """This function is only called *after* the user already has
         answered wrong once, so the statistics are already updated.
         """
         self.q_status = self.QSTATUS_GIVE_UP
+
     def play_question(self):
         return
+
     def start_practise(self):
         return
 
+
 class Gui(abstract.Gui):
     lesson_heading = _("Identify the interval")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         ################
@@ -102,11 +110,13 @@ class Gui(abstract.Gui):
         ##############
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                    _("Statistics for this example exercise"))
+
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: xxx"))
             self.m_t.give_up()
             self.std_buttons_give_up()
+
     def new_question(self, _o=None):
         """This function is called when you click on the 'New'
         button, or when you use the key bindings. So it can be called even
@@ -114,6 +124,7 @@ class Gui(abstract.Gui):
         """
         self.std_buttons_new_question()
         print("New question")
+
     def on_start_practise(self):
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()
@@ -127,9 +138,11 @@ class Gui(abstract.Gui):
         else:
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_flashbar.clear()
+
     def enter_test_mode(self):
         self.m_saved_q_auto = self.get_bool('new_question_automatically')
         self.m_saved_s_new = self.get_float('seconds_before_new_question')
@@ -139,6 +152,7 @@ class Gui(abstract.Gui):
         self.g_new.set_label(_("_Start test"))
         self.g_cancel_test.show()
         self.g_give_up.hide()
+
     def exit_test_mode(self):
         self.set_bool('new_question_automatically', self.m_saved_q_auto)
         self.set_float('seconds_before_new_question', self.m_saved_s_new)

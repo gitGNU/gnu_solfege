@@ -9,6 +9,7 @@ from solfege import utils
 
 
 class TestStringGetLineAt(unittest.TestCase):
+
     def test1(self):
         self.assertEqual(string_get_line_at("abc", 1), "abc")
         self.assertEqual(string_get_line_at("\nabc", 1), "abc")
@@ -23,7 +24,9 @@ class TestStringGetLineAt(unittest.TestCase):
         self.assertEqual(string_get_line_at("  \n\n   \t \n \t abc \n", 3), "")
         self.assertEqual(string_get_line_at("  \n\n   \t \n \t abc \n", 4), "   \t ")
 
+
 class TestMisc(unittest.TestCase):
+
     def test_random_tonika_and_interval_in_key(self):
         for x in range(1000):
             # Interval 6 is tritonus. Only f as lower tone 
@@ -60,4 +63,3 @@ class TestMisc(unittest.TestCase):
 
 suite = unittest.makeSuite(TestStringGetLineAt)
 suite.addTest(unittest.makeSuite(TestMisc))
-

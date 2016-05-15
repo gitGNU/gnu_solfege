@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import os
 import shutil
 
@@ -27,7 +25,9 @@ from gi.repository import Gtk
 from solfege import filesystem
 from solfege import gu
 
+
 class NewProfileDialog(Gtk.Dialog):
+
     def __init__(self):
         Gtk.Dialog.__init__(self, _("_Create profile\u2026").replace("\u2026", "").replace("_", ""))
         self.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -64,6 +64,7 @@ class NewProfileDialog(Gtk.Dialog):
         self.g_statusbox.pack_start(self.g_status, False, False, 0)
         self.g_entry.set_text(_("New Profile"))
         self.set_default_response(Gtk.ResponseType.ACCEPT)
+
     def on_entry_changed(self, *w):
         pdir = os.path.join(filesystem.app_data(), "profiles",
                             self.g_entry.get_text())
@@ -79,6 +80,7 @@ class NewProfileDialog(Gtk.Dialog):
 
 
 class RenameProfileDialog(Gtk.Dialog):
+
     def __init__(self, oldname):
         Gtk.Dialog.__init__(self, _("_Rename profile\u2026").replace("_", "").replace("\u2026", ""))
         self.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -100,6 +102,7 @@ class RenameProfileDialog(Gtk.Dialog):
         self.g_info.set_no_show_all(True)
         vbox.pack_start(self.g_info, False, False, 0)
         self.set_default_response(Gtk.ResponseType.ACCEPT)
+
     def on_entry_changed(self, w):
         s = self.g_entry.get_text()
         pdir = os.path.join(filesystem.app_data(), "profiles", s)
@@ -117,6 +120,7 @@ class RenameProfileDialog(Gtk.Dialog):
 
 
 class ProfileManagerBase(Gtk.Dialog):
+
     def __init__(self, parent, default_profile):
         Gtk.Dialog.__init__(self, _("GNU Solfege - Choose User Profile"),
                             parent)
@@ -174,6 +178,7 @@ class ProfileManagerBase(Gtk.Dialog):
         chk = gu.nCheckButton("app", "noprofilemanager", _("D_on't ask at startup"))
         vbox.pack_start(chk, False, False, 0)
         self.show_all()
+
     def on_create_profile(self, w):
         dlg = NewProfileDialog()
         dlg.show_all()
@@ -189,6 +194,7 @@ class ProfileManagerBase(Gtk.Dialog):
                 except OSError as e:
                     gu.display_exception_message(e)
         dlg.destroy()
+
     def on_rename_profile(self, w):
         if self.m_default_profile == self.get_profile():
             rename_default = True
@@ -215,6 +221,7 @@ class ProfileManagerBase(Gtk.Dialog):
             self.g_liststore.set(self.g_liststore.get_iter(path),
                 0, dlg.g_entry.get_text())
         dlg.destroy()
+
     def on_delete_profile(self, w):
         if gu.dialog_yesno(_("Permanently delete the user profile «%s»?") % self.get_profile(), self):
             path, column = self.g_tw.get_cursor()
@@ -228,11 +235,13 @@ class ProfileManagerBase(Gtk.Dialog):
             if not self.g_liststore.iter_is_valid(it):
                 it = self.g_liststore[-1].iter
             self.g_tw.set_cursor(self.g_liststore.get_path(it))
+
     def on_cursor_changed(self, treeview):
         path, column = self.g_tw.get_cursor()
         if path:
             self.g_delete_profile.set_sensitive(list(path) != [0])
             self.g_rename_profile.set_sensitive(list(path) != [0])
+
     def get_profile(self):
         """
         Return None if the standard profile is selected.
@@ -246,6 +255,7 @@ class ProfileManagerBase(Gtk.Dialog):
 
 
 class ProfileManager(ProfileManagerBase):
+
     def __init__(self, parent, default_profile):
         ProfileManagerBase.__init__(self, parent, default_profile)
         self.add_button(Gtk.STOCK_QUIT, Gtk.ResponseType.CLOSE)
@@ -255,7 +265,7 @@ class ProfileManager(ProfileManagerBase):
 
 
 class ChangeProfileDialog(ProfileManagerBase):
+
     def __init__(self, parent, default_profile):
         ProfileManagerBase.__init__(self, parent, default_profile)
         self.add_button(Gtk.STOCK_APPLY, Gtk.ResponseType.ACCEPT)
-

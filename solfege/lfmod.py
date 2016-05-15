@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import sys
 sys.path.append(".")
 
@@ -25,13 +24,16 @@ import re
 import solfege.parsetree as pt
 from solfege.dataparser import Question
 
+
 class LfMod(object):
+
     def __init__(self, builtins=None):
         if not builtins:
             builtins = {}
         self.m_builtins = builtins
         self.m_globals = builtins.copy()
         self.m_blocklists = {}
+
     def dump(self):
         import pprint
         print("Globals:")
@@ -41,6 +43,8 @@ class LfMod(object):
         print("--------")
 
 translation_re = re.compile("(?P<varname>\w+)\[(?P<lang>[\w_+]+)\]")
+
+
 def do_assignment(mod, statement, local_namespace, global_namespace, in_header,
         included):
     """
@@ -122,4 +126,3 @@ def parse_tree_interpreter(tree, builtins=None):
     mod = LfMod(builtins)
     do_module(tree, mod)
     return mod
-

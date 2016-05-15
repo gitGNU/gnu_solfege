@@ -35,6 +35,7 @@ urls['librsvg'] = {
 gtk_bundle_url = "http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.22/gtk+-bundle_2.22.0-20101016_win32.zip"
 gtk_bundle_fn = os.path.join(cachedir, gtk_bundle_url.split("/")[-1])
 
+
 def get_files(key, savedir):
     if not os.path.exists(savedir):
         os.mkdir(savedir)
@@ -49,6 +50,7 @@ def get_files(key, savedir):
             urllib.urlretrieve(url, fn)
         else:
             print "File already here:", fn
+
 
 def unpack_file(fn):
         print "unzipping:", fn
@@ -67,6 +69,7 @@ def unpack_file(fn):
             outfile = open(os.path.join("win32", out_fn), 'wb')
             outfile.write(z.read(n))
             outfile.close()
+
 
 def unpack():
     for app in urls:
@@ -88,4 +91,3 @@ elif sys.argv[1] == 'get-bundle':
         print "File already here:", gtk_bundle_fn
 elif sys.argv[1] == 'unpack-bundle':
     unpack_file(gtk_bundle_fn)
-

@@ -9,7 +9,9 @@ from solfege import mpd
 from solfege.mpd import elems
 from solfege.mpd import engravers
 
+
 class TestMisc(unittest.TestCase):
+
     def test_empty(self):
         sc = elems.Score()
         # This has always worked.
@@ -17,13 +19,16 @@ class TestMisc(unittest.TestCase):
         sc.add_staff()
         engravers.ScoreContext(sc)
 
+
 class TestClefs(unittest.TestCase):
+
     def test_raise_on_bad_clef(self):
         for clef in ('XX', ):
             def f():
                 score = mpd.parser.parse_to_score_object(r"\staff{ \clef %s c' }" % clef)
                 score.get_engravers(20)
             self.assertRaises(elems.UnknownClefException, f)
+
     def test_clefs(self):
         testdata =        [('violin', 6),
                            ('treble', 6),
@@ -53,6 +58,7 @@ class TestClefs(unittest.TestCase):
             eng = sc.m_contexts
             e = [e for e in eng[0] if isinstance(e, mpd.engravers.NoteheadEngraver)][0]
             self.assertEqual(e.m_ypos, ypos, "c' after %s clef is placed wrong" % clef)
+
     def test_select_clef(self):
         self.assertEqual(mpd.select_clef("c' e'"), "violin")
         self.assertEqual(mpd.select_clef("as e'"), "violin")
@@ -67,4 +73,3 @@ class TestClefs(unittest.TestCase):
 
 suite = unittest.makeSuite(TestClefs)
 suite.addTest(unittest.makeSuite(TestMisc))
-

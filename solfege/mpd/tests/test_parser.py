@@ -11,6 +11,7 @@ from solfege.mpd import Rat
 
 
 class TestClef(unittest.TestCase):
+
     def test_constructor_ok(self):
         c = Clef("violin")
         self.assertEqual(c.m_octaviation, 0)
@@ -46,6 +47,7 @@ class TestMpdParser(unittest.TestCase):
     but we at least know that the parser and engraver does not
     crash.
     """
+
     def _check(self, e, s, substring):
         """
         e is an exception.
@@ -206,6 +208,7 @@ class TestMpdParser(unittest.TestCase):
 
 
 class TestLexer(unittest.TestCase):
+
     def test_simplest(self):
         l = mpd.lexer.Lexer("c4 r4")
         g = next(l)
@@ -330,6 +333,7 @@ class TestLexer(unittest.TestCase):
 
 
 class TestFunctions(unittest.TestCase):
+
     def test_validate_only_notenames(self):
         self.assertEqual(validate_only_notenames("c e g"), (None, None, None))
         self.assertEqual(validate_only_notenames("c4 e2 g"), (None, None, None))
@@ -341,6 +345,7 @@ class TestFunctions(unittest.TestCase):
 
 
 class TestScore(unittest.TestCase):
+
     def test_timelist(self):
         score = parse_to_score_object(
             r"\staff{c2    r4 r8 a8}"

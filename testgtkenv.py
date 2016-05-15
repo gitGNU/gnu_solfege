@@ -9,7 +9,9 @@ print(sys.version)
 from gi.repository import Gtk
 print(Gtk)
 
+
 class Win(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self)
         self.set_default_size(600, 400)

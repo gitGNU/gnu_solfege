@@ -46,6 +46,7 @@ FLAG_64DOWN = 'd6'
 
 fetadir = "feta"
 
+
 class dim20:
     linespacing = 8
     stemlen = linespacing * 3.5
@@ -70,20 +71,25 @@ accidental_y_offset = {ACCIDENTAL__2: -7,
                        ACCIDENTAL_1: -6,
                        ACCIDENTAL_2: -2}
 
+
 class Engraver:
+
     def __init__(self):
         self.m_fontsize = 20
+
     def get_width(self):
         """
         Get the width of all engravers that does not implement their
         own get_width function.
         """
         return 20
+
     def __str__(self):
         return '(%s)' % self.__class__
 
 
 class ClefEngraver(Engraver):
+
     def __init__(self, clef):
         Engraver.__init__(self)
         self.m_clef = clef
@@ -104,6 +110,7 @@ class ClefEngraver(Engraver):
 
 
 class TimeSignatureEngraver(Engraver):
+
     def __init__(self, timesig):
         Engraver.__init__(self)
         self.m_timesig = timesig
@@ -125,12 +132,14 @@ class TimeSignatureEngraver(Engraver):
             ct.set_source_surface(ims, self.m_xpos + x, staff_yoffset + 3)
             x += 10
             ct.paint()
+
     def __str__(self):
         return '(TimeSignatureEngraver:%i/%i)' % (self.m_timesig.m_den,
             self.m_timesig.m_num)
 
 
 class TieEngraver(Engraver):
+
     def __init__(self,  note1, note2):
         Engraver.__init__(self)
         self.m_note1 = note1
@@ -149,17 +158,21 @@ class TieEngraver(Engraver):
 
 
 class AccidentalsEngraver(Engraver):
+
     def __init__(self, accs):
         Engraver.__init__(self)
         self.m_accs = accs
+
         def f(v, w=dimentions[self.m_fontsize].accidental_widths):
             x = 0
             for a in v:
                 x += w[a]
             return x
         self.m_usize = reduce(operator.__add__, list(map(f, list(accs.values())))) + len(accs)
+
     def get_width(self):
         return self.m_usize
+
     def engrave(self, ct, staff_yoffset):
         x = 0
         for y in self.m_accs:
@@ -176,15 +189,18 @@ class AccidentalsEngraver(Engraver):
 
 
 class KeySignatureEngraver(Engraver):
+
     def __init__(self, old_key, key, clef):
         Engraver.__init__(self)
         self.m_clef = clef
         self.m_old_accidentals = mpdutils.key_to_accidentals(old_key)
         self.m_accidentals = mpdutils.key_to_accidentals(key)
+
     def get_width(self):
         #FIXME this value depends on the fontsize, and on what kind of
         #accidental we are drawing. A sharp is wider that a flat.
         return len(self.m_accidentals) * 10 + len(self.m_old_accidentals) * 6 + 8
+
     def engrave(self, ct, staff_yoffset):
         x = 0
         dolist = []
@@ -221,6 +237,7 @@ class KeySignatureEngraver(Engraver):
 
 
 class NoteheadEngraver(Engraver):
+
     def __init__(self, shift, ypos, musicalpitch, duration):
         """
         m_ypos == 0 is the middle line on the staff.
@@ -240,6 +257,7 @@ class NoteheadEngraver(Engraver):
         self.m_numdots = duration.m_dots
         self.m_ypos = ypos
         self.m_midi_int = int(musicalpitch)
+
     def engrave(self, ct, staff_yoffset):
         dim = dimentions[self.m_fontsize]
         # Have to adjust wholenotes a little to the left to be on the middle
@@ -259,6 +277,7 @@ class NoteheadEngraver(Engraver):
             ct.set_source_surface(ims, int(self.m_xpos + dim.xshift * (self.m_shift + 1.5 + n/2.0)),
                 -3 + staff_yoffset + dim.linespacing * self.m_ypos / 2)
         ct.paint()
+
     def __str__(self):
         try:
             xpos = self.m_xpos
@@ -266,6 +285,7 @@ class NoteheadEngraver(Engraver):
             xpos = None
         return "(NoteheadEngraver: xpos:%s, ypos:%i, head:%i, shift=%i)" % (
                 xpos, self.m_ypos, self.m_head, self.m_shift)
+
     def __repr__(self):
         try:
             xpos = self.m_xpos
@@ -276,9 +296,11 @@ class NoteheadEngraver(Engraver):
 
 
 class BarlineEngraver(Engraver):
+
     def __init__(self, barline_type):
         Engraver.__init__(self)
         self.m_type = barline_type
+
     def get_width(self):
         return 8
 
@@ -287,14 +309,18 @@ class BarlineEngraver(Engraver):
         ct.move_to(self.m_xpos + 0.5, staff_yoffset - dim.linespacing * 2)
         ct.line_to(self.m_xpos + 0.5, staff_yoffset + dim.linespacing * 2)
 
+
 class TupletEngraver(Engraver):
+
     def __init__(self, ratio, direction):
         Engraver.__init__(self)
         self.m_stems = []
         self.m_ratio = ratio
         self.m_direction = direction
+
     def add_stem(self, stem):
         self.m_stems.append(stem)
+
     def do_layout(self):
         dim = dimentions[self.m_fontsize]
         top = []
@@ -312,6 +338,7 @@ class TupletEngraver(Engraver):
         self.m_xpos2 = self.m_stems[-1].m_xpos + 2
         if self.m_stems[-1].m_stemdir == const.DOWN:
             self.m_xpos2 += dim.xshift
+
     def engrave(self, ct, staff_yoffset):
         self.do_layout()
         dim = dimentions[self.m_fontsize]
@@ -348,11 +375,14 @@ class TupletEngraver(Engraver):
 
 
 class BeamEngraver(Engraver):
+
     def __init__(self):
         Engraver.__init__(self)
         self.m_stems = []
+
     def add_stem(self, stem_engraver):
         self.m_stems.append(stem_engraver)
+
     def do_layout(self):
         # We don't beam single notes. Notes can be single when the dictation
         # exercise tries to display the first note
@@ -360,6 +390,7 @@ class BeamEngraver(Engraver):
             self.m_stems[0].m_is_beamed = False
         self.decide_beam_stemdir()
         self.set_stemlens(self.find_lowhigh_ypos())
+
     def set_stemlens(self, lh):
         l, h = lh
         for e in self.m_stems:
@@ -368,6 +399,7 @@ class BeamEngraver(Engraver):
             else:
                 assert self.m_stemdir == const.DOWN
                 e.m_beamed_stem_top = h + 6
+
     def find_lowhigh_ypos(self):
         """
         Find the lowest and highest notehead in the beam.
@@ -381,6 +413,7 @@ class BeamEngraver(Engraver):
                 if mx < ylinepos:
                     mx = ylinepos
         return mn, mx
+
     def decide_beam_stemdir(self):
         """
         Decide the direction for the stems in this beam, and set
@@ -397,6 +430,7 @@ class BeamEngraver(Engraver):
         for e in self.m_stems:
             e.m_stemdir = stemdir
         self.m_stemdir = stemdir
+
     def engrave(self, ct, staff_yoffset):
         # Do nothing if there are only one stem in the beam. Usually this
         # does not happen, but it is possible that a lesson file want to
@@ -423,6 +457,7 @@ class BeamEngraver(Engraver):
             ct.line_to(x2, y1 + y*d)
         for stem in self.m_stems:
             stem._beam_done = 8
+
         def short_beam(stem, xdir, beamnum, d=d, beamw=beamw, beaml=beaml, y1=y1):
             for y in range(beamw):
                 ct.move_to(stem.m_xpos, y1 + y + beamnum * d * beamw * 2)
@@ -459,6 +494,7 @@ class StemEngraver(Engraver):
     """
     Every notehead belong to a stem, even if the stem is invisible.
     """
+
     def __init__(self, noteheads, duration, stemdir, is_beamed):
         """
         If stemdir == BOTH: Look at the location of the noteheads, and descide
@@ -483,6 +519,7 @@ class StemEngraver(Engraver):
                 self.m_stemdir = const.DOWN
         self.shift_noteheads()
         self.m_stemlen = dimentions[self.m_fontsize].stemlen
+
     def get_width(self):
         c = 2
         if [n for n in self.m_noteheads if n.m_shift == -1]:
@@ -490,6 +527,7 @@ class StemEngraver(Engraver):
         if [n for n in self.m_noteheads if n.m_shift == 1]:
             c += 1
         return c * dimentions[self.m_fontsize].xshift
+
     def calc_xpos(self):
         """
         TODO: if we readd m_stempos, it has to be taken into consideration here.
@@ -500,6 +538,7 @@ class StemEngraver(Engraver):
             self.m_xpos += dimentions[self.m_fontsize].xshift
             for n in self.m_noteheads:
                 n.m_xpos += dimentions[self.m_fontsize].xshift
+
     def engrave(self, ct, staff_yoffset):
         dim = dimentions[self.m_fontsize]
         if self.m_duration.m_nh < 2:
@@ -539,6 +578,7 @@ class StemEngraver(Engraver):
         ct.move_to(self.m_xpos + 0.5, ytop * dim.linespacing / 2 + staff_yoffset)
         ct.line_to(self.m_xpos + 0.5, yroot * dim.linespacing / 2 + staff_yoffset)
         ct.stroke()
+
     def get_flag(self, stemdir):
         assert self.m_duration.m_nh > 4
         return {8:{const.UP: FLAG_8UP,
@@ -550,6 +590,7 @@ class StemEngraver(Engraver):
                 64: {const.UP: FLAG_64UP,
                      const.DOWN: FLAG_64DOWN}} \
                               [self.m_duration.m_nh][stemdir]
+
     def shift_noteheads(self):
         """
         We need to look at all stems at the same timepos in the staff when
@@ -582,14 +623,17 @@ class StemEngraver(Engraver):
                 elif last_ypos == head.m_ypos:
                     head.m_shift = 1 if self.m_stemdir == const.UP else -1
             last_ypos = head.m_ypos
+
     def __str__(self):
         return "(StemEngraver)"
+
     def __repr__(self):
         return "<StemEngraver xpos:%s>" % (
                 self.m_xpos, )
 
 
 class LedgerLineEngraver(Engraver):
+
     def __init__(self, up, down):
         """
         up: number of ledger lines above staff
@@ -599,6 +643,7 @@ class LedgerLineEngraver(Engraver):
         self.m_xpos = 0
         self.m_up = up
         self.m_down = down
+
     def engrave(self, ct, staff_yoffset):
         dim = dimentions[self.m_fontsize]
         if self.m_up:
@@ -610,15 +655,18 @@ class LedgerLineEngraver(Engraver):
                 ct.move_to(self.m_xpos+dim.ledger_left, (y+3) * dim.linespacing + staff_yoffset)
                 ct.line_to(self.m_xpos+dim.ledger_right, (y+3) * dim.linespacing + staff_yoffset)
         ct.stroke()
+
     def __str__(self):
         return "(LedgerLineEngraver xpos:%i, updown%i%i" % (
             self.m_xpos, self.m_up, self.m_down)
+
     def __repr__(self):
         return "<LedgerLineEngraver xpos:%i, updown%i:%i>" % (
             self.m_xpos, self.m_up, self.m_down)
 
 
 class RestEngraver(Engraver):
+
     def __init__(self, ypos, dur):
         Engraver.__init__(self)
         self.m_ypos = ypos
@@ -647,19 +695,23 @@ class RestEngraver(Engraver):
                 int(self.m_xpos+dim.xshift*(1.5+n/2.0)),
                 -3 + staff_yoffset + dim.linespacing*self.m_ypos/2)
             ct.paint()
+
     def __str__(self):
         return "(RestEngraver)"
 
 
 class SkipEngraver(Engraver):
+
     def __init__(self, duration):
         Engraver.__init__(self)
         self.m_duration = duration
+
     def engrave(self, ct, staff_yoffset):
         pass
 
 
 class _StaffCommon(list):
+
     def __init__(self, staff, last_timepos):
         """
         Create engraver objects for the staff, one timepos at the time.
@@ -853,6 +905,7 @@ class _StaffCommon(list):
 
 
 class StaffContext(_StaffCommon):
+
     def refill_accidentals_info(self, key):
         """Fill the .m_accidentals_info dict with the accidentals
         that exist in the key signature `key`.
@@ -873,6 +926,7 @@ class StaffContext(_StaffCommon):
                         self.m_accidentals_info[n.steps()] = 2
                     else:
                         self.m_accidentals_info[n.steps()] = 1
+
     def needed_accidental(self, m):
         steps = m.steps()
         if m.m_accidental_i != self.m_accidentals_info[steps]:
@@ -882,6 +936,7 @@ class StaffContext(_StaffCommon):
                 return [0, m.m_accidental_i]
             self.m_accidentals_info[steps] = m.m_accidental_i
             return [m.m_accidental_i]
+
     def create_notehead_engraver(self, clef, elements):
         """
         Return a two item
@@ -904,11 +959,13 @@ class RhythmStaffContext(_StaffCommon):
     """
     Typeset notes on a single line. Pitches are ignored.
     """
+
     def refill_accidentals_info(self, key):
         """
         nop since we don't care about pitches.
         """
         return
+
     def create_notehead_engraver(self, clef, elem):
         """
         Return a two item
@@ -922,7 +979,9 @@ class RhythmStaffContext(_StaffCommon):
             elem[0].m_duration)
         return [notehead], StemEngraver([notehead], elem[0].m_duration, elem.m_stemdir, False)
 
+
 class ScoreContext(object):
+
     def __init__(self, score, last_timepos=None):
         t = set()
         self.m_contexts = staff_contexts = []
@@ -963,6 +1022,7 @@ class ScoreContext(object):
                         staff_context.m_engravers.setdefault(
                             score.m_bars[bar_idx].end(), {})['barline'] = e
                 bar_idx += 1
+
             def do_col(s, xpos):
                 max_width = 0
                 for context in staff_contexts:
@@ -990,4 +1050,3 @@ class ScoreContext(object):
                     max_width = max(max_width, max(
                         [e.get_width() for e in context.m_engravers[timepos]['elem']]))
             xpos += max_width
-

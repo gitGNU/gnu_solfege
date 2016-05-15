@@ -69,6 +69,7 @@ ________________________________________________________________________________
     if ret in (Gtk.ResponseType.CANCEL, Gtk.ResponseType.DELETE_EVENT):
         return
     logwin = gu.LogWindow(solfege.win)
+
     def progress_callback(count, size, total):
         if total == -1:
             total = 'unknown'
@@ -119,4 +120,3 @@ ________________________________________________________________________________
     logwin.write("")
 
     logwin.run_finished()
-

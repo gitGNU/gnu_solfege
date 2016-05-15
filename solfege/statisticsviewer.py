@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import datetime
 
 from gi.repository import Gtk
@@ -28,6 +26,7 @@ from solfege import lessonfile
 from solfege import lessonfilegui
 
 display_max_num_tests = 10
+
 
 def label_from_key(statistics, key):
     try:
@@ -48,13 +47,16 @@ def label_from_key(statistics, key):
 
 
 class SimpleTable(Gtk.VBox):
+
     def __init__(self, heading, statistics):
         Gtk.VBox.__init__(self)
         self.m_heading = heading
         self.m_data = []
         self.m_statistics = statistics
+
     def add_row(self, cell1, cell2):
         self.m_data.append((cell1, cell2))
+
     def create(self):
         table = Gtk.Table()
         label = Gtk.Label()
@@ -74,7 +76,9 @@ class SimpleTable(Gtk.VBox):
         self.pack_start(table, False, False, 0)
         self.show_all()
 
+
 class MatrixTable(Gtk.VBox):
+
     def __init__(self, heading, st_data, st):
         """
         st_data is the statistics data we want displayled
@@ -111,6 +115,7 @@ class MatrixTable(Gtk.VBox):
 
 
 class PercentagesTable(Gtk.Frame):
+
     def __init__(self, statistics):
         Gtk.Frame.__init__(self)
         table = Gtk.Table()
@@ -163,6 +168,7 @@ class PercentagesTable(Gtk.Frame):
             box.set_border_width(gu.PAD_SMALL)
         self.update(statistics)
         self.show_all()
+
     def update(self, statistics):
         for box in list(self.boxdict.values()):
             for o in box.get_children():
@@ -196,6 +202,7 @@ class PercentagesTable(Gtk.Frame):
 
 
 class StatisticsViewer(Gtk.ScrolledWindow):
+
     def __init__(self, statistics, heading):
         Gtk.ScrolledWindow.__init__(self)
         self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -220,6 +227,7 @@ class StatisticsViewer(Gtk.ScrolledWindow):
         self.g_tables.show()
         self.vbox.pack_start(self.g_tables, True, True, 0)
         self.show_all()
+
     def update(self):
         self.clear()
         self.g_settings_button.set_sensitive(solfege.db.get_session_count(
@@ -261,6 +269,7 @@ class StatisticsViewer(Gtk.ScrolledWindow):
             c += 1
             if c == display_max_num_tests:
                 break
+
     def create_matrices_expander(self):
         expander = Gtk.Expander()
         expander.connect_after('activate', self.on_expander_activate)
@@ -280,11 +289,13 @@ class StatisticsViewer(Gtk.ScrolledWindow):
             expander.set_expanded(False)
         expander.show_all()
         return expander
+
     def on_expander_activate(self, expander):
         self.m_statistics.m_t.m_P.header['statistics_matrices'] = {
             True: 'enabled',
             False: 'hidden'}[expander.get_expanded()]
         self.update()
+
     def clear(self):
         #UGH why cant we just destroy the children of g_tables??!!
         #for c in self.g_tables.children():
@@ -294,8 +305,10 @@ class StatisticsViewer(Gtk.ScrolledWindow):
         self.g_tables.set_spacing(gu.hig.SPACE_LARGE)
         self.g_tables.show()
         self.vbox.pack_start(self.g_tables, True, True, 0)
+
     def on_delete_statistics(self, widget):
         class Dlg(Gtk.MessageDialog):
+
             def __init__(self, first, last, count):
                 Gtk.MessageDialog.__init__(self, None, Gtk.DialogFlags.MODAL,
                                     Gtk.MessageType.QUESTION,
@@ -316,4 +329,3 @@ class StatisticsViewer(Gtk.ScrolledWindow):
             solfege.db.delete_statistics(self.m_statistics.m_t.m_P.m_filename)
             self.update()
         dlg.destroy()
-

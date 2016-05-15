@@ -15,14 +15,15 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import os
 import sys
 
 from gi.repository import Gtk
 from gi.repository import GdkPixbuf
 
+
 class BaseIconFactory(Gtk.IconFactory):
+
     def __init__(self, widget, datadir):
         Gtk.IconFactory.__init__(self)
         self.datadir = datadir
@@ -36,10 +37,12 @@ class BaseIconFactory(Gtk.IconFactory):
             else:
                 print("File not found: %s" % filename, file=sys.stderr)
 
+
 class EditorIconFactory(BaseIconFactory):
     """
     This class is used by lessonfile_editor.py
     """
+
     def __init__(self, widget, datadir):
         BaseIconFactory.__init__(self, widget, datadir)
         icons = {'solfege-icon': "graphics/solfege.svg",
@@ -54,6 +57,7 @@ class EditorIconFactory(BaseIconFactory):
 
 
 class SolfegeIconFactory(BaseIconFactory):
+
     def __init__(self, widget, datadir):
         BaseIconFactory.__init__(self, widget, datadir)
         icon_list = ['happyface', 'sadface',
@@ -70,4 +74,3 @@ class SolfegeIconFactory(BaseIconFactory):
         for iname in icon_list:
             d['solfege-%s' % iname] = os.path.join("graphics", iname) + ".png"
         self.add_icons(d)
-

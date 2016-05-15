@@ -18,7 +18,6 @@
 # Lesson file related GUI code.
 
 
-
 ############################
 # Python Standard Library
 ############################
@@ -43,6 +42,7 @@ def rn_markup(s):
         v.append('<span font_family="serif"><span size="xx-large">%s</span><span size="small">%s</span><span size="x-large">%s%s</span></span>' % (p1, p2, p3, sep))
     return "".join(v)
 
+
 def chordname_markup(s):
     v = []
     for nn, mod, sup, bass in lessonfile.chordname_markup_tokenizer(s):
@@ -52,6 +52,7 @@ def chordname_markup(s):
         nn = nn[0].upper() + nn[1:]
         v.append('%s%s<span size="large" rise="11000">%s</span>%s' % (nn, mod, sup, bass))
     return '<span font_family="serif" size="xx-large">%s</span>' % " ".join(v)
+
 
 def new_labelobject(label):
     """
@@ -103,6 +104,7 @@ def new_labelobject(label):
 
 
 class LabelObjectBox(gu.AlignedHBox):
+
     def __init__(self, lf, v):
         """
         lf is the lesson file (aka m_P of the teacher object)
@@ -128,6 +130,7 @@ class LabelObjectBox(gu.AlignedHBox):
 
 
 class ExercisesMenuAddIn(object):
+
     def create_learning_tree_menu(self):
         """
         Create and return a Gtk.Menu object that has submenus that
@@ -182,6 +185,7 @@ class ExercisesMenuAddIn(object):
         menu.show_all()
         self._menu_hide_stuff(menu)
         return menu
+
     def _menu_hide_stuff(self, menu):
         """
         Hide the menu if it has no menu items, or all menu items are hidden.
@@ -192,4 +196,3 @@ class ExercisesMenuAddIn(object):
                 self._menu_hide_stuff(sub.get_submenu())
                 if not [c for c in sub.get_submenu().get_children() if c.get_property('visible')]:
                     sub.hide()
-

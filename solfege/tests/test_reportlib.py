@@ -9,7 +9,9 @@ import os
 from solfege.testlib import outdir
 from solfege.reportlib import *
 
+
 class TestReport(unittest.TestCase):
+
     def create_report(self):
         r = Report()
         r.append(Heading(1, "Heading1"))
@@ -22,14 +24,15 @@ class TestReport(unittest.TestCase):
         t.append(row)
         t.append_row("cell1", "cell2")
         return r
+
     def test_html(self):
         r = self.create_report()
         HtmlReport(r, os.path.join(outdir, "t1.html"))
         os.remove(os.path.join(outdir, "t1.html"))
+
     def test_latex(self):
         r = self.create_report()
         LatexReport(r, os.path.join(outdir, "t1.tex"))
         os.remove(os.path.join(outdir, "t1.tex"))
 
 suite = unittest.makeSuite(TestReport)
-

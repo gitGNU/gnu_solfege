@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 #FIXME: voice1_lowest_ylinepos and stempos in the original parser.py
 # give some alignment we need to implement here too.
 
@@ -41,12 +40,16 @@ re_melodic = re.compile(r"""(?x)
                              (?P<len>[\d]*)
                              (?P<dots>\.*)""", re.UNICODE)
 
+
 class UnknownClefException(_exceptions.MpdException):
+
     def __init__(self, clef):
         _exceptions.MpdException.__init__(self)
         self.m_clef = clef
+
     def __str__(self):
         return "'%s' is not a valid clef. Maybe a bug in your lessonfile?" % self.m_clef
+
 
 class Clef(object):
     # Use these constants to access the data in clefdata.
@@ -76,6 +79,7 @@ class Clef(object):
             'soprano': ('C', 1, -4),
     }
     octaviation_re = re.compile("(?P<name>[A-Za-z1-9]+)(?P<oct>([_^])(8|15))?$")
+
     def __init__(self, clefname):
         m = self.octaviation_re.match(clefname)
         if not m:
@@ -88,12 +92,16 @@ class Clef(object):
         except KeyError:
             raise UnknownClefException(clefname)
         self.m_name = m.group('name')
+
     def get_symbol(self):
         return self.clefdata[self.m_name][self.SYM]
+
     def get_stafflinepos(self):
         return self.clefdata[self.m_name][self.LINE]
+
     def steps_to_ylinepos(self, steps):
         return 7-self.clefdata[self.m_name][self.POS] - steps + self.m_octaviation
+
     def an_to_ylinepos(self, an):
         def notename_to_ylinepos(n):
             n = MusicalPitch.new_from_notename(n)
@@ -113,6 +121,7 @@ class Clef(object):
             i = notename_to_ylinepos(an)
         return i
 
+
 class TimeSignature(object):
     """
     A TimeSignature is not the same as a Rat, because a Rat 4/4 can be
@@ -120,21 +129,29 @@ class TimeSignature(object):
     will probably know about preferred beaming. 4/4 vs 6/8 for example.
     """
     __hash__ = None
+
     def __init__(self, a, b):
         self.m_num = a
         self.m_den = b
+
     def as_rat(self):
         return Rat(self.m_num, self.m_den)
+
     def __eq__(self, other):
         return self.m_num == other.m_num and self.m_den == other.m_den
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def __repr__(self):
         return "<TimeSignature %s/%s>" % (self.m_num, self.m_den)
 
+
 class HasParent(object):
+
     def __init__(self, parent):
         self.set_parent(parent)
+
     def set_parent(self, parent):
         if parent:
             self.w_parent = weakref.ref(parent)
@@ -155,29 +172,37 @@ class HasParent(object):
 
 
 class MusicElement(object):
+
     def __init__(self, duration):
         assert isinstance(duration, Duration)
         self.m_duration = duration
+
     def __repr__(self):
         return str(self.__class__)[:-2].replace("<class '", '<') + " %s at %s>" % (self.m_duration.as_mpd_string(), hex(id(self)))
 
+
 class Note(MusicElement):
     __hash__ = None
+
     class Exception(Exception):
         pass
+
     def __deepcopy__(self, memo):
         n = Note(self.m_musicalpitch.clone(), self.m_duration.clone())
         n.m_tieinfo = self.m_tieinfo
         return n
+
     def __eq__(self, other):
         assert isinstance(other, Note)
         return (self.m_musicalpitch == other.m_musicalpitch and
                 self.m_duration == other.m_duration)
+
     def __init__(self, musicalpitch, duration):
         MusicElement.__init__(self, duration)
         assert isinstance(musicalpitch, MusicalPitch)
         self.m_musicalpitch = musicalpitch
         self.m_tieinfo = None
+
     @staticmethod
     def new_from_string(string):
         s = string.strip()
@@ -190,26 +215,36 @@ class Note(MusicElement):
                                                      m.group('octave'))),
             Duration.new_from_string("%s%s" % (m.group('len'), m.group('dots')))
         )
+
     def __repr__(self):
         return str(self.__class__)[:-2].replace("<class '", '<') + " %s%s at %s>" % (self.m_musicalpitch.get_octave_notename(), self.m_duration.as_mpd_string(), hex(id(self)))
 
+
 class Rest(MusicElement):
+
     def __init__(self, duration):
         MusicElement.__init__(self, duration)
+
     def __deepcopy__(self, memo):
         return Rest(self.m_duration.clone())
+
     @staticmethod
     def new_from_string(string):
         return Rest(Duration.new_from_string(string))
 
+
 class Skip(MusicElement):
+
     def __init__(self, duration):
         MusicElement.__init__(self, duration)
+
     def __deepcopy__(self, memo):
         return Skip(self.m_duration.clone())
+
     @staticmethod
     def new_from_string(string):
         return Skip(Duration.new_from_string(string))
+
 
 class Stem(list):
     """
@@ -220,6 +255,7 @@ class Stem(list):
         Every notehead on a stem must have the same duration.
         """
         pass
+
     def __init__(self, parent, elemlist, stemdir):
         assert isinstance(elemlist, list)
         assert stemdir in (const.UP, const.DOWN, const.BOTH)
@@ -232,35 +268,44 @@ class Stem(list):
         self.m_stemdir = stemdir
         self.m_beaminfo = None
         self.m_tupletinfo = None
+
     def __repr__(self):
         return "<Stem %s %s>" % (str(list(self)), self.m_stemdir)
 
 
 class Voice(HasParent):
+
     class CannotAddException(Exception):
         pass
+
     class NoChordsInRhythmStaffException(Exception):
         pass
+
     class NotUnisonException(Exception):
         pass
+
     class BarFullException(Exception):
         """
         Exception raised if we try to add a note or rest that is longer than
         the available time in the bar. FIXME: maybe name better, like
         NotEnoughtTimeException or similar.
         """
+
         def __unicode__(self):
             return "There is not enough space left in the bar"
+
     class NoteDontBelongHere(Exception):
         """
         raised if we try to beam notes that does not belong to this voice.
         """
         pass
+
     def __init__(self, parent):
         HasParent.__init__(self, parent)
         # The timelen of the Voice
         self.m_length = Rat(0, 1)
         self.m_tdict = {}
+
     def copy(self, parent):
         """
         Return a copy of this Voice object. We make a copy of the dict and
@@ -270,6 +315,7 @@ class Voice(HasParent):
         ret.m_length = Rat(self.m_length.m_num, self.m_length.m_den)
         ret.m_tdict = self.m_tdict.copy()
         return ret
+
     def append(self, elem, stemdir=const.BOTH):
         """
         elem - either a MusicElement or a list of MusicElements
@@ -311,6 +357,7 @@ class Voice(HasParent):
             self.m_length += elem[0].m_duration.get_rat_value()
         else:
             raise self.BarFullException()
+
     def add_to(self, timepos, note):
         """
         Add note to an existing stem at timepos.
@@ -320,6 +367,7 @@ class Voice(HasParent):
         note.w_parent = weakref.ref(self.m_tdict[timepos]['elem'])
         assert isinstance(note.w_parent(), Stem)
         self.m_tdict[timepos]['elem'].append(note)
+
     def set_elem(self, elem, timepos):
         """
         Elem is a one item list containing a Skip or Rest, or Stem (that
@@ -329,6 +377,7 @@ class Voice(HasParent):
         if timepos not in self.m_tdict:
             self.m_tdict[timepos] = {}
         self.m_tdict[timepos]['elem'] = elem
+
     def del_elem(self, timepos):
         """
         Delete the element at timepos, move the remaining notes
@@ -355,6 +404,7 @@ class Voice(HasParent):
         bp.remove_skips()
         bp.repack()
         bp.fill_skips()
+
     def try_set_elem(self, elem, timepos, insert_mode):
         """
         Replace whatever is at timepos with elem.
@@ -377,6 +427,7 @@ class Voice(HasParent):
             max_free = bp.get_free_time()
             #flytt til bar-class
             delta = elem.m_duration.get_rat_value() - self.m_tdict[timepos]['elem'][0].m_duration.get_rat_value()
+
             def fix_ties(prev_timepos, cur_timepos, next_timepos):
                 prev_e = self.m_tdict[prev_timepos]['elem'][0] if prev_timepos else None
                 cur_e = self.m_tdict[cur_timepos]['elem'][0]
@@ -431,12 +482,14 @@ class Voice(HasParent):
                     bp.repack()
                     bp.fill_skips()
                     return True
+
     def fill_with_skips(self):
         """
         Fill the voice with skips. We assume the voice is empty.
         """
         for bar in self.w_score().m_bars:
             bar.fill_skips(self)
+
     def get_timeposes_of(self, bar):
         """
         Return a sorted list of all timeposes in bar in this Voice
@@ -463,6 +516,7 @@ class Voice(HasParent):
             return v[start_i:end_i]
         else:
             return v[start_i:]
+
     def get_time_pitch_list(self, bpm):
         """
         Return a list of tuples (pitch, duration-in-seconds) of the tones
@@ -480,6 +534,7 @@ class Voice(HasParent):
             elif isinstance(stem[0], Rest):
                 ret.append((-1, dur))
         return ret
+
     def beam(self, notes):
         """
         Notes is a list of Note objects, once Note object from each stem
@@ -497,6 +552,7 @@ class Voice(HasParent):
         for n in notes[1:][:-1]:
             n.w_parent().m_beaminfo = 'go'
         notes[-1].w_parent().m_beaminfo = 'end'
+
     def tie_timepos(self, timepos):
         """
         Tie all notes on this timepos that has the same pitch as notes on the
@@ -518,6 +574,7 @@ class Voice(HasParent):
             self.tie([self.m_tdict[timepos]['elem'][0],
                       self.m_tdict[next_timepos]['elem'][0]])
             return True
+
     def untie_next(self, timepos):
         """
         Return True if we removed the tie from timepos to the note after.
@@ -543,6 +600,7 @@ class Voice(HasParent):
         else:
             return False
         return True
+
     def untie_prev(self, timepos):
         """
         Remove True if we removed a tie from the prev note to this.
@@ -565,11 +623,13 @@ class Voice(HasParent):
             else:
                 return False
             self.m_tdict[timepos]['elem'][0].m_tieinfo = 'start'
+
     def tie_prev_to_next(self, timepos):
         assert self.m_tdict[timepos]['elem'][0].m_tieinfo == 'go'
         assert self.m_tdict[self.get_prev_timepos(timepos)]['elem'][0].m_tieinfo in ('start', 'go')
         assert self.m_tdict[self.get_next_timepos(timepos)]['elem'][0].m_tieinfo in ('end', 'go')
         self.m_tdict[timepos]['elem'][0].m_tieinfo = None
+
     def tie(self, notes):
         """
         The notes should be in sequence on this Voice. Behaviour if not
@@ -594,6 +654,7 @@ class Voice(HasParent):
             notes[-1].m_tieinfo = 'go'
         elif notes[-1].m_tieinfo is None:
             notes[-1].m_tieinfo = 'end'
+
     def tuplet(self, ratio, direction, notes):
         """
         ratio - a Rat, for example Rat(2, 3) for normal triplets.
@@ -619,18 +680,21 @@ class Voice(HasParent):
         for n in notes[1:][:-1]:
             n.w_parent().m_tupletinfo = 'go'
         notes[-1].w_parent().m_tupletinfo = 'end'
+
     def set_clef(self, clef):
         """
         Set the clef that will be inserted into the staff before the next
         music element.
         """
         self.w_parent().set_clef(clef, self.m_length)
+
     def set_key_signature(self, keysig):
         """
         Call the Staff and set the key signature at the timepos the next
         tone will be added to this voice.
         """
         self.w_parent().set_key_signature(keysig, self.m_length)
+
     def is_bar_full(self):
         """
         Return True if this the next tone will be placed on the first beat
@@ -642,6 +706,7 @@ class Voice(HasParent):
             return bar.m_timepos == self.m_length
         except IndexError:
             return True
+
     def get_prev_timepos(self, timepos):
         """
         Return the previous timepos. Return None if this is the first
@@ -652,6 +717,7 @@ class Voice(HasParent):
         i = v.index(timepos)
         if i > 0:
             return v[i - 1]
+
     def get_next_timepos(self, timepos):
         """
         Return the next timepos. Return None if this is the last timepos
@@ -662,6 +728,7 @@ class Voice(HasParent):
         i = v.index(timepos)
         if i +1 < len(v):
             return v[i + 1]
+
     def get_timelist(self):
         retval = []
         for timepos in sorted(self.m_tdict.keys()):
@@ -683,6 +750,7 @@ class Voice(HasParent):
                   nlen])
                 nlen = None
         return retval
+
     def is_last(self, timepos):
         """
         Return a bool telling if the elem at timepos is the last in the
@@ -690,11 +758,14 @@ class Voice(HasParent):
         next bar.
         """
         return self.m_tdict[timepos]['elem'][0].m_duration.get_rat_value() + timepos == self.w_score().get_bar_at(timepos).end()
+
     def __getitem__(self, idx):
         v = sorted(self.m_tdict)
         return self.m_tdict[v[idx]]
 
+
 class Bar(object):
+
     def __init__(self, timesig, timepos):
         """
         Time signature is the time signature of the bar. It does not
@@ -708,8 +779,10 @@ class Bar(object):
         assert isinstance(timepos, Rat)
         self.m_timesig = timesig
         self.m_timepos = timepos
+
     def end(self):
         return self.m_timepos + self.m_timesig.as_rat()
+
     def fill_skips(self, voice):
         """
         Add Skips at the end of the bar, so that it is filled.
@@ -736,6 +809,7 @@ class Bar(object):
         while nt < self.end():
             voice.set_elem([Skip(Duration.new_from_rat(default_skip))], nt)
             nt += default_skip
+
     def get_free_time(self, voice):
         """
         Return the duration, as a Rat value, on the end of the bar
@@ -747,6 +821,7 @@ class Bar(object):
                 break
             d += voice.m_tdict[timepos]['elem'][0].m_duration.get_rat_value()
         return d
+
     def pop_last_elem(self, voice):
         """
         Remove the last element form the voice, and return its
@@ -756,6 +831,7 @@ class Bar(object):
         ret = voice.m_tdict[timepos]['elem'][0].m_duration.get_rat_value()
         del voice.m_tdict[timepos]
         return ret
+
     def remove_skips(self, voice):
         """
         Remove the skips from the bar, if any.
@@ -765,6 +841,7 @@ class Bar(object):
         for t in voice.get_timeposes_of(self):
             if isinstance(voice.m_tdict[t]['elem'][0], Skip):
                 del voice.m_tdict[t]
+
     def remove_trailing(self, voice, duration):
         """
         Remove elements from the end of the bar, until their duration
@@ -774,6 +851,7 @@ class Bar(object):
         total = Rat(0, 1)
         while total < duration:
             total += self.pop_last_elem(voice)
+
     def repack(self, voice):
         """
         Call this method to cleanup m_tdict for the bar after keys
@@ -825,31 +903,40 @@ class Bar(object):
                 and isinstance(voice.m_tdict[timeposes[-1]]['elem'][0], Note)
                 and voice.m_tdict[timeposes[-1]]['elem'][0].m_tieinfo in ('go', 'start')):
                 voice.untie_next(timeposes[-1])
+
     def __repr__(self):
         return "<%s %i/%i %s at %s>" % (str(self.__class__).split(".")[-1][:-2], self.m_timesig.m_num,
             self.m_timesig.m_den, self.m_timepos, hex(id(self)))
 
+
 class PartialBar(Bar):
+
     def __init__(self, duration, timesig, timepos):
         Bar.__init__(self, timesig, timepos)
         assert isinstance(duration, Duration)
         self.m_duration = duration
+
     def end(self):
         return self.m_timepos + self.m_duration.get_rat_value()
 
+
 class BarProxy(object):
+
     def __init__(self, voice, timepos):
         self.m_voice = voice
         self.m_bar = voice.w_parent().w_parent().get_bar_at(timepos)
+
     def __getattr__(self, attr):
         if attr == 'end':
             return self.m_bar.end
         return lambda *f: getattr(self.m_bar, attr)(self.m_voice, *f)
 
+
 class _StaffCommon(HasParent):
     """
     A voice is added to the staff when it is created.
     """
+
     def __init__(self, parent):
         assert isinstance(parent, Score)
         HasParent.__init__(self, parent)
@@ -859,15 +946,18 @@ class _StaffCommon(HasParent):
         # "keysig". We don't store time signature changes where, since
         # Score.m_bars take care about that.
         self.m_tdict = {}
+
     def copy(self, parent):
         staff = self.__class__(parent)
         staff.m_voices = [v.copy(staff) for v in self.m_voices]
         staff.m_tdict = self.m_tdict.copy()
         return staff
+
     def add_voice(self):
         self.m_voices.append(Voice(self))
         self.w_score().create_shortcuts()
         return self.m_voices[-1]
+
     def get_timeposes(self):
         """
         Return a sorted list of all timeposes in the staff.
@@ -879,6 +969,7 @@ class _StaffCommon(HasParent):
         for has_timeposes in self.m_voices + [self]:
             [timeposes.add(t) for t in has_timeposes.m_tdict]
         return sorted(timeposes)
+
     def get_timelist(self):
         data = {}
         for voice_idx, voice in enumerate(self.m_voices):
@@ -919,19 +1010,24 @@ class _StaffCommon(HasParent):
                 if not voices:
                     retval.append([True, timepos - ppos])
         return retval
+
     def set_property(self, timepos, name, value):
         d = self.m_tdict.setdefault(timepos, {})
         properties = d.setdefault('properties', {})
         properties[name] = value
 
+
 class Staff(_StaffCommon):
+
     def __init__(self, parent):
         _StaffCommon.__init__(self, parent)
         self.set_clef("violin", Rat(0, 1))
+
     def set_clef(self, clef, timepos):
         if timepos not in self.m_tdict:
             self.m_tdict[timepos] = {}
         self.m_tdict[timepos]['clef'] = Clef(clef)
+
     def set_key_signature(self, keysig, timepos):
         if timepos not in self.m_tdict:
             self.m_tdict[timepos] = {}
@@ -945,12 +1041,15 @@ class RhythmStaff(_StaffCommon):
     """
     class OnlyOneVoiceException(Exception):
         pass
+
     def __init__(self, parent):
         _StaffCommon.__init__(self, parent)
+
     def add_voice(self):
         if len(self.m_voices) == 1:
             raise self.OnlyOneVoiceException()
         _StaffCommon.add_voice(self)
+
     def set_key_signature(self, keysig, timepos):
         """
         RhythmStaffs don't have key signatures.
@@ -959,26 +1058,34 @@ class RhythmStaff(_StaffCommon):
 
 
 class Score(object):
+
     class ConcatException(Exception):
         pass
+
     class StaffCountException(ConcatException):
         pass
+
     class StaffTypeException(ConcatException):
         pass
+
     class VoiceCountException(ConcatException):
         pass
+
     def __init__(self):
         self.m_staffs = []
         self.m_bars = []
+
     def copy(self):
         score = Score()
         score.m_staffs = [s.copy(score) for s in self.m_staffs]
         score.m_bars = copy.deepcopy(self.m_bars)
         return score
+
     def add_staff(self, staff_class=Staff):
         self.m_staffs.append(staff_class(self))
         self.create_shortcuts()
         return self.m_staffs[-1]
+
     def create_shortcuts(self):
         """
         (Re)create the voice and staff shortcuts.
@@ -988,6 +1095,7 @@ class Score(object):
             setattr(self, "staff%i" % (staff_idx + 1), staff)
             for voice_idx, voice in enumerate(staff.m_voices):
                 setattr(self, "voice%i%i" % (staff_idx + 1, voice_idx + 1), voice)
+
     def _get_new_bar_timepos(self):
         """
         Return the timepos where the next bar will be added.
@@ -995,6 +1103,7 @@ class Score(object):
         if self.m_bars:
             return self.m_bars[-1].end()
         return Rat(0, 1)
+
     def _get_new_bar_timesig(self, timesig):
         """
         Return the time signature the next bar will get.
@@ -1005,6 +1114,7 @@ class Score(object):
             return self.m_bars[-1].m_timesig
         else:
             return TimeSignature(4, 4)
+
     def add_bar(self, timesig):
         """
         If timesig is None, then we use the same timesig as the last bar.
@@ -1013,6 +1123,7 @@ class Score(object):
         self.m_bars.append(Bar(
             self._get_new_bar_timesig(timesig), self._get_new_bar_timepos()))
         return self.m_bars[-1]
+
     def add_partial_bar(self, duration, timesig):
         """
         Set to the duration of the pickup bar if we want one.
@@ -1021,6 +1132,7 @@ class Score(object):
         self.m_bars.append(PartialBar(duration,
             self._get_new_bar_timesig(timesig), self._get_new_bar_timepos()))
         return self.m_bars[-1]
+
     def get_bar_at(self, timepos):
         """
         Return the bar timepos is within. Raise IndexError if timepos
@@ -1032,6 +1144,7 @@ class Score(object):
             if bar.m_timepos > timepos:
                 return IndexError(timepos)
         raise IndexError(timepos)
+
     def get_timelist(self):
         data = {}
         for staff_idx, staff in enumerate(self.m_staffs):
@@ -1078,6 +1191,7 @@ class Score(object):
                     retval.append([True, timepos - ppos])
                     ppos = timepos
         return retval
+
     @staticmethod
     def concat(s1, s2):
         """
@@ -1111,6 +1225,7 @@ class Score(object):
                 for k in s2.m_staffs[staff_idx].m_voices[voice_idx].m_tdict:
                     ret.m_staffs[staff_idx].m_voices[voice_idx].m_tdict[k + start] = s2.m_staffs[staff_idx].m_voices[voice_idx].m_tdict[k]
         return ret
+
     @staticmethod
     def concat2(s1, s2):
         """
@@ -1143,6 +1258,7 @@ class Score(object):
                     ret.m_staffs[-1].m_voices[-1].append(elem['elem'])
         ret.create_shortcuts()
         return ret
+
     def __deepcopy__(self, memo):
         ret = Score()
         ret.m_bars = copy.deepcopy(self.m_bars)

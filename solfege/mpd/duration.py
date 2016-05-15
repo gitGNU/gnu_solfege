@@ -34,9 +34,11 @@ from solfege.mpd.rat import Rat
 
 
 class Duration:
+
     class BadStringException(Exception):
         pass
     tre = re.compile("^(\d+)(\.*)$")
+
     def __init__(self, nh, dots, tuplet=Rat(1, 1)):
         """
         nh   - the type of note: 1 2 4 8 16 32 etc
@@ -46,12 +48,14 @@ class Duration:
         self.m_nh = nh
         self.m_dots = dots
         self.m_tuplet = tuplet
+
     @staticmethod
     def new_from_string(string):
         m = Duration.tre.match(string)
         if not m:
             raise Duration.BadStringException(string)
         return Duration(int(m.groups()[0]),  len(m.groups()[1]))
+
     def __lt__(self, B):
         """
         >>> A=Duration(4, 1, Rat(1, 1))
@@ -68,10 +72,12 @@ class Duration:
         if not B:
             return -1
         return self.get_rat_value() < B.get_rat_value()
+
     def __eq__(self, B):
         if B is None:
             return False
         return self.get_rat_value() == B.get_rat_value()
+
     def get_rat_value(self):
         """
         >>> A=Duration(4, 1, Rat(1, 1))
@@ -85,6 +91,7 @@ class Duration:
         if self.m_dots > 1:
             d = d + Rat(1, self.m_nh * 4)
         return d * self.m_tuplet
+
     @staticmethod
     def new_from_rat(rat):
         d = Duration(1, 0)
@@ -97,10 +104,12 @@ class Duration:
             d.m_tuplet = rat / d.get_rat_value()
         assert d.get_rat_value() == rat
         return d
+
     def clone(self):
         return Duration(self.m_nh, self.m_dots, self.m_tuplet.clone())
+
     def __str__(self):
         return "(Duration:%s:%idot:%s)" % (self.m_nh, self.m_dots, self.m_tuplet)
+
     def as_mpd_string(self):
         return "%s%s" % (self.m_nh, self.m_dots * ".")
-

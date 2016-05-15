@@ -15,28 +15,32 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from solfege import abstract
 from solfege import gu
 from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard
 
+
 class Teacher(abstract.Teacher):
     OK = 1
     ERR_NO_QUESTION = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.SingAnswerLessonfile
         for s in 'accidentals', 'key', 'semitones', 'atonal':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         assert self.m_P
         self.m_P.select_random_question()
         self.q_status = self.QSTATUS_NEW
         return self.OK
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         self.g_music_displayer = mpd.MusicDisplayer()
@@ -57,6 +61,7 @@ class Gui(abstract.LessonbasedGui):
         ###############
         self.add_random_transpose_gui(row=0)
         self.practise_box.show_all()
+
     def new_question(self, widget):
         def exception_cleanup():
             soundcard.synth.stop()
@@ -85,6 +90,7 @@ class Gui(abstract.LessonbasedGui):
                 e.m_mpd_badcode = self.m_t.m_P.get_question().music.get_err_context(e, self.m_t.m_P)
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def hear_answer(self, widget):
         try:
             self.m_t.m_P.play_question(varname='answer')
@@ -92,6 +98,7 @@ class Gui(abstract.LessonbasedGui):
             if not self.standard_exception_handler(e):
                 raise
         self.g_new.grab_focus()
+
     def update_gui_after_lessonfile_change(self):
         self.g_random_transpose.set_text(str(self.m_t.m_P.header.random_transpose))
         if self.m_t.m_P.header.have_repeat_arpeggio_button:
@@ -107,6 +114,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_play_answer.set_sensitive(False)
         self.g_flashbar.clear()
         self.g_new.set_sensitive(bool(self.m_t.m_P))
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.update_gui_after_lessonfile_change()

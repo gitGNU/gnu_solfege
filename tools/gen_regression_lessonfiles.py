@@ -104,6 +104,7 @@ errors = {
 }
 errors['rvoice'] = errors['voice']
 
+
 def set1():
     for module in module_to_mtype:
         of = open("exercises/standard/regression-lesson-files/xx-%s-exceptions" % module, "w")

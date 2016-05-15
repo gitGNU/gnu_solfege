@@ -9,9 +9,11 @@ from solfege.profilemanager import ChangeProfileDialog
 from solfege.practisesheetdlg import PractiseSheetDialog
 from solfege.trainingsetdlg import TrainingSetDialog
 
+
 def run(cmd):
     print(cmd)
     os.system(cmd)
+
 
 def compress(fn):
     f, ext = os.path.splitext(fn)
@@ -49,6 +51,7 @@ def do_practise_sheet(lang):
     dlg.do_closing_stuff()
     dlg.destroy()
 
+
 def do_training_set(lang):
     dlg = TrainingSetDialog()
     dlg.show_all()
@@ -84,6 +87,7 @@ def do_preferences_window(lang):
     solfege.win.g_config_window.g_pview.set_cursor((6,))
     screenshot(xid, lang, "preferences-statistics.png")
     solfege.win.g_config_window.hide()
+
 
 def do_exercises(lang, xid):
     solfege.app.practise_lessonfile("solfege:lesson-files/harmonic-intervals-3")
@@ -155,4 +159,3 @@ def make_screenshots():
     do_preferences_window(lang)
     do_exercises(lang, xid)
     solfege.win.quit_program()
-

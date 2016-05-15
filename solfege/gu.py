@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import os
 import re
 import subprocess
@@ -45,6 +43,7 @@ PAD_SMALL = 4
 #  n  a widget that get its state stored in ~/.solfegerc
 #  b  the widget is packed into the first argument
 
+
 def escape(s):
     """
     All strings that are passed to Gtk.Label.set_markup, or as ordinary
@@ -54,6 +53,7 @@ def escape(s):
     s = s.replace("<", "&lt;")
     return s.replace(">", "&gt;")
 
+
 def get_modifier(s):
     m = (('<ctrl>', Gdk.ModifierType.CONTROL_MASK),
          ('<shift>', Gdk.ModifierType.SHIFT_MASK),
@@ -62,6 +62,7 @@ def get_modifier(s):
         if s.startswith(mod):
             return mask, s[len(mod):]
     return None, s
+
 
 def parse_key_string(string):
     if not string:
@@ -77,18 +78,19 @@ def parse_key_string(string):
         return mod, getattr(Gdk, 'KEY_%s' % s)
 
 
-
 def tLabel(table, x1, x2, y1, y2, text="", xalign=0.0, yalign=0.5, xoptions=Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, yoptions=Gtk.AttachOptions.EXPAND|Gtk.AttachOptions.FILL, xpadding=0, ypadding=0):
     label = Gtk.Label(label=text)
     label.set_alignment(xalign, yalign)
     table.attach(label, x1, x2, y1, y2, xoptions=xoptions, yoptions=yoptions, xpadding=xpadding, ypadding=ypadding)
     return label
 
+
 def bLabel(pack_into, label, expand=True, fill=True):
     b = Gtk.Label(label=label)
     b.show()
     pack_into.pack_start(b, expand, fill, padding=0)
     return b
+
 
 def bButton(pack_into, label, callback=None, expand=True, fill=True):
     b = Gtk.Button.new_with_mnemonic(label)
@@ -98,7 +100,9 @@ def bButton(pack_into, label, callback=None, expand=True, fill=True):
     pack_into.pack_start(b, expand, fill, padding=0)
     return b
 
+
 class nSpinButton(Gtk.SpinButton, cfg.ConfigUtils):#FIXME (??what is there to fix???)
+
     def __init__(self, exname, name, adj, climb_rate=1, digits=1):
         Gtk.SpinButton.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
@@ -113,16 +117,20 @@ class nSpinButton(Gtk.SpinButton, cfg.ConfigUtils):#FIXME (??what is there to fi
         self.connect('value-changed', self.on_changed)
         self._watch_id = self.add_watch(self.m_name, self._watch_cb)
         self.m_stop_watch = 0
+
     def _watch_cb(self, name):
         if not self.m_stop_watch:
             Gtk.SpinButton.set_value(self, self.get_float(name))
+
     def set_value(self, value):
         Gtk.SpinButton.set_value(self, value)
         self.set_float(self.m_name, value)
+
     def on_changed(self, _o):
         self.m_stop_watch = 1
         self.set_float(self.m_name, self.get_value())
         self.m_stop_watch = 0
+
 
 def tSpinButton(table, x1, x2, y1, y2,
                 value, lower, upper, step_incr=1, page_incr=10, callback=None):
@@ -133,18 +141,22 @@ def tSpinButton(table, x1, x2, y1, y2,
     table.attach(spin, x1, x2, y1, y2)
     return spin
 
+
 def bHBox(pack_into, expand=True, fill=True, padding=0):
     b = Gtk.HBox(False, 0)
     b.show()
     pack_into.pack_start(b, expand, fill, padding)
     return b
 
+
 def bVBox(pack_into, expand=True, fill=True, padding=0):
     b = Gtk.VBox(False, 0)
     pack_into.pack_start(b, expand, fill, padding)
     return b
 
+
 class nCheckButton(Gtk.CheckButton, cfg.ConfigUtils):
+
     def __init__(self, exname, name, label=None, default_value=0, callback=None):
         Gtk.CheckButton.__init__(self, label)
         #cfg.ConfigUtils.__init__(self, exname)
@@ -162,12 +174,15 @@ class nCheckButton(Gtk.CheckButton, cfg.ConfigUtils):
             self.set_active(1)
         self._clicked_id = self.connect('toggled', self.on_clicked)
         self._watch_id = self.add_watch(self.m_name, self._watch_cb)
+
     def _watch_cb(self, name):
         self.set_active(self.get_bool(name))
+
     def on_clicked(self, _o):
         self.set_bool(self.m_name, self.get_active())
         if self.m_callback:
             self.m_callback(_o)
+
 
 def RadioButton(group, label, callback=None):
     rdb = Gtk.RadioButton.new_with_mnemonic_from_widget(group, label)
@@ -188,7 +203,6 @@ def sComboBox(exname, name, strings):
             cfg.set_string("%s/%s" % (exname, name),
                            w.get_child().get_text()))
     return g
-
 
 
 def nComboBox(exname, name, default, popdown_strings):
@@ -212,6 +226,7 @@ def nComboBox(exname, name, default, popdown_strings):
             i = 0
             cfg.set_int("%s/%s" % (c.m_exname, c.m_name), 0)
         c.set_active(cfg.get_int("%s/%s" % (c.m_exname, c.m_name)))
+
     def f(combobox):
         cfg.set_int("%s/%s" % (exname, name), combobox.get_active())
     c.connect('changed', f)
@@ -219,6 +234,7 @@ def nComboBox(exname, name, default, popdown_strings):
 
 
 class nCombo(Gtk.ComboBox, cfg.ConfigUtils):
+
     def __init__(self, exname, name, default, popdown_strings):
         """
         Be aware that the value of the entry, is stored as an integer
@@ -244,10 +260,13 @@ class nCombo(Gtk.ComboBox, cfg.ConfigUtils):
         self.entry.connect("changed", self.entry_changed)
         self.entry.set_editable(False)
         self.show()
+
     def entry_changed(self, entry):
         self.set_int(self.m_name, self.popdown_strings.index(entry.get_text()))
 
+
 class PercussionInstrumentMenu(Gtk.Menu):
+
     def __init__(self, callback):
         Gtk.Menu.__init__(self)
         for idx, pname in enumerate(soundcard.percussion_names):
@@ -259,6 +278,7 @@ class PercussionInstrumentMenu(Gtk.Menu):
 
 
 class PercussionNameButton(Gtk.Button, cfg.ConfigUtils):
+
     def __init__(self, exname, name, default):
         Gtk.Button.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
@@ -270,6 +290,7 @@ class PercussionNameButton(Gtk.Button, cfg.ConfigUtils):
             self.set_int(name, i)
         self.set_label(soundcard.int_to_percussionname(i))
         self.connect('clicked', lambda w: self.g_menu.popup(None, None, None, None, 1, 0))
+
     def entry_changed(self, widget, value):
         self.set_int(self.m_name, value + soundcard.first_percussion_int_value)
         self.set_label(soundcard.percussion_names[value])
@@ -280,7 +301,9 @@ class PercussionNameButton(Gtk.Button, cfg.ConfigUtils):
         t.note(4, value + soundcard.first_percussion_int_value)
         soundcard.synth.play_track(t)
 
+
 class FlashBar(Gtk.Frame):
+
     def __init__(self):
         Gtk.Frame.__init__(self)
         self.set_shadow_type(Gtk.ShadowType.IN)
@@ -292,6 +315,7 @@ class FlashBar(Gtk.Frame):
         self.__timeout = None
         # The allocated size
         self.m_sx, self.m_sy = 0, 0
+
     def require_size(self, stringlist):
         """
         stringlist is a list of the strings believed to be widest.
@@ -301,11 +325,14 @@ class FlashBar(Gtk.Frame):
         for s in stringlist:
             self.display(s)
         self.empty()
+
     def delayed_flash(self, milliseconds, msg):
         GLib.timeout_add(milliseconds, lambda: self.flash(msg))
+
     def empty(self):
         for child in self.__content.get_children():
             child.destroy()
+
     def flash(self, txt, **kwargs):
         """Display a message that is automatically removed after some time.
         If we flash a new message before the old flashed message are removed,
@@ -315,6 +342,7 @@ class FlashBar(Gtk.Frame):
             if GLib.source_remove(self.__timeout):
                 self.__timeout = None
         self.display(txt, **kwargs)
+
         def f(self=self):
             self.__timeout = None
             if self.__stack:
@@ -323,10 +351,12 @@ class FlashBar(Gtk.Frame):
                 self.empty()
             return False
         self.__timeout = GLib.timeout_add(2000, f)
+
     def push(self, txt, **kwargs):
         # stop any flashing before we push
         self.display(txt, **kwargs)
         self.__stack.append((txt, kwargs))
+
     def display(self, txt, **kwargs):
         self.empty()
         r = re.compile("(\{\w+\})") # Unicode??
@@ -352,6 +382,7 @@ class FlashBar(Gtk.Frame):
         if self.__timeout:
             if GLib.source_remove(self.__timeout):
                 self.__timeout = None
+
     def pop(self):
         """If a message is being flashed right now, that flashing is
         not affected, but the message below the flashed message is removed.
@@ -364,16 +395,19 @@ class FlashBar(Gtk.Frame):
                            **self.__stack[-1][1])
             else:
                 self.empty()
+
     def clear(self):
         self.__stack = []
         if not self.__timeout:
             self.empty()
+
     def set(self, txt, **kwargs):
         """
         Empty the stack of messages and display the string in txt.
         """
         self.__stack = [(txt, kwargs)]
         self.display(txt, **kwargs)
+
 
 class hig(object):
     SPACE_SMALL= 6
@@ -385,6 +419,7 @@ class hig_dlg_vbox(Gtk.VBox):
     """a GtkVBox containing as many rows as you wish to have categories
     inside the control area of the GtkDialog.
     """
+
     def __init__(self):
         Gtk.VBox.__init__(self)
         self.set_spacing(hig.SPACE_MEDIUM)
@@ -441,6 +476,7 @@ def hig_label_widget(txt, widget, sizegroup, expand=False, fill=False):
 
 
 class SpinButtonRangeController(object):
+
     def __init__(self, spin_low, spin_high, lowest_value, highest_value):
         self.g_spin_low = spin_low
         self.g_spin_low.connect('value-changed', self.on_low_changed)
@@ -448,16 +484,19 @@ class SpinButtonRangeController(object):
         self.g_spin_high.connect('value-changed', self.on_high_changed)
         self.m_lowest_value = lowest_value
         self.m_highest_value = highest_value
+
     def on_low_changed(self, widget, *v):
         if widget.get_value() > self.g_spin_high.get_value():
             self.g_spin_low.set_value(self.g_spin_high.get_value())
         elif widget.get_value() < self.m_lowest_value:
             self.g_spin_low.set_value(self.m_lowest_value)
+
     def on_high_changed(self, widget, *v):
         if widget.get_value() < self.g_spin_low.get_value():
             self.g_spin_high.set_value(self.g_spin_low.get_value())
         elif widget.get_value() > self.m_highest_value:
             self.g_spin_high.set_value(self.m_highest_value)
+
 
 def create_stock_menu_item(stock, txt, callback, ag, accel_key, accel_mod):
     box = Gtk.HBox(False, 0)
@@ -471,15 +510,19 @@ def create_stock_menu_item(stock, txt, callback, ag, accel_key, accel_mod):
     item.connect('activate', callback)
     return item
 
+
 class AlignedHBox(Gtk.HBox):
+
     def setup_pre(self):
         self.g_prebox = Gtk.HBox(False, 0)
         self.g_prebox.set_no_show_all(True)
         self.pack_start(self.g_prebox, True, True, 0)
+
     def setup_post(self):
         self.g_postbox = Gtk.HBox(False, 0)
         self.g_postbox.set_no_show_all(True)
         self.pack_start(self.g_postbox, True, True, 0)
+
     def set_alignment(self, xalign, yalign):
         self.m_xalign = xalign
         self.m_yalign = yalign
@@ -493,17 +536,20 @@ class AlignedHBox(Gtk.HBox):
             self.g_prebox.show()
             self.g_postbox.hide()
 
+
 class HarmonicProgressionLabel(AlignedHBox):
     """
     This class can parse strings like I-(6,4)V(5,3)-I and can be used
     as button labels.
     """
+
     def __init__(self, text):
         AlignedHBox.__init__(self)
         self.show()
         self.m_xalign = 0.5
         self.m_yalign = 0.5
         self.set_text(text)
+
     def set_text(self, text):
         for o in self.get_children():
             o.destroy()
@@ -521,6 +567,7 @@ class HarmonicProgressionLabel(AlignedHBox):
         self.setup_post()
         self.show_all()
         self.set_alignment(self.m_xalign, self.m_yalign)
+
     def get_next_token(self):
         m_re1 = re.compile("([^\(]+)", re.UNICODE)
         m_re2 = re.compile("\((\w*),\s*(\w*)\)", re.UNICODE)
@@ -539,6 +586,7 @@ class HarmonicProgressionLabel(AlignedHBox):
             return "one", m3.groups()[0], None
         c = self.m_str[0]
         return "err", c, None
+
     def twoline(self, A, B):
         vbox = Gtk.VBox(False, 0)
         t1 = Gtk.Label(label=A)
@@ -550,6 +598,7 @@ class HarmonicProgressionLabel(AlignedHBox):
         t2.show();vbox.pack_start(t2, True, True, 0);
         t2.set_alignment(0, 0);
         self.pack_start(vbox, False, False, 0)
+
     def oneline(self, A):
         vbox = Gtk.VBox(False, 0)
         t = Gtk.Label(label=A)
@@ -557,6 +606,7 @@ class HarmonicProgressionLabel(AlignedHBox):
         t.show();vbox.pack_start(t, True, True, 0);
         t.set_alignment(0, 0);
         self.pack_start(vbox, False, False, 0)
+
     def bigchar(self, A):
         t1 = Gtk.Label(label=A)
         t1.set_name("ProgressionNameLabel")
@@ -575,6 +625,7 @@ def dialog_yesno(text, parent=None, default=False):
     m.destroy()
     return ret == Gtk.ResponseType.YES
 
+
 def dialog_ok(text, parent=None, secondary_text=None, msgtype=Gtk.MessageType.INFO):
     """"
     Return the Gtk.ResponseType.XXXX returned by .run()
@@ -587,6 +638,7 @@ def dialog_ok(text, parent=None, secondary_text=None, msgtype=Gtk.MessageType.IN
     m.destroy()
     return ret
 
+
 def dialog_delete(text, parent, secondary_text=None):
     m = Gtk.MessageDialog(parent, Gtk.DialogFlags.MODAL, Gtk.MessageType.QUESTION, Gtk.ButtonsType.NONE, text)
     m.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_DELETE, Gtk.ResponseType.ACCEPT)
@@ -597,19 +649,25 @@ def dialog_delete(text, parent, secondary_text=None):
     return ret == Gtk.ResponseType.ACCEPT
     return ret
 
+
 class NewLineBox(Gtk.VBox):
+
     def __init__(self):
         Gtk.VBox.__init__(self)
         self.m_todo_widgets = []
+
     def add_widget(self, widget):
         self.m_todo_widgets.append(widget)
+
     def show_widgets(self):
         if 'newline' in self.m_todo_widgets:
             self._newline_show_widgets()
         else:
             self._flow_show_widgets()
+
     def newline(self):
         self.m_todo_widgets.append('newline')
+
     def _newline_show_widgets(self):
         sizegroup = Gtk.SizeGroup(Gtk.SizeGroupMode.HORIZONTAL)
         hbox = bHBox(self, True)
@@ -620,6 +678,7 @@ class NewLineBox(Gtk.VBox):
                 hbox.pack_start(n, False, False, 0)
                 sizegroup.add_widget(n)
         self.show_all()
+
     def _flow_show_widgets(self):
         w = 8
         num_lines = len(self.m_todo_widgets) // w + 1
@@ -633,12 +692,15 @@ class NewLineBox(Gtk.VBox):
             hbox.pack_start(n, False, False, 0)
             c += 1
         self.show_all()
+
     def empty(self):
         for c in self.get_children():
             c.destroy()
         self.m_todo_widgets = []
+
     def get_max_child_height(self):
         return max([c.size_request().height for c in self.m_todo_widgets])
+
 
 def create_png_image(fn):
     """
@@ -649,6 +711,7 @@ def create_png_image(fn):
     im.show()
     return im
 
+
 def create_rhythm_image(rhythm):
     """
     rhythm : a string like 'c8 c8' or 'c8 c16 c16'
@@ -658,6 +721,7 @@ def create_rhythm_image(rhythm):
     im.set_from_file(os.path.join('graphics', 'rhythm-%s.png' % (rhythm.replace(" ", ""))))
     im.show()
     return im
+
 
 def decode_filename(filename):
     """
@@ -677,6 +741,7 @@ class EditorDialogBase(object):
     # that are new and don't have a real filename yet. Other files use
     # their file name as key.
     instance_dict = {}
+
     def __init__(self, filename=None):
         self.m_instance_number = EditorDialogBase.instance_counter
         EditorDialogBase.instance_counter += 1
@@ -696,6 +761,7 @@ class EditorDialogBase(object):
          ('Open', Gtk.STOCK_OPEN, None, None, None, self.on_open),
          ('Help', Gtk.STOCK_HELP, None, None, None, self.on_show_help),
         ])
+
     def add_to_instance_dict(self):
         if self.m_filename:
             assert self.m_filename not in self.instance_dict
@@ -703,6 +769,7 @@ class EditorDialogBase(object):
         else:
             assert (None, self.m_instance_number) not in self.instance_dict
             self.instance_dict[(None, self.m_instance_number)] = self
+
     def get_idict_key(self):
         """
         Return the key used to store the editor in .instance_dict.
@@ -710,6 +777,7 @@ class EditorDialogBase(object):
         a file name, else return the filename.
         """
         return self.m_filename if self.m_filename else (None, self.m_instance_number)
+
     def _get_a_filename(self):
         """
         Return a file name. UntitledN (where N is an integer) if we
@@ -718,12 +786,14 @@ class EditorDialogBase(object):
         if not self.m_filename:
             return _("Untitled%s") % self.m_instance_number
         return self.m_filename
+
     def do_closing_stuff(self):
         """
         Classes that need to do stuff before we return from the delete-event
         callback should implement this method.
         """
         del self.instance_dict[self.get_idict_key()]
+
     def close_window(self, *w):
         """
         Close the window if allowed.
@@ -734,6 +804,7 @@ class EditorDialogBase(object):
         if not r:
             self.destroy()
         return not r
+
     def can_we_close_window(self, *w):
         """
         Return True if we can close the window.
@@ -745,6 +816,7 @@ class EditorDialogBase(object):
             return True
         else:
             return False
+
     def do_save_dialog(self):
         """
         Display a dialog asking if we want to save, and do save if necessary.
@@ -773,6 +845,7 @@ class EditorDialogBase(object):
             assert r == Gtk.ResponseType.OK
             self.on_save()
             return True
+
     def on_delete_event(self, *ignore):
         """
         Do as GTK delete-event handlers should do:
@@ -784,6 +857,7 @@ class EditorDialogBase(object):
             self.do_closing_stuff()
             return False
         return True
+
     def on_open(self, widget):
         """
         Open a FileChooserDialog and select a file.
@@ -821,6 +895,7 @@ class EditorDialogBase(object):
                 else:
                     display_exception_message(e)
         dialog.destroy()
+
     def get_save_as_dialog(self):
         dialog = Gtk.FileChooserDialog(_("Save As..."), self,
             Gtk.FileChooserAction.SAVE,
@@ -828,6 +903,7 @@ class EditorDialogBase(object):
              Gtk.STOCK_OK, Gtk.ResponseType.OK))
         dialog.set_default_response(Gtk.ResponseType.OK)
         return dialog
+
     def on_save_as(self, widget):
         """
         Return True if the file was saved, False if not.
@@ -865,6 +941,7 @@ class EditorDialogBase(object):
                 break
         dialog.destroy()
         return ret == Gtk.ResponseType.OK
+
     def on_save(self, widget=None):
         """
         Return True if the file was saved, False if not.
@@ -881,6 +958,7 @@ class EditorDialogBase(object):
         if retval:
             self.m_savetime = time.time()
         return retval
+
     def new_file(self, action=None):
         """
         Return the new dialog window.
@@ -888,6 +966,7 @@ class EditorDialogBase(object):
         m = self.__class__()
         m.show_all()
         return m
+
     def select_empty_directory(self, title):
         msg = _("Select an empty directory, since we want to fill it with files.")
         dialog = Gtk.FileChooserDialog(title,
@@ -916,6 +995,7 @@ class EditorDialogBase(object):
 
 
 class LogWidget(Gtk.ScrolledWindow):
+
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
         self.g_textbuffer = Gtk.TextBuffer()
@@ -923,6 +1003,7 @@ class LogWidget(Gtk.ScrolledWindow):
             size=16*Pango.SCALE)
         self.g_textview = Gtk.TextView(buffer=self.g_textbuffer)
         self.add(self.g_textview)
+
     def write(self, s, tag=None):
         if tag:
             self.g_textbuffer.insert_with_tags_by_name(
@@ -937,6 +1018,7 @@ class LogWidget(Gtk.ScrolledWindow):
         # This is needed to make the window update:
         while Gtk.events_pending():
             Gtk.main_iteration()
+
     def popen(self, *args, **kwargs):
         """
         Return the Popen objects .returncode
@@ -962,6 +1044,7 @@ class LogWidget(Gtk.ScrolledWindow):
 
 
 class LogWindow(Gtk.Window):
+
     def __init__(self, parent):
         Gtk.Window.__init__(self)
         self.set_transient_for(parent)
@@ -984,11 +1067,13 @@ class LogWindow(Gtk.Window):
         self.show_all()
         self.write = self.g_logwidget.write
         self.popen = self.g_logwidget.popen
+
     def run_finished(self):
         self.g_close_button.set_sensitive(True)
 
 
 class ClickableLabel(Gtk.LinkButton):
+
     def __init__(self, label):
         """
         We are abusing the Link button by not giving it a real uri.
@@ -997,8 +1082,10 @@ class ClickableLabel(Gtk.LinkButton):
         Gtk.LinkButton.__init__(self, label, label)
         self.get_children()[0].set_ellipsize(Pango.EllipsizeMode.END)
         self.get_children()[0].set_alignment(0.0, 0.5)
+
         def f(*w): return True
         self.connect('activate-link', f)
+
     def add_heading(self, text):
         def set_alignment(x, y):
             for c in self.get_children()[0].get_children():
@@ -1011,6 +1098,7 @@ class ClickableLabel(Gtk.LinkButton):
         vbox.pack_start(b, False, False, 0)
         self.get_children()[0].reparent(vbox)
         self.add(vbox)
+
     def make_warning(self):
         im = Gtk.Image()
         im.set_from_stock(Gtk.STOCK_DIALOG_WARNING, Gtk.IconSize.MENU)
@@ -1019,6 +1107,7 @@ class ClickableLabel(Gtk.LinkButton):
 
 
 class ExceptionDialog(Gtk.Dialog):
+
     def __init__(self, exception):
         Gtk.Dialog.__init__(self, sys.exc_info()[0].__name__,
                             solfege.win)
@@ -1077,15 +1166,18 @@ class ExceptionDialog(Gtk.Dialog):
         self.set_default_response(Gtk.ResponseType.CLOSE)
         self.set_focus(w)
         self.show_all()
+
     def _make_primary_bold(self):
         if not self.m_primary_bold:
             self.m_primary_bold = True
             self.g_primary.set_markup('<span weight="bold" size="larger">%s</span>' %
                 escape(self.g_primary.get_text()))
+
     def _parsep(self):
         l = Gtk.Label(label="")
         l.show()
         self.msg_vbox.pack_start(l, True, True, 0)
+
     def add_text(self, text):
         self._make_primary_bold()
         self._parsep()
@@ -1095,6 +1187,7 @@ class ExceptionDialog(Gtk.Dialog):
         l.set_alignment(0.0, 0.5)
         l.show()
         self.msg_vbox.pack_start(l, True, True, 0)
+
     def add_nonwrapped_text(self, text):
         self._make_primary_bold()
         self._parsep()
@@ -1121,6 +1214,7 @@ class ExceptionDialog(Gtk.Dialog):
             sc.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
             sc.set_size_request(-1, int(h * max_lines / lines))
 
+
 def display_exception_message(exception, lessonfile=None):
         """Call this function only inside an except clause."""
         sourcefile, lineno, func, code = traceback.extract_tb(sys.exc_info()[2])[0]
@@ -1136,4 +1230,3 @@ def display_exception_message(exception, lessonfile=None):
             m.add_nonwrapped_text(exception.m_nonwrapped_text)
         m.run()
         m.destroy()
-

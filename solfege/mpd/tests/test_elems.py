@@ -12,14 +12,18 @@ from solfege.mpd import const
 from solfege.mpd import parser
 from solfege import mpd
 
+
 def f3(s):
     return parser.parse_to_score_object(s).get_timelist()
 
+
 class TestScore(unittest.TestCase):
+
     def setUp(self):
         self.score = Score()
         self.staff = self.score.add_staff() # default class is Staff
         self.__bp = None
+
     def get_bp(self):
         # We need a getter for .bp because we cannot create the BarProxy
         # before some elements have been added to the bar.
@@ -27,11 +31,13 @@ class TestScore(unittest.TestCase):
             self.__bp = BarProxy(self.score.voice11, Rat(0, 1))
         return self.__bp
     bp = property(get_bp)
+
     def test_constructor_ok(self):
         # add_staff automatically creates the first voice
         self.assertEqual(len(self.staff.m_voices), 1)
         # and creates the voice shortcut
         self.assertEqual(type(self.score.voice11), Voice)
+
     def test_add_note(self):
         self.score.voice11.append(Note.new_from_string("c'4"))
         self.score.voice11.append(Note.new_from_string("c'2"))
@@ -48,10 +54,12 @@ class TestScore(unittest.TestCase):
             Note.new_from_string("e'1"),
             Note.new_from_string("g'1"),
         ])
+
     def test_add_rest(self):
         self.score.voice11.append(Rest(Duration.new_from_string("8")))
         self.assertIsInstance(self.score.voice11.m_tdict[Rat(0, 1)]['elem'][0], Rest)
         self.assertIsInstance(self.score.voice11.m_tdict[Rat(0, 1)]['elem'][0].w_parent(), Voice)
+
     def test_add_bar(self):
         self.assertIsInstance(self.score.add_bar(TimeSignature(4, 4)), Bar)
         self.score.add_bar(TimeSignature(4, 4))
@@ -61,6 +69,7 @@ class TestScore(unittest.TestCase):
         self.assertEqual(self.score.m_bars[1].m_timepos, Rat(1, 1))
         self.assertEqual(self.score.m_bars[2].m_timepos, Rat(2, 1))
         self.assertEqual(self.score.m_bars[3].m_timepos, Rat(9, 4))
+
     def test_add_bar_autotimesig(self):
         self.score.add_bar(None)
         self.assertEqual(self.score.m_bars[0].m_timesig, TimeSignature(4, 4))
@@ -68,6 +77,7 @@ class TestScore(unittest.TestCase):
         self.assertEqual(self.score.m_bars[1].m_timesig, TimeSignature(5, 8))
         self.score.add_bar(None)
         self.assertEqual(self.score.m_bars[2].m_timesig, TimeSignature(5, 8))
+
     def test_add_partial_bar(self):
         self.score.add_partial_bar(Duration.new_from_string("4"), TimeSignature(4, 4))
         self.score.add_bar(None)
@@ -79,12 +89,14 @@ class TestScore(unittest.TestCase):
         self.score.voice11.append(Note.new_from_string("c4"))
         self.score.voice11.append(Note.new_from_string("c1"))
         self.score.voice11.append(Note.new_from_string("c1"))
+
     def test_get_bar_at(self):
         # Raise exception, since we have not added bars
         self.assertRaises(IndexError, self.score.get_bar_at, Rat(0, 1))
         # None is to get the default timesig 4/4
         self.score.add_bar(None)
         self.assertIsInstance(self.score.get_bar_at(Rat(0, 1)), Bar)
+
     def test_set_clef(self):
         self.score.voice11.set_clef("violin")
         self.assertEqual(self.score.staff1.m_tdict[Rat(0, 1)]['clef'].m_name, "violin")
@@ -95,21 +107,25 @@ class TestScore(unittest.TestCase):
         self.score.voice11.set_clef("treble")
         self.assertEqual(self.score.staff1.m_tdict[Rat(0, 1)]['clef'].m_name, "bass")
         self.assertEqual(self.score.staff1.m_tdict[Rat(1, 8)]['clef'].m_name, "treble")
+
     def test_stem_down(self):
         self.score.voice11.append(Note.new_from_string("c'8"))
         self.score.voice11.append(Note.new_from_string("c'8"), const.DOWN)
         self.assertEqual(self.score.voice11.m_tdict[Rat(0, 1)]['elem'].m_stemdir, const.BOTH)
         self.assertEqual(self.score.voice11.m_tdict[Rat(1, 8)]['elem'].m_stemdir, const.DOWN)
+
     def test_one_voice_in_rhythm_staff(self):
         staff = self.score.add_staff(RhythmStaff)
         self.assertRaises(staff.OnlyOneVoiceException,
             staff.add_voice)
+
     def test_no_chords_in_rhythm_staff(self):
         self.score.add_staff(RhythmStaff)
         self.score.voice21.append(Note.new_from_string("cis4"))
         self.assertRaises(Voice.NoChordsInRhythmStaffException,
                 self.score.voice21.append,
                 [Note.new_from_string("gis4"), Note.new_from_string("fis4")])
+
     def test_is_bar_full(self):
         self.assertTrue(self.score.voice11.is_bar_full())
         self.score.voice11.append(Note.new_from_string("c2"))
@@ -118,12 +134,14 @@ class TestScore(unittest.TestCase):
         self.assertFalse(self.score.voice11.is_bar_full())
         self.score.voice11.append(Note.new_from_string("c4"))
         self.assertTrue(self.score.voice11.is_bar_full())
+
     def test_midigen_rest(self):
         self.score.voice11.append(Note.new_from_string("c4"))
         self.score.voice11.append(Rest(Duration.new_from_string("4")))
         self.score.voice11.append(Note.new_from_string("c4"))
         t = mpd.score_to_tracks(self.score)
         self.assertEqual(t[0].str_repr(), "n48 d1/4 o48 d1/4 n48 d1/4 o48")
+
     def test_midigen_tie(self):
         n1 = Note.new_from_string("c4")
         n2 = Note.new_from_string("c4")
@@ -136,6 +154,7 @@ class TestScore(unittest.TestCase):
         self.score.voice11.tie([n1, n2, n3])
         t = mpd.score_to_tracks(self.score)
         self.assertEqual(t[0].str_repr(), "n48 d3/4 o48 n50 d1/4 o50")
+
     def test_tuplets(self):
         n1 = Note(MusicalPitch.new_from_notename("g'"),
                   Duration(8, 0, Rat(2, 3)))
@@ -147,12 +166,14 @@ class TestScore(unittest.TestCase):
         self.score.voice11.append(n2)
         self.score.voice11.append(n3)
         self.score.voice11.tuplet(Rat(2, 3), const.UP, [n1, n2, n3])
+
     def test_single_tuplet(self):
         n1 = Note(MusicalPitch.new_from_notename("g'"),
                   Duration(8, 0, Rat(2, 3)))
         self.score.voice11.append(n1)
         self.score.voice11.tuplet(Rat(2, 3), const.UP, [n1])
         self.assertEqual(n1.w_parent().m_tupletinfo, 'end')
+
     def test_rh_1(self):
         self.assertEqual(f3(r"\staff{c}"), [[True, Rat(1, 4)]])
         self.assertEqual(f3(r"\staff{c2}"), [[True, Rat(1, 2)]])
@@ -172,6 +193,7 @@ class TestScore(unittest.TestCase):
             [True, Rat(3, 8)],
             [True, Rat(1, 4)],
         ])
+
     def test_rh_rest(self):
         self.assertEqual(f3(r"\staff{c4 r8 c4}"), [
             [True, Rat(1, 4)],
@@ -188,6 +210,7 @@ class TestScore(unittest.TestCase):
             [True, Rat(1, 8)],
             [True, Rat(1, 8)],
         ])
+
     def test_rh_tie(self):
         self.assertEqual(f3(r"\staff{c4~ c8 c8 r4 c4}"), [
             [True, Rat(3, 8)],
@@ -200,33 +223,40 @@ class TestScore(unittest.TestCase):
         self.assertEqual(f3(r"\staff{c8~ c8~ c8}"), [
             [True, Rat(3, 8)],
         ])
+
     def test_rh_1b(self):
         self.assertEqual(f3(r"\staff{c4~ c8}"), [
             [True, Rat(3, 8)],
         ])
+
     def test_rh_2a(self):
         self.assertEqual(f3(r"\staff{c2}\addvoice{c4 c4}"), [
             [True, Rat(1, 4)],
             [True, Rat(1, 4)],
         ])
+
     def test_rh_2b(self):
         self.assertEqual(f3(r"\staff{c2}\addvoice{c4}"), [
             [True, Rat(1, 2)],
         ])
+
     def test_rh_2c(self):
         self.assertEqual(f3(r"\staff{c2}\addvoice{r4 c4}"), [
             [True, Rat(1, 4)],
             [True, Rat(1, 4)],
         ])
+
     def test_rh_2d(self):
         self.assertEqual(f3(r"\staff{c2}\addvoice{r4 r4}"), [
             [True, Rat(1, 2)],
         ])
+
     def test_rh_2e(self):
         self.assertEqual(f3(r"\staff{c1}\addvoice{r4 g2 r4}"), [
             [True, Rat(1, 4)],
             [True, Rat(3, 4)],
         ])
+
     def test_rh_3(self):
         self.assertEqual(f3(r"\staff{c4}"), [
             [True, Rat(1, 4)],
@@ -247,6 +277,7 @@ c4 c8 c8
             [True, Rat(1, 4)],
             [True, Rat(1, 8)],
             [True, Rat(1, 8)]])
+
     def test_bar_fill_skips(self):
         n1 = Note(MusicalPitch.new_from_notename("g'"),
                   Duration(4, 0))
@@ -257,6 +288,7 @@ c4 c8 c8
         self.assertTrue(isinstance(self.score.voice11.m_tdict[Rat(1, 4)]['elem'][0], Rest))
         self.assertTrue(isinstance(self.score.voice11.m_tdict[Rat(1, 2)]['elem'][0], Skip))
         self.assertTrue(isinstance(self.score.voice11.m_tdict[Rat(3, 4)]['elem'][0], Skip))
+
     def test_repack_bar_1(self):
         """
         We delete one note, and sees that the bar is packed correctly.
@@ -273,6 +305,7 @@ c4 c8 c8
         self.bp.repack()
         self.assertEqual(sorted(self.score.voice11.m_tdict.keys()),
             [Rat(0, 1), Rat(1, 4), Rat(1, 2)])
+
     def test_repack_bar_2(self):
         """
         One note is changed from 1/4 to 1/2 length. Then we call
@@ -291,6 +324,7 @@ c4 c8 c8
         self.bp.repack()
         self.assertEqual(sorted(self.score.voice11.m_tdict.keys()),
             [Rat(0, 1), Rat(1, 4), Rat(3, 4)])
+
     def test_repack_bar_3(self):
         """
         One note is changed from 1/4 to 1/1 length. Then we call
@@ -305,6 +339,7 @@ c4 c8 c8
         self.assertEqual(sorted(self.score.voice11.m_tdict.keys()),
             [Rat(0, 1), Rat(1, 4), Rat(1, 2)])
         self.assertRaises(Voice.BarFullException, self.bp.repack)
+
     def test_get_timeposes_of(self):
         self.score.add_bar(TimeSignature(4, 4))
         self.score.add_bar(TimeSignature(4, 4))
@@ -318,6 +353,7 @@ c4 c8 c8
             [Rat(0, 1)])
         self.assertEqual(
             self.score.voice11.get_timeposes_of(self.score.m_bars[1]), [])
+
     def test_get_time_pitch_list(self):
         def f(s, tempo=(60, 4)):
             s = parser.parse_to_score_object(r"\staff{ %s}" % s)
@@ -328,6 +364,7 @@ c4 c8 c8
         self.assertEqual(f(r" \times 2/3 { c4 d2 }"), [(48, 2.0/3), (50, 4.0/3)])
         self.assertEqual(f("c4 r8. d4"), [(48, 1.0), (-1, 0.75), (50, 1.0)])
         self.assertRaises(Voice.NotUnisonException, f, "<c4 d4>")
+
     def test_is_last(self):
         voice = self.score.voice11
         voice.append(Note.new_from_string("c2"))
@@ -342,9 +379,11 @@ c4 c8 c8
 
 
 class TestNote(unittest.TestCase):
+
     def setUp(self):
         self.score = Score()
         self.staff = self.score.add_staff() # default class is Staff
+
     def test_contructor(self):
         Note(MusicalPitch.new_from_notename("c'"),
              Duration.new_from_string("4."))
@@ -352,9 +391,11 @@ class TestNote(unittest.TestCase):
                           Note, "4.", MusicalPitch.new_from_notename("c'"))
         self.assertRaises(AssertionError,
                           Note, Duration.new_from_string("4."), "c'")
+
     def test_new_from_string(self):
         Note.new_from_string("c'4.")
         self.assertRaises(InvalidNotenameException, Note.new_from_string, "x")
+
     def test_beam(self):
         voice = self.score.voice11
         n1 = Note.new_from_string("c'8")
@@ -366,6 +407,7 @@ class TestNote(unittest.TestCase):
         n3 = Note.new_from_string("d'8")
         n4 = Note.new_from_string("d'8")
         self.assertRaises(Voice.NoteDontBelongHere, voice.beam, [n3, n4])
+
     def test_tie_2notes(self):
         voice = self.score.voice11
         n1 = Note.new_from_string("c'4")
@@ -373,6 +415,7 @@ class TestNote(unittest.TestCase):
         voice.append(n1)
         voice.append(n2)
         voice.tie([n1, n2])
+
     def test_tie_3notes(self):
         voice = self.score.voice11
         n1 = Note.new_from_string("c'4")
@@ -385,6 +428,7 @@ class TestNote(unittest.TestCase):
 
 
 class TestBarProxy(unittest.TestCase):
+
     def setUp(self):
         self.score = Score()
         self.staff = self.score.add_staff()
@@ -396,6 +440,7 @@ class TestBarProxy(unittest.TestCase):
         v.append(Note.new_from_string("c'4"))
         v.append(Note.new_from_string("c'4"))
         v.append(Note.new_from_string("c'4"))
+
     def test_1(self):
         bp = BarProxy(self.score.voice11, Rat(0, 1))
         bp.remove_trailing(Rat(1, 4))
@@ -408,4 +453,3 @@ class TestBarProxy(unittest.TestCase):
 suite = unittest.makeSuite(TestScore)
 suite.addTest(unittest.makeSuite(TestNote))
 suite.addTest(unittest.makeSuite(TestBarProxy))
-

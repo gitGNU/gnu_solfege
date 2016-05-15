@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import sys
 
 from gi.repository import Gtk
@@ -30,13 +29,16 @@ class AbstractQuestionNameTable(Gtk.Table, cfg.ConfigUtils):
     """
     Base class for QuestionNameButtonTable and QuestionNameCheckButtonTable.
     """
+
     def __init__(self, exname):
         Gtk.Table.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
         self._ignore_watch = 0
         self.add_watch('ask_for_names', self.ask_for_names_changed)
+
     def ask_for_names_changed(self):
         pass
+
     def initialize(self, num, dir):
         self.m_num = num
         self.m_dir = dir
@@ -46,6 +48,7 @@ class AbstractQuestionNameTable(Gtk.Table, cfg.ConfigUtils):
             X.destroy()
         self.m_button_dict = {}
         self.m_name_list = []
+
     def conditional_newline(self):
         """
         Do newline if there are enough buttons on the line.
@@ -60,6 +63,7 @@ class AbstractQuestionNameTable(Gtk.Table, cfg.ConfigUtils):
             if self.m_x == self.m_num:
                 self.m_x = 0
                 self.m_y = self.m_y + 1
+
     def newline(self):
         if self.m_dir == 'vertic':
             self.m_y = 0
@@ -67,6 +71,7 @@ class AbstractQuestionNameTable(Gtk.Table, cfg.ConfigUtils):
         else:
             self.m_x = 0
             self.m_y = self.m_y + 1
+
     def grab_focus_first_button(self):
         v = self.get_children()
         v.reverse()
@@ -75,9 +80,12 @@ class AbstractQuestionNameTable(Gtk.Table, cfg.ConfigUtils):
                 c.grab_focus()
                 return
 
+
 class QuestionNameButtonTable(AbstractQuestionNameTable):
+
     def __init__(self, exname):
         AbstractQuestionNameTable.__init__(self, exname)
+
     def ask_for_names_changed(self, *v):
         """
         This method is called when the config variable 'ask_for_names' is
@@ -89,6 +97,7 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
         for n, button in list(self.m_button_dict.items()):
             button.set_sensitive(
                 self.m_name_list.index(n) in self.get_list('ask_for_names'))
+
     def add(self, question, callback):
         """add a button and set up callback function.
         there should not be created more than one button with the same
@@ -113,10 +122,13 @@ class QuestionNameButtonTable(AbstractQuestionNameTable):
         self.conditional_newline()
         return b
 
+
 class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
+
     def __init__(self, teacher):
         AbstractQuestionNameTable.__init__(self, teacher.m_exname)
         self.m_t = teacher
+
     def ask_for_names_changed(self, *v):
         self.m_t.m_P.m_random.reset()
         if not self.m_name_list:
@@ -127,6 +139,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
             return
         for question in self.m_t.m_P.m_questions:
             question.active = self.m_name_list.index(question.name.cval) in self.get_list('ask_for_names')
+
     def add(self, question):
         """add a button and set up callback function.
         there should not be created more than one button with the same
@@ -149,6 +162,7 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
         self.attach(b, self.m_x, self.m_x+1, self.m_y, self.m_y+1)
         self.conditional_newline()
         return b
+
     def on_checkbutton_toggled(self, button):
         """
         Set the content of the 'ask_for_names' config variable based on
@@ -159,11 +173,14 @@ class QuestionNameCheckButtonTable(AbstractQuestionNameTable):
             if self.m_button_dict[self.m_name_list[i]].get_active():
                 v.append(i)
         self.set_list('ask_for_names', v)
+
     def select_all(self):
         for button in list(self.m_button_dict.values()):
             button.set_active(True)
 
+
 class RandomTransposeDialog(Gtk.Dialog):
+
     def __init__(self, initial_value, parent):
         Gtk.Dialog.__init__(self, _("Set transposition"), parent, 0,
            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
@@ -273,9 +290,11 @@ class RandomTransposeDialog(Gtk.Dialog):
             self.m_spins[t][1].set_value(v2)
             self.m_spins[t][0].set_value(v1)
         self.show_all()
+
     def on_spins_clicked(self, w, n):
         for w in self.m_spins[n]:
             w.set_sensitive(self.m_buttons[n].get_active())
+
     def get_value(self):
         for n, btn in list(self.m_buttons.items()):
             if btn.get_active():
@@ -285,5 +304,3 @@ class RandomTransposeDialog(Gtk.Dialog):
         elif s == 'no':
             return (False, )
         return [s, self.m_spins[s][0].get_value_as_int(), self.m_spins[s][1].get_value_as_int()]
-
-

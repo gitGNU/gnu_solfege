@@ -7,7 +7,9 @@ import unittest
 from solfege.mpd.interval import Interval
 from solfege.mpd.musicalpitch import MusicalPitch
 
+
 class TestInterval(unittest.TestCase):
+
     def test_constructor(self):
         for s, a, b, c, i, steps in (
                 ('p1', 0, 0, 0, 0, 1),
@@ -38,10 +40,12 @@ class TestInterval(unittest.TestCase):
             self.assertEqual(repr(n), s)
             self.assertEqual(i, n.get_intvalue())
             self.assertEqual(steps, n.steps())
+
     def test_addition(self):
         a = MusicalPitch.new_from_notename("c'")
         b = Interval("m2")
         self.assertEqual((a+b).get_octave_notename(), "des'")
+
     def test_add_d5(self):
         a = MusicalPitch.new_from_notename("b")
         b = Interval("-d5")
@@ -52,12 +56,14 @@ class TestInterval(unittest.TestCase):
         a = MusicalPitch.new_from_notename("bisis")
         b = Interval("-d5")
         self.assertEqual((a+b).get_octave_notename(), "fisis")
+
     def test_new_from_int(self):
         for x in range(-12, 12):
             i = Interval.new_from_int(x)
             a = MusicalPitch.new_from_notename("bisis")
             b = a + i
             self.assertEqual(int(a) + x, int(b))
+
     def test_get_cname(self):
         for i, s in enumerate((
             "Perfect Unison",
@@ -89,4 +95,3 @@ class TestInterval(unittest.TestCase):
             self.assertEqual(Interval.new_from_int(i).get_cname(), s, (i, s))
 
 suite = unittest.makeSuite(TestInterval)
-

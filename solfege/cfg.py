@@ -96,9 +96,11 @@ _app_defaults_filename = None
 _system_filename = None
 data = {}
 
+
 def split(key):
     v = key.rpartition("/")
     return v[0], v[2]
+
 
 def parse_file_into_dict(dictionary, filename):
     with codecs.open(filename, "r", "utf-8") as f:
@@ -128,10 +130,12 @@ def parse_file_into_dict(dictionary, filename):
 def sync():
     dump(data, _user_filename)
 
+
 def _maybe_create_key(key):
     section, k = split(key)
     if section not in data:
         data[section] = {}
+
 
 def iterate_sections():
     for n in list(data.keys()):
@@ -139,6 +143,7 @@ def iterate_sections():
 ########################
 ## set_XXXX functions ##
 ########################
+
 
 def set_string(key, val):
     _maybe_create_key(key)
@@ -153,6 +158,7 @@ def set_string(key, val):
         for cb in list(_watches[key].values()):
             cb(key)
 
+
 def set_int(key, val):
     assert isinstance(val, int)
     _maybe_create_key(key)
@@ -164,6 +170,7 @@ def set_int(key, val):
             return
         for cb in list(_watches[key].values()):
             cb(key)
+
 
 def set_float(key, val):
     assert isinstance(val, (float, int))
@@ -177,6 +184,7 @@ def set_float(key, val):
         for cb in list(_watches[key].values()):
             cb(key)
 
+
 def set_bool(key, val):
     _maybe_create_key(key)
     if val:
@@ -184,12 +192,14 @@ def set_bool(key, val):
     else:
         set_string(key, "false")
 
+
 def set_list(key, val):
     set_string(key, str(val))
 
 ########################
 ## get_XXX functions ##
 ########################
+
 
 def get_string(key):
     if len(key.split("=")) == 2:
@@ -201,6 +211,7 @@ def get_string(key):
         return data[section][k]
     except KeyError:
         return default
+
 
 def get_int(key):
     if len(key.split("=")) == 2:
@@ -216,6 +227,7 @@ def get_int(key):
     except KeyError:
         return int(default)
 
+
 def get_float(key):
     if len(key.split("=")) == 2:
         key, default = key.split("=")
@@ -226,6 +238,7 @@ def get_float(key):
         return float(data[section][k])
     except KeyError:
         return float(default)
+
 
 def get_list(key):
     if len(key.split("=")) == 2:
@@ -238,6 +251,7 @@ def get_list(key):
     except KeyError:
         return default
 
+
 def get_bool(key):
     if get_string(key) == 'true':
         return 1
@@ -247,6 +261,8 @@ def get_bool(key):
         return 0
 
 #####################################
+
+
 def del_key(key):
     section, k = split(key)
     #FIXME watches
@@ -257,6 +273,7 @@ def del_key(key):
     del data[section][k]
     if not data[section]:
         del data[section]
+
 
 def del_section(section):
     #FIXME watches
@@ -269,6 +286,7 @@ def del_section(section):
 ## reading and writing the database ##
 ######################################
 
+
 def dump(datadict, fn):
     f = codecs.open(fn, 'w', 'utf-8')
     for section in datadict:
@@ -277,6 +295,7 @@ def dump(datadict, fn):
             f.write("%s=%s\n" % (name, datadict[section][name]))
         f.write("\n")
     f.close()
+
 
 def drop_user_config():
     """
@@ -293,6 +312,7 @@ def drop_user_config():
     if _system_filename and os.path.isfile(_system_filename):
         data = parse_file_into_dict(data, _system_filename)
 
+
 def reread_data():
     global data, _watches, _watch_counter, _blocked_watches
     _watches = {}
@@ -305,13 +325,17 @@ def reread_data():
     if _user_filename and os.path.isfile(_user_filename):
         data = parse_file_into_dict(data, _user_filename)
 
+
 class CfgParseException(Exception):
+
     def __init__(self, filename, lineno):
         Exception.__init__(self)
         self.m_filename = filename
         self.m_lineno = lineno
+
     def __str__(self):
         return "CfgParseException: Failed to parse line %(lineno)i of the file '%(filename)s'" % {'lineno': self.m_lineno, 'filename': self.m_filename}
+
 
 def initialise(app_defaults_filename, system_filename, user_filename):
     """
@@ -346,8 +370,10 @@ def initialise(app_defaults_filename, system_filename, user_filename):
 
 
 class ConfigUtils(object):
+
     def __init__(self, exname):
         self.m_exname = exname
+
     def block_watch(self, name):
         """
         Stop functions watching a name being called. You have to call the
@@ -357,11 +383,13 @@ class ConfigUtils(object):
         if name not in _blocked_watches:
             _blocked_watches[name] = 0
         _blocked_watches[name] += 1
+
     def unblock_watch(self, name):
         name = self._expand_name(name)
         assert name in _blocked_watches
         assert _blocked_watches[name] > 0
         _blocked_watches[name] -= 1
+
     def add_watch(self, name, callback):
         global _watch_counter
         name = self._expand_name(name)
@@ -370,6 +398,7 @@ class ConfigUtils(object):
         _watches[name][_watch_counter] = callback
         _watch_counter += 1
         return _watch_counter - 1
+
     def remove_watch(self, name, watch_id):
         name = self._expand_name(name)
         if name in _watches:
@@ -381,6 +410,7 @@ class ConfigUtils(object):
                 logging.warning("cfg.remove_watch: id don't exist: %s", watch_id)
         else:
             logging.warning("cfg.remove_watch: name is not watched: %s", name)
+
     def _expand_name(self, name):
         if name.count("/") == 0:
             return "%s/%s" % (self.m_exname, name)
@@ -388,36 +418,48 @@ class ConfigUtils(object):
     ######
     # set
     ######
+
     def set_string(self, name, val):
         set_string(self._expand_name(name), val)
+
     def set_int(self, name, val):
         set_int(self._expand_name(name), val)
+
     def set_float(self, name, val):
         set_float(self._expand_name(name), val)
+
     def set_bool(self, name, val):
         set_bool(self._expand_name(name), val)
+
     def set_list(self, name, val):
         set_list(self._expand_name(name), val)
     ######
     # get
     ######
+
     def _get(self, func, name, default=""):
         return func(self._expand_name(name)+default)
+
     def get_string(self, name):
         r = self._get(get_string, name)
         if r is None:
             return ""
         else:
             return r
+
     def get_int(self, name):
         return self._get(get_int, name)
+
     def get_int_with_default(self, name, default):
         assert type(default) is type(0)
         return self.get_int(name+"=%i" % default)
+
     def get_float(self, name):
         return self._get(get_float, name)
+
     def get_bool(self, name):
         return self._get(get_bool, name)
+
     def get_list(self, name):
         try:
             if '=' in name:
@@ -425,5 +467,3 @@ class ConfigUtils(object):
             return eval(self._get(get_string, name, "=[]"))
         except SyntaxError:
             return []
-
-

@@ -26,6 +26,7 @@ import sys
 import textwrap
 import traceback
 
+
 def _i(s):
     """
     used for translated strings with a prefix, like these:
@@ -39,6 +40,7 @@ def _i(s):
         return "%s" %(s.split('|')[-1])
     else:
         return "%s" % ns
+
 
 def langs():
     ret = []
@@ -60,8 +62,10 @@ def langs():
             retval.append(s)
     return retval
 
+
 def _nop(s):
     return str(s)
+
 
 def setup(prefix, config_locale=None):
     global locale_setup_failed
@@ -119,5 +123,3 @@ def setup(prefix, config_locale=None):
     # plurals usage:
     # i =  'some integer value'
     # ungettext("%i car", "%i cars", i) % i
-
-

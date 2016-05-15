@@ -155,6 +155,7 @@ short_name = (
     _i("interval|P15"),
     )
 
+
 def number_name(steps):
     try:
         return {
@@ -176,10 +177,13 @@ def number_name(steps):
     except KeyError:
         return "%ith" % steps
 
+
 class InvalidIntervalnameException(_exceptions.MpdException):
+
     def __init__(self, notename):
         _exceptions.MpdException.__init__(self)
         self.m_intervalname = notename
+
     def __str__(self):
         return _("Invalid interval name: %s") % self.m_intervalname
 
@@ -203,6 +207,7 @@ class Interval:
         'a': 'Augmented',
         'aa': 'Doubly-augmented',
         }
+
     def __init__(self, iname=None):
         self.m_dir = 1 # value as to be 1 or -1 for initialised obj
         self.m_octave = 0 # 0, 1, 2, 3 etc
@@ -217,6 +222,7 @@ class Interval:
         self.m_mod = 0
         if iname:
             self.set_from_string(iname)
+
     def nn_to_translated_quality(interval_quality):
         """
         Return translated interval quality from internal short string.
@@ -227,11 +233,13 @@ class Interval:
         xgettext_wont_find_us = _i
         return xgettext_wont_find_us("interval|%s" % Interval._nn_to_interval_quality[interval_quality].title())
     nn_to_translated_quality = staticmethod(nn_to_translated_quality)
+
     def errorcheck(self):
         assert 0 <= self.m_interval <= 6
         assert -2 <= self.m_mod <= 1 # should be increased to -3 <= x <= 2
         assert self.m_octave >= 0
         assert self.m_dir in (-1, 1)
+
     def _set(self, direction, interval, mod, octave):
         self.m_dir = direction
         self.m_interval = interval
@@ -240,12 +248,14 @@ class Interval:
         if __debug__:
             self.errorcheck()
         return self
+
     def new_from_int(i):
         assert isinstance(i, int)
         new_int = Interval()
         new_int.set_from_int(i)
         return new_int
     new_from_int = staticmethod(new_from_int)
+
     def set_from_int(self, i):
         """It returns self to allow chaining: set_from_int(4).pretty_name()
         """
@@ -264,6 +274,7 @@ class Interval:
                (-1, 5), (0, 5), # sixth
                (-1, 6), (0, 6))[abs(i) % 12] # seventh
         return self
+
     def set_from_string(self, s):
         """
         unison  p1
@@ -305,10 +316,12 @@ class Interval:
                 self.m_mod = {'d': -1, 'p': 0, '': 0, 'a': 1}[modifier]
             except:
                 raise InvalidIntervalnameException(s_orig)
+
     def get_intvalue(self):
         if __debug__:
             self.errorcheck()
         return ([0, 2, 4, 5, 7, 9, 11][self.m_interval] + self.m_octave * 12 + self.m_mod) * self.m_dir
+
     def __str__(self):
         if __debug__:
             self.errorcheck()
@@ -318,21 +331,25 @@ class Interval:
         else:
             ret = ret + " up)"
         return ret
+
     def __repr__(self):
         if self.m_interval in (0, 3, 4):
             return "%s%s" % ({-2: 'dd', -1: 'd', 0: 'p', 1: 'a', 2: 'aa'}[self.m_mod], self.m_interval + 1 + self.m_octave * 7)
         return "%s%s" % ({-2: 'd', -1: 'm', 0: 'M', 1: 'a'}[self.m_mod],  (self.m_interval + 1 + self.m_octave * 7))
+
     def __eq__(self, interval):
         return self.m_dir == interval.m_dir \
             and self.m_octave == interval.m_octave \
             and self.m_mod == interval.m_mod \
             and self.m_interval == interval.m_interval
+
     def get_number_name(self):
         """
         Return the translated general name of the interval, like second, third
         etc. (major, minor etc.)
         """
         return _(number_name(self.steps()))
+
     def get_quality_short(self):
         """
         Return a short string telling the quality.
@@ -351,11 +368,13 @@ class Interval:
                     -1: "m",
                      0: "M",
                      1: "a"}[self.m_mod]
+
     def get_cname_short(self):
         """
         Return the short untranslated interval name, like p5 or M2
         """
         return "%s%i" % (self.get_quality_short(), self.steps())
+
     def get_cname(self):
         """
         Return the full untranslated interval name, both the number and quality.
@@ -368,13 +387,12 @@ class Interval:
         return "%s %s" % (
                 self._nn_to_interval_quality[self.get_quality_short()],
                 number_name(self.steps()))
+
     def get_name(self):
         """
         Return the full translated intervalname, both the number and quality.
         """
         return _(self.get_cname())
+
     def steps(self):
         return self.m_octave * 7 + self.m_interval + 1
-
-
-

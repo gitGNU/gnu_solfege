@@ -21,6 +21,7 @@ op.add_option("--no-test", action='store_false', dest='run_make_test',
 
 options, args = op.parse_args()
 
+
 def parse_build_log():
     f = open("build.log", "r")
     curlang = None
@@ -49,6 +50,7 @@ version_number = args[0]
 distdir = "solfege-%s" % version_number
 bindistdir = "solfege-bin-%s" % version_number
 
+
 def get_last_revision_id():
     p = subprocess.Popen(["git", "rev-parse", "HEAD"],
         cwd=distdir,
@@ -62,10 +64,13 @@ def get_last_revision_id():
     p.wait()
     return retval
 
+
 class Logger(object):
+
     def __init__(self, filename):
         self.logfile = open(filename, 'w')
         self.close = self.logfile.close
+
     def call(self, *args, **kwargs):
         kwargs['stdout'] = subprocess.PIPE
         kwargs['stderr'] = subprocess.STDOUT
@@ -85,6 +90,7 @@ class Logger(object):
             print "p.returncode =", p.returncode
             sys.exit()
         return p.returncode
+
 
 def update_configure_ac(new_revid, version):
     f = open(os.path.join(distdir, "configure.ac"), "r")

@@ -8,6 +8,7 @@ from solfege.mpd.rat import Rat
 
 
 class TestRat(unittest.TestCase):
+
     def test_constructor(self):
         self.assertEqual(float(Rat(1, 4)), 0.25)
         self.assertEqual(float(Rat(9, 8)), 1.125)

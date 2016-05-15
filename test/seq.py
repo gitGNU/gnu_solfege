@@ -34,7 +34,6 @@ for i in range(500):
         s.seq_stop_note(devnum, 1, 60 + (i*2) % 10 + 1, 90)
 
 
-
 s.seqbuf_dump()
 
 import sys

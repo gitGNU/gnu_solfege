@@ -27,9 +27,11 @@ import sys
 import os
 import textwrap
 
+
 def assert_python_version(required_version):
     if sys.version_info < required_version:
         sys.exit("Solfege need Python %s or newer. The configure script told you so.\nThis is Python %s" % (".".join([str(i) for i in required_version]), sys.version))
+
 
 def init(options):
     # this is needed for py2exe
@@ -38,4 +40,3 @@ def init(options):
     from gi.repository import Gtk
     assert_python_version((2, 7))
     Gtk.check_version(3, 4, 0)
-

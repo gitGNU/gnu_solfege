@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from solfege import abstract
 from solfege import gu
 from solfege import lessonfile
@@ -23,19 +22,25 @@ from solfege import mpd
 from solfege import soundcard
 from solfege import utils
 
+
 class Teacher(abstract.Teacher):
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.SingChordLessonfile
         for s in 'accidentals', 'key', 'semitones', 'atonal':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         self.q_status = self.QSTATUS_NEW
         self.m_P.select_random_question()
+
     def play_440hz(self):
         utils.play_note(4, mpd.notename_to_int("a'"))
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         ################
@@ -53,6 +58,7 @@ class Gui(abstract.LessonbasedGui):
         # config_grid #
         ###############
         self.add_random_transpose_gui(row=0)
+
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()
@@ -70,6 +76,7 @@ class Gui(abstract.LessonbasedGui):
                 e.m_mpd_badcode = self.m_t.m_P.get_question().music.get_err_context(e, self.m_t.m_P)
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.g_music_displayer.clear(2)
@@ -77,14 +84,15 @@ class Gui(abstract.LessonbasedGui):
         self.g_new.set_sensitive(True)
         self.g_new.grab_focus()
         self.g_play_answer.set_sensitive(False)
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.g_play_answer.set_sensitive(False)
         self.g_music_displayer.clear(2)
+
     def play_440hz(self, widget):
         try:
             self.m_t.play_440hz()
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
-

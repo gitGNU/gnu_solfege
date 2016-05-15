@@ -11,6 +11,8 @@ import shutil
 import atexit
 
 # we need this hack because doctest messes with _
+
+
 def f(s):
     if type(s) == type(""):
         print ("'%s'" % s)
@@ -69,6 +71,7 @@ suite = unittest.TestSuite((
     solfege.tests.test_cfg.suite,
 ))
 
+
 class MyProg(unittest.TestProgram):
     USAGE = """\
 Usage: %(progName)s [options] [test] [...]
@@ -92,6 +95,7 @@ def iter_suite(suite):
                 yield xx
         else:
             yield t
+
 
 def rmtemp():
     shutil.rmtree(testlib.outdir)
@@ -119,4 +123,3 @@ if args and '-h' not in sys.argv:
 sys.argv.append("suite")
 
 MyProg()
-

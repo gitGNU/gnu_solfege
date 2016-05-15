@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import Gtk
 
 from solfege import abstract
@@ -29,6 +28,7 @@ from solfege.mpd import Rat
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     """
     The Teacher and Gui for dictation abuses q_status a little.
@@ -36,11 +36,14 @@ class Teacher(abstract.Teacher):
     QSTATUS_NO mean that the question is corrupt and unusable. Other
                questions in the same file might be useable.
     """
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.DictationLessonfile
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher, no_notebook=False)
         ################
@@ -67,6 +70,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_play = gu.bButton(self.action_area, _("_Play the whole music"),
                                  self.play)
         self.g_show = gu.bButton(self.action_area, _("_Show"), self.show_answer)
+
     def exception_cleanup(self):
         """ cleanup function after exception caught in select_previous
         and select_next
@@ -76,6 +80,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_play.set_sensitive(False)
         self.g_show.set_sensitive(False)
         self.g_music_displayer.clear()
+
     def select_previous(self, widget):
         self.m_t.m_P.select_previous()
         try:
@@ -88,6 +93,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_play.set_sensitive(True)
             self.g_show.set_sensitive(True)
         self._update()
+
     def select_next(self, widget):
         self.m_t.m_P.select_next()
         try:
@@ -100,6 +106,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_play.set_sensitive(True)
             self.g_show.set_sensitive(True)
         self._update()
+
     def play(self, widget=None):
         # see Teacher docstring.
         if self.m_t.q_status != self.QSTATUS_NEW:
@@ -109,8 +116,10 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e, soundcard.synth.stop):
                 raise
+
     def on_end_practise(self):
         self.m_t.end_practise()
+
     def show_answer(self, widget=None):
         # see Teacher docstring.
         if self.m_t.q_status != self.QSTATUS_NEW:
@@ -121,6 +130,7 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def _update(self):
         """
         Updates the buttons above the action_area where you have
@@ -166,6 +176,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_partbox.set_sensitive(False)
         else:
             self.g_partbox.set_sensitive(True)
+
     def display_start_of_music(self):
         """
         Callers must catch exceptions.
@@ -189,6 +200,7 @@ class Gui(abstract.LessonbasedGui):
             if 'm_mpd_badcode' not in dir(e):
                 e.m_mpd_badcode = self.m_t.m_P.get_question()[e.m_mpd_varname].get_err_context(e, self.m_t.m_P)
             raise
+
     def update_gui_after_lessonfile_change(self):
         self.m_t.q_status = self.QSTATUS_NEW
         if not self.m_t.m_P.m_questions:
@@ -218,6 +230,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_play.set_sensitive(True)
             self.g_show.set_sensitive(True)
         self._update()
+
     def create_pixmap_button(self):
         im = Gtk.Image()
         im.set_from_stock("solfege-rhythm-c4", Gtk.IconSize.LARGE_TOOLBAR)
@@ -225,8 +238,8 @@ class Gui(abstract.LessonbasedGui):
         btn = Gtk.Button()
         btn.add(im)
         return btn
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.update_gui_after_lessonfile_change()
         self.g_play.grab_focus()
-

@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import logging
 import time
 
@@ -28,18 +27,22 @@ from solfege import mpd
 
 from solfege.mpd.requests import MusicRequest
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     ERR_NO_ELEMS = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.QuestionsLessonfile
         for s in 'show', 'play':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         self.m_P.select_random_question()
         return self.OK
+
     def get_timedelta_list(self):
         """
         Return a list of the number of seconds between it should be between
@@ -71,10 +74,13 @@ class Teacher(abstract.Teacher):
             e.m_mpd_badcode = self.m_P.get_question()[qvar].get_err_context(e, self.m_P)
             raise
         return retval
+
     def start_tapping(self):
         self.m_taps = []
+
     def tap(self):
         self.m_taps.append(time.time())
+
     def is_tap_complete(self):
         """
         Return True if the user has tapped as many times as the
@@ -82,6 +88,7 @@ class Teacher(abstract.Teacher):
         """
         # A little abuse of get_timedelta_list, but this makes it simple.
         return len(self.m_taps) == len(self.get_timedelta_list())
+
     def get_score(self):
         """
         Return a list of floats telling us how close the users answer was.
@@ -111,6 +118,7 @@ class Teacher(abstract.Teacher):
                 a = self.m_taps[x+1] - self.m_taps[x]
                 retval.append(a / question[x])
         return retval
+
     def get_answer_status(self):
         """
         Will return a tuple (bool, string) where the bool is True if the
@@ -126,8 +134,10 @@ class Teacher(abstract.Teacher):
             s = "Not good enough: %.2f > %.2f" % (max_diff, limit)
         return (max_diff < limit, s)
 
+
 class Gui(abstract.LessonbasedGui):
     please_tap_str = _("Please tap the rhythm.")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         #
@@ -156,6 +166,7 @@ class Gui(abstract.LessonbasedGui):
                               Gtk.Adjustment(0, 0, 2, 0.01, 0.05))
         spin.set_digits(2)
         self.g_config_grid.attach(spin, 1, 0, 1, 1)
+
     def on_new_question(self, widget=None):
         def exception_cleanup():
             self.m_t.end_practise()
@@ -188,14 +199,17 @@ class Gui(abstract.LessonbasedGui):
             assert g == self.m_t.ERR_NO_ELEMS
             self.g_repeat.set_sensitive(False)
             self.g_flashbar.flash(_("You have to configure this exercise properly"))
+
     def on_give_up(self, widget):
         self.std_buttons_give_up()
         self.g_flashbar.clear()
         self.g_tap.set_sensitive(False)
         self.m_t.q_status = self.QSTATUS_GIVE_UP
+
     def on_repeat(self, widget):
         self.m_t.m_P.play_question()
         self.g_tap.grab_focus()
+
     def on_tap(self, widget=None):
         self.g_flashbar.set(_("Tapping in progress..."))
         self.m_t.tap()
@@ -219,6 +233,7 @@ class Gui(abstract.LessonbasedGui):
             # the user has tapped so far.
             if not self.standard_exception_handler(e):
                 raise
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.std_buttons_start_practise()

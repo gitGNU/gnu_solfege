@@ -120,6 +120,7 @@ _("notename|bx")
 
 
 class InvalidNotenameException(_exceptions.MpdException):
+
     def __init__(self, n):
         _exceptions.MpdException.__init__(self)
         self.m_notename = n

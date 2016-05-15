@@ -21,8 +21,10 @@ from solfege.soundcard.synth_common import SynthCommon
 from solfege.soundcard import winmidi
 from solfege.mpd.track import MidiEventStream
 
+
 class WinSynth(SynthCommon):
     NUM_CHANNELS = 16
+
     def __init__(self, devnum, verbose_init):
         SynthCommon.__init__(self)
         try:
@@ -38,13 +40,17 @@ class WinSynth(SynthCommon):
         self.m_devnum = devnum
         if verbose_init:
             logging.debug("Solfege will use Windows multimedia output.")
+
     def close(self):
         self.__driver = None
+
     def stop(self):
         # dummy function
         pass
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, midieventstream):
         if self.__driver is None:
             raise RuntimeError("Attempted to use synth after closing.")

@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import GObject
 
 from solfege import abstract
@@ -29,10 +28,12 @@ from solfege.specialwidgets import QuestionNameButtonTable, QuestionNameCheckBut
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     ERR_NO_QUESTION = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IdByNameLessonfile
@@ -43,15 +44,19 @@ class Teacher(abstract.Teacher):
                   'accidentals', 'key', 'semitones', 'atonal',
             ):
             self.m_lessonfile_defs[s] = s
+
     def enter_test_mode(self):
         self.m_custom_mode = False
         self.m_statistics.enter_test_mode()
         self.m_P.enter_test_mode()
+
     def exit_test_mode(self):
         self.m_statistics.exit_test_mode()
         self.m_custom_mode = self.get_bool('gui/expert_mode')
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
+
     def new_question(self):
         """
         UI will never call this function unless we have a usable lessonfile.
@@ -75,6 +80,7 @@ class Teacher(abstract.Teacher):
         self.m_P.select_random_question()
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def guess_answer(self, answer):
         """
         Return: 1 if correct, None if wrong
@@ -94,7 +100,9 @@ class Teacher(abstract.Teacher):
             if solfege.app.m_test_mode:
                 self.maybe_auto_new_question()
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         ################
@@ -144,10 +152,12 @@ class Gui(abstract.LessonbasedGui):
         ##############
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
                                    _("Identify by name"))
+
         def _f(varname):
             self.m_t.q_status = self.QSTATUS_NO
             self.setup_action_area_buttons()
         self.add_watch('ask_for_names', _f)
+
     def update_answer_buttons(self):
         self.g_bb.initialize(self.m_t.m_P.header.fillnum,
                              self.m_t.m_P.header.filldir)
@@ -155,6 +165,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_bb.add(question, self.on_click)
         if self.m_t.m_custom_mode:
             self.g_bb.ask_for_names_changed()
+
     def update_select_question_buttons(self):
         #FIXME duplicate code in src/chord.py
         if self.m_t.m_custom_mode:
@@ -167,6 +178,7 @@ class Gui(abstract.LessonbasedGui):
         else:
             self.g_select_questions_category_box.hide()
             self.g_select_questions.initialize(0, 0)
+
     def setup_action_area_buttons(self):
         """
         Make the buttons visible or invisible depending
@@ -188,6 +200,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_music_displayer.clear(self.m_t.m_P.header.music_displayer_stafflines)
         else:
             self.g_music_displayer.hide()
+
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: {answer}"), answer=self.m_t.m_P.get_name())
@@ -195,6 +208,7 @@ class Gui(abstract.LessonbasedGui):
             self.std_buttons_give_up()
             if self.m_t.m_P.header.have_music_displayer:
                 self.run_exception_handled(self.show_answer)
+
     def on_click(self, button, event=None):
         if not event:
             self.on_left_click(button)
@@ -203,6 +217,7 @@ class Gui(abstract.LessonbasedGui):
                 self.on_right_click(button)
             else:
                 self.g_flashbar.flash(_("Right click is not allowed for this lesson file."))
+
     def on_right_click(self, button):
         if solfege.app.m_test_mode:
             return
@@ -230,6 +245,7 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def on_left_click(self, button):
         if self.m_t.q_status == self.QSTATUS_NO:
             if solfege.app.m_test_mode:
@@ -257,6 +273,7 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def new_question(self, widget=None):
         """
         The new button should be insensitive if we have no lesson file.
@@ -266,6 +283,7 @@ class Gui(abstract.LessonbasedGui):
             return
         if solfege.app.m_test_mode:
             self.g_new.hide()
+
         def exception_cleanup():
             self.m_t.q_status = self.QSTATUS_NO
             soundcard.synth.stop()
@@ -285,6 +303,7 @@ class Gui(abstract.LessonbasedGui):
                     e.m_mpd_badcode = self.m_t.m_P.get_question()['music'].get_err_context(e, self.m_t.m_P)
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = self.get_bool('gui/expert_mode')
         super(Gui, self).on_start_practise()
@@ -312,12 +331,14 @@ class Gui(abstract.LessonbasedGui):
         else:
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()
         if self.m_t.m_P and self.m_t.m_P.header.have_music_displayer:
             self.g_music_displayer.clear(self.m_t.m_P.header.music_displayer_stafflines)
         self.g_flashbar.clear()
+
     def enter_test_mode(self):
         self.m_saved_q_auto = self.get_bool('new_question_automatically')
         self.m_saved_s_new = self.get_float('seconds_before_new_question')
@@ -330,6 +351,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_repeat_arpeggio.hide()
         self.g_repeat_slowly.hide()
         self.g_cancel_test.show()
+
     def exit_test_mode(self):
         self.set_bool('new_question_automatically', self.m_saved_q_auto)
         self.set_float('seconds_before_new_question', self.m_saved_s_new)

@@ -14,11 +14,14 @@ import solfege.cfg
 from solfege.cfg import parse_file_into_dict
 from solfege import cfg
 
+
 class Test_parse_file_into_dict(unittest.TestCase):
+
     def test_parse_default_config(self):
         d = {}
         parse_file_into_dict(d, "default.config")
         self.assertEqual(d['gui']['expert_mode'], "false")
+
     def test_fail_on_non_utf8(self):
         filename = os.path.join(outdir, 'bad-unicode.ini')
         outfile = open(filename, 'w', encoding="iso-8859-1")
@@ -29,6 +32,7 @@ class Test_parse_file_into_dict(unittest.TestCase):
         d = {}
         self.assertRaises(UnicodeDecodeError, parse_file_into_dict, d, filename)
         os.remove(filename)
+
     def test_parse_utf8(self):
         filename = os.path.join(outdir, 'ok-utf8.ini')
         outfile = codecs.open(filename, 'w', 'utf-8')
@@ -45,6 +49,7 @@ class Test_parse_file_into_dict(unittest.TestCase):
         self.assertEqual(d['sound']['s'], '/home/Us\xe9r/bin/prog')
         self.assertTrue(isinstance(d['sound']['s'], str))
         self.assertTrue(isinstance(d['sound']['s'], str))
+
     def test_set_str(self):
         cfg.set_string("abc/def", "str string")
         cfg.set_string("abc/ghi", "unicode string ØÆÅ")

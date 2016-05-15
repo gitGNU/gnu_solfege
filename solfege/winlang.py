@@ -15,14 +15,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import os
 import re
 import sys
 
 from solfege import buildinfo
 from solfege import filesystem
+
 
 def win32_put_langenviron(lang):
     """
@@ -65,6 +64,7 @@ def win32_get_langenviron():
     else:
         return "system default"
 
+
 def _pre_3_11_win32_get_langenviron():
     """
     Old version of win32_get_langenviron.
@@ -88,4 +88,3 @@ def _pre_3_11_win32_get_langenviron():
             if m:
                 return m.groups()[0]
     return None
-

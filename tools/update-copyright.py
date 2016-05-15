@@ -5,11 +5,14 @@ import sys
 import re
 
 r = re.compile("(?P<left>\# Copyright \(C\) )(?P<years>(\d\d\d\d,\s)*(\d\d\d\d))(?P<right>\s+Tom Cato Amundsen)")
+
+
 def do_file(filename):
     f = file(filename, 'r')
     s = f.read()
     f.close()
     m = r.search(s)
+
     def func(r):
         years = r.group('years')
         if '2011' not in years:
@@ -20,6 +23,7 @@ def do_file(filename):
         f = file(filename, 'w')
         f.write(s2)
         f.close()
+
 
 def motto(filename):
     f = file(filename, 'r')

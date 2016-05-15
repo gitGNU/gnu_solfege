@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from solfege import abstract
 from solfege.mpd import elems
 from solfege import gu
@@ -24,16 +23,20 @@ from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard
 
+
 class Teacher(abstract.Teacher):
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.QuestionsLessonfile
+
     def new_question(self):
         if self.get_bool('config/picky_on_new_question') \
                 and self.q_status in [self.QSTATUS_NEW, self.QSTATUS_WRONG]:
             return self.ERR_PICKY
         self.q_status = self.QSTATUS_NEW
         self.m_P.select_random_question()
+
     def play_question(self):
         # We can only create countin for questions that are generated using
         # the mpd module
@@ -49,6 +52,7 @@ class Teacher(abstract.Teacher):
             soundcard.synth.play_track(*tracks)
         else:
             self.m_P.play_question()
+
     def get_empty_staff(self):
         """
         Return a score with and empty staff with the correct numbers of bars
@@ -75,6 +79,7 @@ class Teacher(abstract.Teacher):
                 score.add_bar(bar.m_timesig)
         score.voice11.fill_with_skips()
         return score
+
     def guess_answer(self, score):
         assert self.q_status not in (self.QSTATUS_NO, self.QSTATUS_GIVE_UP)
         q = self.m_P.get_question()
@@ -90,11 +95,13 @@ class Teacher(abstract.Teacher):
         else:
             self.q_status = self.QSTATUS_WRONG
             return False
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
 
 
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         self.g_w = mpd.RhythmWidget()
@@ -111,8 +118,10 @@ class Gui(abstract.LessonbasedGui):
             ('repeat', self.repeat_question),
             ('give_up', self.give_up))
         self.g_w.show()
+
     def on_score_updated(self, w):
         self.g_guess_answer.set_sensitive(bool(self.g_w.m_score.get_timelist()))
+
     def new_question(self, *w):
         def exception_cleanup():
             self.m_t.q_status = self.QSTATUS_NO
@@ -131,6 +140,7 @@ class Gui(abstract.LessonbasedGui):
                     e.m_mpd_badcode = self.m_t.m_P.get_question()[e.m_mpd_varname].get_err_context(e, self.m_t.m_P)
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def guess_answer(self, *w):
         if self.m_t.q_status == Teacher.QSTATUS_SOLVED:
             if self.m_t.guess_answer(self.g_w.m_score):
@@ -145,9 +155,11 @@ class Gui(abstract.LessonbasedGui):
                 self.g_flashbar.flash(_("Wrong"))
                 self.std_buttons_answer_wrong()
                 self.g_w.grab_focus()
+
     def repeat_question(self, *w):
         self.g_w.grab_focus()
         self.m_t.play_question()
+
     def give_up(self, *w):
         if 'rhythm' in self.m_t.m_P.get_question():
             varname = 'rhythm'
@@ -165,6 +177,7 @@ class Gui(abstract.LessonbasedGui):
         self.m_t.give_up()
         self.g_c.set_editable(False)
         self.std_buttons_give_up()
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.std_buttons_start_practise()
@@ -172,4 +185,3 @@ class Gui(abstract.LessonbasedGui):
         self.g_w.set_score(elems.Score())
         self.g_flashbar.delayed_flash(self.short_delay,
             _("Click 'New' to begin."))
-

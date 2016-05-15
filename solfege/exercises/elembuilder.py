@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import Gtk
 
 from solfege import abstract
@@ -28,9 +27,11 @@ from solfege import statisticsviewer
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_NO_QUESTION = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.ElembuilderLessonfile
@@ -41,10 +42,12 @@ class Teacher(abstract.Teacher):
         self.m_statistics.m_key_is_list = True
         for s in 'auto', 'show', 'play':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         self.m_P.select_random_question()
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def guess_answer(self, answer):
         """
         elembuilder statistics will use a list of the names of the answered
@@ -63,15 +66,19 @@ class Teacher(abstract.Teacher):
                     self.m_statistics.add_wrong(fasit, answer)
                 self.q_status = self.QSTATUS_WRONG
             return False
+
     def give_up(self):
         self.q_status = self.QSTATUS_GIVE_UP
 
+
 class MultiButton(Gtk.Button):
+
     def __init__(self, label):
         Gtk.Button.__init__(self)
         l = lessonfilegui.new_labelobject(label)
         self.add(l)
         self.m_marked_wrong = False
+
     def mark_wrong(self):
         if self.m_marked_wrong:
             return
@@ -86,7 +93,9 @@ class MultiButton(Gtk.Button):
         vbox.pack_start(label, True, True, 0)
         vbox.show()
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         self.m_key_bindings = {'backspace_ak': self.on_backspace}
@@ -121,6 +130,7 @@ class Gui(abstract.LessonbasedGui):
         # statistics #
         ##############
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer, "")
+
     def new_question(self, widget):
         self.g_answer_button_box.set_sensitive(True)
         for w in self.g_answer.get_children():
@@ -143,8 +153,10 @@ class Gui(abstract.LessonbasedGui):
                 raise
         else:
             self.std_buttons_new_question()
+
     def repeat_question(self, widget):
         self.m_t.m_P.play_question()
+
     def guess_answer(self, widget):
         if self.m_t.q_status == self.QSTATUS_NO:
             if solfege.app.m_test_mode:
@@ -181,6 +193,7 @@ class Gui(abstract.LessonbasedGui):
                     for btn in self.g_answer.get_children():
                         max_button_height = max(max_button_height, btn.size_request().height)
                     self.g_answer_frame.set_size_request(-1, max_button_height)
+
     def on_backspace(self, widget=None):
         if self.m_t.q_status in (self.m_t.QSTATUS_SOLVED,
                                  self.m_t.QSTATUS_GIVE_UP):
@@ -191,6 +204,7 @@ class Gui(abstract.LessonbasedGui):
         if not self.m_users_answer:
             self.g_guess_answer.set_sensitive(False)
             self.g_backspace.set_sensitive(False)
+
     def add_element(self, widget, element):
         """
         Called when the user clicks a button to add another element.
@@ -203,6 +217,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_answer.pack_start(b, False, False, 0)
         self.g_backspace.set_sensitive(True)
         self.g_guess_answer.set_sensitive(True)
+
     def give_up(self, widget):
         for w in self.g_answer.get_children():
             w.destroy()
@@ -215,6 +230,7 @@ class Gui(abstract.LessonbasedGui):
         if self.m_t.m_P.header.have_music_displayer:
             self.run_exception_handled(self.show_answer)
         self.g_answer_button_box.set_sensitive(False)
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = False # FIXME
         super(Gui, self).on_start_practise()
@@ -254,6 +270,7 @@ class Gui(abstract.LessonbasedGui):
         self.show_hide_at_question_start_buttons()
         self.g_flashbar.flash(_("Click 'New' to begin."))
         self.g_answer_button_box.set_sensitive(False)
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()

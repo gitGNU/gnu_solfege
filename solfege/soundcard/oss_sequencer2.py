@@ -20,20 +20,25 @@ from solfege.soundcard import oss_common
 from solfege.soundcard import solfege_c_midi
 from solfege.mpd.track import MidiEventStream
 
+
 class OSSSequencer2Synth(oss_common.AbstractSynth):
+
     def __init__(self, device, devnum, verbose_init):
         oss_common.AbstractSynth.__init__(self, device, devnum, verbose_init)
         # FIXME-LEARNTHIS: is the value 96 special in any way,
         # or can I use whatever value i want???
         solfege_c_midi.sndctl_tmr_timebase(96)
         solfege_c_midi.sndctl_tmr_tempo(60)
+
     def set_patch(self):
         """
         Set
         """
         pass
+
     def play_track(self, *tracks):
         self.play_midieventstream(MidiEventStream(*tracks))
+
     def play_midieventstream(self, midieventstream):
         m = solfege_c_midi
         m.sndctl_seq_reset()
@@ -43,6 +48,7 @@ class OSSSequencer2Synth(oss_common.AbstractSynth):
         m.sndctl_tmr_tempo(60)
         m.seq_start_timer()
         self.handle_midi_events(midieventstream)
+
     def handle_midi_events(self, midieventstream):
         m = solfege_c_midi
         for e in midieventstream:
@@ -73,5 +79,3 @@ class OSSSequencer2Synth(oss_common.AbstractSynth):
             else:
                 raise Exception("oss_sequencer2: Corrupt midieventstream error")
         m.seqbuf_dump()
-
-

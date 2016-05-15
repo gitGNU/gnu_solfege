@@ -11,7 +11,9 @@ from solfege import lessonfile
 from solfege import optionparser
 from solfege.exercises import idbyname
 
+
 class TestDB(unittest.TestCase):
+
     def test_en(self):
         s1 = "var = 1"
         s2 = "#comment\nvar = 1"
@@ -20,6 +22,7 @@ class TestDB(unittest.TestCase):
                          statistics.hash_lessonfile_text(s2))
         self.assertEqual(statistics.hash_lessonfile_text(s1),
                          statistics.hash_lessonfile_text(s3))
+
     def test_two(self):
         opt_parser = optionparser.SolfegeOptionParser()
         options, args = opt_parser.parse_args()
@@ -34,6 +37,7 @@ class TestDB(unittest.TestCase):
         for seconds in (-1, 0, 10000):
             self.assertEqual(t.m_statistics.get_num_correct_for_key(seconds, 'minor'), 1)
             self.assertEqual(t.m_statistics.get_num_guess_for_key(seconds, 'minor'), 3)
+
     def test_store_variables(self):
         db = statistics.DB()
         db.set_variable('database_version', 2)

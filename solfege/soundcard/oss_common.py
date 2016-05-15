@@ -19,8 +19,10 @@ import os
 from solfege.soundcard import solfege_c_midi
 from solfege.soundcard.soundcardexceptions import SyscallException, SeqNoSynthsException
 
+
 class AbstractSynth:
     NUM_CHANNELS = 16
+
     def __init__(self, device, devnum, verbose_init):
         self.m_type_major = "OSS"
         self.m_device = device
@@ -28,6 +30,7 @@ class AbstractSynth:
         self.open_device()
         if verbose_init:
             self.print_soundcard_info()
+
     def open_device(self):
         # the app will crash if I rmmod awe_awe
         solfege_c_midi.cvar.seqfd = os.open(self.m_device, os.O_WRONLY, 0)
@@ -51,6 +54,7 @@ class AbstractSynth:
         if self.m_num_voices == -1:
             self.close()
             raise SyscallException("While trying to open the device %s\nioctl(seqfd, SNDCTL_SYNTH_INFO, &si) failed" % self.m_device, solfege_c_midi.cvar.errno)
+
     def print_soundcard_info(self):
         print("Devicefile:", self.m_device)
         print("The following sound devices has been found:")
@@ -59,11 +63,12 @@ class AbstractSynth:
         for x in range(nrsynths):
             print("%i: %s" % (x, solfege_c_midi.get_synth_name(x)))
         print("--- using %s ---" % solfege_c_midi.get_synth_name(self.m_devnum))
+
     def close(self):
         if solfege_c_midi.cvar.seqfd != -1:
             solfege_c_midi.sndctl_seq_reset()
             os.close(solfege_c_midi.cvar.seqfd)
             solfege_c_midi.cvar.seqfd = -1
+
     def stop(self):
         solfege_c_midi.sndctl_seq_reset()
-

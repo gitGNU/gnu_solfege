@@ -24,8 +24,10 @@ sys.path.append(".")
 
 import solfege, solfege.dataparser, solfege.lessonfile
 
+
 def tex_subst(s):
     return s.replace("&", "\&").replace("#", "\#")
+
 
 def so2ly(s, musicformat):
     re_staff = re.compile("\\\\staff")
@@ -49,6 +51,7 @@ def so2ly(s, musicformat):
     retval = retval + "\n  >\n}"
     return retval
 
+
 def write_header(of, header, filename):
     of.write("\n\\subsection{%s}" % tex_subst(header.title))
     of.write("\n\\begin{itemize}")
@@ -57,6 +60,7 @@ def write_header(of, header, filename):
     of.write("\n\\item content: %s" % header.content)
     of.write("\n\\item musicformat: %s" % header.musicformat)
     of.write("\n\\end{itemize}")
+
 
 def write_questions(of, header, questions):
     for q in questions:
@@ -81,6 +85,7 @@ predef = {'dictation': 'dictation',
                       'no': 0,
                       'tempo': (60, 4)}
 
+
 def write_file(of, filename):
     parser = solfege.dataparser.Dataparser(predef, ('tempo',))
     parser.parse_file(filename)
@@ -104,4 +109,3 @@ for filename in sys.argv[1:]:
 
 of.write("\n\\end{document}")
 of.close()
-

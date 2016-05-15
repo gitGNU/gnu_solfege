@@ -5,7 +5,6 @@
 # Utility functions used by the test suite.
 
 
-
 import builtins
 import os
 import unittest
@@ -16,11 +15,14 @@ builtins.testsuite_is_running = True
 
 outdir = 'test-outdir'
 
+
 class I18nSetup(unittest.TestCase):
+
     def setUp(self):
         self.__saved_LANGUAGE = os.environ.get('LANGUAGE', None)
         os.environ['LANGUAGE'] = 'nb'
         i18n.setup(".")
+
     def tearDown(self):
         if self.__saved_LANGUAGE:
             os.environ['LANGUAGE'] = self.__saved_LANGUAGE
@@ -31,19 +33,22 @@ class TmpFileBase(unittest.TestCase):
     Sub-classes must set .parserclass
     """
     tmpdir = "solfege/tests/tmp-lesson-files"
+
     def setUp(self):
         self.p = self.parserclass()
         self.m_files = set()
+
     def add_file(self, content, filename):
         self.m_files.add(filename)
         outfile = open(os.path.join(self.tmpdir, filename), 'w')
         outfile.write(content)
         outfile.close()
+
     def do_file(self, content):
         self.add_file(content, 'testfile')
         self.p.parse_file(os.path.join(self.tmpdir, 'testfile'))
         return self.p
+
     def tearDown(self):
         for filename in self.m_files:
             os.remove(os.path.join(self.tmpdir, filename))
-

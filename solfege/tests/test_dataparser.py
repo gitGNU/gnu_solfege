@@ -14,7 +14,9 @@ import solfege.parsetree as pt
 import solfege.i18n
 import os
 
+
 class TestLexer(unittest.TestCase):
+
     def test_get_line(self):
         l = Lexer("""#comment1
 #comment2
@@ -27,6 +29,7 @@ var = 3
         self.assertEqual(l.get_line(2), "#comment3")
         self.assertEqual(l.get_line(3), "")
         self.assertEqual(l.get_line(4), "var = 3")
+
     def test_scan(self):
         p = Dataparser()
         p._lexer = Lexer("\"string\" name 1.2 2 (", p)
@@ -43,6 +46,7 @@ var = 3
                               e.m_nonwrapped_text)
         else:
             self.fail("DataparserException not raised")
+
     def test_unable_to_tokenize(self):
         p = Dataparser()
         try:
@@ -63,6 +67,7 @@ var = 3
                               e.m_nonwrapped_text)
         else:
             self.fail("UnableToTokenizeException not raised")
+
     def _test_encodings_delcar_not_first(self):
         """
         FIXME: I disabled this test because people suddenly started
@@ -78,6 +83,7 @@ var = 3
         f.close()
         self.assertRaises(UnableToTokenizeException,
             Lexer, s, Dataparser())
+
     def _test_missing_encoding_definition_iso88591(self):
         """
         FIXME: I disabled this test because people suddenly started
@@ -95,6 +101,7 @@ var = 3
         f.close()
         self.assertRaises(UnableToTokenizeException,
             Lexer, s, Dataparser())
+
     def test_X(self):
         s = r"""
 question {
@@ -107,11 +114,14 @@ question {
         p = Dataparser()
         p._lexer = Lexer(s, p)
 
+
 class TestDataParser(TmpFileBase):
     parserclass = Dataparser
+
     def assertRaisedIn(self, methodname):
         t = traceback.extract_tb(sys.exc_info()[2])
         self.assertEqual(t[-1][2], methodname)
+
     def test_exception_statement_1(self):
         try:
             self.do_file("b")
@@ -123,6 +133,7 @@ class TestDataParser(TmpFileBase):
             self.assertEqual(e.m_token, ('EOF', None, 1, 0))
         else:
             self.fail("DataparserSyntaxError not raised")
+
     def test_exception_statement_2(self):
         try:
             self.do_file("a)")
@@ -134,6 +145,7 @@ class TestDataParser(TmpFileBase):
             self.assertEqual(e.m_token, (')', ')', 1, 0))
         else:
             self.fail("DataparserSyntaxError not raised")
+
     def test_exception_statement_3(self):
         try:
             self.do_file("""#comment
@@ -148,6 +160,7 @@ class TestDataParser(TmpFileBase):
                               e.m_nonwrapped_text)
         else:
             self.fail("DataparserSyntaxError not raised")
+
     def test_exception_statement_4(self):
         try:
             self.do_file("""#comment
@@ -162,6 +175,7 @@ class TestDataParser(TmpFileBase):
                               e.m_nonwrapped_text)
         else:
             self.fail("DataparserSyntaxError not raised")
+
     def test_exception_assignment(self):
         try:
             self.do_file("question = 3")
@@ -172,6 +186,7 @@ class TestDataParser(TmpFileBase):
                               e.m_nonwrapped_text)
         else:
             self.fail("AssignmentToReservedWordException not raised")
+
     def test_istr_translations_in_file1(self):
         p = self.do_file("""
          foo = "foo-C"
@@ -190,6 +205,7 @@ class TestDataParser(TmpFileBase):
         self.assertEqual(p.tree[2][1].right.evaluate({}, {}),
                           'var-nb')
         self.assertTrue(isinstance(p.tree[2][0].right.evaluate({}, {}), istr))
+
     def test_istr_translations_in_file_lang_before_C(self):
         """
         The Dataparser will accept setting the translated var before the
@@ -204,6 +220,7 @@ class TestDataParser(TmpFileBase):
         self.assertEqual(p.tree[0].right.m_value, "foo-no")
         self.assertEqual(p.tree[0].right.m_value.cval, "foo-no")
         self.assertEqual(p.tree[1].right.m_value, "foo-C")
+
     def test_i18n_list_fails(self):
         try:
             self.do_file('foo[no] = "foo-no", "blabla" ')
@@ -213,6 +230,7 @@ class TestDataParser(TmpFileBase):
                +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
+
     def test_i18n_int_fails(self):
         try:
             self.do_file('foo[no] = 8')
@@ -222,6 +240,7 @@ class TestDataParser(TmpFileBase):
                +'                    ^')
         else:
             self.fail("CanOnlyTranslateStringsException not raised")
+
     def test_import(self):
         p = self.do_file("\n".join([
             "import progression_elements",
@@ -232,6 +251,7 @@ class TestDataParser(TmpFileBase):
         self.assertTrue(isinstance(p.tree[0].right, pt.Program))
         self.assertTrue(isinstance(p.tree[1], pt.Assignment))
         self.assertTrue(isinstance(p.tree[1].right, pt.Identifier))
+
     def test_import_as(self):
         p = self.do_file("\n".join([
             "import progression_elements as p",
@@ -244,6 +264,7 @@ class TestDataParser(TmpFileBase):
         self.assertTrue(isinstance(p.tree[0].right, pt.Program))
         self.assertTrue(isinstance(p.tree[1].right, pt.Identifier))
         self.assertTrue(isinstance(p.tree[2][0].right, pt.Identifier))
+
     def test_pt_2(self):
         p = self.do_file("""header {
         module = idbyname
@@ -256,6 +277,7 @@ class TestDataParser(TmpFileBase):
         for d in p.tree[0]:
             if d.left == 'module':
                 self.assertEqual(d.right, 'idbyname')
+
     def test_nested_block(self):
         """
         As we can see, the Dataparser class and the parsetree code
@@ -267,6 +289,7 @@ class TestDataParser(TmpFileBase):
         self.assertTrue(isinstance(p.tree[0][1], pt.Block))
         self.assertTrue(isinstance(p.tree[0][1][0], pt.Assignment))
         self.assertEqual(p.tree[0][1][0].right.evaluate({}, {}), 5)
+
     def test_named_block(self):
         p = self.do_file('element I { label = "label-I" } '
                       +'element II { label = "label-II" }')
@@ -278,10 +301,13 @@ class TestDataParser(TmpFileBase):
         self.assertTrue(isinstance(p.tree[1], pt.NamedBlock))
         self.assertEqual(p.tree[1][0].right.evaluate({}, {}), 'label-II')
 
+
 class TestIstr(I18nSetup):
+
     def test_musicstr(self):
         s = istr(r"\staff{ c e g }")
         self.assertTrue(isinstance(s, str))
+
     def test_add_translations1(self):
         #i18n.langs: nb_NO, nb, C
         # name = "Yes"
@@ -293,6 +319,7 @@ class TestIstr(I18nSetup):
         self.assertEqual(s, 'Ja')
         s = s.add_translation('nb_NO', 'Ja!')
         self.assertEqual(s, 'Ja!')
+
     def test_add_translations2(self):
         #i18n.langs: nb_NO, nb, C
         # name = "Yes"
@@ -304,19 +331,23 @@ class TestIstr(I18nSetup):
         self.assertEqual(s, 'Ja!')
         s = s.add_translation('nb', 'Ja')
         self.assertEqual(s, 'Ja!', "Should still be 'Ja!' because no_NO is preferred before no")
+
     def test_override_gettext(self):
         s = dataparser_i18n_func("major")
         self.assertEqual(s, "dur")
         self.assertEqual(s.cval, "major")
         s = s.add_translation('nb', "Dur")
         self.assertEqual(s, "Dur")
+
     def test_type(self):
         s = istr("jo")
         self.assertIsInstance(s, istr)
         self.assertIsInstance(s, str)
 
+
 class TestEncodingSniffer(TmpFileBase):
     parserclass = Dataparser
+
     def test_file_not_found(self):
         self.assertRaises(FileNotFoundError, read_encoding_marker_from_file, "asdfasdf")
         self.assertEqual(
@@ -325,6 +356,7 @@ class TestEncodingSniffer(TmpFileBase):
         self.assertEqual(
             read_encoding_marker_from_file("exercises/standard/lesson-files/chord-min-major"),
             None)
+
     def test_from_string(self):
         self.assertEqual(read_encoding_marker_from_string(
             "# vim: set fileencoding=findme\n"
@@ -341,18 +373,22 @@ class TestEncodingSniffer(TmpFileBase):
             + "line 2\n"
             + "# vim: set fileencoding=findme\n"
             + "# line\nline\n"), None)
+
     def test_utf8_in_first_line(self):
         self.assertEqual(read_encoding_marker_from_string(
             "# ソルフェージュ\n"
             + "# vim: set fileencoding=findme\n"
             + "# line\nline\n"), "findme")
+
     def test_empty_string(self):
         self.assertIsNone(read_encoding_marker_from_string(""))
+
     def test_empty_lines(self):
         self.assertIsNone(read_encoding_marker_from_string("\n\n\n"))
         self.add_file("\n\n\n\n\n\n", "empty-lines")
         self.assertIsNone(read_encoding_marker_from_file(
             os.path.join(self.tmpdir, "empty-lines")))
+
     def test_empty_file(self):
         self.add_file("", "empty-file")
         self.assertIsNone(read_encoding_marker_from_file(

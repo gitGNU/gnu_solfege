@@ -35,6 +35,7 @@ from solfege.mpd.musicdisplayer import MusicDisplayer
 
 
 class RhythmWidgetController(Gtk.HBox):
+
     def __init__(self, rwidget):
         """
         rwidget is the RhythmWidget we are controlling
@@ -368,6 +369,7 @@ GObject.signal_new('score-updated', RhythmWidget,
 
 
 class TestWin(Gtk.Window):
+
     def __init__(self):
         Gtk.Window.__init__(self)
         vbox = Gtk.VBox()

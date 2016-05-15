@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import random
 import sys
 import traceback
@@ -34,6 +33,7 @@ from solfege import cfg, lessonfile, osutils, const
 
 import solfege
 
+
 class QstatusDefs(object):
     QSTATUS_NO = 0
     QSTATUS_NEW = 1
@@ -45,7 +45,9 @@ class QstatusDefs(object):
     QSTATUS_TYPE_WRONG = 7
     QSTATUS_TYPE_SOLVED = 8
 
+
 class Teacher(cfg.ConfigUtils, QstatusDefs):
+
     def __init__(self, exname):
         cfg.ConfigUtils.__init__(self, exname)
         self.q_status = self.QSTATUS_NO
@@ -63,6 +65,7 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
         # Some exercises modules want other default values for the
         # lessonfile header variables. They can add them to this dict
         self.m_lessonfile_header_defaults = {}
+
     def maybe_auto_new_question(self):
         if self.get_bool('new_question_automatically'):
             if self.m_timeout_handle is None:
@@ -70,17 +73,20 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
                     self.m_timeout_handle = None
                     self.g_view.new_question()
                 self.m_timeout_handle = GObject.timeout_add(int(self.get_float('seconds_before_new_question')*1000),  remove_timeout)
+
     def end_practise(self):
         if self.m_timeout_handle:
             GObject.source_remove(self.m_timeout_handle)
             self.m_timeout_handle = None
         self.q_status = self.QSTATUS_NO
         soundcard.synth.stop()
+
     def exit_test_mode(self):
         """
         Shared between harmonic and melodic interval.
         """
         self.m_statistics.exit_test_mode()
+
     def set_lessonfile(self, lessonfile):
         """
         Set the variable 'm_lessonfile' and
@@ -90,6 +96,7 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
         self.parse_lessonfile()
         if self.m_P and self.m_statistics:
             solfege.db.validate_stored_statistics(self.m_P.m_filename)
+
     def parse_lessonfile(self):
         self.m_question = None
         self.q_status = self.QSTATUS_NO
@@ -103,15 +110,18 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
             run = gu.dialog_yesno(_("The lessonfile contain potentially dangerous code because it run external programs. Run anyway?"))
             if not run:
                 self.m_P = None
+
     def check_askfor(self):
         if self.m_custom_mode:
             self.set_list('ask_for_names', list(range(len(self.m_P.get_unique_cnames()))))
+
     def play_tonic(self):
         """
         Play the tonic of the question, if defined.
         """
         if 'tonic' in self.m_P.get_question():
             self.m_P.play_question(None, 'tonic')
+
 
 class MelodicIntervalTeacher(Teacher):
     """
@@ -121,16 +131,19 @@ class MelodicIntervalTeacher(Teacher):
     and singinterval.
     """
     class ConfigureException(Exception):
+
         def __init__(self, msg=_("The exercise has to be better configured.")):
             Exception.__init__(self, msg)
     OK = 0
     ERR_PICKY = 1
     ERR_CONFIGURE = 2
     no_intervals_str = _("No intervals selected for interval number %i.")
+
     def __init__(self, exname):
         Teacher.__init__(self, exname)
         self.m_tonika = None
         self.m_question = []
+
     def new_question(self, L, H):
         assert isinstance(L, str)
         assert isinstance(H, str)
@@ -235,6 +248,7 @@ class MelodicIntervalTeacher(Teacher):
 
 
 class RhythmAddOnClass:
+
     def new_question(self):
         """returns:
                self.ERR_PICKY : if the question is not yet solved and the
@@ -269,6 +283,7 @@ class RhythmAddOnClass:
             self.m_question.append(random.choice(v))
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def get_music_notenames(self, count_in):
         """
         Return a string with the notenames of the current question.
@@ -283,12 +298,14 @@ class RhythmAddOnClass:
             s = "d%s " % count_in_notelen * self.get_int("count_in")
         s += " ".join([const.RHYTHMS[k] for k in self.m_question])
         return s
+
     def get_music_string(self):
         """
         Return a complete mpd string of the current question that can
         be feed to utils.play_music.
         """
         return r"\rhythmstaff{ \time 1000000/4 %s}" % self.get_music_notenames(True)
+
     def play_rhythm(self, rhythm):
         """
         rhythm is a string. Example: 'c4 c8 c8 c4'
@@ -303,6 +320,7 @@ class RhythmAddOnClass:
         track.replace_note(mpd.notename_to_int("d"),
                            self.get_int("config/countin_perc"))
         soundcard.synth.play_track(track)
+
     def set_elements_variables(self):
         """
         This is called from the on_start_practise() method of exercise
@@ -319,6 +337,7 @@ class RhythmAddOnClass:
                     self.m_P.header.rhythm_elements[:]
                 self.m_P.header.rhythm_elements = \
                   [n for n in self.m_P.header.rhythm_elements if n != 'newline']
+
     def set_default_header_values(self):
         for n, default in (('bpm', 60),
                   ('count_in', 2),
@@ -328,6 +347,7 @@ class RhythmAddOnClass:
             else:
                 self.set_int(n, default)
 
+
 class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
     """Important members:
          - practise_box
@@ -335,6 +355,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
          - g_config_grid
     """
     short_delay = 700
+
     def __init__(self, teacher, no_notebook=False):
         Gtk.VBox.__init__(self)
         cfg.ConfigUtils.__init__(self, teacher.m_exname)
@@ -384,6 +405,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.g_cancel_test = Gtk.Button(_("_Cancel test"))
         self.g_cancel_test.connect('clicked', self.on_cancel_test)
         self.action_area.pack_end(self.g_cancel_test, False, False, 0)
+
     def add_module_is_deprecated_label(self):
         """
         The deprecated module must set a message in self.g_deprecated_label
@@ -402,9 +424,11 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         hbox.pack_start(self.g_deprecated_label, True, True, 0)
         self.practise_box.pack_start(hbox, False, False, 0)
         self.practise_box.reorder_child(hbox, 0)
+
     def set_deprecation_text(self, oldmodule, newmodule, filename):
         self.g_deprecated_label.set_line_wrap(True)
         self.g_deprecated_label.set_markup("<b>The %(oldmodule)s module is deprecated. Convert \"%(filename)s\" to use the %(newmodule)s module.</b>" % locals())
+
     def std_buttons_add(self, *buttons):
         """
         buttons is a sequence of tuples ('buttonname', callback)
@@ -441,6 +465,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             if '-' in b:
                 b = b.split('-')[0]
             setattr(self, 'g_%s' % b, button)
+
     def _std_buttons_start_sensitivity(self):
         # Values like 'new-interval', 'new-tone' and 'new-chord' and
         # possible others can be added to ._std_buttons
@@ -453,6 +478,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             'display_music', 'show', 'give_up'):
             if b in self._std_buttons:
                 getattr(self, 'g_%s' % b).set_sensitive(False)
+
     def std_buttons_start_practise(self):
         self._std_buttons_start_sensitivity()
         self.g_new.grab_focus()
@@ -483,6 +509,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 self.g_show.show()
             else:
                 self.g_show.hide()
+
     def std_buttons_new_question(self):
         # Values like 'new-interval', 'new-tone' and 'new-chord' and
         # possible others can be added to ._std_buttons
@@ -501,6 +528,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         for n in 'show', 'give_up', 'guess_answer':
             if n in self._std_buttons:
                 getattr(self, 'g_%s' % n).set_sensitive(False)
+
     def std_buttons_end_practise(self):
         # We check for the lesson parser because it is possible that a
         # completely broken lesson file was started, and the user tries
@@ -515,6 +543,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                     if '-' in name:
                         name = name.split('-')[0]
                     getattr(self, 'g_%s' % name).hide()
+
     def std_buttons_answer_correct(self):
         # Setting sensitivity is only required when
         # self.get_bool('config/picky_on_new_question') is True, but
@@ -531,9 +560,11 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_guess_answer.set_sensitive(False)
         if 'backspace' in self._std_buttons:
             self.g_backspace.set_sensitive(False)
+
     def std_buttons_answer_wrong(self):
         if 'give_up' in self._std_buttons:
             self.g_give_up.set_sensitive(True)
+
     def std_buttons_give_up(self):
         if [n for n in self._std_buttons if n.split("-")[0] == 'new']:
             self.g_new.set_sensitive(True)
@@ -547,12 +578,15 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_guess_answer.set_sensitive(False)
         if 'backspace' in self._std_buttons:
             self.g_backspace.set_sensitive(False)
+
     def std_buttons_exception_cleanup(self):
         self._std_buttons_start_sensitivity()
+
     def on_cancel_test(self, *w):
         self.g_cancel_test.hide()
         self.on_end_practise()
         solfege.win.exit_test_mode()
+
     def do_test_complete(self):
         self.on_end_practise()
         req = self.m_t.m_P.get_test_requirement()
@@ -563,6 +597,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             gu.dialog_ok(_("Test completed!\nYour score was %(score).1f%%.\nThe test requirement was %(requirement).1f%%.") % {'score': res * 100, 'requirement': req * 100})
         else:
             gu.dialog_ok(_("Test failed.\nYour score was %(score).1f%%.\nThe test requirement was %(requirement).1f%%.") % {'score': res * 100, 'requirement': req * 100})
+
     def set_lesson_heading(self, txt):
         if txt:
             self.g_lesson_heading.set_text('<span size="large"><b>%s</b></span>' % gu.escape(txt))
@@ -570,6 +605,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_lesson_heading.show()
         else:
             self.g_lesson_heading.hide()
+
     def set_lesson_description(self, txt):
         if txt:
             self.g_lesson_description.set_text(gu.escape(txt))
@@ -577,6 +613,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_lesson_description.show()
         else:
             self.g_lesson_description.hide()
+
     def on_start_practise(self):
         """
         Code that are common for all exercises. Not used by many now,
@@ -596,8 +633,10 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.set_lesson_description(self.m_t.m_P.header.lesson_description)
         else:
             self.set_lesson_description(getattr(self, "lesson_description", None))
+
     def on_end_practise(self):
         pass
+
     def handle_config_grid_visibility(self):
         """
         Show self.config_grid if it has any visible children, otherwise
@@ -608,6 +647,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             self.g_config_grid.show()
         else:
             self.g_config_grid.hide()
+
     def handle_statistics_page_sensibility(self):
         try:
             if self.m_t.m_custom_mode:
@@ -618,6 +658,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 self.g_statview.set_tooltip_text("")
         except AttributeError: # not all exercises has g_statview
             pass
+
     def on_key_press_event(self, widget, event):
         if (self.g_notebook is None or self.g_notebook.get_current_page() == 0) \
                 and event.type == Gdk.EventType.KEY_PRESS:
@@ -625,20 +666,24 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
                 if self.keymatch(event, s):
                     self.m_key_bindings[s]()
                     return 1
+
     def keymatch(self, event, cfname):
         a, b = gu.parse_key_string(self.get_string(cfname))
         return ((event.get_state() & (Gdk.ModifierType.CONTROL_MASK|Gdk.ModifierType.SHIFT_MASK|Gdk.ModifierType.MOD1_MASK)) == a) and (event.keyval == b)
+
     def setup_statisticsviewer(self, viewclass, heading):
         self.g_statview = viewclass(self.m_t.m_statistics, heading)
         self.g_statview.show()
         self.g_notebook.append_page(self.g_statview, Gtk.Label(label=_("Statistics")))
         self.g_notebook.connect('switch_page', self.on_switch_page)
+
     def on_switch_page(self, notebook, obj, pagenum):
         if pagenum == 2:
             if self.m_t.m_P and not self.m_t.m_custom_mode:
                 self.g_statview.update()
             else:
                 self.g_statview.clear()
+
     def _add_auto_new_question_gui(self, row):
         """
         Add the user interface used to configure if we should get a new
@@ -651,6 +696,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         spin.set_digits(1)
         label = Gtk.Label(label=_("seconds delay"))
         label.props.halign = Gtk.Align.START
+
         def f(button, spin=spin, label=label):
             spin.set_sensitive(button.get_active())
             label.set_sensitive(button.get_active())
@@ -662,6 +708,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         self.g_config_grid.attach(b, 0, row, 1, 1)
         self.g_config_grid.attach(spin, 1, row, 1, 1)
         self.g_config_grid.attach(label, 2, row, 1, 1)
+
     def _lessonfile_exception(self, exception, sourcefile, lineno):
         m = gu.ExceptionDialog(exception)
         idx = self.m_t.m_P._idx
@@ -676,6 +723,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         m.add_text(_('The exception was caught in\n"%(filename)s", line %(lineno)i.') % {'filename': sourcefile, 'lineno': lineno})
         m.run()
         m.destroy()
+
     def _mpd_exception(self, exception, sourcefile, lineno):
         m = gu.ExceptionDialog(exception)
         if 'm_mpd_varname' in dir(exception):
@@ -690,6 +738,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         m.add_text(_('The exception was caught in\n"%(filename)s", line %(lineno)i.') % {'filename': sourcefile, 'lineno': lineno})
         m.run()
         m.destroy()
+
     def run_exception_handled(self, method, *args, **kwargs):
         """
         Call method() and catch exceptions with standard_exception_handler.
@@ -699,6 +748,7 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def standard_exception_handler(self, e, cleanup_function=lambda: False):
         """
         Use this method to try to catch a few common solfege exceptions.
@@ -739,13 +789,16 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
             return True
         return False
 
+
 class RhythmAddOnGuiClass(object):
+
     def add_select_elements_gui(self, grid, row):
         self.g_element_frame = frame = Gtk.Frame(label=_("Rhythms to use in question"))
         grid.attach(frame, 0, row, 3, 1)
         self.g_select_rhythms_box = gu.NewLineBox()
         self.g_select_rhythms_box.set_border_width(gu.PAD_SMALL)
         frame.add(self.g_select_rhythms_box)
+
     def add_select_num_beats_gui(self, grid, row):
         ###
         label = Gtk.Label(label=_("Number of beats in question:"))
@@ -763,12 +816,14 @@ class RhythmAddOnGuiClass(object):
         grid.attach(gu.nSpinButton(self.m_exname, "count_in",
                                    Gtk.Adjustment(2, 0, 10, 1, 10)),
                     1, row + 1, 1, 1)
+
     def pngcheckbutton(self, i):
         btn = Gtk.CheckButton()
         btn.add(gu.create_rhythm_image(const.RHYTHMS[i]))
         btn.show()
         btn.connect('clicked', self.select_element_cb, i)
         return btn
+
     def update_select_elements_buttons(self):
         """
         (Re)create the checkbuttons used to select which rhythm elements
@@ -784,6 +839,7 @@ class RhythmAddOnGuiClass(object):
                 self.g_select_rhythms_box.add_widget(b)
                 b.set_active(n in self.m_t.m_P.header.rhythm_elements)
         self.g_select_rhythms_box.show_widgets()
+
     def select_element_cb(self, button, element_num):
         def sortlike(orig, b):
             ret = []
@@ -807,11 +863,13 @@ class RhythmAddOnGuiClass(object):
         self.m_t.m_P.header.rhythm_elements = \
             [n for n in self.m_t.m_P.header.rhythm_elements if n != 'newline']
 
+
 class IntervalGui(Gui):
     """
     Creates 'New interval' and 'Repeat' buttons in the action_area.
     """
     keyboard_accel = 99
+
     def __init__(self, teacher):
         Gui.__init__(self, teacher)
 
@@ -825,6 +883,7 @@ class IntervalGui(Gui):
         self.std_buttons_add(('new-interval', self.new_question),
             ('repeat', self.repeat_question))
         self.setup_key_bindings()
+
     def _create_select_inputwidget_gui(self, row):
         """
         This will be called by HarmonicInterval and MelodicInterval
@@ -847,7 +906,6 @@ class IntervalGui(Gui):
         self.g_config_grid.attach(combo, 1, row, 1, 1)
         self.g_config_grid.attach(self.g_disable_unused_buttons, 2, row, 1, 1)
 
-
     def add_lock_to_key_gui(self, row):
         # gui to lock to a key
         def toggle_lock_to_key_sensitivity(checkbutton):
@@ -867,6 +925,7 @@ class IntervalGui(Gui):
         self.g_config_grid.attach(self.g_notename, 1, row, 1, 1)
         self.g_config_grid.attach(self.g_scaletype, 2, row, 1, 1)
         toggle_lock_to_key_sensitivity(check)
+
     def select_inputwidget(self):
         """
         This will be called by HarmonicInterval and MelodicInterval
@@ -876,6 +935,7 @@ class IntervalGui(Gui):
         if i >= len(inputwidgets.inputwidget_names):
             i = 0
         self.use_inputwidget(i)
+
     def use_inputwidget(self, i):
         self.set_int('inputwidget', i)
         if self.g_input:
@@ -900,6 +960,7 @@ class IntervalGui(Gui):
             self.on_end_practise()
         self.g_disable_unused_buttons.set_sensitive(
             isinstance(self.g_input, inputwidgets.IntervalButtonsWidgetBase))
+
     def setup_key_bindings(self):
         keys = ['minor2', 'major2', 'minor3', 'major3',
                 'perfect4', 'diminished5', 'perfect5', 'minor6',
@@ -908,14 +969,17 @@ class IntervalGui(Gui):
         self.m_key_bindings = {}
         for idx in range(len(keys)):
             self.m_key_bindings['interval_input/'+keys[idx]] = lambda idx=idx, self=self: self.click_on_interval(self.keyboard_accel, idx+1, None)
+
     def repeat_question(self, *w):
         self.m_t.play_question()
         self.g_input.grab_focus_first_sensitive_button()
 
 
 class LessonbasedGui(Gui):
+
     def __init__(self, teacher, no_notebook=False):
         Gui.__init__(self, teacher, no_notebook)
+
     def add_random_transpose_gui(self, row):
         """
         All widgets need an instance variable because we will hide
@@ -934,6 +998,7 @@ class LessonbasedGui(Gui):
         button.show()
         button.connect('clicked', self.run_random_transpose_dialog)
         self.g_config_grid.attach(button, 2, row, 1, 1)
+
     def run_random_transpose_dialog(self, widget):
         dlg = RandomTransposeDialog(self.m_t.m_P.header.random_transpose, solfege.win)
         response = dlg.run()
@@ -946,6 +1011,7 @@ class LessonbasedGui(Gui):
             else:
                 self.g_random_transpose.set_text(str(self.m_t.m_P.header.random_transpose))
         dlg.destroy()
+
     def show_answer(self, widget=None):
         """
         Show the answer in the g_music_displayer if we have one, if not
@@ -958,6 +1024,7 @@ class LessonbasedGui(Gui):
         if not isinstance(self.m_t.m_P.get_question()[varname], lessonfile.MpdDisplayable):
             return
         self.display_music(varname)
+
     def display_music(self, varname):
         """
         Display the music in the variable named by varname from
@@ -976,6 +1043,7 @@ class LessonbasedGui(Gui):
             e.m_mpd_badcode = self.m_t.m_P.get_question()[varname].get_err_context(e, self.m_t.m_P)
             if not self.standard_exception_handler(e):
                 raise
+
     def do_at_question_start_show_play(self):
         """
         This method is shared by idbyname and elembuilder, and possibly
@@ -997,6 +1065,7 @@ class LessonbasedGui(Gui):
                 self.show_answer()
             elif 'cuemusic' in self.m_t.m_P.get_question():
                 self.display_music('cuemusic')
+
     def show_hide_at_question_start_buttons(self):
         """
         Show and hide g_play_music, g_repeat and g_display_music
@@ -1013,4 +1082,3 @@ class LessonbasedGui(Gui):
             self.g_display_music.show()
         else:
             self.g_display_music.hide()
-

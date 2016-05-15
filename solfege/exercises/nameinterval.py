@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import random
 
 from gi.repository import Gtk
@@ -27,7 +26,9 @@ from solfege import mpd
 
 import solfege
 
+
 class Teacher(abstract.Teacher):
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.NameIntervalLessonfile
@@ -47,6 +48,7 @@ class Teacher(abstract.Teacher):
                   'varbaritone', 'tenor', 'alto', 'mezzosoprano', 'french',
                   ):
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         """
         Return True if a new question was created.
@@ -75,12 +77,14 @@ class Teacher(abstract.Teacher):
         self.m_answered_number = None
         self.q_status = self.QSTATUS_NEW
         return True
+
     def get_music_string(self):
         return r"\staff{ \clef %(clef)s \stemUp %(low)s %(high)s"% {
             'clef': self.m_P.header.clef,
             'high': (self.m_low_pitch + self.m_interval).get_octave_notename(),
             'low': self.m_low_pitch.get_octave_notename(),
         }
+
     def _check_answer(self):
         """
         Set qstatus and return
@@ -91,6 +95,7 @@ class Teacher(abstract.Teacher):
                 self.q_status = self.QSTATUS_SOLVED
             else:
                 self.q_status = self.QSTATUS_WRONG
+
     def answer_complete(self):
         """
         Return True if both interval quality and interval number
@@ -101,6 +106,7 @@ class Teacher(abstract.Teacher):
                  or len(self.m_P.header.interval_quality) == 1)
             and (self.m_answered_number is not None
                  or (len(self.m_P.header.interval_number) == 1)))
+
     def answer_quality(self, n):
         """
         Set q_status according to how we answer.
@@ -108,6 +114,7 @@ class Teacher(abstract.Teacher):
         assert self.q_status in (self.QSTATUS_NEW, self.QSTATUS_WRONG)
         self.m_answered_quality = n
         self._check_answer()
+
     def answer_number(self, n):
         """
         Set q_status according to how we answer.
@@ -115,6 +122,7 @@ class Teacher(abstract.Teacher):
         assert self.q_status in (self.QSTATUS_NEW, self.QSTATUS_WRONG)
         self.m_answered_number = n
         self._check_answer()
+
     def answered_correctly(self):
         """
         Return true if the question is answered correctly.
@@ -138,6 +146,7 @@ class Teacher(abstract.Teacher):
 
 class Gui(abstract.LessonbasedGui):
     lesson_heading = _("Name the interval")
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher, True)
         self.g_music_displayer = mpd.MusicDisplayer()
@@ -151,12 +160,15 @@ class Gui(abstract.LessonbasedGui):
         self.g_number_box = gu.bHBox(self.practise_box)
         self.g_number_box.show()
         gu.bButton(self.action_area, _("_New"), self.new_question)
+
     def unbold_interval(self):
         for b in self.g_number_box.get_children():
             b.get_child().set_name('')
+
     def unbold_quality(self):
         for b in self.g_quality_box.get_children():
             b.get_child().set_name('')
+
     def new_question(self, widget=None):
         self.unbold_interval()
         self.unbold_quality()
@@ -169,6 +181,7 @@ class Gui(abstract.LessonbasedGui):
         except lessonfile.LessonfileException as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def on_interval_quality_clicked(self, button, n):
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_flashbar.flash(_("Click 'New' to begin."))
@@ -185,6 +198,7 @@ class Gui(abstract.LessonbasedGui):
         b.get_child().set_name("BoldText")
         if self.m_t.answer_complete():
             self.handle_do_answer()
+
     def on_interval_number_clicked(self, button, n):
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_flashbar.flash(_("Click 'New' to begin."))
@@ -201,12 +215,14 @@ class Gui(abstract.LessonbasedGui):
         b.get_child().set_name("BoldText")
         if self.m_t.answer_complete():
             self.handle_do_answer()
+
     def handle_do_answer(self):
         self.g_flashbar.clear()
         if self.m_t.answered_correctly():
             self.g_flashbar.flash(_("Correct"))
         else:
             self.g_flashbar.flash(_("Wrong"))
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.g_music_displayer.clear()
@@ -231,6 +247,7 @@ class Gui(abstract.LessonbasedGui):
             ])
             self.g_flashbar.delayed_flash(self.short_delay,
                 _("Click 'New' to begin."))
+
     def on_end_practise(self):
         [btn.destroy() for btn in self.g_number_box.get_children()]
         [btn.destroy() for btn in self.g_quality_box.get_children()]

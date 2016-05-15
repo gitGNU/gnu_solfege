@@ -6,9 +6,11 @@ import re
 from subprocess import *
 import time
 
+
 def run(cmd):
     print "run:", cmd
     os.system(cmd)
+
 
 def get_image_dim(fn):
     output = Popen(["file", fn], stdout=PIPE).communicate()[0]
@@ -18,6 +20,7 @@ def get_image_dim(fn):
         return int(m.groups()[0]), int(m.groups()[1])
     else:
         return None, None
+
 
 def do_file(fn, width):
     time.sleep(2)

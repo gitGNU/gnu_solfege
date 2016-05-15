@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import locale
 import logging
 import sys
@@ -36,6 +35,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
     Base class for the classes that display the front page and the
     page where we select exerises or tests.
     """
+
     def __init__(self):
         Gtk.ScrolledWindow.__init__(self)
         self.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
@@ -45,6 +45,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
         self.set_size_request(self.m_min_width, self.m_min_height)
         self.m_linkbuttons = []
         self.g_searchentry = None
+
     def on_focus_in(self, w, event):
         """
         Set the vadjustment so that the window will scroll to make the button
@@ -65,6 +66,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
                 adj.set_value(0.0)
             else:
                 adj.set_value(a.y)
+
     def on_key_press_event(self, mainwin, event):
         if event.type == Gdk.EventType.KEY_PRESS and event.get_state() == 0:
             adj = self.get_vadjustment()
@@ -104,6 +106,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
                         to_btn.grab_focus()
                         self._on_focus_in_blocked = False
                         return True
+
     def adjust_scrolledwin_size(self):
         # We do set_size_request on the view to make the window so wide
         # that we avoid a horizontal scroll bar.
@@ -137,6 +140,7 @@ class SelectWinBase(Gtk.ScrolledWindow):
 
 
 class ExerciseView(SelectWinBase):
+
     def __init__(self,  fields=('link',)):
         SelectWinBase.__init__(self)
         self.m_fields = fields
@@ -151,6 +155,7 @@ class ExerciseView(SelectWinBase):
         self.g_searchentry.connect('activate', self.on_search)
         gu.bButton(self.g_searchbox, _("Search"), callback=self.on_search, expand=False)
         self.show_all()
+
     def _display_data(self, page, display_only_tests=False,
             is_search_result=False, show_topics=False):
         """
@@ -248,13 +253,16 @@ class ExerciseView(SelectWinBase):
         self.g_grid.show_all()
         self.adjust_scrolledwin_size()
         self.get_vadjustment().set_value(0.0)
+
     def on_page_link_clicked(self, btn, link):
         self.g_searchbox.hide()
         self.emit('link-clicked', self.m_page)
         self.display_data(link)
+
     def on_link_clicked(self, w, filename):
         self.emit('link-clicked', self.m_page)
         solfege.app.practise_lessonfile(filename)
+
     def display_search_result(self, searchfor, result, result_C, display_only_tests=False):
         self._display_data(
           frontpage.Page('',
@@ -266,8 +274,10 @@ class ExerciseView(SelectWinBase):
             _("C-locale search results for “%s”:") % searchfor,
               result_C),
               ])))
+
     def on_end_practise(self, w=None):
         pass
+
     def _search(self, substring, C_locale, only_tests):
         """
         substring - the string to search for
@@ -312,11 +322,13 @@ GObject.signal_new('link-clicked', ExerciseView,
 
 
 class FrontPage(ExerciseView):
+
     def display_data(self, data, display_only_tests=False,
             is_search_result=False, show_topics=False):
         self._display_data(data, display_only_tests, is_search_result,
                            show_topics)
         self.g_searchentry.grab_focus()
+
     def on_search(self, *button):
         search_for = self.g_searchentry.get_text().lower()
         logging.debug("FrontPage.on_search '%s'", search_for)
@@ -330,12 +342,15 @@ class FrontPage(ExerciseView):
 
 
 class TestsView(ExerciseView):
+
     def on_link_clicked(self, w, filename):
         self.emit('link-clicked', self.m_page)
         solfege.app.test_lessonfile(filename)
+
     def display_data(self, data=None, is_search_result=False, show_topics=False):
         self._display_data(data, True, is_search_result, show_topics)
         self.g_searchentry.grab_focus()
+
     def on_search(self, *button):
         search_for = self.g_searchentry.get_text().lower()
         page = self._search(search_for, False, True)
@@ -348,6 +363,7 @@ class TestsView(ExerciseView):
 
 
 class SearchView(ExerciseView):
+
     def __init__(self, infotext, fields=('link',)):
         ExerciseView.__init__(self, fields)
         page = """FileHeader(1,
@@ -360,9 +376,11 @@ class SearchView(ExerciseView):
         p = frontpage.parse_tree(page)
         self.display_data(frontpage.parse_tree(page))
         self.g_searchentry.show()
+
     def display_data(self, data):
         self._display_data(data)
         self.g_searchentry.grab_focus()
+
     def on_search(self, *button):
         search_for = self.g_searchentry.get_text().lower()
         lessonfile.infocache.update_modified_files()
@@ -373,5 +391,3 @@ class SearchView(ExerciseView):
             filename for filename in lessonfile.infocache._data
             if search_for in lessonfile.infocache.get(filename, 'title').lower()
         ])
-
-

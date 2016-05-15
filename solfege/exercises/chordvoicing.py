@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from gi.repository import Gtk
 
 from solfege import abstract
@@ -24,15 +23,18 @@ from solfege import lessonfile
 from solfege import mpd
 from solfege import soundcard
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     ERR_PICKY = 1
     #UGH should we do this here
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.QuestionsLessonfile
         for s in 'accidentals', 'key', 'semitones', 'atonal':
             self.m_lessonfile_defs[s] = s
+
     def new_question(self):
         """
         return 1 if the teacher has a question to ask
@@ -46,6 +48,7 @@ class Teacher(abstract.Teacher):
         self.m_P.select_random_question()
         self.q_status = self.QSTATUS_NEW
         return Teacher.OK
+
     def guess_chordtype(self, t):
         """
         return 1 if correct, None if not.
@@ -69,6 +72,7 @@ class Teacher(abstract.Teacher):
             else:
                 self.q_status = self.QSTATUS_TYPE_WRONG
                 return
+
     def guess_voicing(self, tones):
         """
         return 1 if correct, None if not.
@@ -90,10 +94,13 @@ class Teacher(abstract.Teacher):
             self.q_status = self.QSTATUS_VOICING_SOLVED
             return 1
         self.q_status = self.QSTATUS_VOICING_WRONG
+
     def give_up(self):
         self.q_status = self.QSTATUS_VOICING_SOLVED
 
+
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         self.m_stacking_frame_min_height = 0
@@ -145,6 +152,7 @@ class Gui(abstract.LessonbasedGui):
         # config_grid #
         ###############
         self.add_random_transpose_gui(row=0)
+
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()
@@ -175,9 +183,11 @@ class Gui(abstract.LessonbasedGui):
                     e.m_mpd_badcode = self.m_t.m_P.get_question()['music'].get_err_context(e, self)
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def clear_stacking_frame(self):
         for c in self.g_source.get_children() + self.g_answer.get_children():
             c.destroy()
+
     def fill_stacking_frame(self):
         """
         Create the buttons in stacking frame.
@@ -195,6 +205,7 @@ class Gui(abstract.LessonbasedGui):
             self.g_source.pack_end(b, False, False, 0)
             b.show()
         self.g_source.get_children()[0].grab_focus()
+
     def give_up(self, v=None):
         self.m_t.give_up()
         self.std_buttons_give_up()
@@ -203,6 +214,7 @@ class Gui(abstract.LessonbasedGui):
         self.g_stacking_frame.set_sensitive(True)
         self.g_redo.set_sensitive(False)
         self.show_music()
+
     def on_chordtype_right_clicked(self, button, event, t):
         if event.button != 3:
             return
@@ -233,6 +245,7 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e):
                 raise
+
     def on_chordtype_clicked(self, btn, t):
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_flashbar.flash(_("Click 'New chord' to begin."))
@@ -246,6 +259,7 @@ class Gui(abstract.LessonbasedGui):
                 self.g_flashbar.flash(_("Wrong"))
         elif self.m_t.q_status in (self.QSTATUS_TYPE_SOLVED, self.QSTATUS_VOICING_WRONG):
             self.g_flashbar.flash(_("Type is already solved, now specify voicing."))
+
     def on_notebutton_clicked(self, btn, n, user_notename):
         newb = Gtk.Button(user_notename)
         newb.show()
@@ -265,6 +279,7 @@ class Gui(abstract.LessonbasedGui):
                 self.g_redo.grab_focus()
         else:
             self.g_source.get_children()[0].grab_focus()
+
     def show_music(self):
         self.clear_stacking_frame()
         md = mpd.MusicDisplayer()
@@ -281,6 +296,7 @@ class Gui(abstract.LessonbasedGui):
             b.get_children()[0].set_use_markup(1)
             b.show()
             self.g_answer.pack_end(b, False, False, 0)
+
     def fill_chordtype_box(self):
         for x in self.g_chordtype_box.get_children():
             x.destroy()
@@ -291,9 +307,11 @@ class Gui(abstract.LessonbasedGui):
             b.connect('clicked', self.on_chordtype_clicked, name.cval)
             b.connect('button_release_event', self.on_chordtype_right_clicked, name)
             b.show()
+
     def set_chordtype_frame_status_solved(self, t):
         for c in self.g_chordtype_box.get_children():
             c.set_sensitive(c.m_chordtype == t)
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.g_random_transpose.set_text(str(self.m_t.m_P.header.random_transpose))
@@ -307,6 +325,7 @@ class Gui(abstract.LessonbasedGui):
         self.fill_chordtype_box()
         self.clear_stacking_frame()
         self.g_stacking_frame.set_sensitive(False)
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()

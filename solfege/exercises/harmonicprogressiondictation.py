@@ -24,9 +24,12 @@ from solfege import mpd
 from solfege import soundcard
 from solfege import statisticsviewer
 
+
 class Teacher(idbyname.Teacher):
+
     def __init__(self, exname):
         idbyname.Teacher.__init__(self, exname)
+
     def play_question(self):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -34,6 +37,7 @@ class Teacher(idbyname.Teacher):
 
 
 class Gui(abstract.LessonbasedGui):
+
     def __init__(self, teacher):
         abstract.LessonbasedGui.__init__(self, teacher)
         ################
@@ -79,6 +83,7 @@ class Gui(abstract.LessonbasedGui):
 
     def on_entry_changed(self, w):
         self.g_guess_answer.set_sensitive(bool(self.g_entry.get_text()))
+
     def guess_answer(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_NO:
             return
@@ -94,10 +99,12 @@ class Gui(abstract.LessonbasedGui):
             else:
                 self.g_flashbar.flash(_("Wrong"))
                 self.std_buttons_answer_wrong()
+
     def show_answer(self, widget=None):#FIXME rename to show_music??
         if self.m_t.q_status != self.QSTATUS_NO:
             self.g_music_displayer.display(self.m_t.m_P.get_music(),
                                self.get_int('config/feta_font_size=20'))
+
     def new_question(self, widget=None):
         def exception_cleanup():
             soundcard.synth.stop()
@@ -118,12 +125,14 @@ class Gui(abstract.LessonbasedGui):
         except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):
                 raise
+
     def give_up(self, widget=None):
         self.m_t.give_up()
         self.std_buttons_give_up()
         self.g_guess_answer.set_sensitive(False)
         self.g_flashbar.push(self.m_t.m_P.get_cname())
         self.show_answer()
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = self.get_bool('gui/expert_mode')
         self.m_t.m_statistics.reset_session()
@@ -135,9 +144,9 @@ class Gui(abstract.LessonbasedGui):
         self.std_buttons_start_practise()
         self.set_lesson_heading(self.m_t.m_P.header.lesson_heading)
         self.g_guess_answer.grab_default()
+
     def on_end_practise(self):
         self.std_buttons_end_practise()
         self.g_guess_answer.set_sensitive(False)
         self.g_music_displayer.clear(2)
         self.m_t.end_practise()
-

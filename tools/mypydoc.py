@@ -12,4 +12,3 @@ import solfege.i18n
 solfege.i18n.setup(".")
 
 pydoc.cli()
-

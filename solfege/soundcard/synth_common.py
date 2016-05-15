@@ -16,24 +16,28 @@
 
 
 class SynthCommon(object):
+
     def __init__(self):
         self.__test_saved_play_midieventstream = None
+
     def start_testmode(self):
         assert self.__test_saved_play_midieventstream is None
         self.m_test_stream = None
         self.__test_saved_play_midieventstream = self.play_midieventstream
         self.play_midieventstream = self.testmode_play_midieventstream
+
     def end_testmode(self):
         assert self.__test_saved_play_midieventstream is not None
         self.play_midieventstream = self.__test_saved_play_midieventstream
         self.__test_saved_play_midieventstream = None
         return self.flush_testdata()
+
     def flush_testdata(self, details=0):
         if self.m_test_stream:
             return self.m_test_stream.str_repr(details)
         return ""
+
     def testmode_play_midieventstream(self, midieventstream):
         # twostep operation because we want to sort the events
         # in a specific order
         self.m_test_stream = midieventstream
-

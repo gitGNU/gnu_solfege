@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 from gi.repository import Gtk
 from gi.repository import Gdk
 
@@ -27,17 +25,21 @@ from solfege import gu
 from solfege import mpd
 from solfege import utils
 
+
 class CairoCommon(object):
     mark_color = {
         1: (0, 1, 0),
         2: (0.8, 0.6, 0)
     }
+
     def __init__(self):
         self.m_marks = []
         self.m_clicked_tones = []
+
     def clear(self):
         self.m_marks = []
         self.m_clicked_tones = []
+
     def mark_note(self, midi_int, color):
         """
         color should be 1 to mark the first tone of a question and
@@ -46,23 +48,28 @@ class CairoCommon(object):
         if midi_int not in self.m_marks:
             self.m_marks.append((midi_int, color))
         self.queue_draw()
+
     def set_first_note(self, note):
         self.clear()
         self.m_clicked_tones = [int(note)]
         self.mark_note(self.m_clicked_tones[-1], 1)
+
     def grab_focus_first_sensitive_button(self):
         """
         Dummy function. Only buttons interface implement this.
         """
         pass
+
     def know_directions(self):
         """
         Return True because this is a inputwidget where the user say
         both interval type _and_ direction.
         """
         return True
+
     def forget_last_tone(self):
         self.m_clicked_tones.pop()
+
     def _handle_tone_clicked(self, midi_int, mouse_button):
         if self.m_clicked_tones:
             interval = midi_int - self.m_clicked_tones[-1]
@@ -70,7 +77,9 @@ class CairoCommon(object):
                 self.m_clicked_tones.append(midi_int)
             self.m_callback(mouse_button, interval, midi_int)
 
+
 class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
+
     def __init__(self, num_octaves, lowest_c, key_w=15):
         Gtk.DrawingArea.__init__(self)
         CairoCommon.__init__(self)
@@ -88,6 +97,7 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
         self.m_last_redraw = 0
         self.m_black_w = 0.6
         self.set_size_request(int(num_octaves * 7 * key_w + 1), int(self.m_white_h + 1))
+
     def _on_button_press(self, drawingarea, event):
         assert event.x >= 0
         if event.x < self.m_pos_x or event.x > self.m_num_octaves * 7 * self.m_key_w + self.m_pos_x:
@@ -117,6 +127,7 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
         clicked_on.m_accidental_i = black_clicked
         clicked_on.m_octave_i += clicked_octave
         self.on_button_press_event(event, clicked_on.semitone_pitch())
+
     def draw(self, widget, context):
         num_key = 7 * self.m_num_octaves
         width = num_key * self.m_key_w
@@ -160,11 +171,13 @@ class PianoKeyboard(Gtk.DrawingArea, CairoCommon):
 
 
 class PianoOctaveWithAccelName(PianoKeyboard):
+
     def __init__(self, callback, keys):
         PianoKeyboard.__init__(self, 1, "c", 40)
         self.m_callback = callback
         self.m_visible_accels = False
         self.m_keys = keys
+
     def draw(self, widget, context):
         PianoKeyboard.draw(self, widget, context)
         if not self.m_visible_accels:
@@ -194,6 +207,7 @@ class PianoOctaveWithAccelName(PianoKeyboard):
                 context.fill()
                 context.stroke()
         context.restore()
+
     def on_button_press_event(self, event, midi_int):
         if event.button == 3:
             utils.play_note(4, midi_int)
@@ -202,9 +216,11 @@ class PianoOctaveWithAccelName(PianoKeyboard):
 
 
 class IntervalPianoWidget(PianoKeyboard):
+
     def __init__(self, callback):
         PianoKeyboard.__init__(self, 4, "c,", 18)
         self.m_callback = callback
+
     def on_button_press_event(self, event, midi_int):
         """
         The callback function is only called if we have an interval.
@@ -227,6 +243,7 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         self.get_sensitive_buttons = sensicallback
         self.m_callback = callback
         self.m_buttons = {}
+
     def post_construct(self, vars_to_watch):
         self.m_lowest_tone = mpd.LOWEST_NOTENAME
         self.m_highest_tone = mpd.HIGHEST_NOTENAME
@@ -234,15 +251,18 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         for var in vars_to_watch:
             self.add_watch(var, self.intervals_changed)
         self.intervals_changed()
+
     def intervals_changed(self, s=None):
         if self.get_bool('disable_unused_intervals'):
             self.set_sensitivity(self.get_sensitive_buttons())
         else:
             self.set_sensitivity(list(range(mpd.interval.max_interval+1)))
+
     def set_sensitivity(self, make_active):
         for x in range(1, mpd.interval.max_interval + 1):
             if x in self.m_buttons:
                 self.m_buttons[x].set_sensitive(x in make_active)
+
     def mk_button(self, nr):
         # buttonwidget calls m_callback with None as midi_int because it
         # does not know if you mean interval up or down when you click
@@ -255,35 +275,45 @@ class IntervalButtonsWidgetBase(Gtk.Grid, cfg.ConfigUtils):
         b.set_vexpand(True)
         b.set_hexpand(True)
         return b
+
     def row(self, *data):
         row = Gtk.Grid()
         row.set_column_homogeneous(True)
         self.add(row)
         for i in data:
             row.add(self.mk_button(i))
+
     def _abc(self, button, event, interval):
         if event.button == 3:
             self.m_callback(3, interval, None)
+
     def set_first_note(self, note):
         self.m_first_note = int(note)
+
     def know_directions(self):
         return False
+
     def clear(self):
         pass
+
     def show(self):
         self.show_all()
+
     def grab_focus_first_sensitive_button(self):
         if self.get_bool('disable_unused_intervals'):
             self.m_buttons[self.get_sensitive_buttons()[0]].grab_focus()
         else:
             self.m_buttons[1].grab_focus()
+
     def mark_note(self, midi_int, color):
         """
         Only implemented for buttons that are drawn using cairo.
         """
         pass
 
+
 class IntervalButtonsWidget(IntervalButtonsWidgetBase):
+
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
         g1 = Gtk.Grid()
@@ -305,6 +335,7 @@ class IntervalButtonsWidget(IntervalButtonsWidgetBase):
 
 
 class IntervalButtonsWidget2(IntervalButtonsWidgetBase):
+
     def __init__(self, exname, callback, sensicallback, vars_to_watch):
         IntervalButtonsWidgetBase.__init__(self, exname, callback, sensicallback)
         self.row(1, 2, 3, 4)
@@ -319,6 +350,7 @@ class IntervalButtonsWidget2(IntervalButtonsWidgetBase):
 
 
 class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
+
     def __init__(self, callback, strings,
                 string_thickness=(1, 1, 1, 1, 1, 1)):
         Gtk.DrawingArea.__init__(self)
@@ -359,14 +391,17 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
         self.connect('leave-notify-event', self.on_leave_notify_event)
         self.connect('button-press-event', self.on_button_press_event)
         self.set_size_request(self.m_neckl, self.m_neckw)
+
     def on_button_press_event(self, widget, event):
         x, y = self.event2xy(event)
         if x is not None and y is not None:
             midi_int = self.m_stringtuning[y] + x
             self._handle_tone_clicked(midi_int, event.button)
+
     def on_leave_notify_event(self, widget, event):
         self.m_mouse_pos = None, None
         self.queue_draw()
+
     def on_motion_notify_event(self, widget, event):
         x, y = self.event2xy(event)
         need_redraw = False
@@ -380,6 +415,7 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
             self.m_mouse_pos = None, None
         if need_redraw:
             self.queue_draw()
+
     def draw(self, widget, context):
         self.m_posx = int((self.get_allocated_width() - self.m_neckl) / 2) + 0.5
         self.m_posy = int((self.get_allocated_height() - self.m_neckw) / 2) + 0.5
@@ -502,6 +538,7 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
             context.set_source_rgb(0, 0, 0)
             context.stroke()
             context.restore()
+
     def event2xy(self, event):
         x = event.x - self.m_posx
         xp = yp = None
@@ -517,15 +554,18 @@ class AbstractGuitarWidget(Gtk.DrawingArea, CairoCommon):
 
 
 class GuitarWidget(AbstractGuitarWidget):
+
     def __init__(self, callback, strings, string_thickness):
         AbstractGuitarWidget.__init__(self, callback, strings, string_thickness)
 
 
 class AccordionWidget(Gtk.DrawingArea, CairoCommon):
+
     def __init__(self, callback, keyboard_system):
         Gtk.DrawingArea.__init__(self)
         CairoCommon.__init__(self)
         self.m_callback = callback
+
         def ff(first, count):
             i = mpd.notename_to_int(first)
             return [mpd.int_to_octave_notename(i + x * 3) for x in range(count)]
@@ -557,6 +597,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
         self.connect('draw', self.draw)
         self.connect('button-press-event', self._on_button_press)
         self.set_events(Gdk.EventMask.BUTTON_PRESS_MASK)
+
     def event_to_button_pos(self, event):
         """
         Return a tuple telling which button on the accordion that
@@ -572,6 +613,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
                 if math.sqrt((event.x-cx)**2+(event.y-cy)**2)<self.m_button_radius:
                     return x, y
         return None, None
+
     def _on_button_press(self, drawingarea, event):
         # This is only set if set_first_note is called
         x, y = self.event_to_button_pos(event)
@@ -579,6 +621,7 @@ class AccordionWidget(Gtk.DrawingArea, CairoCommon):
             return
         midi_int = mpd.notename_to_int(self.m_notenames[y][x])
         self._handle_tone_clicked(midi_int, event.button)
+
     def draw(self, widget, context):
         # number of buttons, horiz and vertic.
         self.m_bx = bx = len(self.m_notenames[0])
@@ -650,6 +693,7 @@ inputwidget_names = [_("Buttons"),
                  _("Accordion (system used in Finland)"),
                  _("Accordion (Belgian Charleroi do2)")]
 
+
 def int_to_inputwidget(i, callback, exname, get_interval_input_list, vars_to_watch):
     if i in (0, 1):
         w = {0: IntervalButtonsWidget,
@@ -679,4 +723,3 @@ def int_to_inputwidget(i, callback, exname, get_interval_input_list, vars_to_wat
     elif i == 10:
         w = AccordionWidget(callback, 'belgian')
     return w
-

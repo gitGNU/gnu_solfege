@@ -23,6 +23,7 @@
 
 import sys, getopt, colorsys, imp, md5
 
+
 class pydepgraphdot:
 
     def main(self,argv):    
@@ -186,25 +187,33 @@ class pydepgraphdot:
 
 
 class StdoutWrapper(object):
+
     def __init__(self):
         self.done=set()
+
     def write(self, line):
         if line not in self.done:
             print >> sys.stdout, line
             self.done.add(line)
 
+
 class mypydepgraphdot(pydepgraphdot):
     #def use(sel, s, type):
     #    pass
+
     def get_output_file(self):
         return StdoutWrapper()
 
+
 class DD(pydepgraphdot):
+
     def get_output_file(self):
         f = open("ut.dots", 'w')
         return f
+
     def get_data(self):
         return self._data['depgraph'], self._data['types']
+
     def color(self, s, type):
         if s.startswith("solfege.mpd"):
             return "#c3a983"
@@ -214,11 +223,9 @@ class DD(pydepgraphdot):
             return "#aaaaaa"
         return "#999999"
 
+
 def main():
     mypydepgraphdot().main(sys.argv[1:])
 
 if __name__=='__main__':
     main()
-
-
-

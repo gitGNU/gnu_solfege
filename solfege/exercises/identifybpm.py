@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 import logging
 import random
 
@@ -29,9 +28,11 @@ from solfege import mpd
 from solfege import soundcard
 from solfege import statistics, statisticsviewer
 
+
 class Teacher(abstract.Teacher):
     OK = 0
     NO_TEMPOS = 1
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
@@ -52,15 +53,19 @@ class Teacher(abstract.Teacher):
                 self.m_practise_these[bpm] = 1
             else:
                 self.m_practise_these[bpm] = 0
+
     def toggle_active(self, bpm):
         self.m_practise_these[bpm] = not self.m_practise_these[bpm]
         v = [b for b in self.m_practise_these if self.m_practise_these[b]]
         self.set_string('active_bpms', str(v))
+
     def get_possible_bpms(self):
         return [n for n in list(self.m_practise_these.keys()) \
             if self.m_practise_these[n]]
+
     def get_number_of_levels(self):
         return len(self.m_ped)
+
     def new_question(self):
         last = self.m_question
         if not self.get_possible_bpms():
@@ -78,8 +83,10 @@ class Teacher(abstract.Teacher):
             self.m_question_track.note(4, cfg.get_int("config/rhythm_perc"))
         self.q_status = self.QSTATUS_NEW
         return self.OK
+
     def play_question(self):
         soundcard.synth.play_track(self.m_question_track)
+
     def guess_answer(self, bpm):
         assert self.q_status != self.QSTATUS_NO
         if self.m_question == bpm:
@@ -92,9 +99,11 @@ class Teacher(abstract.Teacher):
             if self.q_status == self.QSTATUS_NEW:
                 self.m_statistics.add_wrong(str(self.m_question), str(bpm))
             self.q_status = self.QSTATUS_WRONG
+
     def end_practise(self):
         super(Teacher, self).end_practise()
         self.q_status = self.QSTATUS_NO
+
     def give_up(self):
         soundcard.synth.stop()
         logging.debug("identifybpm.give_up:FIXME not saving statistics")
@@ -103,6 +112,7 @@ class Teacher(abstract.Teacher):
 
 class Gui(abstract.Gui):
     lesson_heading = _("Beats per minute")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         ################
@@ -145,13 +155,16 @@ class Gui(abstract.Gui):
         ########
         self.g_notebook.get_nth_page(1).hide()
         self.update_buttons()
+
     def on_event(self, button, event):
         if event.button == 3:
             self.m_t.toggle_active(button.m_bpm)
             self.update_buttons()
+
     def on_level_change(self, adjustment):
         self.set_int('level', adjustment.value)
         self.update_buttons()
+
     def on_new(self, _o=None):
         try:
             n = self.m_t.new_question()
@@ -165,12 +178,15 @@ class Gui(abstract.Gui):
             self.m_t.play_question()
         else:
             self.g_flashbar.flash(_("You have to select some tempos to practise."))
+
     def on_repeat(self, _o=None):
         self.m_t.play_question()
+
     def on_give_up(self, _o):
         self.m_t.give_up()
         self.g_flashbar.flash(str(self.m_t.m_question))
         self.std_buttons_give_up()
+
     def update_buttons(self):
         v = self.m_t.get_possible_bpms()
         for b in self.m_buttons:
@@ -178,6 +194,7 @@ class Gui(abstract.Gui):
                 b.get_children()[0].set_name("BpmActiveLabel")
             else:
                 b.get_children()[0].set_name("BpmInactiveLabel")
+
     def on_click(self, _o):
         if self.m_t.q_status in (self.QSTATUS_SOLVED, self.QSTATUS_GIVE_UP):
             return
@@ -193,12 +210,14 @@ class Gui(abstract.Gui):
             self.g_flashbar.flash(_("Wrong"))
             self.std_buttons_answer_wrong()
         self.g_statview.update()
+
     def on_start_practise(self):
         super(Gui, self).on_start_practise()
         self.g_flashbar.flash(_("Click 'New tempo' to begin."))
         self.std_buttons_start_practise()
         self.m_t.m_statistics.reset_session()
         self.g_statview.update()
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()

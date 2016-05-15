@@ -16,6 +16,7 @@ class TmpFile(TmpFileBase):
 
 
 class TestTrack(unittest.TestCase):
+
     def test_simple1(self):
         t = Track()
         t.note(4, 90, 127)
@@ -59,6 +60,7 @@ class TestTrack(unittest.TestCase):
 
 
 class TestMidiEventStream(TmpFile):
+
     def setUp(self):
         TmpFile.setUp(self)
         cfg.set_bool('config/override_default_instrument', True)
@@ -415,6 +417,7 @@ class TestMidiEventStream(TmpFile):
 
 
 class TestChannelDevice(unittest.TestCase):
+
     def setUp(self):
         self.cd = MidiEventStream.ChannelDevice()
 

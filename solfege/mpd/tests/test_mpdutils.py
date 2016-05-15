@@ -5,7 +5,9 @@
 import unittest
 from solfege.mpd.mpdutils import find_possible_first_note
 
+
 class TestMpdUtils(unittest.TestCase):
+
     def test_1(self):
         self.assertEqual((0, 1), find_possible_first_note("d e"))
         self.assertEqual((1, 3), find_possible_first_note("<d'4 e>"))
@@ -16,4 +18,3 @@ class TestMpdUtils(unittest.TestCase):
         self.assertEqual((1, 2), find_possible_first_note(r"[c8 d]"))
 
 suite = unittest.makeSuite(TestMpdUtils)
-

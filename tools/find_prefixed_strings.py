@@ -24,6 +24,8 @@ parser.add_option("-f", action="store_true", dest="display_filename",
 r = re.compile("\"%s\|(?P<prefix>.*?)\"" % options.string_prefix)
 prefix_re = re.compile("\s*name\s*=\s*.*?\"(?P<prefix>.*?)\|.*?\"")
 db = {}
+
+
 def list_name_prefixes():
     prefixes = set()
     for fn in glob.glob("lesson-files/*"):

@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 """
 This code does not work. Also notice that is is not imported by
     from exercises import *
@@ -31,21 +30,27 @@ from solfege import lessonfile
 import solfege.soundcard.solfege_c_midi
 from solfege import soundcard
 
+
 class Teacher(abstract.Teacher):
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
 
+
 class Gui(abstract.Gui):
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         self.g_hz = gu.bLabel(self.practise_box, "")
         self.g_notename = gu.bLabel(self.practise_box, "")
         self.g_cent = gu.bLabel(self.practise_box, "")
+
     def on_start_practise(self):
         soundcard.solfege_c_midi.dsp_open_record()
         #self.__idle_tag = GObject.idle_add(self.update_view)
         self.__idle_tag = GObject.timeout_add(300, self.update_view)
+
     def update_view(self):
         freq = soundcard.solfege_c_midi.idle_loop()
         print(freq)
@@ -54,6 +59,7 @@ class Gui(abstract.Gui):
         self.g_notename.set_text(notename)
         self.g_cent.set_text(str(cent))
         return True
+
     def on_end_practise(self):
         #Gtk.idle_remove(self.__idle_tag)
         GObject.source_remove(self.__idle_tag)

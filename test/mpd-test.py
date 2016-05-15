@@ -10,7 +10,6 @@ from solfege import filesystem
 solfege.cfg.initialise("default.config", None, filesystem.rcfile())
 
 
-
 from gi.repository import Gtk
 
 from solfege import gu
@@ -21,11 +20,14 @@ from solfege import utils
 
 musicfile = "mpd-test.txt"
 
+
 class DisplaytestWindow(Gtk.Window):
+
     def on_quit(self, w):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)
         self.save(t)
+
     def __init__(self):
         Gtk.Window.__init__(self)
         self.connect('destroy', self.on_quit)
@@ -52,29 +54,35 @@ class DisplaytestWindow(Gtk.Window):
         gu.bButton(vbox, "Display first notes", self.on_display_first_notes)
         gu.bButton(vbox, "Play", self.on_play)
         gu.bButton(vbox, "Play first", self.on_play_first)
+
     def save(self, text):
         f = open(musicfile, 'w')
         f.write(text)
         f.close()
+
     def on_parse(self, _o):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)
         score = mpd.parser.parse_to_score_object(t)
+
     def on_display(self, _o):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)
         self.save(t)
         self.g_displayer.display(t, 20)
+
     def on_display_first_notes(self, _o):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)
         self.save(t)
         self.g_displayer.display(t, 20, mpd.Rat(0, 1))
+
     def on_play(self, _o):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)
         self.save(t)
         utils.play_music(t, (120, 4), 0, 100)
+
     def on_play_first(self, _o):
         t = self.m_buf.get_text(self.m_buf.get_start_iter(),
                                 self.m_buf.get_end_iter(), True)

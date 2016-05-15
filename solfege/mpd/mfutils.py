@@ -30,21 +30,26 @@ def mf_delta(i):
     vect = vect + v
     return vect
 
+
 def mf_int16(i):
     assert isinstance(i, int) and 0 <= i < 2**16
     return [i >> 8 & 0xff, i  & 0xff]
+
 
 def mf_int24(i):
     assert isinstance(i, int) and 0 <= i < 2**24
     return [i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
 
+
 def mf_int32(i):
     assert isinstance(i, int) and 0 <= i < 2**32
     return [i >> 24 & 0xff, i >> 16 & 0xff, i >> 8 & 0xff, i  & 0xff]
 
+
 def write_int16(f, i):
     assert isinstance(i, int) and 0 <= i < 2**16
     f.write(bytes(mf_int16(i)))
+
 
 def write_int32(f, i):
     assert isinstance(i, int) and 0 <= i < 2**32
@@ -57,6 +62,7 @@ MIDI_PROGRAM_CHANGE = 0xc0
 
 MIDI_CONTROLLER_VOLUME = 0x07
 
+
 def mf_tempo(n):
     """
     n -- number of quarter tones per minute.
@@ -65,6 +71,7 @@ def mf_tempo(n):
     v = mf_delta(0) + [0xff, 0x51, 0x03] + mf_int24(int(500000*120/n))
     return v
 
+
 def mf_timesig(numerator, denuminator):
     d = {0:1, 2:1, 4:2, 8:3, 16:4, 32:5, 64:6}[denuminator]
     return mf_delta(0) + [0xff, 0x58, 0x04,
@@ -72,31 +79,39 @@ def mf_timesig(numerator, denuminator):
                           0x10, #0x18
                           0x08]
 
+
 def mf_program_change(chan, prg):
     assert 0 <= chan < 16
     return mf_delta(0) + [chan+MIDI_PROGRAM_CHANGE, prg]
+
 
 def mf_volume_change(chan, volume):
     assert 0 <= chan < 16
     assert 0 <= volume < 256
     return mf_delta(0) + [chan + MIDI_CONTROLLER_CHANGE, MIDI_CONTROLLER_VOLUME, volume]
 
+
 def mf_note_on(delta, chan, note, vel):
     assert 0 <= chan < 16
     return mf_delta(delta) + [chan+MIDI_NOTE_ON, note, vel]
+
 
 def mf_note_off(delta, chan, note, vel):
     assert 0 <= chan < 16
     return mf_delta(delta) + [chan+MIDI_NOTE_OFF, note, vel]
 
+
 def mf_end_of_track():
     return [0x0, 0xff, 0x2f, 0x00]
+
 
 def write_vect(f, v):
     f.write(bytes(v))
 
+
 class MThd:
     PPQN = 96
+
     def __init__(self, f):
         v = []
         # MIDI file format:
@@ -117,4 +132,3 @@ class MThd:
         f.write(b"MThd")
         write_int32(f, len(v)) #chunk len
         f.write(bytes(v))
-

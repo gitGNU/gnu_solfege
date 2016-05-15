@@ -18,7 +18,6 @@
 # not pull in the gtk module.
 
 
-
 RHYTHMS = ("c4", "c8 c8", "c16 c16 c16 c16", "c8 c16 c16",
            "c16 c16 c8", "c16 c8 c16", "c8. c16", "c16 c8.",
            "r4", "r8 c8", "r8 c16 c16", "r16 c16 c8", "r16 c8 c16",

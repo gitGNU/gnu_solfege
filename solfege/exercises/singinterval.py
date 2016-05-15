@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from solfege import abstract
 from solfege import gu
 from solfege import lessonfile
@@ -27,18 +26,22 @@ from solfege.mpd import elems
 
 import solfege
 
+
 class Teacher(abstract.MelodicIntervalTeacher):
+
     def __init__(self, exname):
         abstract.MelodicIntervalTeacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IntervalsLessonfile
         self.m_lessonfile_header_defaults['statistics_matrices'] = 'disabled'
         self._ignore_picky = 1
         self.m_statistics = statistics.IntervalStatistics(self)
+
     def enter_test_mode(self):
         self.m_tonika = None
         self.m_custom_mode = False
         self.m_statistics.enter_test_mode()
         self.m_P.enter_test_mode()
+
     def get_question(self):
         """
         Return a string that can be used to display the intervals.
@@ -62,11 +65,13 @@ class Teacher(abstract.MelodicIntervalTeacher):
                 solfege.mpd.Duration(4, 0)))
         score.m_staffs[0].set_clef(solfege.mpd.select_clef(" ".join([x.get_octave_notename() for x in tones])), solfege.mpd.Rat(0, 1))
         return score
+
     def guessed_correct(self):
         if self.get_int('number_of_intervals=1') == 1 \
                 and not self.m_custom_mode:
             self.m_statistics.add_correct(self.m_question[0])
         self.q_status = self.QSTATUS_SOLVED
+
     def guessed_wrong(self):
         if self.get_int('number_of_intervals=1') == 1 \
                 and not self.m_custom_mode:
@@ -74,11 +79,13 @@ class Teacher(abstract.MelodicIntervalTeacher):
         # we set q_status to WRONG, just to trick the MelodicIntervalTeacher
         # .new_interval to do the work for us.
         self.q_status = self.QSTATUS_SOLVED
+
     def play_first_tone(self):
         if self.q_status == self.QSTATUS_NO:
             return
         assert self.m_question
         utils.play_note(4, self.m_tonika.semitone_pitch())
+
     def play_last_tone(self):
         if self.q_status == self.QSTATUS_NO:
             return
@@ -91,6 +98,7 @@ class Teacher(abstract.MelodicIntervalTeacher):
 
 class Gui(abstract.Gui):
     lesson_heading = _("Sing the interval")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         ################
@@ -130,6 +138,7 @@ class Gui(abstract.Gui):
         ###############
         self.setup_statisticsviewer(
            statisticsviewer.StatisticsViewer, _("Sing interval"))
+
     def _new_question(self):
         try:
             r = self.m_t.new_question(self.get_string('user/lowest_pitch'),
@@ -152,6 +161,7 @@ class Gui(abstract.Gui):
             solfege.win.display_error_message(_("The exercise has to be better configured.\nClick 'Reset to default values' on the config\npage if you don't know how to do this."))
             self.g_score_displayer.clear()
         return r
+
     def on_start_practise(self):
         # First, we have to empty the cfg database because we will
         # copy the values from the lesson header.
@@ -183,6 +193,7 @@ class Gui(abstract.Gui):
         self.g_new_interval.grab_focus()
         self.g_new_interval_correct.hide()
         self.g_new_interval_wrong.hide()
+
     def on_end_practise(self):
         self.g_new_interval.show()
         self.g_repeat_tonika.set_sensitive(False)
@@ -190,6 +201,7 @@ class Gui(abstract.Gui):
         self.g_repeat_last_tone.set_sensitive(False)
         self.m_t.end_practise()
         self.g_score_displayer.clear()
+
     def new_last_was_wrong(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_NEW:
             self.m_t.guessed_wrong()
@@ -197,6 +209,7 @@ class Gui(abstract.Gui):
                 self.do_test_complete()
                 return
         self._new_question()
+
     def new_question(self, widget=None):#called by 'new last was correct' and from
                  # teacher when we get a new question automatically.
         if self.m_t.q_status == self.QSTATUS_NEW:
@@ -214,6 +227,7 @@ class Gui(abstract.Gui):
             self.g_new_interval.hide()
             self.g_new_interval_correct.show()
             self.g_new_interval_wrong.show()
+
     def enter_test_mode(self):
         self.m_saved_q_auto = self.get_bool('new_question_automatically')
         self.m_saved_s_new = self.get_float('seconds_before_new_question')
@@ -224,6 +238,7 @@ class Gui(abstract.Gui):
         self.g_new_interval_correct.hide()
         self.g_new_interval_wrong.hide()
         self.g_cancel_test.show()
+
     def exit_test_mode(self):
         self.set_bool('new_question_automatically', self.m_saved_q_auto)
         self.set_float('seconds_before_new_question', self.m_saved_s_new)

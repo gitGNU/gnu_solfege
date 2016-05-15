@@ -15,8 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 from gi.repository import GObject
 from gi.repository import Gdk
 from gi.repository import Gtk
@@ -26,18 +24,22 @@ from solfege import const
 from solfege import gu
 from solfege import lessonfile
 
+
 class Teacher(abstract.Teacher, abstract.RhythmAddOnClass):
     OK = 0
     ERR_PICKY = 1
     ERR_NO_ELEMS = 2
+
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.HeaderLessonfile
         self.m_lessonfile_defs['newline'] = 'newline'
+
     def play_question(self):
         if self.q_status == self.QSTATUS_NO:
             return
         self.play_rhythm(self.get_music_string())
+
     def guess_answer(self, a):
         assert self.q_status in [self.QSTATUS_NEW, self.QSTATUS_WRONG]
         v = []
@@ -52,6 +54,7 @@ class Teacher(abstract.Teacher, abstract.RhythmAddOnClass):
 
 
 class RhythmViewer(Gtk.Frame):
+
     def __init__(self, parent):
         Gtk.Frame.__init__(self)
         self.set_shadow_type(Gtk.ShadowType.IN)
@@ -66,12 +69,15 @@ class RhythmViewer(Gtk.Frame):
         self.m_num_beats = 0
         self.g_face = None
         self.__timeout = None
+
     def set_num_beats(self, i):
         self.m_num_beats = i
+
     def clear(self):
         for child in self.g_box.get_children():
             child.destroy()
         self.m_data = []
+
     def create_holders(self):
         """
         create those |__| that represents one beat
@@ -83,6 +89,7 @@ class RhythmViewer(Gtk.Frame):
         for x in range(self.m_num_beats):
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
         self.m_data = []
+
     def clear_wrong_part(self):
         """When the user have answered the question, this method is used
         to clear all but the first correct elements."""
@@ -99,6 +106,7 @@ class RhythmViewer(Gtk.Frame):
         self.m_data = self.m_data[:n]
         for x in range(n, self.m_num_beats):
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
+
     def add_rhythm_element(self, i):
         assert len(self.m_data) <= self.m_num_beats
         if len(self.g_box.get_children()) >= self.m_num_beats:
@@ -112,6 +120,7 @@ class RhythmViewer(Gtk.Frame):
         self.g_box.pack_start(vbox, False, False, 0)
         self.g_box.reorder_child(vbox, len(self.m_data))
         self.m_data.append(i)
+
     def backspace(self):
         if len(self.m_data) > 0:
             if self.g_face:
@@ -121,15 +130,18 @@ class RhythmViewer(Gtk.Frame):
             self.g_box.get_children()[len(self.m_data)-1].destroy()
             self.g_box.pack_start(gu.create_png_image('holder'), False, False, 0)
             del self.m_data[-1]
+
     def mark_wrong(self, idx):
         """
         Mark the rhythm elements that was wrong by putting the content of
         graphics/rhythm-wrong.png (normally a red line) under the element.
         """
         self.g_box.get_children()[idx].get_children()[1].show()
+
     def len(self):
         "return the number of rhythm elements currently viewed"
         return len(self.m_data)
+
     def sad_face(self):
         l = gu.HarmonicProgressionLabel(_("Wrong"))
         l.show()
@@ -142,6 +154,7 @@ class RhythmViewer(Gtk.Frame):
         im.show()
         self.g_face.add(im)
         self.g_box.pack_start(self.g_face, False, False, 0)
+
     def happy_face(self):
         l = gu.HarmonicProgressionLabel(_("Correct"))
         l.show()
@@ -154,12 +167,15 @@ class RhythmViewer(Gtk.Frame):
         im.show()
         self.g_face.add(im)
         self.g_box.pack_start(self.g_face, False, False, 0)
+
     def on_happyface_event(self, obj, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1:
             self.g_parent.new_question()
+
     def on_sadface_event(self, obj, event):
         if event.type == Gdk.EventType.BUTTON_PRESS and event.button == 1:
             self.clear_wrong_part()
+
     def flash(self, s):
         self.clear()
         l = Gtk.Label(label=s)
@@ -171,12 +187,15 @@ class RhythmViewer(Gtk.Frame):
             max(l.size_request().width + gu.PAD * 2, self.g_box.size_request().width),
             max(l.size_request().height + gu.PAD * 2, self.g_box.size_request().height))
         self.__timeout = GObject.timeout_add(2000, self.unflash)
+
     def unflash(self, *v):
         self.__timeout = None
         self.clear()
 
+
 class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
     lesson_heading = _("Identify the rhythm")
+
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
         self.m_key_bindings = {'backspace_ak': self.on_backspace}
@@ -224,6 +243,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         self.g_config_grid.attach(spin, 1, 4, 1, 1)
         self._add_auto_new_question_gui(row=5)
         self.g_config_grid.show_all()
+
     def pngbutton(self, i):
         "used by the constructor"
         btn = Gtk.Button()
@@ -237,19 +257,23 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         btn.show()
         btn.connect('clicked', self.guess_element, i)
         return btn
+
     def select_element_cb(self, button, element_num):
         super(Gui, self).select_element_cb(button, element_num)
         self.update_answer_buttons()
+
     def on_backspace(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_SOLVED:
             return
         self.g_rhythm_viewer.backspace()
         if not self.g_rhythm_viewer.m_data:
             self.g_backspace.set_sensitive(False)
+
     def play_users_answer(self, widget):
         if self.g_rhythm_viewer.m_data:
             rhythm = " ".join([const.RHYTHMS[c] for c in self.g_rhythm_viewer.m_data])
             self.m_t.play_rhythm(r"\rhythmstaff{ \time 1000000/4 %s }" % rhythm)
+
     def guess_element(self, sender, i):
         if self.m_t.q_status == self.QSTATUS_NO:
             self.g_rhythm_viewer.flash(_("Click 'New' to begin."))
@@ -273,6 +297,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
                         self.g_rhythm_viewer.mark_wrong(x)
                 self.g_rhythm_viewer.sad_face()
                 self.std_buttons_answer_wrong()
+
     def new_question(self, widget=None):
         g = self.m_t.new_question()
         if g == self.m_t.OK:
@@ -292,9 +317,11 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
             assert g == self.m_t.ERR_NO_ELEMS
             self.g_repeat.set_sensitive(False)
             self.g_rhythm_viewer.flash(_("You have to configure this exercise properly"))
+
     def repeat_question(self, *w):
         self.m_t.play_question()
         self.g_first_rhythm_button.grab_focus()
+
     def update_answer_buttons(self):
         """
         (Re)create the buttons needed to answer the questions.
@@ -312,6 +339,7 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
                     self.g_first_rhythm_button = b
                 self.g_answer_box.add_widget(b)
         self.g_answer_box.show_widgets()
+
     def on_start_practise(self):
         self.m_t.m_custom_mode = bool(self.m_t.m_P.header.configurable_rhythm_elements)
         super(Gui, self).on_start_practise()
@@ -327,10 +355,12 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         if 'not_start_with_rest' in self.m_t.m_P.header:
             self.m_t.set_bool('not_start_with_rest', self.m_t.m_P.header.not_start_with_rest)
         self.g_rhythm_viewer.flash(_("Click 'New' to begin."))
+
     def on_end_practise(self):
         self.m_t.end_practise()
         self.std_buttons_end_practise()
         self.g_rhythm_viewer.create_holders()
+
     def give_up(self, widget=None):
         if self.m_t.q_status == self.QSTATUS_NO:
             return
@@ -339,4 +369,3 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
             self.g_rhythm_viewer.add_rhythm_element(i)
         self.m_t.q_status = self.QSTATUS_SOLVED
         self.std_buttons_give_up()
-

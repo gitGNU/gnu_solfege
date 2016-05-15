@@ -16,8 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 import logging
 import os
 import io
@@ -41,7 +39,9 @@ from solfege import frontpage as pd
 from solfege import lessonfile
 from solfege import osutils
 
+
 class LessonFilePreviewWidget(Gtk.VBox):
+
     def __init__(self, model):
         Gtk.VBox.__init__(self)
         self.m_model = model
@@ -67,6 +67,7 @@ class LessonFilePreviewWidget(Gtk.VBox):
         self.g_topic_box = Gtk.VBox()
         self.pack_start(self.g_topic_box, False, False, 0)
         self.show_all()
+
     def update(self, dlg):
         fn = dlg.get_preview_filename()
         if fn:
@@ -96,7 +97,9 @@ class LessonFilePreviewWidget(Gtk.VBox):
         self.show_all()
         return True
 
+
 class SelectLessonFileDialog(Gtk.FileChooserDialog):
+
     def __init__(self, parent):
         Gtk.FileChooserDialog.__init__(self, _("Select lesson file"),
             parent=parent,
@@ -111,6 +114,7 @@ class SelectLessonFileDialog(Gtk.FileChooserDialog):
 
 
 class SelectLessonfileBySearchDialog(Gtk.Dialog):
+
     def __init__(self, w):
         Gtk.Dialog.__init__(self, buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.ACCEPT), parent=w)
         view = SearchView(_('Search for exercises. Each exercise you click will be added to the section of the front page.'),
@@ -118,6 +122,7 @@ class SelectLessonfileBySearchDialog(Gtk.Dialog):
         view.on_link_clicked = self.on_link_clicked
         self.vbox.pack_start(view, True, True, 0)
         self.show_all()
+
     def on_link_clicked(self, widget, filename):
         self.m_filename = filename
         self.response(Gtk.ResponseType.OK)
@@ -131,6 +136,7 @@ def editor_of(obj):
     while not isinstance(p, Editor):
         p = p.m_parent
     return p
+
 
 def parent_page(obj):
     """
@@ -147,11 +153,13 @@ def parent_page(obj):
         if p is None:
             return None
 
+
 class Section(Gtk.VBox):
     """
     A section consists of a heading and a list of links.
     self.g_link_box is a vbox that contains the links.
     """
+
     def __init__(self, model, parent):
         Gtk.VBox.__init__(self)
         self.m_model = model
@@ -262,11 +270,13 @@ class Section(Gtk.VBox):
         item.connect('activate', self.on_add_link_by_search)
         menu.append(item)
         menu.show_all()
+
     def on_edit_heading(self, btn):
         self.g_heading_entry.set_text(self.m_model.m_name)
         self.g_heading_entry.show()
         self.g_heading.hide()
         self.g_heading_entry.grab_focus()
+
         def finish_edit(entry):
             self.g_heading_entry.disconnect(sid)
             self.g_heading_entry.disconnect(keyup_id)
@@ -276,10 +286,12 @@ class Section(Gtk.VBox):
             self.g_heading_entry.hide()
             self.g_heading.show()
         sid = self.g_heading_entry.connect('activate', finish_edit)
+
         def keydown(entry, event):
             if event.keyval == Gdk.KEY_Tab:
                 finish_edit(entry)
         keydown_sid = self.g_heading_entry.connect('key-press-event', keydown)
+
         def keyup(entry, event):
             if event.keyval == Gdk.KEY_Escape:
                 self.g_heading_entry.disconnect(sid)
@@ -288,10 +300,13 @@ class Section(Gtk.VBox):
                 self.g_heading.show()
                 return True
         keyup_id = self.g_heading_entry.connect('key-release-event', keyup)
+
     def on_add(self, btn, event):
         self.g_add_popup.popup(None, None, None, None, event.button, event.time)
+
     def on_remove(self, btn, event):
         self.m_parent.remove_section(self)
+
     def on_add_link_by_search(self, btn):
         dlg = SelectLessonfileBySearchDialog(editor_of(self))
         while True:
@@ -301,6 +316,7 @@ class Section(Gtk.VBox):
             else:
                 break
         dlg.destroy()
+
     def on_add_link(self, btn):
         if editor_of(self).m_filename:
             open_dir = os.path.split(editor_of(self).m_filename)[0]
@@ -317,6 +333,7 @@ class Section(Gtk.VBox):
                 self._add_filenames(dlg.get_filenames())
                 break
         dlg.destroy()
+
     def _add_filenames(self, filenames):
         for filename in filenames:
             fn = gu.decode_filename(filename)
@@ -333,12 +350,15 @@ class Section(Gtk.VBox):
                 continue
             self.m_model.append(fn)
             self.g_link_box.pack_start(self.create_linkrow(fn), True, True, 0)
+
     def on_add_link_to_new_page(self, menuitem):
         page = pd.Page(_("Untitled%s") % "", [pd.Column()])
         self.m_model.append(page)
         self.g_link_box.pack_start(self.create_linkrow(page), True, True, 0)
+
     def create_linkrow(self, link_this):
         hbox = Gtk.HBox()
+
         def ff(btn, page):
             if id(page) in editor_of(self).m_page_mapping:
                 editor_of(self).show_page_id(id(page))
@@ -363,6 +383,7 @@ class Section(Gtk.VBox):
         linkbutton.connect('button-press-event', self.on_right_click_row, link_this)
         hbox.show_all()
         return hbox
+
     def on_right_click_row(self, button, event, linked):
         idx = self.m_model.index(linked)
         if event.button == 3:
@@ -396,12 +417,14 @@ class Section(Gtk.VBox):
             m.show_all()
             m.popup(None, None, None, None, event.button, event.time)
             return True
+
     def on_delete_link(self, menuitem, linked):
         idx = self.m_model.index(linked)
         if id(linked) in editor_of(self).m_page_mapping:
             editor_of(self).destroy_window(id(linked))
         self.g_link_box.get_children()[idx].destroy()
         del self.m_model[idx]
+
     def on_edit_linktext(self, menuitem, linked):
         idx = self.m_model.index(linked)
         # row is the hbox containing the linkbutton
@@ -413,6 +436,7 @@ class Section(Gtk.VBox):
         linkbutton.hide()
         entry.show()
         entry.grab_focus()
+
         def finish_edit(entry):
             linkbutton.set_label(entry.get_text().decode("utf-8"))
             linkbutton.get_children()[0].set_alignment(0.0, 0.5)
@@ -420,10 +444,12 @@ class Section(Gtk.VBox):
             self.m_model[idx].m_name = entry.get_text().decode("utf-8")
             entry.destroy()
         sid = entry.connect('activate', finish_edit)
+
         def keydown(entry, event):
             if event.keyval == Gdk.KEY_Tab:
                 finish_edit(entry)
         entry.connect('key-press-event', keydown)
+
         def keyup(entry, event):
             if event.keyval == Gdk.KEY_Escape:
                 linkbutton.show()
@@ -431,6 +457,7 @@ class Section(Gtk.VBox):
                 entry.destroy()
                 return True
         entry.connect('key-release-event', keyup)
+
     def on_edit_file(self, menuitem, linked):
         try:
             try:
@@ -440,12 +467,15 @@ class Section(Gtk.VBox):
                  raise osutils.BinaryForProgramException("Text editor", cfg.get_string("programs/text-editor"), e)
         except osutils.BinaryForProgramException as e:
             solfege.win.display_error_message2(e.msg1, e.msg2)
+
     def on_cut(self, btn):
         self.m_parent.cut_section(self)
+
     def on_cut_link(self, menuitem, idx):
         Editor.clipboard.append(self.m_model[idx])
         del self.m_model[idx]
         self.g_link_box.get_children()[idx].destroy()
+
     def on_paste(self, btn, idx):
         assert Editor.clipboard, "Paste buttons should be insensitive when the clipboard is empty."
         pobj = Editor.clipboard.pop()
@@ -461,6 +491,7 @@ class Section(Gtk.VBox):
             row = self.create_linkrow(mobj)
             self.g_link_box.pack_start(row, True, True, 0)
             self.g_link_box.reorder_child(row, idx)
+
     def on_move_link_up(self, btn, idx):
         """
         Move the link one row up.
@@ -468,6 +499,7 @@ class Section(Gtk.VBox):
         assert idx > 0
         self.m_model[idx], self.m_model[idx - 1] = self.m_model[idx - 1], self.m_model[idx]
         self.g_link_box.reorder_child(self.g_link_box.get_children()[idx], idx - 1)
+
     def on_move_link_down(self, btn, idx=None):
         """
         Move the link one row down.
@@ -477,6 +509,7 @@ class Section(Gtk.VBox):
 
 
 class Column(Gtk.VBox):
+
     def __init__(self, model, parent):
         Gtk.VBox.__init__(self)
         self.set_spacing(gu.hig.SPACE_MEDIUM)
@@ -499,17 +532,21 @@ class Column(Gtk.VBox):
         b.connect('clicked', self.on_paste)
         Editor.clipboard.register_paste_button(b, pd.LinkList)
         hbox.pack_start(b, False, False, 0)
+
     def __del__(self):
         logging.debug("Column.__del__")
+
     def cut_section(self, section):
         idx = self.g_section_box.get_children().index(section)
         Editor.clipboard.append(self.m_model[idx])
         del self.m_model[idx]
         self.g_section_box.get_children()[idx].destroy()
+
     def remove_section(self, section):
         idx = self.g_section_box.get_children().index(section)
         del self.m_model[idx]
         self.g_section_box.get_children()[idx].destroy()
+
     def on_add_section(self, btn):
         # We write "Untitled%s" % "" instead of just "Untitled" here
         # since "Untitled%s" is already translated in many languages.
@@ -518,6 +555,7 @@ class Column(Gtk.VBox):
         gui_section = Section(section, self)
         self.g_section_box.pack_start(gui_section, False, False, 0)
         gui_section.show_all()
+
     def move_section_down(self, widget, section):
         idx = self.g_section_box.get_children().index(section)
         if idx < len(self.g_section_box.get_children()) - 1:
@@ -525,6 +563,7 @@ class Column(Gtk.VBox):
             self.m_model[idx], self.m_model[idx + 1] \
                     = self.m_model[idx + 1], self.m_model[idx]
             self.m_parent.update_buttons()
+
     def move_section_up(self, widget, section):
         idx = self.g_section_box.get_children().index(section)
         if idx > 0:
@@ -532,6 +571,7 @@ class Column(Gtk.VBox):
             self.m_model[idx], self.m_model[idx - 1] \
                     = self.m_model[idx - 1], self.m_model[idx]
             self.m_parent.update_buttons()
+
     def on_paste(self, widget):
         """
         Paste the clipboard as a new section to this column.
@@ -546,6 +586,7 @@ class Column(Gtk.VBox):
 
 
 class Page(Gtk.VBox):
+
     def __init__(self, model, parent):
         Gtk.VBox.__init__(self)
         self.m_model = model
@@ -561,14 +602,17 @@ class Page(Gtk.VBox):
         self.show_all()
         if model:
             self.update_from_model()
+
     def __del__(self):
         logging.debug("Page.__del__:", self.m_model.m_name)
+
     def on_add_column(self, *btn):
         column = pd.Column()
         self.m_model.append(column)
         gcol = Column(column, self)
         gcol.show_all()
         self.g_column_box.pack_start(gcol, True, True, 0)
+
     def on_move_section_left(self, button, section):
         column_idx = self.g_column_box.get_children().index(section.m_parent)
         section_idx = section.m_parent.g_section_box.get_children().index(section)
@@ -586,6 +630,7 @@ class Page(Gtk.VBox):
                 del self.m_model[-1]
                 self.g_column_box.get_children()[-1].destroy()
             self.update_buttons()
+
     def on_move_section_right(self, button, section):
         # the column we move from
         column_idx = self.g_column_box.get_children().index(section.m_parent)
@@ -600,6 +645,7 @@ class Page(Gtk.VBox):
         self.m_model[column_idx + 1].append(self.m_model[column_idx][section_idx])
         del self.m_model[column_idx][section_idx]
         self.update_buttons()
+
     def update_from_model(self):
         for child in self.g_column_box.get_children():
             child.destroy()
@@ -607,6 +653,7 @@ class Page(Gtk.VBox):
             self.g_column_box.pack_start(Column(column, self), False, False, 0)
         self.g_column_box.show_all()
         self.update_buttons()
+
     def update_buttons(self):
         num_cols = len(self.g_column_box.get_children())
         for col_idx, column in enumerate(self.g_column_box.get_children()):
@@ -622,19 +669,24 @@ class Page(Gtk.VBox):
 
 
 class Clipboard(list):
+
     def __init__(self, v=[]):
         list.__init__(v)
         self.m_paste_buttons = []
+
     def pop(self, i=-1):
         ret = list.pop(self, i)
         self.update_buttons()
         return ret
+
     def append(self, obj):
         list.append(self, obj)
         self.update_buttons()
+
     def register_paste_button(self, button, accepts_types):
         button.set_sensitive(bool(self) and isinstance(self[-1], accepts_types))
         self.m_paste_buttons.append((button, accepts_types))
+
     def update_buttons(self):
         for button, types in self.m_paste_buttons:
             button.set_sensitive(bool(self) and isinstance(self[-1], types))
@@ -644,6 +696,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
     savedir = os.path.join(filesystem.user_data(), 'exercises', 'user')
     # The clipboard will be shared between all Editor instances
     clipboard = Clipboard()
+
     def __init__(self, filename=None):
         Gtk.Window.__init__(self)
         logging.debug("fpeditor.Editor.__init__(%s)", filename)
@@ -680,8 +733,10 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         self.add_to_instance_dict()
         self.g_fptitle.set_text(self.m_model.m_name)
         self.g_fptitle.connect('changed', self.on_frontpage_title_changed)
+
     def __del__(self):
         logging.debug("fpeditor.Editor.__del__, filename=%s", self.m_filename)
+
     def add_page(self, page):
         """
         Add and show the page.
@@ -689,8 +744,10 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         editor_of(self).m_page_mapping[id(page.m_model)] = page
         self.g_main_box.pack_start(page, True, True, 0)
         self.show_page(page)
+
     def show_page_id(self, page_id):
         self.show_page(self.m_page_mapping[page_id])
+
     def show_page(self, page):
         """
         Hide the currently visible page, and show PAGE instead.
@@ -707,10 +764,13 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
             self.g_title_hbox.show()
         self.g_ui_manager.get_widget("/Toolbar/GoBack").set_sensitive(
             not isinstance(self.g_visible_page.m_parent, Editor))
+
     def go_back(self, *action):
         self.show_page(self.g_visible_page.m_parent)
+
     def on_frontpage_title_changed(self, widget):
         self.m_model.m_name = widget.get_text()
+
     def setup_toolbar(self):
         self.g_ui_manager.insert_action_group(self.g_actiongroup, 0)
         uixml = """
@@ -735,6 +795,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         self.g_main_box.pack_start(toolbar, False, False, 0)
         self.g_main_box.reorder_child(toolbar, 0)
         self.g_ui_manager.get_widget("/Toolbar").set_style(Gtk.ToolbarStyle.BOTH)
+
     def destroy_window(self, window_id):
         """
         Destroy the window with the id 'windowid' and all subwindows.
@@ -747,6 +808,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
             editor_of(self).m_page_mapping[wid].destroy()
             del editor_of(self).m_page_mapping[wid]
         do_del(window_id)
+
     @staticmethod
     def edit_file(fn):
         if fn in Editor.instance_dict:
@@ -758,6 +820,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
             except IOError as e:
                 gu.dialog_ok(_("Loading file '%(filename)s' failed: %(msg)s") %
                         {'filename': fn, 'msg': str(e).decode('utf8', 'replace')})
+
     def load_file(self, filename):
         """
         Load a file into a empty, newly created Editor object.
@@ -774,6 +837,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
                 m.destroy()
         self.set_not_modified()
         self.set_title(self.m_filename)
+
     def set_not_modified(self):
         """
         Store the current state of the data in self.m_orig_dump so that
@@ -782,6 +846,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         s = io.StringIO()
         self.m_model.dump(s)
         self.m_orig_dump = s.getvalue()
+
     def is_modified(self):
         """
         Return True if the data has changed since the last call to
@@ -791,9 +856,11 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         self.m_model.dump(s)
         s = s.getvalue()
         return s != self.m_orig_dump
+
     @property
     def m_changed(self):
         return self.is_modified()
+
     def save(self, w=None):
         assert self.m_filename
         save_location = os.path.split(self.m_filename)[0] + os.sep
@@ -803,8 +870,10 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
         # We do test for solfege.win since it is not available during testing
         if hasattr(solfege, 'win'):
             solfege.win.load_frontpage()
+
     def on_show_help(self, *w):
         return
+
     def get_save_as_dialog(self):
         dialog = gu.EditorDialogBase.get_save_as_dialog(self)
         ev2 = Gtk.EventBox()

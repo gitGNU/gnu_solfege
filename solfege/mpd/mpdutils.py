@@ -23,11 +23,14 @@ should go into this file.
 import re
 from solfege.mpd.musicalpitch import MusicalPitch
 
+
 def int_to_octave_notename(i):
     return MusicalPitch.new_from_int(i).get_octave_notename()
 
+
 def int_to_user_octave_notename(i):
     return MusicalPitch.new_from_int(i).get_user_octave_notename()
+
 
 def notename_to_int(n):
     return MusicalPitch.new_from_notename(n).semitone_pitch()
@@ -93,5 +96,3 @@ def find_possible_first_note(music):
                     return i, i + len(m.group('pitchname'))
             elif r == re_list[-1]:
                 return i, i+1
-
-
