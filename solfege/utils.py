@@ -182,8 +182,8 @@ def random_tonic_and_interval_in_key(lowest, highest, irange, tonic, keytype):
     for tone in all_tones:
         if (tone + interval in all_tones
             and lowest <= tone <= highest
-            and lowest <= tone + interval <= highest):
-                solutions.append(tone)
+                and lowest <= tone + interval <= highest):
+            solutions.append(tone)
     return (mpd.MusicalPitch.new_from_int(random.choice(solutions)), interval)
 
 key_data = {
@@ -218,18 +218,6 @@ def un_escape_url_string(s):
     def f(m):
         return chr(eval("0x%s" % m.groups()[1]))
     return r.sub(f, s)
-
-
-def _str_to_dict(s):
-    D = {}
-    if s:
-        V = s.split(";")
-        for e in V:
-            n, v = e.split("=")
-            D[n.strip()] = v.strip()
-    for k in D:
-        D[k] = un_escape_url_string(D[k])
-    return D
 
 
 def freq_to_notename_cent(freq):
