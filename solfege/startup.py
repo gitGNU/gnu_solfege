@@ -166,7 +166,7 @@ def start_gui(datadir):
             else:
                 w.display_error_message(msg, str(t))
         else:
-            sys.__excepthook__(t, msg, traceback)
+            sys.__excepthook__(t, value, traceback)
     if not options.disable_exception_handler:
         sys.excepthook = ef
     print(time.time() - start_time)
