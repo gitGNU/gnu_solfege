@@ -79,7 +79,7 @@ class Teacher(abstract.Teacher):
         Gui should not call this function if the question is already solved.
         """
         v = self.m_P.get_music_as_notename_list('music')
-        v.sort(mpd.compare_notenames)
+        v.sort(key=lambda n: mpd.notename_to_int(n))
         question_i = []
         for n in v:
             while n[-1] in ",'":
@@ -290,7 +290,7 @@ class Gui(abstract.LessonbasedGui):
                 self.m_t.m_P.get_music_as_notename_string('music')), 20)
         # display the notenames on the buttons with octave info
         v = self.m_t.m_P.get_music_as_notename_list('music')
-        v.sort(mpd.compare_notenames)
+        v.sort(key=lambda n: mpd.notename_to_int(n))
         for n in v:
             b = Gtk.Button(mpd.MusicalPitch.new_from_notename(n).get_user_octave_notename())
             b.get_children()[0].set_use_markup(1)
