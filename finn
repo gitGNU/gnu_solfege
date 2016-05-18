@@ -1,6 +1,8 @@
 #!/bin/sh
-egrep "$1" --color=auto exercises/standard/lesson-files/*
+# Free text search
+
+egrep "$1" -d recurse --color=auto exercises/standard/lesson-files/*
 find -name "*.py" | xargs egrep --color=auto -n "$1" Makefile.in
 find -name Makefile | xargs egrep --color=auto  -n "$1"
 egrep --color=auto -n "$1" *.xml
-cd help/C && find | xargs egrep --color=auto -n "$1"
+cd help/C && find | xargs egrep -d recurse --color=auto -n "$1"
