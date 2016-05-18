@@ -471,7 +471,7 @@ class Section(Gtk.VBox):
         try:
             try:
                 subprocess.call((cfg.get_string("programs/text-editor"),
-                             lessonfile.uri_expand(self.m_model[self._linked])))
+                             lessonfile.uri_expand(self.m_model[self._idx])))
             except OSError as e:
                 raise osutils.BinaryForProgramException("Text editor", cfg.get_string("programs/text-editor"), e)
         except osutils.BinaryForProgramException as e:
