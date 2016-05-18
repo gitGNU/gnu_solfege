@@ -22,6 +22,7 @@ import io
 import subprocess
 
 from gi.repository import Gtk
+from gi.repository import Gdk
 
 from solfege.esel import SearchView
 
@@ -154,6 +155,41 @@ def parent_page(obj):
             return None
 
 
+class MyEntry(Gtk.Entry):
+
+    def __init__(self, text, finish_cb):
+        """
+        text - the default text for the entry
+        finish_cb - the function to call with text as its argument
+                    when the user is finished editing.
+        """
+        Gtk.Entry.__init__(self)
+        self.finish_edit = finish_cb
+        self.set_text(text)
+        self.m_text = text
+        self.activate_id = self.connect('activate', self.activate_cb)
+        self.focus_id = self.connect('focus-out-event', self.focus_cb)
+        self.escape_id = self.connect('key-release-event', self.escape_cb)
+
+    def activate_cb(self, entry):
+        entry.disconnect(self.focus_id)
+        entry.disconnect(self.escape_id)
+        self.finish_edit(entry.get_text())
+
+    def focus_cb(self, entry, event):
+        entry.disconnect(self.activate_id)
+        entry.disconnect(self.escape_id)
+        self.finish_edit(entry.get_text())
+        return True
+
+    def escape_cb(self, entry, event):
+        if event.keyval == Gdk.KEY_Escape:
+            entry.disconnect(self.activate_id)
+            entry.disconnect(self.focus_id)
+            self.finish_edit(self.m_text)
+            return True
+
+
 class Section(Gtk.VBox):
     """
     A section consists of a heading and a list of links.
@@ -165,13 +201,9 @@ class Section(Gtk.VBox):
         self.m_model = model
         self.m_parent = parent
         assert isinstance(model, pd.LinkList)
-        hbox = Gtk.HBox()
+        self.heading_hbox = hbox = Gtk.HBox()
         hbox.set_spacing(6)
         self.pack_start(hbox, False, False, 0)
-        # This is displayed and used when we edit the heading
-        self.g_heading_entry = Gtk.Entry()
-        self.g_heading_entry.set_no_show_all(True)
-        hbox.pack_start(self.g_heading_entry, True, True, 0)
         self.g_heading = Gtk.Label()
         self.g_heading.set_alignment(0.0, 0.5)
         # FIXME escape m_name
@@ -271,35 +303,46 @@ class Section(Gtk.VBox):
         menu.append(item)
         menu.show_all()
 
+        # The pop menu shown when right clicking on a link to an
+        # exercise or a subpage.
+        self.popup_menu = m = Gtk.Menu()
+        item = Gtk.ImageMenuItem(Gtk.STOCK_DELETE)
+        item.connect('activate', self.on_delete_link)
+        m.append(item)
+        item = Gtk.ImageMenuItem(Gtk.STOCK_CUT)
+        item.connect('activate', self.on_cut_link)
+        m.append(item)
+        m._paste_item = item = Gtk.ImageMenuItem(Gtk.STOCK_PASTE)
+        item.connect('activate', self.on_paste)
+        m.append(item)
+        m._edit_item = item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
+        item.connect('activate', self.on_edit_linktext)
+        m.append(item)
+        m._up_item = item = Gtk.ImageMenuItem(Gtk.STOCK_GO_UP)
+        item.connect('activate', self.on_move_link_up)
+        m.append(item)
+        m._down_item = item = Gtk.ImageMenuItem(Gtk.STOCK_GO_DOWN)
+        item.connect('activate', self.on_move_link_down)
+        m.append(item)
+        m._edit_file_item = item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
+        item.connect('activate', self.on_edit_file)
+        m.append(item)
+        m.show_all()
+
     def on_edit_heading(self, btn):
-        self.g_heading_entry.set_text(self.m_model.m_name)
-        self.g_heading_entry.show()
-        self.g_heading.hide()
-        self.g_heading_entry.grab_focus()
-
-        def finish_edit(entry):
-            self.g_heading_entry.disconnect(sid)
-            self.g_heading_entry.disconnect(keyup_id)
-            self.g_heading_entry.disconnect(keydown_sid)
-            self.m_model.m_name = entry.get_text()
-            self.g_heading.set_markup("<b>%s</b>" % entry.get_text())
-            self.g_heading_entry.hide()
+        def finish_edit(text):
+            self.m_model.m_name = text
+            self.g_heading.set_markup("<b>%s</b>" % text)
             self.g_heading.show()
-        sid = self.g_heading_entry.connect('activate', finish_edit)
+            entry.destroy()
 
-        def keydown(entry, event):
-            if event.keyval == Gdk.KEY_Tab:
-                finish_edit(entry)
-        keydown_sid = self.g_heading_entry.connect('key-press-event', keydown)
+        entry = MyEntry(self.m_model.m_name, finish_edit)
+        self.heading_hbox.pack_start(entry, True, True, 0)
+        self.heading_hbox.reorder_child(entry, 0)
+        entry.show()
 
-        def keyup(entry, event):
-            if event.keyval == Gdk.KEY_Escape:
-                self.g_heading_entry.disconnect(sid)
-                self.g_heading_entry.disconnect(keyup_id)
-                self.g_heading_entry.hide()
-                self.g_heading.show()
-                return True
-        keyup_id = self.g_heading_entry.connect('key-release-event', keyup)
+        self.g_heading.hide()
+        entry.grab_focus()
 
     def on_add(self, btn, event):
         self.g_add_popup.popup(None, None, None, None, event.button, event.time)
@@ -387,96 +430,64 @@ class Section(Gtk.VBox):
     def on_right_click_row(self, button, event, linked):
         idx = self.m_model.index(linked)
         if event.button == 3:
-            m = Gtk.Menu()
-            item = Gtk.ImageMenuItem(Gtk.STOCK_DELETE)
-            item.connect('activate', self.on_delete_link, linked)
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_CUT)
-            item.connect('activate', self.on_cut_link, idx)
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_PASTE)
-            item.set_sensitive(bool(Editor.clipboard))
-            item.connect('activate', self.on_paste, idx)
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
-            item.connect('activate', self.on_edit_linktext, linked)
-            item.set_sensitive(bool(not isinstance(linked, str)))
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_GO_UP)
-            item.connect('activate', self.on_move_link_up, idx)
-            item.set_sensitive(bool(idx > 0))
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_GO_DOWN)
-            item.connect('activate', self.on_move_link_down, idx)
-            item.set_sensitive(bool(idx < len(self.m_model) - 1))
-            m.append(item)
-            item = Gtk.ImageMenuItem(Gtk.STOCK_EDIT)
-            item.set_sensitive(isinstance(linked, str))
-            item.connect('activate', self.on_edit_file, idx)
-            m.append(item)
-            m.show_all()
+            self._linked = linked
+            self._idx = idx
+            m = self.popup_menu
+            m._paste_item.set_sensitive(bool(Editor.clipboard))
+            m._edit_item.set_sensitive(bool(not isinstance(linked, str)))
+            m._up_item.set_sensitive(bool(idx > 0))
+            m._down_item.set_sensitive(bool(idx < len(self.m_model) - 1))
+            m._edit_file_item.set_sensitive(isinstance(linked, str))
             m.popup(None, None, None, None, event.button, event.time)
             return True
 
-    def on_delete_link(self, menuitem, linked):
-        idx = self.m_model.index(linked)
-        if id(linked) in editor_of(self).m_page_mapping:
-            editor_of(self).destroy_window(id(linked))
+    def on_delete_link(self, menuitem):
+        idx = self.m_model.index(self._linked)
+        if id(self._linked) in editor_of(self).m_page_mapping:
+            editor_of(self).destroy_window(id(self._linked))
         self.g_link_box.get_children()[idx].destroy()
         del self.m_model[idx]
 
-    def on_edit_linktext(self, menuitem, linked):
-        idx = self.m_model.index(linked)
+    def on_edit_linktext(self, menuitem):
+        idx = self.m_model.index(self._linked)
         # row is the hbox containing the linkbutton
         row = self.g_link_box.get_children()[idx]
         linkbutton = row.get_children()[0]
-        entry = Gtk.Entry()
-        entry.set_text(linkbutton.get_label())
+
+        def finish_edit(text):
+            linkbutton.set_label(text)
+            self.m_model[idx].m_name = text
+            linkbutton.show()
+            linkbutton.get_children()[0].set_alignment(0.0, 0.5)
+            entry.destroy()
+
+        entry = MyEntry(linkbutton.get_label(), finish_edit)
         row.pack_start(entry, True, True, 0)
         linkbutton.hide()
         entry.show()
         entry.grab_focus()
 
-        def finish_edit(entry):
-            linkbutton.set_label(entry.get_text().decode("utf-8"))
-            linkbutton.get_children()[0].set_alignment(0.0, 0.5)
-            linkbutton.show()
-            self.m_model[idx].m_name = entry.get_text().decode("utf-8")
-            entry.destroy()
-        sid = entry.connect('activate', finish_edit)
-
-        def keydown(entry, event):
-            if event.keyval == Gdk.KEY_Tab:
-                finish_edit(entry)
-        entry.connect('key-press-event', keydown)
-
-        def keyup(entry, event):
-            if event.keyval == Gdk.KEY_Escape:
-                linkbutton.show()
-                entry.disconnect(sid)
-                entry.destroy()
-                return True
-        entry.connect('key-release-event', keyup)
-
-    def on_edit_file(self, menuitem, linked):
+    def on_edit_file(self, menuitem):
         try:
             try:
                 subprocess.call((cfg.get_string("programs/text-editor"),
-                             lessonfile.uri_expand(self.m_model[linked])))
+                             lessonfile.uri_expand(self.m_model[self._linked])))
             except OSError as e:
-                 raise osutils.BinaryForProgramException("Text editor", cfg.get_string("programs/text-editor"), e)
+                raise osutils.BinaryForProgramException("Text editor", cfg.get_string("programs/text-editor"), e)
         except osutils.BinaryForProgramException as e:
             solfege.win.display_error_message2(e.msg1, e.msg2)
 
     def on_cut(self, btn):
         self.m_parent.cut_section(self)
 
-    def on_cut_link(self, menuitem, idx):
+    def on_cut_link(self, menuitem):
+        idx = self._idx
         Editor.clipboard.append(self.m_model[idx])
         del self.m_model[idx]
         self.g_link_box.get_children()[idx].destroy()
 
-    def on_paste(self, btn, idx):
+    def on_paste(self, btn):
+        idx = self._idx
         assert Editor.clipboard, "Paste buttons should be insensitive when the clipboard is empty."
         pobj = Editor.clipboard.pop()
         if isinstance(pobj, pd.LinkList):
@@ -492,18 +503,20 @@ class Section(Gtk.VBox):
             self.g_link_box.pack_start(row, True, True, 0)
             self.g_link_box.reorder_child(row, idx)
 
-    def on_move_link_up(self, btn, idx):
+    def on_move_link_up(self, btn):
         """
         Move the link one row up.
         """
+        idx = self._idx
         assert idx > 0
         self.m_model[idx], self.m_model[idx - 1] = self.m_model[idx - 1], self.m_model[idx]
         self.g_link_box.reorder_child(self.g_link_box.get_children()[idx], idx - 1)
 
-    def on_move_link_down(self, btn, idx=None):
+    def on_move_link_down(self, btn):
         """
         Move the link one row down.
         """
+        idx = self._idx
         self.m_model[idx], self.m_model[idx + 1] = self.m_model[idx + 1], self.m_model[idx]
         self.g_link_box.reorder_child(self.g_link_box.get_children()[idx], idx + 1)
 
@@ -818,7 +831,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
                 win.show()
             except IOError as e:
                 gu.dialog_ok(_("Loading file '%(filename)s' failed: %(msg)s") %
-                        {'filename': fn, 'msg': str(e).decode('utf8', 'replace')})
+                        {'filename': fn, 'msg': str(e)})
 
     def load_file(self, filename):
         """
