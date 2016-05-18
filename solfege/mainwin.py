@@ -111,12 +111,13 @@ class MusicViewerWindow(Gtk.Dialog):
         self.g_music_displayer.display(music, fontsize)
 
 
-class MainWin(Gtk.Window, cfg.ConfigUtils):
+class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
     default_front_page = os.path.join(lessonfile.exercises_dir, 'learningtree.txt')
     debug_front_page = os.path.join(lessonfile.exercises_dir, 'debugtree.txt')
 
     def __init__(self, options, datadir):
-        Gtk.Window.__init__(self, Gtk.WindowType.TOPLEVEL)
+        Gtk.ApplicationWindow.__init__(self)#, Gtk.WindowType.TOPLEVEL)
+        self.set_show_menubar(False)
         self._vbox = Gtk.VBox()
         self._vbox.show()
         self.add(self._vbox)
@@ -608,6 +609,7 @@ class MainWin(Gtk.Window, cfg.ConfigUtils):
         self.set_title("GNU Solfege")
         if not self.show_view('searchview'):
             self.add_view(SearchView(_('Search the exercise titles of all lesson files found by the program, not just the active front page with sub pages.')), 'searchview')
+            self.get_view().g_searchentry.grab_focus()
 
     def display_frontpage(self, data=None, show_topics=False):
         """
