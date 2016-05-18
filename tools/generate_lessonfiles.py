@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Solfege - free ear training software
 # Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
@@ -17,6 +17,9 @@ solfege.i18n.setup(".")
 import solfege.frontpage as fp
 from solfege.mpd.musicalpitch import MusicalPitch
 from solfege.mpd.interval import Interval
+from pathlib import Path
+
+saveto = Path("xexercises/standard/lesson-files")
 
 header = """
 header {
@@ -87,7 +90,7 @@ def three_tones_less_than_octave(filename):
     0 11 12
     a  b  c
     """
-    f = codecs.open(filename, 'w', 'utf-8')
+    f = filename.open("w")
     write_file_copyright(f)
     f.write("""header {
   lesson_id = "80cc940b-c47b-4264-a7b5-6cbd7a997bb0"
@@ -116,7 +119,7 @@ def three_tones_larger_than_octave(filename):
     0 23    24
     a  b  c
     """
-    f = codecs.open(filename, 'w', 'utf-8')
+    f = filename.open("w")
     write_file_copyright(f)
     f.write("""header {
   lesson_id = "3f1c7305-9978-4fe3-9bb3-8c01ff776a08"
@@ -134,9 +137,9 @@ def three_tones_larger_than_octave(filename):
     f.close()
 
 
-def csound_intonation(filename_fmt, mod, lesson_id):
-    filename = filename_fmt % mod
-    f = codecs.open(filename, 'w', 'utf-8')
+def csound_intonation(mod, lesson_id):
+    filename = saveto / ("csound-fifth-%s" % mod)
+    f = filename.open("w")
     f.write("""# Solfege - free ear training software
 # Copyright (C) 2004, 2005, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
@@ -176,8 +179,8 @@ def csound_intonation2(harmonic, interval_name, cent):
         hs = "harmonic-"
     else:
         hs = ""
-    filename = os.path.join("exercises", "standard", "lesson-files", "csound-intonation-%s%s-%icent" % (hs, iname_to_fn(interval_name), cent))
-    f = codecs.open(filename, 'w', 'utf-8')
+    filename = saveto / ("csound-intonation-%s%s-%icent" % (hs, iname_to_fn(interval_name), cent))
+    f = filename.open("w")
     f.write("""# Solfege - free ear training software
 # Copyright (C) 2004, 2005, 2011 Tom Cato Amundsen
 # License is GPL, see file COPYING
@@ -245,25 +248,21 @@ def generate_csound_intonation():
             csound_intonation2(True, cname, cent)
             sect.append("solfege:lesson-files/csound-intonation-harmonic-%s-%icent" % (
                 iname_to_fn(cname), cent))
-    f = codecs.open("exercises/standard/csound-tree.txt", "w", "utf-8")
+    filename = saveto.parent / "csound-tree.txt"
+    f = filename.open("w")
     fileheader.dump(f)
     f.close()
 
 generate_csound_intonation()
 
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.97",
-    "b465c807-d7bf-4e3a-a6da-54c78d5b59a1")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.98",
-    "aa5c3b18-664b-4e3d-b42d-2f06582f4135")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.99",
-    "5098fb96-c362-45b9-bbb3-703db149a079")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.995",
-    "3b1f57e8-2983-4a74-96da-468aa5414e5e")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.996",
-    "a06b5531-7422-4ea3-8711-ec57e2a4ce22")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.997",
-    "e67c5bd2-a275-4d9a-96a8-52e43a1e8987")
-csound_intonation("exercises/standard/lesson-files/csound-fifth-%s", "0.998",
-    "1cadef8c-859e-4482-a6c4-31bd715b4787")
-three_tones_less_than_octave("exercises/standard/lesson-files/hear-tones-triads")
-three_tones_larger_than_octave("exercises/standard/lesson-files/hear-tones-triads-difficult")
+for pct, lesson_id in (
+        ("0.97", "b465c807-d7bf-4e3a-a6da-54c78d5b59a1"),
+        ("0.98", "aa5c3b18-664b-4e3d-b42d-2f06582f4135"),
+        ("0.99", "5098fb96-c362-45b9-bbb3-703db149a079"),
+        ("0.995", "3b1f57e8-2983-4a74-96da-468aa5414e5e"),
+        ("0.996", "a06b5531-7422-4ea3-8711-ec57e2a4ce22"),
+        ("0.997", "e67c5bd2-a275-4d9a-96a8-52e43a1e8987"),
+        ("0.998", "1cadef8c-859e-4482-a6c4-31bd715b4787")):
+    csound_intonation(pct, lesson_id)
+three_tones_less_than_octave(saveto / "hear-tones-triads")
+three_tones_larger_than_octave(saveto / "hear-tones-triads-difficult")
