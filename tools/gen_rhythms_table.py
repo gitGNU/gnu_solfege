@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 import sys
 # We need to do this on the build server. For some reason, it is not
 # necessary on my workstation.
-sys.path.insert(0, os.getcwdu())
+sys.path.insert(0, os.getcwd())
 
 import solfege.const
 
@@ -17,10 +17,10 @@ img_str = """%i:<inlinemediaobject>
       </textobject>
     </inlinemediaobject>"""
 f = open("help/C/rhythmtable.xml", "w")
-print >> f, "<para>"
+print("<para>", file=f)
 for i, r in enumerate(solfege.const.RHYTHMS):
-    print >> f, img_str % (i, r.replace(" ", ""), r),
+    f.write(img_str % (i, r.replace(" ", ""), r))
     if i != len(solfege.const.RHYTHMS) - 1:
-        print >> f, ", "
-print >> f, "</para>"
+        print(", ", file=f)
+print("</para>", file=f)
 f.close()

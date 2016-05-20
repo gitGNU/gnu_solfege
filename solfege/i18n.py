@@ -84,9 +84,7 @@ def setup(prefix, config_locale=None):
         print()
         import builtins
         locale_setup_failed = True
-        builtins.__dict__['_no_xgettext'] = _nop
         builtins.__dict__['_'] = _nop
-        builtins.__dict__['_i_no_xgettext'] = _nop
         builtins.__dict__['_i'] = _nop
         builtins.__dict__['ungettext'] = _nop
         return
@@ -116,9 +114,7 @@ def setup(prefix, config_locale=None):
                            os.path.join(prefix, 'share', 'locale'),
                            fallback=True)
     builtins.__dict__['_'] = t.gettext
-    builtins.__dict__['_no_xgettext'] = t.gettext
     builtins.__dict__['_i'] = _i
-    builtins.__dict__['_i_no_xgettext'] = _i
     builtins.__dict__['ngettext'] = t.ngettext
     # plurals usage:
     # i =  'some integer value'

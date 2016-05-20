@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+﻿#!/usr/bin/python3
 # vim: set fileencoding=utf-8:
 # Solfege - free ear training software
 # Copyright (C) 2008, 2009, 2010, 2011  Tom Cato Amundsen
@@ -17,8 +17,8 @@ import time
 
 def nop(s): return s
 
-import __builtin__
-__builtin__.__dict__['_'] = nop
+import builtins
+builtins.__dict__['_'] = nop
 
 sys.path.insert(0, ".")
 from solfege.i18n import _i
@@ -49,7 +49,7 @@ def get_data():
                  "    %% Do not edit. Changes will be lost!")
     retval = {
       "theory-intervals-1.ly":
-    ur"""
+    r"""
     %s
     \version "2.8.1"
     \include "scale-common.ly"
@@ -66,7 +66,7 @@ def get_data():
       _i("interval|Ninth"), _i("interval|Tenth")),
 
       "theory-intervals-seconds.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -80,7 +80,7 @@ def get_data():
                'i': _i('interval|Minor')},
 
         "theory-intervals-thirds.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -94,7 +94,7 @@ def get_data():
                'i': _i("interval|Minor")},
 
         "theory-intervals-fourths.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -108,7 +108,7 @@ def get_data():
            'a': _i('interval|Augmented')},
 
         "theory-intervals-fifths.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -122,7 +122,7 @@ def get_data():
            'd': _i('interval|Diminished')},
 
         "theory-intervals-sixths.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -136,7 +136,7 @@ def get_data():
            'i': _i("interval|Minor")},
 
         "theory-intervals-sevenths.ly":
-    ur"""
+    r"""
     %(g)s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -150,7 +150,7 @@ def get_data():
            'i': _i("interval|Minor")},
 
         "inverting-intervals.ly":
-    ur"""
+    r"""
     %s
     \version "2.7.40"
     \include "scale-common.ly"
@@ -196,10 +196,10 @@ def write_if_changed(filename, contents):
 
 def set_lang(lang):
     if lang == 'C':
-        __builtin__.__dict__['_'] = nop
+        builtins.__dict__['_'] = nop
     else:
         g = gettext.GNUTranslations(open(os.path.join("po", "%s.mo" % lang), 'rb'))
-        __builtin__.__dict__['_'] = g.ugettext
+        builtins.__dict__['_'] = g.gettext
 
 
 languages = [fn for fn in os.listdir("help") if os.path.isdir(os.path.join("help", fn))]
@@ -210,15 +210,15 @@ if options.ly_targets:
     for lang in [x for x in os.listdir("help") if os.path.isdir(os.path.join("help", x))]:
         for fn in ly_files:
             ret.append(os.path.join("help", lang, "ly", fn))
-    print " ".join(ret)
+    print(" ".join(ret))
 elif options.ly_C_targets:
-    print " ".join([os.path.join("help", "C", "ly", x) for x in ly_files])
+    print(" ".join([os.path.join("help", "C", "ly", x) for x in ly_files]))
 elif options.png_targets:
     ret = []
     for lang in [x for x in os.listdir("help") if os.path.isdir(os.path.join("help", x))]:
         for fn in ly_files:
             ret.append(os.path.join("help", lang, "ly", fn[:-2] + "png"))
-    print " ".join(ret)
+    print(" ".join(ret))
 elif options.outfile:
     lang = options.outfile.split(os.sep)[1]
     fn = options.outfile.split(os.sep)[-1]

@@ -187,7 +187,7 @@ class ExerciseView(SelectWinBase):
                 if (display_only_tests
                     and not frontpage._TreeCommon.tests_in_sub(linklist)):
                         continue
-                heading = Gtk.Label(label="<b>%s</b>" % _no_xgettext(linklist.m_name))
+                heading = Gtk.Label(label="<b>%s</b>" % linklist.m_name)
                 heading.set_alignment(0.0, 0.5)
                 heading.set_use_markup(True)
                 self.g_grid.attach(heading, col_idx * COLW, y, 2, 1)
@@ -196,7 +196,7 @@ class ExerciseView(SelectWinBase):
                     if isinstance(self, TestsView) and not frontpage._TreeCommon.tests_in_sub(link):
                         continue
                     if isinstance(link, frontpage.Page):
-                        label = gu.ClickableLabel(_no_xgettext(link.m_name))
+                        label = gu.ClickableLabel(link.m_name)
                         label.connect('clicked', self.on_page_link_clicked, link)
                         self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
                     else:
@@ -211,7 +211,7 @@ class ExerciseView(SelectWinBase):
                                         labeltxt = labeltxt.cval
                                         label = gu.ClickableLabel(labeltxt)
                                     else:
-                                        label = gu.ClickableLabel(_no_xgettext(labeltxt))
+                                        label = gu.ClickableLabel(labeltxt)
                                     if solfege.app.m_options.debug:
                                         label.set_tooltip_text("%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
                                     elif fieldname == 'link-with-filename-tooltip':

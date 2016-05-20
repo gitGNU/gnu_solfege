@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -108,21 +108,23 @@ errors['rvoice'] = errors['voice']
 def set1():
     for module in module_to_mtype:
         of = open("exercises/standard/regression-lesson-files/xx-%s-exceptions" % module, "w")
+        def p(s):
+            print(s, file=of)
         if module == 'elembuilder':
-            print >> of, 'include("../lesson-files/include/progression-elements")'
-        print >> of, "header {"
-        print >> of, "  module = %s" % module
-        print >> of, '  title = "%s mpd errors"' % module
-        print >> of, "  lesson_id = \"%s-module-exceptions\"" % module
-        print >> of, "  have_repeat_slowly_button = yes"
+            p('include("../lesson-files/include/progression-elements")')
+        p("header {")
+        p("  module = %s" % module)
+        p('  title = "%s mpd errors"' % module)
+        p("  lesson_id = \"%s-module-exceptions\"" % module)
+        p("  have_repeat_slowly_button = yes")
         if module == 'idbyname':
-            print >> of, "  filldir = horiz"
-            print >> of, "  fillnum = 4"
+            p("  filldir = horiz")
+            p("  fillnum = 4")
         elif module == 'elembuilder':
-            print >> of, "  elements = auto"
+            p("  elements = auto")
         elif module == 'idproperty':
-            print >> of, '  flavour = "chord"'
-        print >> of, "}"
+            p('  flavour = "chord"')
+        p("}")
         for mtype in module_to_mtype[module]:
             if mtype == module_to_mtype[module][0]:
                 vv = [ok[mtype]]
@@ -130,15 +132,15 @@ def set1():
                 vv = []
             if mtype in errors:
                 for music in vv + errors[mtype]:
-                    print >> of, "question {"
-                    print >> of, '  name = "%s: %s"' % (mtype, music)
-                    print >> of, '  music = %s("%s")' % (mtype, music)
+                    p("question {")
+                    p('  name = "%s: %s"' % (mtype, music))
+                    p('  music = %s("%s")' % (mtype, music))
                     if module == 'singanswer':
-                        print >> of, 'question_text = "question..."'
-                        print >> of, 'answer = music %s("%s")' % (mtype, music)
+                        p('question_text = "question..."')
+                        p('answer = music %s("%s")' % (mtype, music))
                     elif module == 'elembuilder':
-                        print >> of, 'elements = progI, progIV'
-                    print >> of, "}"
+                        p('elements = progI, progIV')
+                    p("}")
         of.close()
 
 set1()

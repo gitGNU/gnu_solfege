@@ -1,4 +1,4 @@
-#/usr/bin/python
+#/usr/bin/python3
 # GNU Solfege - free ear training software
 # Copyright (C) 2006, 2007, 2008, 2011  Tom Cato Amundsen
 #
@@ -25,17 +25,17 @@ sys.path.append(".")
 
 
 def create_languages_py():
-    f = file("solfege/languages.py", "w")
-
-    print >> f, "# Generated at build time by tools/buildscript.py"
-    print >> f, "# Do not edit. Changes will be lost."
-    print >> f, "C_locale_idx = 1"
-    print >> f, "languages = ["
-    print >> f, "  'system default',"
-    print >> f, "  'English/United States [en-us]',"
+    f = open("solfege/languages.py", "w")
+    print(
+"""# Generated at build time by tools/buildscript.py"
+# Do not edit. Changes will be lost."
+C_locale_idx = 1"
+languages = ["
+'system default',"
+'English/United States [en-us]',""", file=f)
     for fn in glob.glob("po/*.po"):
-        print >> f, "   '%s'," % os.path.splitext(os.path.basename(fn))[0]
-    print >> f, "]"
+        print("   '%s'," % os.path.splitext(os.path.basename(fn))[0], file=f)
+    print("]", file=f)
     f.close()
 
 
@@ -44,7 +44,7 @@ def create_manpage():
     import solfege.i18n
     solfege.i18n.setup(".")
     import solfege.optionparser
-    options = solfege.optionparser.SolfegeOptionParser().format_help().encode('iso-8859-1', 'replace')
+    options = solfege.optionparser.SolfegeOptionParser().format_help()#.encode('iso-8859-1', 'replace')
     v = options.split("\n")
     del v[0]
     del v[0]
@@ -54,9 +54,9 @@ def create_manpage():
     # and it confuses txt2man.
     options = re.sub('--disable-exception-handler\s*',
                      '--disable-exception-handler  ', options)
-    s = open("solfege.1.txt", "r").read()
-    s = s.replace('XXOPTIONS', options)
-    print >> sys.stdout, s
+    with open("solfege.1.txt", "r") as f:
+        s = f.read().replace('XXOPTIONS', options)
+    print(s)
 
 
 def get_last_git_sha(git=None):
