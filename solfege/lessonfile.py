@@ -1981,7 +1981,7 @@ class InfoCache(object):
             print("file not lessonfile:", filename)
             raise self.FileNotLessonfile(filename)
         if not self._data[filename]['title']:
-            self._data[filename]['title'] = "error: empty string as title in '%s'" % filename
+            self._data[filename]['title'] = istr("error: empty string as title in '%s'" % filename)
 
     def iter_parse_all_files(self):
         """

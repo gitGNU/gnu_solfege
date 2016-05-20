@@ -183,9 +183,13 @@ class _TreeCommon(list):
 
 class _NamedTreeCommon(_TreeCommon):
 
-    def __init__(self, name='', listitems=[]):
+    def __init__(self, name='', listitems=[], C_locale=False):
+        """
+        Do not translate titles if C_locale is True
+        """
         assert isinstance(name, str)
         _TreeCommon.__init__(self, listitems)
+        self.C_locale = C_locale
         self.m_name = name
 
     def dump(self, stream, level=0):

@@ -207,7 +207,11 @@ class ExerciseView(SelectWinBase):
                             for field_idx, fieldname in enumerate(self.m_fields):
                                 if fieldname in ('link', 'link-with-filename-tooltip'):
                                     labeltxt = lessonfile.infocache.get(link, 'title')
-                                    label = gu.ClickableLabel(_no_xgettext(labeltxt))
+                                    if linklist.C_locale:
+                                        labeltxt = labeltxt.cval
+                                        label = gu.ClickableLabel(labeltxt)
+                                    else:
+                                        label = gu.ClickableLabel(_no_xgettext(labeltxt))
                                     if solfege.app.m_options.debug:
                                         label.set_tooltip_text("%s\n%s module" % (link, lessonfile.infocache.get(link, 'module')))
                                     elif fieldname == 'link-with-filename-tooltip':
@@ -269,7 +273,7 @@ class ExerciseView(SelectWinBase):
               result),
               frontpage.LinkList(
             _("C-locale search results for “%s”:") % searchfor,
-              result_C),
+              result_C, C_locale=True),
               ])))
 
     def on_end_practise(self, w=None):
@@ -283,14 +287,7 @@ class ExerciseView(SelectWinBase):
                      tests
         """
         logging.debug("search: '%s'", substring)
-        match_func = {
-            False: lambda filename: substring in _no_xgettext(lessonfile.infocache.get(filename, 'title')).lower(),
-            True: lambda filename: substring in lessonfile.infocache.get(filename, 'title').lower()
-        }[C_locale]
-        test_filter = {
-            False: lambda filename: True,
-            True: lambda filename: lessonfile.infocache.get(filename, 'test')
-        }[C_locale]
+        self.compile_search_pattern(substring)
         page = frontpage.Page(listitems=frontpage.Column())
         cur_topic = None
         # the last topic appended to the page
@@ -301,7 +298,9 @@ class ExerciseView(SelectWinBase):
                 cur_topic = child
             if isinstance(child, str):
                 try:
-                    if (match_func(child) and test_filter(child)) and child not in found:
+                    if self.is_match(child, C_locale) and child not in found:
+                        if only_tests and not lessonfile.infocache.get(child, 'test'):
+                            continue
                         if cur_topic != last_topic:
                             page[0].append(frontpage.LinkList(cur_topic.m_name))
                             last_topic = cur_topic
@@ -311,6 +310,56 @@ class ExerciseView(SelectWinBase):
                     # Ignore missing lesson files and files with errors
                     pass
         return page
+
+    def compile_search_pattern(self, search_for):
+        self.search_for = search_for.lower()
+        words = self.search_for.split()
+        if self.search_for.startswith("module:"):
+            if words[0] == "module:":
+                self.search_module = words[1]
+                self.search_for = " ".join(words[2:])
+            else:
+                self.search_module = words[0].split(":")[1]
+                self.search_for = " ".join(words[1:])
+        else:
+            self.search_module = None
+
+    def is_match(self, filename, C_locale=False):
+        try:
+            if not (self.search_module is None
+                    or (self.search_module is not None
+                        and self.search_module != lessonfile.infocache.get(filename, 'module'))):
+                return False
+            if C_locale:
+                return self.search_for in lessonfile.infocache.get(filename, 'title').cval.lower()
+            return self.search_for in _(lessonfile.infocache.get(filename, 'title')).lower()
+        except lessonfile.InfoCache.FileNotFound:
+            logging.debug("ExerciseView.is_match tried to match non-existing file:",
+                          filename)
+            return False
+
+    def on_search(self, *button):
+        """
+        module:modulename [string to search for]
+        module: modulename  [string to search for]
+        """
+        search_for = self.g_searchentry.get_text().lower()
+        self.compile_search_pattern(search_for)
+
+        lessonfile.infocache.update_modified_files()
+        result = []
+        result_C = []
+        for filename in lessonfile.infocache._data:
+            if self.is_match(filename):
+                result.append(filename)
+            elif self.is_match(filename, C_locale=True):
+                # Only search for a C locale match if not found in translated
+                # title. This to avoid duplicates
+                result_C.append(filename)
+        self.display_search_result(
+            self.g_searchentry.get_text(),
+            result, result_C)
+
 
 GObject.signal_new('link-clicked', ExerciseView,
                    GObject.SignalFlags.RUN_FIRST,
@@ -322,20 +371,20 @@ class FrontPage(ExerciseView):
 
     def display_data(self, data, display_only_tests=False,
             is_search_result=False, show_topics=False):
+        # We need to save a reference to the exercises we want to display,
+        # because the code that display the search result need the original
+        # data if the user enters a new search on the search results page.
+        self._saved_page = data
         self._display_data(data, display_only_tests, is_search_result,
                            show_topics)
         self.g_searchentry.grab_focus()
 
-    def on_search(self, *button):
-        search_for = self.g_searchentry.get_text().lower()
-        logging.debug("FrontPage.on_search '%s'", search_for)
-        page = self._search(search_for, False, False)
-        page_C = self._search(search_for, True, False)
-        page_C.m_name = _('Search untranslated lesson titles')
-        if not page_C.is_empty():
-            page[0].append(frontpage.LinkList(_('Too few matches?'),
-                listitems=[page_C]))
-        self.display_data(page, is_search_result=True)
+    def search_iterator(self):
+        """
+        Used by the on_search method in parent class. This iterator lists
+        the filename of all lesson files that should be searched.
+        """
+        return self._saved_page.iterate_flattened()
 
 
 class TestsView(ExerciseView):
@@ -345,18 +394,12 @@ class TestsView(ExerciseView):
         solfege.app.test_lessonfile(filename)
 
     def display_data(self, data=None, is_search_result=False, show_topics=False):
+        # We need to save a reference to the exercises we want to display,
+        # because the code that display the search result need the original
+        # data if the user enters a new search on the search results page.
+        self._saved_page = data
         self._display_data(data, True, is_search_result, show_topics)
         self.g_searchentry.grab_focus()
-
-    def on_search(self, *button):
-        search_for = self.g_searchentry.get_text().lower()
-        page = self._search(search_for, False, True)
-        page_C = self._search(search_for, True, True)
-        page_C.m_name = 'Search exercises without translating them'
-        if not page_C.is_empty():
-            page[0].append(frontpage.LinkList(_('Too few matches?'),
-                listitems=[page_C]))
-        self.display_data(page, is_search_result=True)
 
 
 class SearchView(ExerciseView):
@@ -377,13 +420,9 @@ class SearchView(ExerciseView):
         self._display_data(data)
         self.g_searchentry.grab_focus()
 
-    def on_search(self, *button):
-        search_for = self.g_searchentry.get_text().lower()
-        lessonfile.infocache.update_modified_files()
-        self.display_search_result(self.g_searchentry.get_text(), [
-            filename for filename in lessonfile.infocache._data
-            if search_for in _(lessonfile.infocache.get(filename, 'title')).lower()
-        ], [
-            filename for filename in lessonfile.infocache._data
-            if search_for in lessonfile.infocache.get(filename, 'title').lower()
-        ])
+    def search_iterator(self):
+        """
+        Used by the on_search method in parent class. This iterator lists
+        the filename of all lesson files that should be searched.
+        """
+        return lessonfile.infocache

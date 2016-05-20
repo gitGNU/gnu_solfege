@@ -4,4 +4,38 @@
 links. Press <keycombo><keycap>Alt</keycap><keycap>Left</keycap></keycombo>
 to move to the previous page or <keycap>F5</keycap> to move to the front
 page.</para>
+
+<sect2 id='searching-for-exercises'>
+<title>Searching for exercises</title>
+<para>
+The front page has a search bar that let you search for exercises
+whose title matches you search string. Just fill in a word or two,
+for example <emphasis>Seventh</emphasis> and press <keycap>Enter</keycap>
+or click <guibutton>Search</guibutton> to see all exercises that has
+the work <emphasis>Seventh</emphasis> in its title.
+</para>
+<para>
+The program will first assume you are searching in your own language,
+and will list all exerises matching. Then it will take you search term
+and search in the untranslated lesson titles.
+</para>
+
+<para>
+Using the search bar on the front page will search all exercises that
+are added to this front page, and its sub pages. If you want to search
+all exercises avalable to Solfege, you should press
+<keycombo><keycap>Ctrl</keycap><keycap>F5</keycap></keycombo>.
+</para>
+</sect2>
+
+<sect2>
+<title>Searching for exercise modules</title>
+<para>To search for exercises written using a specific exercise module, you 
+have to enter <quote>module:modulename</quote>. You can also add words to
+search for. Example:
+<blockquote>
+   module:idbyname major
+</blockquote>
+</para>
+</sect2>
 </sect1>
