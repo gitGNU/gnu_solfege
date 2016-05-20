@@ -243,8 +243,8 @@ binary-tarball:
 	
 dist_workhorse: all AUTHORS INSTALL README FAQ INSTALL.win32
 	rm -rf $(DISTNAME)
-ifdef BZR
-	$(BZR) st && $(BZR) log -r 1..  > ChangeLog || true
+ifdef GIT
+	$(GIT) log --oneline --graph > Changelog
 endif
 	mkdir $(DISTNAME)
 	for dfile in $(dist_files); do \
