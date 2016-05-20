@@ -60,7 +60,7 @@ def get_last_revision_id():
         p.poll()
         if p.returncode is not None:
             break
-        return p.stdout.readline().strip()
+        return p.stdout.readline().strip().decode("ascii")
     p.wait()
     return retval
 
@@ -82,7 +82,7 @@ class Logger(object):
             while True:
                 s = p.stdout.readline()
                 print(s.strip())
-                self.logfile.write(s)
+                self.logfile.write(s.decode("utf-8"))
                 if not s:
                     break
         p.wait()
