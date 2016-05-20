@@ -8,11 +8,17 @@ help () {
   exit
 }
 
-if test "x$2" = "x" ; then
-  help 
+if test "x$1" = "x-p" ; then
+  if test "x$2" = "x" ; then
+    help
+  fi
 fi
 
 if test "x$1" = "x-h" ; then
+  help
+fi
+
+if test "x$1" = "x" ; then
   help
 fi
 
