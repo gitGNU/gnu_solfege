@@ -1,5 +1,5 @@
 # GNU Solfege - free ear training software
-# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2007, 2008, 2011  Tom Cato Amundsen
+# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2007, 2008, 2011, 2016  Tom Cato Amundsen
 # Copyright (C) 2001 Joe Lee
 #
 # This program is free software: you can redistribute it and/or modify

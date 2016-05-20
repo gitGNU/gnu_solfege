@@ -1,5 +1,5 @@
 ﻿# GNU Solfege
-# Copyright (C) 2011 Tom Cato Amundsen
+# Copyright (C) 2011, 2016 Tom Cato Amundsen
 
 header {
     module=toneincontext

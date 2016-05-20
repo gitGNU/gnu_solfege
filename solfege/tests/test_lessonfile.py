@@ -1,6 +1,6 @@
 # Solfege - free ear training software
 # vim: set fileencoding=utf-8 :
-# Copyright (C) 2007, 2008, 2011 Tom Cato Amundsen
+# Copyright (C) 2007, 2008, 2011, 2016 Tom Cato Amundsen
 # License is GPL, see file COPYING
 
 

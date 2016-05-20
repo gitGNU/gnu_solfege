@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # GNU Solfege - free ear training software
-# Copyright (C) 2009, 2011 Tom Cato Amundsen
+# Copyright (C) 2009, 2011, 2016 Tom Cato Amundsen
 # Licence is GPL, see file COPYING
 
 from __future__ import absolute_import

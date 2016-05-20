@@ -1,5 +1,5 @@
 # Solfege - free ear training software
-# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2011  Tom Cato Amundsen
+# Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2011, 2016  Tom Cato Amundsen
 # License is GPL, see file COPYING
 
 include("include/jazz-progression-elements")
