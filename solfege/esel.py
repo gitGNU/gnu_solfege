@@ -231,9 +231,11 @@ class ExerciseView(SelectWinBase):
                         except lessonfile.InfoCache.FileNotFound:
                             label = gu.ClickableLabel(_("«%s» was not found") % link)
                             label.make_warning()
+                            self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
                         except lessonfile.InfoCache.FileNotLessonfile:
                             label = gu.ClickableLabel(_("Failed to parse «%s»") % link)
                             label.make_warning()
+                            self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
                     if first:
                         label.m_first = True
                         first = False
