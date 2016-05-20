@@ -19,7 +19,7 @@ from solfege.mpd.musicalpitch import MusicalPitch
 from solfege.mpd.interval import Interval
 from pathlib import Path
 
-saveto = Path("xexercises/standard/lesson-files")
+saveto = Path("exercises/standard/lesson-files")
 
 header = """
 header {
