@@ -31,10 +31,10 @@ def create_languages_py():
     print(
 """# Generated at build time by tools/buildscript.py"
 # Do not edit. Changes will be lost."
-C_locale_idx = 1"
-languages = ["
-'system default',"
-'English/United States [en-us]',""", file=f)
+C_locale_idx = 1
+languages = [
+   'system default',
+   'English/United States [en-us]',""", file=f)
     for fn in glob.glob("po/*.po"):
         print("   '%s'," % os.path.splitext(os.path.basename(fn))[0], file=f)
     print("]", file=f)
