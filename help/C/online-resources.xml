@@ -1,6 +1,6 @@
 <sect1 id='online-resources'>
 <title>Online resources</title>
-<para>The homepage for Solfege is <ulink url='http://www.solfege.org'>http://www.solfege.org</ulink>. There is also a smaller page with more static info at <ulink url='http://www.gnu.org/software/solfege/'>http://www.gnu.org/software/solfege/</ulink>.</para>
+<para>The homepage for Solfege is <ulink url='http://www.gnu.org/software/solfege/'>http://www.gnu.org/software/solfege/</ulink>. You can follow or contribute to the development of Solfege on the <ulink url='http://savannah.gnu.org/projects/solfege/'>Solfege project page</ulink>.</para>
 <sect2 id='download-solfege'>
 <title>Download Solfege</title>
 <para>The source code is available from <ulink url='http://ftp.gnu.org/gnu/solfege'>http://ftp.gnu.org/gnu/solfege</ulink>.  If you are adventurous, you can try the unstable (buggy, but might contain new stuff) releases from <ulink url='http://alpha.gnu.org/gnu/solfege'>http://alpha.gnu.org/gnu/solfege</ulink>. These releases might have more bugs, but then you get the chance to try new stuff and find and report bugs.</para>

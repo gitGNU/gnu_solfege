@@ -105,12 +105,6 @@ So you only have to enter the full path if the programs are installed
 outside the PATH. A warning sign after the entry where you enter the file
 name mean that the program is not found.</para>
 
-<para>Please check the download page on <ulink
-url="http://www.solfege.org">www.solfege.org</ulink> for up-to-date tips
-and download links if you run MS Windows and have to download and install
-the programs yourself.
-</para>
-
 <sect3 id='pw-convertors'>
 <title>Converters</title>
 <para>Give command lines that can convert between different audio formats.
