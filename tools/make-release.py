@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # vim: set fileencoding=utf-8:
 
 import optparse
@@ -34,16 +34,16 @@ def parse_build_log():
             curlang = m.groups()[0]
         if line.startswith("Error") or line.startswith("ERROR"):
             if not stack or stack[0] != 'docbook':
-                print "Errors, probably from docbook:"
-                print "=============================="
+                print("Errors, probably from docbook:")
+                print("==============================")
                 stack = ['docbook']
             if len(stack) < 2 or (len(stack) == 2 and stack[1] != curlang):
                 if len(stack) == 2 and stack[1] != curlang:
                     stack[1] = curlang
                 else:
                     stack.append(curlang)
-                print "Language:", curlang
-            print "\t", line
+                print("Language:", curlang)
+            print("\t", line)
     f.close()
 
 version_number = args[0]
@@ -81,13 +81,13 @@ class Logger(object):
                 break
             while True:
                 s = p.stdout.readline()
-                print s.strip()
+                print(s.strip())
                 self.logfile.write(s)
                 if not s:
                     break
         p.wait()
         if p.returncode != 0:
-            print "p.returncode =", p.returncode
+            print("p.returncode =", p.returncode)
             sys.exit()
         return p.returncode
 
@@ -120,12 +120,12 @@ if options.docbooktest:
 bl = Logger("build.log")
 for b in distdir, bindistdir:
     if os.path.exists(b):
-        s = raw_input("«%s» exists. Delete (Y/N)? " % b)
+        s = input("«%s» exists. Delete (Y/N)? " % b)
         if s in ('y', 'Y'):
             shutil.rmtree(b)
         else:
             sys.exit(1)
-print "git clone . ", distdir
+print("git clone . ", distdir)
 bl.call(["git", "clone", ".", distdir])
 
 if options.translated_branch:
@@ -157,5 +157,5 @@ if options.run_make_test:
     bl.call(["make", "test"], cwd=bindistdir)
 bl.call(["make", "dist"], cwd=bindistdir)
 bl.close()
-print "Remember to check that the translation of the user manual does"
-print "not mess with the docbook format of the file."
+print("Remember to check that the translation of the user manual does")
+print("not mess with the docbook format of the file.")
