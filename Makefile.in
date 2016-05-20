@@ -105,8 +105,6 @@ dist_files = AUTHORS COPYING INSTALL FAQ INSTALL.win32 \
 	test.py 
 
 include $(patsubst %,%/Makefile,$(SUBDIRS))
--include debian-dir/Makefile
--include debian/Makefile
 
 # We need solfege/_version.py because solfege imports it at runtime.
 solfege.1: solfege.1.txt solfege/_version.py
