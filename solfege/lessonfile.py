@@ -2109,9 +2109,12 @@ def parse_lesson_file_header(filename):
     if not e:
         # Solfege assumes the file encoding it utf-8 unless specified
         e = 'utf-8'
-    with open(filename, 'r', encoding=e) as f:
-        s = f.read(40960)
-
+    try:
+        with open(filename, 'r', encoding=e) as f:
+            s = f.read(40960)
+    except UnicodeDecodeError:
+        logging.error("parse_lesson_file_header: failed {}".format(filename))
+        return
     m = r.search(s)
     p = LessonfileCommon()
     ###############################
