@@ -244,7 +244,7 @@ binary-tarball:
 dist_workhorse: all AUTHORS INSTALL README FAQ INSTALL.win32
 	rm -rf $(DISTNAME)
 ifdef GIT
-	$(GIT) log --oneline --graph > Changelog
+	$(GIT) log --oneline --graph > ChangeLog
 endif
 	mkdir $(DISTNAME)
 	for dfile in $(dist_files); do \
