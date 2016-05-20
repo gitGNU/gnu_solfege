@@ -21,6 +21,8 @@ import os.path
 import sys
 import pprint
 import re
+import locale
+
 sys.path.append(".")
 
 
@@ -73,7 +75,7 @@ def get_last_git_sha(git=None):
         if p.returncode is not None:
             break
         while True:
-            s = p.stdout.readline()
+            s = p.stdout.readline().decode(locale.getpreferredencoding())
             if s.startswith("commit"):
                 return s.split(" ")[1].strip()
             if not s:
@@ -84,5 +86,5 @@ def get_last_git_sha(git=None):
 def create_versions_file(git):
     version_info = {'git_sha': get_last_git_sha(git)}
     with open("solfege/_version.py", "w") as f:
-        print >> f, "version_info =",
+        f.write("version_info =")
         pprint.pprint(version_info, stream=f)

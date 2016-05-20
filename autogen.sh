@@ -13,5 +13,5 @@ if [ "$OSTYPE" = "msys" ]; then
 else
 	aclocal $ACINCLUDE
 	autoconf
-        python -c "import tools.buildutil; tools.buildutil.create_versions_file('git')"
+        python3 -c "import tools.buildutil; tools.buildutil.create_versions_file('git')"
 fi
