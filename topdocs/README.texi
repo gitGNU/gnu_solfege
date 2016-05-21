@@ -43,7 +43,7 @@ is installed:
 
 @subsubsection Runtime
 @itemize @bullet
-@item Python >= 2.7
+@item Python >= 3.4
 @item Gtk+ >= 3.4
 @item pygobject >= 3.2.2
 

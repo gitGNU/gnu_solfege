@@ -154,7 +154,7 @@ if test "x$ENABLE_OSS_SOUND" = xyes; then
   if test "x$HAVE_PYTHON_H" = xno; then
         AC_MSG_ERROR([
 *** We need the python header files to build the OSS sound module.
-*** The debian package is called python-dev, other distributions
+*** The debian package is called python3-dev, other distributions
 *** probably have a similar name.])
   fi
 fi
