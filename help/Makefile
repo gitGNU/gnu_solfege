@@ -94,6 +94,8 @@ xmllint:
 		if [ $$? -eq 0 ] ; then true; else exit $$?; fi \
 	done
 
+xmllint-C:
+	xmllint --postvalid --dtdvalid http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd --xinclude --noout  help/C/solfege.xml
 
 maintainer-clean: rm-generated-user-manual
 
