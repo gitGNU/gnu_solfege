@@ -56,7 +56,7 @@ if sys.platform == 'win32':
 appname = "GNU Solfege"
 
 
-def _get_home_dir():
+def get_home_dir():
     ''' Try to find user's home directory, otherwise return current directory.'''
     path1 = os.path.expanduser("~")
     try:
@@ -83,27 +83,6 @@ def win32_program_files_folder():
     """
     return winreg._get_reg_value(winreg._winreg.HKEY_LOCAL_MACHINE,
         r"SOFTWARE\Microsoft\Windows\CurrentVersion", r"ProgramFilesDir")
-
-
-def _win32_unicode_decode(s):
-    enc = sys.getfilesystemencoding()
-    if enc is None or enc == "":
-        enc = "iso-8859-1"
-    try:
-        return s.decode(enc)
-    except UnicodeDecodeError:
-        try:
-            return s.decode(locale.getpreferredencoding())
-        except UnicodeDecodeError:
-            return s.decode("iso-8859-1")
-
-
-def get_home_dir():
-    if sys.platform == 'win32':
-        return _win32_unicode_decode(_get_home_dir())
-    else:
-        # linux user names can only be ascii chars.
-        return _get_home_dir()
 
 
 # FIXME remove??

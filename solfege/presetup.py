@@ -21,6 +21,9 @@ import sys
 import textwrap
 import traceback
 
+import gi
+# Gtk win windows complains without this:
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk
 
 from solfege import cfg
