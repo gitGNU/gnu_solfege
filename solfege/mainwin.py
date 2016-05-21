@@ -207,6 +207,7 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
             solfege.app.m_frontpage_data = frontpage.load_tree(self.default_front_page)
             self.set_string('app/frontpage', self.default_front_page)
             gu.dialog_ok(_("Loading front page '%s' failed. Using default page." % filename),
+                parent=self,
                 secondary_text="\n".join(traceback.format_exception(*sys.exc_info())))
             if solfege.splash_win:
                 solfege.splash_win.show()
@@ -486,16 +487,17 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
                         shutil.copytree(os.path.join(filesystem.get_home_dir(), "lessonfiles"),
                                         os.path.join(filesystem.user_data(), "lessonfiles"))
                     except (OSError, shutil.Error) as e:
-                        gu.dialog_ok(_("Error while copying directory:\n%s" % e))
+                        gu.dialog_ok(_("Error while copying directory:\n%s" % e,
+                                     parent=self))
                     else:
-                        gu.dialog_ok(_("Files copied. The old files has been left behind. Please delete them when you have verified that all files was copied correctly."))
+                        gu.dialog_ok(_("Files copied. The old files has been left behind. Please delete them when you have verified that all files was copied correctly."), parent=self)
 
                 if solfege.splash_win:
                     solfege.splash_win.show()
         # MIGRATION 3.9.3 when we added langenviron.bat and in 3.11
         # we migrated to langenviron.txt because we does not use cmd.exe
         if sys.platform == 'win32' and winlang.win32_get_langenviron() != self.get_string('app/lc_messages'):
-            gu.dialog_ok(_("Migrated old language setup. You might have to restart the program all translated messages to show up."))
+            gu.dialog_ok(_("Migrated old language setup. You might have to restart the program all translated messages to show up."), parent=self)
             winlang.win32_put_langenviron(self.get_string('app/lc_messages'))
         # MIGRATION 3.11.1: earlier editors would create new learning trees
         # below app_data() instead of user_data().
@@ -521,7 +523,7 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
         except AttributeError:
             pass
         for filename in lessonfile.infocache.frontpage.iter_old_format_files():
-            gu.dialog_ok(_("Cannot load front page file"), None,
+            gu.dialog_ok(_("Cannot load front page file"), self,
                 _("The file «%s» is saved in an old file format. The file can be converted by editing and saving it with an older version of Solfege. Versions from 3.16.0 to 3.20.4 should do the job.") % filename)
 
     def activate_exercise(self, module, urlobj=None):
@@ -741,7 +743,7 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
 
     def enter_test_mode(self):
         if 'enter_test_mode' not in dir(self.get_view()):
-            gu.dialog_ok(_("The '%s' exercise module does not support test yet." % self.m_viewer))
+            gu.dialog_ok(_("The '%s' exercise module does not support test yet." % self.m_viewer), self)
             return
         self.m_action_groups['NotExit'].set_sensitive(False)
         self.g = self.get_view().g_notebook.get_nth_page(0)

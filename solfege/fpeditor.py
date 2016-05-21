@@ -831,7 +831,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
                 win.show()
             except IOError as e:
                 gu.dialog_ok(_("Loading file '%(filename)s' failed: %(msg)s") %
-                        {'filename': fn, 'msg': str(e)})
+                        {'filename': fn, 'msg': str(e)}, self)
 
     def load_file(self, filename):
         """

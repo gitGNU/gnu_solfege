@@ -107,7 +107,10 @@ class Gui(abstract.LessonbasedGui):
                 self.g_w.set_score(self.m_t.m_score)
                 self.g_c.set_editable(True)
         except Duration.BadStringException as e:
-            gu.dialog_ok("Lesson file error", secondary_text="Bad rhythm string in the elements variable of the lessonfile. Only digits and dots expected: %s" % str(e))
+            gu.dialog_ok(
+                "Lesson file error",
+                solfege.win,
+                secondary_text="Bad rhythm string in the elements variable of the lessonfile. Only digits and dots expected: %s" % str(e))
             exception_cleanup()
         except Exception as e:
             if not self.standard_exception_handler(e, exception_cleanup):

@@ -594,9 +594,21 @@ class Gui(Gtk.VBox, cfg.ConfigUtils, QstatusDefs):
         solfege.win.exit_test_mode()
         passed, res = solfege.db.get_test_status(self.m_t.m_P.m_filename)
         if res >= req:
-            gu.dialog_ok(_("Test completed!\nYour score was %(score).1f%%.\nThe test requirement was %(requirement).1f%%.") % {'score': res * 100, 'requirement': req * 100})
+            gu.dialog_ok(
+                _("Test completed!\n"
+                  "Your score was %(score).1f%%.\n"
+                  "The test requirement was %(requirement).1f%%.") % {
+                    'score': res * 100,
+                    'requirement': req * 100},
+                solfege.win)
         else:
-            gu.dialog_ok(_("Test failed.\nYour score was %(score).1f%%.\nThe test requirement was %(requirement).1f%%.") % {'score': res * 100, 'requirement': req * 100})
+            gu.dialog_ok(
+                _("Test failed.\n"
+                  "Your score was %(score).1f%%.\n"
+                  "The test requirement was %(requirement).1f%%.") % {
+                    'score': res * 100,
+                    'requirement': req * 100},
+                solfege.win)
 
     def set_lesson_heading(self, txt):
         if txt:

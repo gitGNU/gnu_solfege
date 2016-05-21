@@ -150,7 +150,11 @@ def start_gui(datadir):
     except sqlite3.OperationalError as e:
         if solfege.splash_win:
             solfege.splash_win.hide()
-        gu.dialog_ok(_("Failed to open the statistics database:\n«%s»") % str(e).decode(sys.getfilesystemencoding(), 'replace'), secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
+        gu.dialog_ok(
+            _("Failed to open the statistics database:\n«%s»")
+                % str(e).decode(sys.getfilesystemencoding(), 'replace'), 
+            solfege.win,
+            secondary_text=_("Click OK to exit the program. Then try to quit all other instances of the program, or reboot the computer. You can only run one instance of GNU Solfege at once."))
         sys.exit()
 
     def ef(t, value, traceback):

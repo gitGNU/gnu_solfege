@@ -177,7 +177,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
             p = lessonfile.LessonfileCommon()
             p.parse_file(filename)
             if not [q for q in p.m_questions if isinstance(q.music, lessonfile.MpdParsable)]:
-                gu.dialog_ok(_("This lesson file cannot be exported because some of the music in the file are not parsable by the mpd module."))
+                gu.dialog_ok(_("This lesson file cannot be exported because some of the music in the file are not parsable by the mpd module."), self)
                 return
         self.m_changed = True
         self.g_liststore.append((
@@ -306,7 +306,8 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
                 all_files_ok = False
             iter = self.g_liststore.iter_next(iter)
         if not all_files_ok:
-            gu.dialog_ok("Can not run because some exercises are not found.")
+            gu.dialog_ok("Can not run because some exercises are not found.",
+                         self)
             return
         export_to = \
             self.select_empty_directory(_("Select where to export the files"))

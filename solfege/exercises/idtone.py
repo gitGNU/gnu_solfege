@@ -303,7 +303,7 @@ _("""You have to select some tones practise. Do this on the config page by setti
                             weight = 0.0
                         self.set_float('%s_weight' % n, weight)
                 else:
-                    gu.dialog_ok("The white_keys_weight variable in the lesson file '%s' had wrong type" % os.path.abspath(self.m_t.m_P.m_filename), msgtype=Gtk.MessageType.WARNING)
+                    gu.dialog_ok("The white_keys_weight variable in the lesson file '%s' had wrong type" % os.path.abspath(self.m_t.m_P.m_filename), self, msgtype=Gtk.MessageType.WARNING)
             else:
                 for idx, n in enumerate(mpd.MusicalPitch.notenames):
                     self.set_float('%s_weight' % n, 0.0)
@@ -317,7 +317,7 @@ _("""You have to select some tones practise. Do this on the config page by setti
                             weight = 0.0
                         self.set_float('%s_weight' % n, weight)
                 else:
-                    gu.dialog_ok("The black_keys_weight variable in the lesson file '%s' had wrong type" % os.path.abspath(self.m_t.m_P.m_filename), msgtype=Gtk.MessageType.WARNING)
+                    gu.dialog_ok("The black_keys_weight variable in the lesson file '%s' had wrong type" % os.path.abspath(self.m_t.m_P.m_filename), self, msgtype=Gtk.MessageType.WARNING)
             else:
                 for idx, n in enumerate(('cis', 'dis', 'fis', 'gis', 'ais')):
                     self.set_float('%s_weight' % n, 0.0)

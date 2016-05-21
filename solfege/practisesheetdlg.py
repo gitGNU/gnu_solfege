@@ -532,7 +532,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             if ok > 0:
                 do_add = gu.dialog_yesno(_("Not all music types are supported. This file contain %(ok)i supported questions and %(not_ok)i that are not supported. The unsupported questions will be ignored. Add any way?" % locals()))
             else:
-                gu.dialog_ok(_("Could not add the lesson file. It has no questions with a music object with supported music type."))
+                gu.dialog_ok(_("Could not add the lesson file. It has no questions with a music object with supported music type."), self)
                 do_add = False
         else:
             do_add = True
@@ -638,7 +638,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             else:
                 if lessonfile.infocache.get(lessonfilename, 'module') == 'harmonicinterval':
                     d['intervals'] = []
-                    gu.dialog_ok("FIXME: «%s» was saved with a buggy version of solfege, so you must set the intervals by selecting the file in the dialog and clicking the intervals to be asked. Sorry!" % lessonfilename)
+                    gu.dialog_ok("FIXME: «%s» was saved with a buggy version of solfege, so you must set the intervals by selecting the file in the dialog and clicking the intervals to be asked. Sorry!" % lessonfilename, self)
             d['count'] = int(section.find('count').text)
             d['line_len'] = int(section.find('line_len').text)
             d['qtype'] = int(section.find('qtype').text)
