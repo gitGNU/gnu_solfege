@@ -32,10 +32,7 @@ all exercises avalable to Solfege, you should press
 <title>Searching for exercise modules</title>
 <para>To search for exercises written using a specific exercise module, you 
 have to enter <quote>module:modulename</quote>. You can also add words to
-search for. Example:
-<blockquote>
-   module:idbyname major
-</blockquote>
+search for. Example: <userinput>module:idbyname major</userinput>
 </para>
 </sect2>
 </sect1>
