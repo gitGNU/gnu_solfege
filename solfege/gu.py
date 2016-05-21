@@ -650,7 +650,6 @@ def dialog_delete(text, parent, secondary_text=None):
     ret = m.run()
     m.destroy()
     return ret == Gtk.ResponseType.ACCEPT
-    return ret
 
 
 class NewLineBox(Gtk.VBox):
