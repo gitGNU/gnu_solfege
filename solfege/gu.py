@@ -726,17 +726,6 @@ def create_rhythm_image(rhythm):
     return im
 
 
-def decode_filename(filename):
-    """
-    Decode the filename we get from FileChooser.get_filename()
-    We need to do this for every filename.
-    """
-    if sys.platform == 'win32':
-        return filename.decode("utf-8")
-    else:
-        return filename.decode(sys.getfilesystemencoding())
-
-
 class EditorDialogBase(object):
     # Classes inheriting from this must define self.savedir
     instance_counter = 1
@@ -879,7 +868,7 @@ class EditorDialogBase(object):
         ret = dialog.run()
         if ret == Gtk.ResponseType.OK:
             try:
-                new_file = decode_filename(dialog.get_filename())
+                new_file = dialog.get_filename()
                 assert new_file not in self.instance_dict
                 win = self.__class__(new_file)
                 win.show_all()
@@ -925,11 +914,11 @@ class EditorDialogBase(object):
         while 1:
             ret = dialog.run()
             if ret == Gtk.ResponseType.OK:
-                if os.path.exists(decode_filename(dialog.get_filename())):
+                if os.path.exists(dialog.get_filename()):
                     if not dialog_yesno(_("File exists. Overwrite?")):
                         continue
                 try:
-                    new_name = decode_filename(dialog.get_filename())
+                    new_name = dialog.get_filename()
                     self.instance_dict[new_name] = self.instance_dict[self.get_idict_key()]
                     del self.instance_dict[self.get_idict_key()]
                     self.m_filename = new_name
@@ -985,14 +974,14 @@ class EditorDialogBase(object):
                 dialog.destroy()
                 return
             elif res == Gtk.ResponseType.OK:
-                if os.listdir(decode_filename(dialog.get_filename())):
+                if os.listdir(dialog.get_filename()):
                     msg_dlg = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL,
                         Gtk.MessageType.INFO, Gtk.ButtonsType.OK, msg)
                     msg_dlg.run()
                     msg_dlg.destroy()
                 else:
                     break
-        ret = decode_filename(dialog.get_filename())
+        ret = dialog.get_filename()
         dialog.destroy()
         return ret
 

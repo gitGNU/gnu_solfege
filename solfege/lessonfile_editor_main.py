@@ -293,7 +293,7 @@ class MainWin(Gtk.Window):
                                     Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
         dialog.set_default_response(Gtk.ResponseType.OK)
         if dialog.run() == Gtk.ResponseType.OK:
-            filename = gu.decode_filename(dialog.get_filename())
+            filename = dialog.get_filename()
             try:
                 self.load_file(filename)
             except Exception as e:
@@ -323,7 +323,7 @@ class MainWin(Gtk.Window):
         dialog.set_default_response(Gtk.ResponseType.OK)
 
         if dialog.run() == Gtk.ResponseType.OK:
-            self.m_P.m_filename = gu.decode_filename(dialog.get_filename())
+            self.m_P.m_filename = dialog.get_filename()
             self.save_file()
         dialog.destroy()
 
@@ -337,7 +337,7 @@ class MainWin(Gtk.Window):
             dialog.set_default_response(Gtk.ResponseType.OK)
 
             if dialog.run() == Gtk.ResponseType.OK:
-                self.m_P.m_filename = gu.decode_filename(dialog.get_filename())
+                self.m_P.m_filename = dialog.get_filename()
             dialog.destroy()
         if self.m_P.m_filename:
             self.update_appwin()

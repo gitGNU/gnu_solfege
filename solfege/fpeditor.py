@@ -72,7 +72,6 @@ class LessonFilePreviewWidget(Gtk.VBox):
     def update(self, dlg):
         fn = dlg.get_preview_filename()
         if fn:
-            fn = gu.decode_filename(fn)
             for child in self.g_topic_box.get_children():
                 child.destroy()
             fn = lessonfile.mk_uri(fn)
@@ -378,8 +377,7 @@ class Section(Gtk.VBox):
         dlg.destroy()
 
     def _add_filenames(self, filenames):
-        for filename in filenames:
-            fn = gu.decode_filename(filename)
+        for fn in filenames:
             assert os.path.isabs(fn)
             # If the file name is a file in a subdirectory below
             # lessonfile.exercises_dir in the current working directory,
