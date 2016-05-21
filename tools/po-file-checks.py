@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # coding: iso-8859-1
 
 import re
@@ -109,6 +109,14 @@ msgstr "Il file \"%s\"."
         e = Entry(s)
         self.assertEqual(e.get_msgstr(), "Il file \"%s\".")
 
+def sniff_po_encoding(filename):
+    r = re.compile(b".*Content-Type: text/plain; charset=(.*?)\\\\n\"")
+    with open(filename, "br") as f:
+        for line in f.readlines():
+            m = r.match(line)
+            if m:
+                return m.groups()[0].decode("ascii")
+
 
 def string_to_entry_list(s):
     """
@@ -118,7 +126,7 @@ def string_to_entry_list(s):
     v = []
     for x in s.split("\n\n"):
         if not x:
-            print "NOTHIN"
+            print("NOTHIN")
             continue
         e = Entry(x)
         v.append(e)
@@ -138,7 +146,8 @@ def parse_string(s):
 
 
 def parse_file(filename):
-    return parse_string(file(filename, 'r').read())
+    with open(filename, 'r') as f:
+        return parse_string(f.read())
 
 
 def find_string_formatting(s):
@@ -215,7 +224,9 @@ Požadované skóre bylo%.1f% %.
 
 
 def check_file(filename):
-    v = string_to_entry_list(file(filename, 'r').read())
+    enc = sniff_po_encoding(filename)
+    with open(filename, 'r', encoding=enc) as f:
+        v = string_to_entry_list(f.read())
     file_ok = True
     for entry in v:
         if entry.is_header():
@@ -225,12 +236,12 @@ def check_file(filename):
         if (a != b) and entry.get_msgstr() and \
                 (entry.get_status() not in ('obsolete', 'fuzzy')):
             file_ok = False
-            print "%s:" % filename
-            print 'msgid: "%s"' % entry.get_msgid()
-            print 'msgstr: "%s"' % entry.get_msgstr()
-            print "%s != %s" % (a, b)
-            print "Entry status:", entry.get_status()
-            print
+            print("%s:" % filename)
+            print('msgid: "%s"' % entry.get_msgid())
+            print('msgstr: "%s"' % entry.get_msgstr)()
+            print("%s != %s" % (a, b))
+            print("Entry status:", entry.get_status())
+            print()
         # Check mapping key
         v1 = find_string_formatting_mapping_keys(entry.get_msgid())
         v2 = find_string_formatting_mapping_keys(entry.get_msgstr())
@@ -247,16 +258,16 @@ def check_file(filename):
                 and (entry.get_msgid() not in ok_different_mapping_key) \
                 and (not format_ok):
             file_ok = False
-            print "Mapping key not equal in the file", filename
-            print "\tmsgid: \"" + entry.get_msgid() + "\""
-            print "\tmsgstr: \"" + entry.get_msgstr() + "\""
+            print("Mapping key not equal in the file", filename)
+            print("\tmsgid: \"" + entry.get_msgid() + "\"")
+            print("\tmsgstr: \"" + entry.get_msgstr() + "\"")
         # Check for notename| strings
         if entry.get_msgid().startswith("notename|"):
             if "|" in entry.get_msgstr():
                 file_ok = False
-                print "%s:" % filename
-                print "'|' in translated notename entry:"
-                print 'msgid: "%s"' % entry.get_msgid()
+                print("%s:" % filename)
+                print("'|' in translated notename entry:")
+                print('msgid: "%s"' % entry.get_msgid())
     return file_ok
 
 
@@ -265,9 +276,10 @@ if len(sys.argv) > 1 and sys.argv[1] == '-t':
     unittest.main()
     sys.exit()
 if len(sys.argv) > 1 and sys.argv[1] == '-c':
-    s = file('po/tr.po', 'r').read()
+    with open('po/tr.po', 'r') as f:
+        s = f.read()
     for x in s.split("\n\n"):
-        print "\n", x
+        print("\n", x)
     sys.exit()
 
 
