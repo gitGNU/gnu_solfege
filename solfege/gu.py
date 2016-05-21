@@ -915,7 +915,7 @@ class EditorDialogBase(object):
             ret = dialog.run()
             if ret == Gtk.ResponseType.OK:
                 if os.path.exists(dialog.get_filename()):
-                    if not dialog_yesno(_("File exists. Overwrite?")):
+                    if not dialog_yesno(_("File exists. Overwrite?"), dialog):
                         continue
                 try:
                     new_name = dialog.get_filename()

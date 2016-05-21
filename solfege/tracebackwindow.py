@@ -65,7 +65,8 @@ class TracebackWindow(Gtk.Dialog):
             "I would prefer if you open a web browser and report your "
             "bug to the bug tracker at https://savannah.gnu.org/bugs/?group=solfege.\n\n"
             "This will give your bug report higher priority and it "
-            "will be fixed faster.\n\nAre you willing to do that?"))
+            "will be fixed faster.\n\nAre you willing to do that?"),
+            self)
         if yesno:
             return
         self.m_send_exception = 'Nothing'

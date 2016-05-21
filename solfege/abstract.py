@@ -107,7 +107,7 @@ class Teacher(cfg.ConfigUtils, QstatusDefs):
                                         self.m_lessonfile_header_defaults)
         self.m_P.parse_file(self.m_lessonfile)
         if [q for q in self.m_P.m_questions if isinstance(q.get('music'), lessonfile.Cmdline)]:
-            run = gu.dialog_yesno(_("The lessonfile contain potentially dangerous code because it run external programs. Run anyway?"))
+            run = gu.dialog_yesno(_("The lessonfile contain potentially dangerous code because it run external programs. Run anyway?"), solfege.win)
             if not run:
                 self.m_P = None
 

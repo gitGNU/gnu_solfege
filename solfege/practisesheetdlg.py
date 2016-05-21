@@ -530,7 +530,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
         ok = len([q.music for q in p.m_questions if isinstance(q.music, self.ok_music_types)])
         if not_ok > 0:
             if ok > 0:
-                do_add = gu.dialog_yesno(_("Not all music types are supported. This file contain %(ok)i supported questions and %(not_ok)i that are not supported. The unsupported questions will be ignored. Add any way?" % locals()))
+                do_add = gu.dialog_yesno(_("Not all music types are supported. This file contain %(ok)i supported questions and %(not_ok)i that are not supported. The unsupported questions will be ignored. Add any way?" % locals()), self)
             else:
                 gu.dialog_ok(_("Could not add the lesson file. It has no questions with a music object with supported music type."), self)
                 do_add = False
