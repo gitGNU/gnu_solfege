@@ -34,6 +34,9 @@ from solfege import cfg, lessonfile, osutils, const
 import solfege
 
 
+class ExerciseModuleImportError(ImportError):
+    pass
+
 class QstatusDefs(object):
     QSTATUS_NO = 0
     QSTATUS_NEW = 1

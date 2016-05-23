@@ -367,6 +367,10 @@ class SolfegeApp(cfg.ConfigUtils):
             cleanup()
             gu.display_exception_message(e, lessonfile=filename)
             return
+        except abstract.ExerciseModuleImportError as e:
+            solfege.win.display_error_message2(
+                _("Exercise module not found"), str(e))
+            return
         if 'm_discards' in dir(self.m_teachers[module].m_P):
             for msg in self.m_teachers[module].m_P.m_discards:
                 print(msg, file=sys.stderr)
@@ -426,7 +430,10 @@ class SolfegeApp(cfg.ConfigUtils):
             reload(m)
             del sys.path[0]
         else:
-            m = __import__("solfege.exercises.%s" % modulename, fromlist=("solfege.exercises.%s" % modulename,), level=0)
+            try:
+                m = __import__("solfege.exercises.%s" % modulename, fromlist=("solfege.exercises.%s" % modulename,), level=0)
+            except ImportError as e:
+                raise abstract.ExerciseModuleImportError(e)
         return m
 
     def reset_exercise(self, w=None):
