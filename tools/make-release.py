@@ -72,6 +72,7 @@ class Logger(object):
         self.close = self.logfile.close
 
     def call(self, *args, **kwargs):
+        print(" ".join(args[0]), file=self.logfile)
         kwargs['stdout'] = subprocess.PIPE
         kwargs['stderr'] = subprocess.STDOUT
         p = subprocess.Popen(*args, **kwargs)
@@ -81,7 +82,7 @@ class Logger(object):
                 break
             while True:
                 s = p.stdout.readline()
-                print(s.strip())
+                print(s.strip().decode("utf-8"))
                 self.logfile.write(s.decode("utf-8"))
                 if not s:
                     break
@@ -155,7 +156,7 @@ bl.call(["tar", "--gzip", "--create",
 
 if options.run_make_test:
     bl.call(["make", "test"], cwd=bindistdir)
-bl.call(["make", "dist"], cwd=bindistdir)
+
 bl.close()
 print("Remember to check that the translation of the user manual does")
 print("not mess with the docbook format of the file.")
