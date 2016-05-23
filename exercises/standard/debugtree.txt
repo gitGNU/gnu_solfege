@@ -65,11 +65,9 @@ FileHeader(1,
     Page(_(u'generated test files'), [
      Column([
       LinkList(_(u'generated test files'), [
-       u'solfege:regression-lesson-files/xx-chord-exceptions',
        u'solfege:regression-lesson-files/xx-chordvoicing-exceptions',
        u'solfege:regression-lesson-files/xx-dictation-exceptions',
        u'solfege:regression-lesson-files/xx-elembuilder-exceptions',
-       u'solfege:regression-lesson-files/xx-harmonicprogressiondictation-exceptions',
        u'solfege:regression-lesson-files/xx-idbyname-exceptions',
        u'solfege:regression-lesson-files/xx-idproperty-exceptions',
        u'solfege:regression-lesson-files/xx-rhythmtapping-exceptions',
