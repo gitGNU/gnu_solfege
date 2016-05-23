@@ -47,7 +47,7 @@ def hash_lessonfile_text(s):
 def hash_of_lessonfile(filename):
     assert isinstance(filename, str)
     with open(lessonfile.uri_expand(filename), 'r') as f:
-        return f.read()
+        return hash_lessonfile_text(f.read())
 
 
 class DB(object):
