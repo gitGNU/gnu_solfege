@@ -328,9 +328,8 @@ class ExerciseView(SelectWinBase):
 
     def is_match(self, filename, C_locale=False):
         try:
-            if not (self.search_module is None
-                    or (self.search_module is not None
-                        and self.search_module != lessonfile.infocache.get(filename, 'module'))):
+            if (self.search_module is not None
+                and self.search_module != lessonfile.infocache.get(filename, 'module')):
                 return False
             if C_locale:
                 return self.search_for in lessonfile.infocache.get(filename, 'title').cval.lower()
