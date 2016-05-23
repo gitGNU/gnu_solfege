@@ -1197,9 +1197,6 @@ class ExceptionDialog(Gtk.Dialog):
 def display_exception_message(exception, lessonfile=None):
         """Call this function only inside an except clause."""
         sourcefile, lineno, func, code = traceback.extract_tb(sys.exc_info()[2])[0]
-        # We can replace characters because we will only display the
-        # file name, not open the file.
-        sourcefile = sourcefile.decode(sys.getfilesystemencoding(), 'replace')
         m = ExceptionDialog(exception)
         if lessonfile:
             m.add_text(_("Please check the lesson file %s.") % lessonfile)
