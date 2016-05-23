@@ -24,13 +24,6 @@ FileHeader(1,
        ]),
       ]),
      ]),
-    Page(_(u'chord'), [
-     Column([
-      LinkList(_(u'chord'), [
-       u'solfege:regression-lesson-files/chord-wav-music',
-       ]),
-      ]),
-     ]),
     Page(_(u'nameinterval'), [
      Column([
       LinkList(_(u'nameinterval'), [
@@ -44,13 +37,6 @@ FileHeader(1,
       LinkList(_(u'chordvoicing'), [
        u'solfege:regression-lesson-files/chordvoicing-lessonfile-exception',
        u'solfege:regression-lesson-files/chordvoicing-mpd-exception',
-       ]),
-      ]),
-     ]),
-    Page(_(u'harmonicprogressiondictation'), [
-     Column([
-      LinkList(_(u'harmonicprogressiondictation'), [
-       u'solfege:regression-lesson-files/harmonicprogression-lessonfile-exception',
        ]),
       ]),
      ]),
@@ -111,20 +97,6 @@ FileHeader(1,
       LinkList(_(u'rhythmtapping2'), [
        u'solfege:regression-lesson-files/rhythmtapping2-1',
        u'solfege:lesson-files/rhythmtapping2-self-config-binary',
-       ]),
-      ]),
-     ]),
-    Page(_(u'harmonicprogressiondictation'), [
-     Column([
-      LinkList(_(u'harmonicprogressiondictation'), [
-       u'solfege:lesson-files/progression-x',
-       ]),
-      ]),
-     ]),
-    Page(_(u'chord'), [
-     Column([
-      LinkList(_(u'chord'), [
-       u'solfege:regression-lesson-files/chord-no-name',
        ]),
       ]),
      ]),

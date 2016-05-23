@@ -140,8 +140,6 @@ write a lesson file, drop it in a directory and use it.</para>
 <para>In GNU Solfege, each exercise is created by a lesson file
 interpreted by one of the exercise modules.</para>
 
-<para>Deprecated modules: chord, harmonicprogressiondictation,
-</para>
 <para>Missing documentation: chordvoicing, identifybpm, twelvetone
 </para>
 
@@ -441,8 +439,8 @@ Example:</para>
 create variation. The default value is <literal>yes</literal>. (The
 default value changed from <literal>no</literal> to
 <literal>yes</literal> in Solfege 3.0.)</para>
-<para>Used in modules: <literal>chord</literal>,
-<literal>chordvoicing</literal>, <literal>harmonicprogressiondictation</literal>,
+<para>Used in modules:
+<literal>chordvoicing</literal>,
 <literal>idbyname</literal>, <literal>singanswer</literal>,
 <literal>singchord</literal></para>
 
@@ -541,8 +539,7 @@ You can transpose INTEGER1 and INTEGER2.
     <literal>no</literal> for lesson files where it does not make sense, for
     example in a <literal>idbyname</literal> lesson file where many questions
     have the same name.</para>
-    <para>Modules: <literal>idbyname</literal>, <literal>chordvoicing</literal>
-    and <literal>chord</literal>.</para>
+    <para>Modules: <literal>idbyname</literal> and <literal>chordvoicing</literal>.</para>
     </listitem>
 </varlistentry>
 
@@ -841,7 +838,7 @@ ask_for_intervals_1 = -2, -3
     <para>This variable can also be defined globally for the whole lesson file.
     Do do so you should put it in the beginning of the file, outside any
     question blocks.</para>
-    <para>Modules: <literal>idbyname</literal>, <literal>chord</literal>,
+    <para>Modules: <literal>idbyname</literal>,
         <literal>chordvoicing</literal>,
         <literal>rhythmdictation2</literal> and
         <literal>rhythmtapping</literal>.</para>
@@ -882,7 +879,7 @@ ask_for_intervals_1 = -2, -3
     <para>This variable can also be defined globally for the whole lesson file.
     Do do so you should put it in the beginning of the file, outside any
     question blocks.</para>
-    <para>Modules: <literal>idbyname</literal>, <literal>chord</literal>,
+    <para>Modules: <literal>idbyname</literal>,
         <literal>singanswer</literal> and <literal>chordvoicing</literal></para>
     <!-- ikke melodicinterval, singchord, compareintervals, ...-->
     </listitem>

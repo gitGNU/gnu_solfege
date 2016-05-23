@@ -15,7 +15,6 @@
 
 # Undocumented
 # chordvoicing (test written)
-# harmonicprogressiondictation (test written)
 # identifybpm
 # singinterval
 # tuner
@@ -34,7 +33,6 @@
 # idbyname
 # singanswer
 # rhythmtapping
-# chord (obsolete)
 # idproperty
 # dictation
 # singchord
@@ -44,12 +42,10 @@ module_to_mtype = {
   'idbyname': ('voice', 'rvoice', 'chord', 'music'),
   'singanswer': ('voice', 'rvoice', 'chord', 'music'),
   'rhythmtapping': ('voice', 'rvoice'),
-  'chord': ('chord',),
   'idproperty': ('chord', 'rvoice',),
   'dictation': ('music', 'voice', 'rvoice',),
   'singchord': ('satb',),
   'elembuilder': ('voice', 'rvoice', 'music'),
-  'harmonicprogressiondictation': ('music', 'rvoice'),
   'chordvoicing': ('chord', 'satb'),
 }
 
