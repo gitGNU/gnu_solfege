@@ -46,7 +46,7 @@ def create_manpage():
     import solfege.i18n
     solfege.i18n.setup(".")
     import solfege.optionparser
-    options = solfege.optionparser.SolfegeOptionParser().format_help()#.encode('iso-8859-1', 'replace')
+    options = solfege.optionparser.SolfegeOptionParser().format_help()
     v = options.split("\n")
     del v[0]
     del v[0]
