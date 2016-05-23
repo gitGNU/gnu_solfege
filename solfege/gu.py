@@ -1105,18 +1105,20 @@ class ExceptionDialog(Gtk.Dialog):
         self.set_resizable(True)
         self.set_border_width(6)
         self.vbox.set_spacing(0)
+
+        # HBox with two children: the warning image, and a VBox with content
         hbox = Gtk.HBox(False, 0)
         hbox.set_spacing(12)
         hbox.set_border_width(6)
         self.vbox.pack_start(hbox, False, False, 0)
+        img = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
+        img.props.valign = Gtk.Align.START
+        hbox.pack_start(img, False, False, padding=0)
+
+        # A Vbox with labels and code listings
         vbox = Gtk.VBox(False, 0)
         hbox.pack_start(vbox, False, False, padding=0)
-        img = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
-        vbox.pack_start(img, False, False, padding=0)
-        vbox = Gtk.VBox(False, 0)
-        hbox.pack_start(vbox, True, True, 0)
-        self.msg_vbox = Gtk.VBox(False, 0)
-        vbox.pack_start(self.msg_vbox, True, True, 0)
+        self.msg_vbox = vbox
         self.g_primary = Gtk.Label()
         if sys.exc_info()[0].__name__ == 'AttributeError':
             self.g_primary.set_name("DEBUGWARNING")
@@ -1125,34 +1127,29 @@ class ExceptionDialog(Gtk.Dialog):
         self.m_primary_bold = False
         self.msg_vbox.pack_start(self.g_primary, True, True, 0)
         if isinstance(exception, Exception):
-            self.g_primary.set_text(str(exception).decode(sys.getfilesystemencoding(), 'replace'))
+            self.g_primary.set_text(str(exception))
         else:
             if 'args' in dir(exception) and exception.args:
                 estr = exception.args[0]
             else:
                 estr = exception
             if not isinstance(estr, str):
-                estr = str(estr).decode(sys.getfilesystemencoding(), 'replace')
+                estr = str(estr)
             self.g_primary.set_text(estr)
             if 'args' in dir(exception):
                 for s in exception.args[1:]:
                     self.add_text(s)
-        # This label is here just for spacing
-        l = Gtk.Label(label="")
-        vbox.pack_start(l, True, True, 0)
+        self.g_primary.set_width_chars(60)
         expander = Gtk.Expander(label="Traceback")
         self.vbox.pack_start(expander, True, True, 0)
         l = Gtk.Label("".join(traceback.format_exception(
-            sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])).decode(sys.getfilesystemencoding(), 'replace'))
+            sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])))
         l.set_alignment(0.0, 0.5)
         sc = Gtk.ScrolledWindow()
         sc.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         sc.set_size_request(-1, 100)
         expander.add(sc)
         sc.add_with_viewport(l)
-        l = Gtk.Label(label=_("Visit http://www.solfege.org/support if you need help."))
-        l.set_alignment(0.0, 0.5)
-        vbox.pack_start(l, False, False, 0)
         w = self.add_button(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         self.set_default_response(Gtk.ResponseType.CLOSE)
         self.set_focus(w)
@@ -1164,14 +1161,8 @@ class ExceptionDialog(Gtk.Dialog):
             self.g_primary.set_markup('<span weight="bold" size="larger">%s</span>' %
                 escape(self.g_primary.get_text()))
 
-    def _parsep(self):
-        l = Gtk.Label(label="")
-        l.show()
-        self.msg_vbox.pack_start(l, True, True, 0)
-
     def add_text(self, text):
         self._make_primary_bold()
-        self._parsep()
         # We add a empty string with a newline to get the spacing
         l = Gtk.Label(label=text)
         l.set_line_wrap(True)
@@ -1181,10 +1172,10 @@ class ExceptionDialog(Gtk.Dialog):
 
     def add_nonwrapped_text(self, text):
         self._make_primary_bold()
-        self._parsep()
         sc = Gtk.ScrolledWindow()
         l = Gtk.Label()
         l.set_markup('<span font_family="monospace">%s</span>' % escape(text))
+        l.set_name("codelisting")
         l.set_line_wrap(False)
         l.set_alignment(0.0, 0.5)
         l.show()
