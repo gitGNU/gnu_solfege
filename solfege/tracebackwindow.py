@@ -20,7 +20,6 @@ import sys
 from gi.repository import Gtk
 
 from solfege import gu
-from solfege import reportbug
 
 
 class TracebackWindow(Gtk.Dialog):
