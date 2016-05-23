@@ -41,58 +41,9 @@ class TracebackWindow(Gtk.Dialog):
         self.vbox.pack_start(scrollwin, True, True, 0)
         self.g_text = Gtk.TextView()
         scrollwin.add(self.g_text)
-        self.g_report = Gtk.Button()
-        self.g_report.connect('clicked', self.do_report)
-        box = Gtk.HBox()
-        self.g_report.add(box)
-        im = Gtk.Image.new_from_stock('gtk-execute', Gtk.IconSize.BUTTON)
-        box.pack_start(im, True, True, 0)
-        label = Gtk.Label()
-        label.set_text_with_mnemonic(gu.escape(_('_Make automatic bug report')))
-        label.set_use_markup(True)
-        box.pack_start(label, True, True, 0)
-        self.action_area.pack_start(self.g_report, True, True, 0)
         self.g_close = Gtk.Button(stock='gtk-close')
         self.action_area.pack_start(self.g_close, True, True, 0)
         self.g_close.connect('clicked', lambda w: self.hide())
-
-    def do_report(self, *v):
-        yesno = gu.dialog_yesno(_(
-            "Automatic bug reports are often mostly useless because "
-            "people omit their email address and add very little info "
-            "about what happened. Fixing bugs is difficult if we "
-            "cannot contact you and ask for more information.\n\n"
-            "I would prefer if you open a web browser and report your "
-            "bug to the bug tracker at https://savannah.gnu.org/bugs/?group=solfege.\n\n"
-            "This will give your bug report higher priority and it "
-            "will be fixed faster.\n\nAre you willing to do that?"),
-            self)
-        if yesno:
-            return
-        self.m_send_exception = 'Nothing'
-        b = self.g_text.get_buffer()
-        d = reportbug.ReportBugWindow(
-            self, b.get_text(b.get_start_iter(),
-                             b.get_end_iter(), False))
-        while 1:
-            ret = d.run()
-            if ret in (Gtk.ResponseType.REJECT, Gtk.ResponseType.DELETE_EVENT):
-                break
-            elif ret == reportbug.RESPONSE_SEND:
-                self.m_send_exception = d.send_bugreport()
-                break
-        if self.m_send_exception != 'Nothing':
-            if self.m_send_exception:
-                m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL,
-                    Gtk.MessageType.ERROR, Gtk.ButtonsType.CLOSE,
-                    "Sending bugreport failed:\n%s" % self.m_send_exception)
-            else:
-                m = Gtk.MessageDialog(self, Gtk.DialogFlags.MODAL,
-                    Gtk.MessageType.INFO, Gtk.ButtonsType.CLOSE,
-                    'Report sent to http://www.solfege.org')
-            m.run()
-            m.destroy()
-        d.destroy()
 
     def write(self, txt):
         if ("DeprecationWarning:" in txt) or \
