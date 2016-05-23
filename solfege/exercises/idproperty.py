@@ -39,7 +39,8 @@ class Teacher(abstract.Teacher):
     def __init__(self, exname):
         abstract.Teacher.__init__(self, exname)
         self.lessonfileclass = lessonfile.IdPropertyLessonfile
-        for s in 'accidentals', 'key', 'semitones', 'atonal':
+        for s in ('accidentals', 'key', 'semitones', 'atonal',
+                  'horiz', 'vertic'):
             self.m_lessonfile_defs[s] = s
 
     def new_question(self):
