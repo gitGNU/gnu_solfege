@@ -7,8 +7,8 @@
 # The exercise plays tonic chord and then an interval in that key. User should enter the name of the interval an guess (write down on paper) the notes.
 
 header {
-    lesson_id = "intervals_in_minor"
-    module = harmonicprogressiondictation
+    module = idbyname
+    fillnum = 4
     title = _("Interval in a key (minor)")
     title[et] = "Intervall helistikus (minoor)"
    # help = "intervall-helistikus"
