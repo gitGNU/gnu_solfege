@@ -1,24 +1,35 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # GNU Solfege - free ear training software
 # Copyright (C) 2009, 2011, 2016 Tom Cato Amundsen
 # Licence is GPL, see file COPYING
 
-from __future__ import absolute_import
+"""
+Generate sha1 hash value of a file after removing lines
+starting with # and empty lines.
+
+This used to preserve the statistics of lesson files when
+doing changes to them that does not affect the statistics.
+
+Usage:
+ ./tools/hash-of-file.py filename
+"""
+
 import sys
 sys.path.insert(0, ".")
 
+if len(sys.argv) < 2 or sys.argv[1] in ('-h', '--help'):
+   import __main__
+   print(__main__.__doc__)
+   sys.exit()
 import textwrap
 from solfege import i18n
 i18n.setup(".")
 from solfege import statistics
 
-print
-print "\n".join(textwrap.wrap(
- "The hash value is calculated using solfege.statistics.hash_of_lessonfile(filename). "
- "This is the sha1 hash value of the file after lines starting with # and empty "
- "lines have been removed."))
-
-print
-print "filename:", sys.argv[1]
-print "    replaces = \"%s\"" % statistics.hash_of_lessonfile(unicode(sys.argv[1]))
-print
+print()
+print("\n".join(textwrap.wrap(
+ "To preserve statistics, place the following in the header "
+ "of %s before making changes to it:" % sys.argv[1])))
+print()
+print("    replaces = \"%s\"" % statistics.hash_of_lessonfile(str(sys.argv[1])))
+print()
