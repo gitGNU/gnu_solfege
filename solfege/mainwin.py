@@ -96,8 +96,9 @@ from solfege import filesystem
 
 class MusicViewerWindow(Gtk.Dialog):
 
-    def __init__(self):
-        Gtk.Dialog.__init__(self)
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(self, parent)
+        self.set_transient_for(parent)
         self.set_default_size(500, 300)
         self.g_music_displayer = mpd.MusicDisplayer()
         self.vbox.pack_start(self.g_music_displayer, True, True, 0)
@@ -733,7 +734,7 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
 
     def display_in_musicviewer(self, music):
         if not self.g_musicviewer_window:
-            self.g_musicviewer_window = MusicViewerWindow()
+            self.g_musicviewer_window = MusicViewerWindow(self)
             self.g_musicviewer_window.show()
         self.g_musicviewer_window.display_music(music)
 
