@@ -371,10 +371,11 @@ class FlashBar(Gtk.Frame):
                     w.set_name("FlashBarLabel")
                 else:
                     w = lessonfilegui.new_labelobject(kwargs[varname])
+                self.__content.pack_start(w, False, False, 0)
             elif child:  # don't create label for empty string
                 w = Gtk.Label(label=child)
                 w.set_name("FlashBarLabel")
-            self.__content.pack_start(w, False, False, 0)
+                self.__content.pack_start(w, False, False, 0)
             w.show()
         self.m_sx = max(self.size_request().width, self.m_sx)
         self.m_sy = max(self.size_request().height, self.m_sy)
