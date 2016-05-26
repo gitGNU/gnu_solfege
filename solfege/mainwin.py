@@ -471,51 +471,6 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
                 solfege.splash_win.destroy()
                 solfege.splash_win = None
             solfege.app.display_sound_init_error_message(solfege.app.m_sound_init_exception)
-        # MIGRATION 3.9.0
-        if sys.platform == "win32" \
-            and os.path.exists(os.path.join(filesystem.get_home_dir(), "lessonfiles")) \
-            and not os.path.exists(filesystem.user_lessonfiles()):
-                if solfege.splash_win:
-                    solfege.splash_win.hide()
-                do_move = gu.dialog_yesno(_('In Solfege 3.9.0, the location where Solfege look for lesson files you have created was changed. The files has to be moved from "%(old)s" and into the folder "%(gnu)s" in your "%(doc)s" folder.\nMay I move the files automatically for you now?' % {
-                    'doc': os.path.split(os.path.split(filesystem.user_data())[0])[1],
-                    'gnu': os.path.join(filesystem.appname, 'lessonfiles'),
-                    'old': os.path.join(filesystem.get_home_dir(), "lessonfiles"),
-                  }), parent=self)
-                if do_move:
-                    try:
-                        os.makedirs(filesystem.user_data())
-                        shutil.copytree(os.path.join(filesystem.get_home_dir(), "lessonfiles"),
-                                        os.path.join(filesystem.user_data(), "lessonfiles"))
-                    except (OSError, shutil.Error) as e:
-                        gu.dialog_ok(_("Error while copying directory:\n%s" % e,
-                                     parent=self))
-                    else:
-                        gu.dialog_ok(_("Files copied. The old files has been left behind. Please delete them when you have verified that all files was copied correctly."), parent=self)
-
-                if solfege.splash_win:
-                    solfege.splash_win.show()
-        # MIGRATION 3.9.3 when we added langenviron.bat and in 3.11
-        # we migrated to langenviron.txt because we does not use cmd.exe
-        if sys.platform == 'win32' and winlang.win32_get_langenviron() != self.get_string('app/lc_messages'):
-            gu.dialog_ok(_("Migrated old language setup. You might have to restart the program all translated messages to show up."), parent=self)
-            winlang.win32_put_langenviron(self.get_string('app/lc_messages'))
-        # MIGRATION 3.11.1: earlier editors would create new learning trees
-        # below app_data() instead of user_data().
-        if (sys.platform == "win32" and
-            os.path.exists(os.path.join(filesystem.app_data(),
-                                        "learningtrees"))):
-            if not os.path.exists(os.path.join(filesystem.user_data(), "learningtrees")):
-                os.makedirs(os.path.join(filesystem.user_data(), "learningtrees"))
-            for fn in os.listdir(os.path.join(filesystem.app_data(), "learningtrees")):
-                if not os.path.exists(os.path.join(filesystem.user_data(), "learningtrees", fn)):
-                    shutil.move(os.path.join(filesystem.app_data(), "learningtrees", fn),
-                            os.path.join(filesystem.user_data(), "learningtrees"))
-                else:
-                    # We add the .bak exstention if the file already exists.
-                    shutil.move(os.path.join(filesystem.app_data(), "learningtrees", fn),
-                            os.path.join(filesystem.user_data(), "learningtrees", "%s.bak" % fn))
-                os.rmdir(os.path.join(os.path.join(filesystem.app_data(), "learningtrees")))
         item = self.g_ui_manager.get_widget("/Menubar/FileMenu/FrontPagesMenu")
         item.connect('activate', lambda s: self.create_frontpage_menu())
         try:
@@ -563,18 +518,6 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
                 linklist = frontpage.LinkList(dir)
                 col.append(linklist)
             linklist.append(filename)
-        if os.path.isdir(filesystem.user_lessonfiles()):
-            linklist = None
-            col.append(frontpage.Paragraph(_('You really should move the following directory to a directory below <span font_family="monospace">%s</span>. Future versions of GNU Solfege will not display files in the old location. The user manual have details on where to place the files.') % os.path.join(filesystem.user_data(), 'exercises')))
-            # Added just to be nice with people not moving their files from
-            # pre 3.15.3 location:
-            for filename in os.listdir(filesystem.user_lessonfiles()):
-                if not linklist:
-                    linklist = frontpage.LinkList(filesystem.user_lessonfiles())
-                linklist.append(os.path.join(filesystem.user_lessonfiles(), filename))
-            # only display the linklist if there are any files.
-            if linklist:
-                col.append(linklist)
         self.display_frontpage(page)
 
     def display_recent_exercises(self, w):

@@ -2016,7 +2016,7 @@ class InfoCache(object):
 
     def parse_all_files(self, when_idle):
         """
-        Parse all standard lesson files and the user_lessonfiles.
+        Parse all standard lesson files and the user generated files.
         Will not check if reparse is necessary.
         """
         logging.debug("parse_all_files(when_idle=%s)", when_idle)
@@ -2038,7 +2038,7 @@ class InfoCache(object):
             list(self.iter_parse_all_files())
 
     def update_modified_files(self):
-        self.cond_parse_dir(filesystem.user_lessonfiles())
+        self.cond_parse_dir(os.path.join(filesystem.user_data(), "exercises/user/lesson-files"))
         self.cond_parse_dir(os.path.join(exercises_dir, "lesson-files"))
 
     def cond_parse_dir(self, dir):

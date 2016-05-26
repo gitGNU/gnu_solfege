@@ -24,18 +24,12 @@ r"""
 ~/.solfege/eartr.tests  C:\D&S\User\.solfege\eartr.tests  My Documents\GNU Solfege\eartr.tests
 ~/lessonfiles           C:\D&S\User\lessonfiles           My Documents\GNU Solfege\lessonfiles
 
-We need more functions that I would prefer because we still have ~/.solfegerc
-and ~/lessonfiles on linux. user_lessonfiles() could have been unnecessary
-if ~/lessonfiles moved to ~/.solfege/lessonfiles
-
 MSWIN: app_data() => %APPDATA%\GNU Solfege
        rcfile() => app_data()\solfegerc
        user_data() => MyDocuments\GNU Solfege
-       user_lessonfiles() => user_data()/lessonfiles
 Linux: app_data() => ~/.solfege
        rcfile() => ~/.solfegerc
        user_data() => app_data()
-       user_lessonfiles() => ~/lessonfiles
 
 Example locations:
     app_data()/learningtrees
@@ -99,18 +93,6 @@ def user_data():
         return os.path.join(winreg._get_reg_user_value(winreg.SHELL_FOLDERS, 'Personal'), appname)
     else:
         return os.path.expanduser("~/.solfege")
-
-
-def user_lessonfiles():
-    """
-    DEPRECATED: user_data()/exercises/user/lesson-files is the standard now.
-    Return the full path name of the directory that will store files
-    created by the user. For example lesson files and learning trees.
-    """
-    if sys.platform == "win32":
-        return os.path.join(user_data(), "lessonfiles")
-    else:
-        return os.path.expanduser("~/lessonfiles")
 
 
 def rcfile():
