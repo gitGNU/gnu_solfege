@@ -562,7 +562,7 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
         self.set_title("GNU Solfege")
         if not self.show_view('searchview'):
             self.add_view(SearchView(_('Search the exercise titles of all lesson files found by the program, not just the active front page with sub pages.')), 'searchview')
-            self.get_view().g_searchentry.grab_focus()
+        self.get_view().g_searchentry.grab_focus()
 
     def display_frontpage(self, data=None, show_topics=False):
         """
