@@ -7,21 +7,34 @@ you do not know any computer programming. The steps are:</para>
 <itemizedlist>
 
 <listitem><para>Create a <link linkend="lesson-files">lesson file</link>
-and save it it in the first directory
-listed when you select <guimenuitem>User Exercises</guimenuitem> from the
-<guimenu>File</guimenu> menu. Create the directory if it does not
+and save it it in
+<filename class="directory">
+<link linkend='USERDATA'>USERDATA</link>/exercises/user/lesson-files
+</filename>. You can also see the full file name for the directory
+when you select <menuchoice><guimenu>File</guimenu><guimenuitem>User Exercises</guimenuitem></menuchoice>.
+Create the directory if it does not
 exist.</para></listitem>
-<listitem><para>Select <guimenuitem>User Exercises</guimenuitem> once again to
-see the file show up in the list.</para></listitem>
+<listitem><para>Select
+<menuchoice>
+ <shortcut><keysym>F9</keysym></shortcut>
+ <guimenu>File</guimenu><guimenuitem>User Exercises</guimenuitem>
+</menuchoice>
+again to see the file show up in the list.</para></listitem>
 <listitem><para>Click the link to your lesson file and enjoy!</para></listitem>
 </itemizedlist>
 
 <para>To get started, you can copy one of the lesson files included in GNU
 Solfege. The lesson files are located in the <filename
 class="directory">exercises/standard/lesson-files</filename> subdirectory of
-the installation directory. You can find the installation directory by
-selecting <guimenuitem>File Locations</guimenuitem> from the
-<guimenu>Help</guimenu> menu. It is important to store the lesson files you
+<link linkend='INSTALLDIR'>the installation directory INSTALLDIR</link>.
+You can see the full name of
+ <link linkend='INSTALLDIR'>INSTALLDIR</link> for your operating system
+by selecting
+<menuchoice>
+  <guimenu>Help</guimenu>
+  <guimenuitem>File Locations</guimenuitem>
+</menuchoice>.
+It is important to store the lesson files you
 create in the directory intended for user created lesson files, and not in the
 applications directory. This because all files in the installation directory
 may be removed while upgrading the program.</para>
@@ -41,18 +54,36 @@ myfiles/lesson-files/chords-2
 menu, and then click <guibutton>New</guibutton> on the toolbar of the
 dialog that pops up.</para>
 
+<para>The only way <filename><link linkend='USERDATA'>USERDATA</link>/exercises/user</filename>
+is different from any other directory below
+<filename><link linkend='USERDATA'>USERDATA</link>/exercises</filename>
+is that all lesson files saved in
+<filename><link linkend='USERDATA'>USERDATA</link>/exercises/user/lesson-files</filename>
+are listed when you press <keycap>F9</keycap> or select
+<menuchoice><guimenu>File</guimenu><guimenuitem>User Exercises</guimenuitem>
+</menuchoice>.
+</para>
+</sect1>
+
+<sect1>
+<title>Plugins or user contributed exercise modules</title>
+<para>
+Solfege let you write your own exercise modules in python. You can save them
+in <filename><link linkend="USERDATA">USERDATA</link>/user/modules</filename>
+
+</para>
 </sect1>
 
 <sect1 id='lesson-file-locations-details'>
 <title>File locations</title>
 
-<sect2>
+<sect2 id="INSTALLDIR">
 <title>INSTALLDIR</title>
 <para>In <xref linkend='extending-intro'/> we showed you just enough to place
 your lesson file to get started. This sections give you all the details
 how files and directories are set up.</para>
 
-<para>We will write <literal id="INSTALLDIR">INSTALLDIR</literal>
+<para>We will write <literal>INSTALLDIR</literal>
 whenever we refer to the directory Solfege is installed in. The exact
 location differ from operating system to operating system, and can be
 found by selecting <menuchoice><guimenu>Help</guimenu><guimenuitem>File locations</guimenuitem></menuchoice> and then lookup «Solfege installation directory».
@@ -74,11 +105,6 @@ files.</para>
 
 <sect2>
 <title><literal id="USERDATA">USERDATA</literal></title>
-<para>Solfege allow for the user to create exercises (and soon also
-exercise modules written in Python). These should not be saved in
-<filename>INSTALLDIR</filename> because then they will be lost on
-upgrade.</para>
-
 <para>The directory to save the lesson files you write yourself depends on the
 operating system you run, and on the locale settings (language). In this
 document we will write USERDATA whenever we refer to the directory found
