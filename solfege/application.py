@@ -25,6 +25,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import importlib
 from urllib.parse import urlparse
 import webbrowser
 
@@ -353,11 +354,13 @@ class SolfegeApp(cfg.ConfigUtils):
     def practise_lessonfile(self, filename):
         def cleanup():
             module = lessonfile.infocache.get(filename, 'module')
-            self.m_teachers[module].m_P = None
-            solfege.win.box_dict[module].practise_box.set_sensitive(False)
-            solfege.win.box_dict[module].g_config_grid.set_sensitive(False)
-            solfege.win.box_dict[module].action_area.set_sensitive(False)
-            solfege.win.box_dict[module].std_buttons_end_practise()
+            if module in self.m_teachers:
+                self.m_teachers[module].m_P = None
+            if module in solfege.win.box_dict:
+                solfege.win.box_dict[module].practise_box.set_sensitive(False)
+                solfege.win.box_dict[module].g_config_grid.set_sensitive(False)
+                solfege.win.box_dict[module].action_area.set_sensitive(False)
+                solfege.win.box_dict[module].std_buttons_end_practise()
         try:
             module = self._practise_lessonfile(filename)
         except (lessonfile.LessonfileParseException,
@@ -427,7 +430,7 @@ class SolfegeApp(cfg.ConfigUtils):
                                       "exercises", collection, "modules")
             sys.path.insert(0, module_dir)
             m = __import__(modulename.split("/")[1])
-            reload(m)
+            importlib.reload(m)
             del sys.path[0]
         else:
             try:

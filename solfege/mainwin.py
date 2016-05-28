@@ -532,7 +532,6 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
                    solfege.db.recent(8))])])
         self.display_frontpage(data, show_topics=True)
         self.set_title("GNU Solfege - " + _("_Recent Exercises").replace("_", ""))
-        print (data)
         self.get_view().g_searchbox.hide()
 
     def display_recent_tests(self, w):
