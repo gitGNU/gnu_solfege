@@ -499,19 +499,6 @@ class SpinButtonRangeController(object):
             self.g_spin_high.set_value(self.m_highest_value)
 
 
-def create_stock_menu_item(stock, txt, callback, ag, accel_key, accel_mod):
-    box = Gtk.HBox(False, 0)
-    box.set_spacing(PAD_SMALL)
-    im = Gtk.Image()
-    im.set_from_stock(stock, Gtk.IconSize.MENU)
-    item = Gtk.ImageMenuItem(txt)
-    item.set_image(im)
-    if accel_key != 0:
-        item.add_accelerator('activate', ag, accel_key, accel_mod, Gtk.AccelFlags.VISIBLE)
-    item.connect('activate', callback)
-    return item
-
-
 class AlignedHBox(Gtk.HBox):
 
     def setup_pre(self):
