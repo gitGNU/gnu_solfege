@@ -19,6 +19,7 @@ import sys
 
 from gi.repository import Gtk
 
+import solfege
 from solfege import gu
 
 
@@ -46,6 +47,8 @@ class TracebackWindow(Gtk.Dialog):
         self.connect('response', self.on_response)
 
     def write(self, txt):
+        if getattr(solfege, 'win', False):
+            self.set_transient_for(solfege.win)
         if ("DeprecationWarning:" in txt) or \
            (not self.m_show_gtk_warnings and (
             "GtkWarning" in txt
@@ -59,7 +62,8 @@ class TracebackWindow(Gtk.Dialog):
             self.show_all()
         buffer = self.g_text.get_buffer()
         buffer.insert(buffer.get_end_iter(), txt)
-        self.set_focus(self.g_close)
+        self.set_focus(
+            self.get_widget_for_response(Gtk.ResponseType.CLOSE))
 
     def flush(self, *v):
         pass
