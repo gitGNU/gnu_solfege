@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# vim: set fileencoding=utf8:
+# vim: set fileencoding=utf-8:
 # GNU Solfege - free ear training software
 # Copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2007, 2008, 2011, 2016  Tom Cato Amundsen
 #
