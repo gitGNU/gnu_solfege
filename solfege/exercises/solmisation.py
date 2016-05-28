@@ -153,8 +153,8 @@ class RhythmViewer(Gtk.Frame):
         self.g_face = Gtk.EventBox()
         self.g_face.connect('button_press_event', self.on_sadface_event)
         self.g_face.show()
-        im = Gtk.Image()
-        im.set_from_stock('solfege-sadface', Gtk.IconSize.LARGE_TOOLBAR)
+        im = Gtk.Image.new_from_icon_name(
+            "face-sad", Gtk.IconSize.LARGE_TOOLBAR)
         im.show()
         self.g_face.add(im)
         self.g_box.pack_start(self.g_face, False, False, 0)
@@ -166,8 +166,8 @@ class RhythmViewer(Gtk.Frame):
         self.g_face = Gtk.EventBox()
         self.g_face.connect('button_press_event', self.on_happyface_event)
         self.g_face.show()
-        im = Gtk.Image()
-        im.set_from_stock('solfege-happyface', Gtk.IconSize.LARGE_TOOLBAR)
+        im = Gtk.Image.new_from_icon_name(
+            "face-smile", Gtk.IconSize.LARGE_TOOLBAR)
         im.show()
         self.g_face.add(im)
         self.g_box.pack_start(self.g_face, False, False, 0)
