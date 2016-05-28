@@ -24,6 +24,7 @@ from solfege import gu
 
 class TracebackWindow(Gtk.Dialog):
 
+    RESPONSE_CLEAR = 1
     def __init__(self, show_gtk_warnings):
         Gtk.Dialog.__init__(self)
         self.m_show_gtk_warnings = show_gtk_warnings
@@ -40,9 +41,9 @@ class TracebackWindow(Gtk.Dialog):
         self.vbox.pack_start(scrollwin, True, True, 0)
         self.g_text = Gtk.TextView()
         scrollwin.add(self.g_text)
-        self.g_close = Gtk.Button(stock='gtk-close')
-        self.action_area.pack_start(self.g_close, True, True, 0)
-        self.g_close.connect('clicked', lambda w: self.hide())
+        self.add_button("gtk-clear", self.RESPONSE_CLEAR)
+        self.add_button("gtk-close", Gtk.ResponseType.CLOSE)
+        self.connect('response', self.on_response)
 
     def write(self, txt):
         if ("DeprecationWarning:" in txt) or \
@@ -65,3 +66,10 @@ class TracebackWindow(Gtk.Dialog):
 
     def close(self, *v):
         pass
+
+    def on_response(self, dlg, response):
+        if response == self.RESPONSE_CLEAR:
+            b = self.g_text.get_buffer()
+            b.delete(b.get_start_iter(), b.get_end_iter())
+        elif response == Gtk.ResponseType.CLOSE:
+            self.hide()
