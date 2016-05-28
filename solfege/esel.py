@@ -17,6 +17,7 @@
 
 
 import logging
+import os
 
 from gi.repository import GObject
 from gi.repository import Gtk
@@ -173,7 +174,7 @@ class ExerciseView(SelectWinBase):
         for col_idx, column in enumerate(page):
             assert isinstance(column, frontpage.Column)
             first = True
-            y = 0
+            y = 1
             for sect_id, linklist in enumerate(column):
                 if isinstance(linklist, frontpage.Paragraph):
                     label = Gtk.Label(label=linklist.m_text)
@@ -198,7 +199,7 @@ class ExerciseView(SelectWinBase):
                     if isinstance(link, frontpage.Page):
                         label = gu.ClickableLabel(link.m_name)
                         label.connect('clicked', self.on_page_link_clicked, link)
-                        self.g_grid.attach(label, col_idx * COLW + 1, y, 1, 1)
+                        self.g_grid.attach(label, col_idx * COLW, y, 1, 1)
                     else:
                         assert isinstance(link, str), type(link)
                         if display_only_tests:
@@ -227,11 +228,11 @@ class ExerciseView(SelectWinBase):
                                     else:
                                         label = Gtk.Label(lessonfile.infocache.get(link, fieldname))
                                     label.set_alignment(0.0, 0.5)
-                                self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
+                                self.g_grid.attach(label, col_idx * COLW + field_idx, y, 1, 1)
                         except lessonfile.InfoCache.FileNotFound:
                             label = gu.ClickableLabel(_("«%s» was not found") % link)
                             label.make_warning()
-                            self.g_grid.attach(label, col_idx * COLW + 1 + field_idx, y, 1, 1)
+                            self.g_grid.attach(label, col_idx * COLW  + field_idx, y, 1, 1)
                         except lessonfile.InfoCache.FileNotLessonfile:
                             label = gu.ClickableLabel(_("Failed to parse «%s»") % link)
                             label.make_warning()
@@ -267,16 +268,24 @@ class ExerciseView(SelectWinBase):
         solfege.app.practise_lessonfile(filename)
 
     def display_search_result(self, searchfor, result, result_C, display_only_tests=False):
-        self._display_data(
-          frontpage.Page('',
-            frontpage.Column([
-              frontpage.LinkList(
-            _("Search results for “%s”:") % searchfor,
-              result),
-              frontpage.LinkList(
-            _("C-locale search results for “%s”:") % searchfor,
-              result_C, C_locale=True),
-              ])))
+        page = frontpage.Page('', frontpage.Column([]))
+        column = page[0]
+        location = None
+        for rlist in result, result_C:
+            if rlist is result:
+                column.append(frontpage.Paragraph(_("Search results for “%s”:") % searchfor))
+            else:
+                column.append(frontpage.Paragraph(_("C-locale search results for “%s”:") % searchfor))
+
+            for r in rlist:
+                path, name = os.path.split(r)
+                if path != location:
+                    linklist = frontpage.LinkList(path, C_locale=rlist==result_C)
+                    column.append(linklist)
+                    location = path
+                linklist.append(r)
+        column.append(frontpage.LinkList())
+        self._display_data(page)
 
     def on_end_practise(self, w=None):
         pass
@@ -350,7 +359,7 @@ class ExerciseView(SelectWinBase):
         lessonfile.infocache.update_modified_files()
         result = []
         result_C = []
-        for filename in lessonfile.infocache._data:
+        for filename in self.search_iterator():
             if self.is_match(filename):
                 result.append(filename)
             elif self.is_match(filename, C_locale=True):
@@ -360,6 +369,9 @@ class ExerciseView(SelectWinBase):
         self.display_search_result(
             self.g_searchentry.get_text(),
             result, result_C)
+
+    def search_iterator(self):
+        return self._saved_page.iterate_filenames()
 
 
 GObject.signal_new('link-clicked', ExerciseView,
@@ -379,13 +391,6 @@ class FrontPage(ExerciseView):
         self._display_data(data, display_only_tests, is_search_result,
                            show_topics)
         self.g_searchentry.grab_focus()
-
-    def search_iterator(self):
-        """
-        Used by the on_search method in parent class. This iterator lists
-        the filename of all lesson files that should be searched.
-        """
-        return self._saved_page.iterate_flattened()
 
 
 class TestsView(ExerciseView):
@@ -426,4 +431,33 @@ class SearchView(ExerciseView):
         Used by the on_search method in parent class. This iterator lists
         the filename of all lesson files that should be searched.
         """
-        return lessonfile.infocache
+        return lessonfile.infocache.iter_parse_all_files()
+
+class UserView(ExerciseView):
+    """
+    This view will display and search only in the user generated
+    lesson files in ~/.solfege/exercises
+    """
+
+    def __init__(self, infotext, fields=('link',)):
+        ExerciseView.__init__(self, fields)
+        page = """FileHeader(1,
+        Page(u'User generated lesson files', [
+         Column([
+          Paragraph('%s'),
+         ]),
+        ])
+        )""" % infotext
+        self.display_data(frontpage.parse_tree(page))
+        self.g_searchentry.show()
+
+    def display_data(self, data):
+        self._display_data(data)
+        self.g_searchentry.grab_focus()
+
+    def search_iterator(self):
+        """
+        Used by the on_search method in parent class. This iterator lists
+        the filename of all lesson files that should be searched.
+        """
+        return lessonfile.infocache.iter_user_files()

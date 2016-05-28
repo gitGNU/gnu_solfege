@@ -44,7 +44,7 @@ except ImportError:
 
 from solfege import winlang
 from solfege import buildinfo
-from solfege.esel import FrontPage, TestsView, SearchView
+from solfege.esel import FrontPage, TestsView, SearchView, UserView
 
 from gi.repository import Gtk
 from gi.repository import Gdk
@@ -507,40 +507,48 @@ class MainWin(Gtk.ApplicationWindow, cfg.ConfigUtils):
             self.display_error_message2(_("Error opening web browser"), str(e))
 
     def display_user_exercises(self, w):
+        self.set_title("GNU Solfege - " + _("User Exercises"))
+        if not self.show_view('userview'):
+            self.add_view(UserView(""), 'userview')
+            self.get_view().g_searchentry.grab_focus()
+            self.get_view().on_search()
+        else:
+            self.show_view('userview')
         col = frontpage.Column()
-        page = frontpage.Page(_('User exercises'), col)
+        page = frontpage.Page(_('User Exercises'), col)
         curdir = None
         linklist = None
+        d = os.path.join(filesystem.user_data(), "exercises/user/lesson-files")
+        linklist = frontpage.LinkList(d)
+        col.append(linklist)
         for filename in lessonfile.infocache.iter_user_files(only_user_collection=True):
-            dir, fn = os.path.split(filename)
-            if dir != curdir:
-                curdir = dir
-                linklist = frontpage.LinkList(dir)
-                col.append(linklist)
             linklist.append(filename)
-        self.display_frontpage(page)
+        self.get_view().display_data(page)
 
     def display_recent_exercises(self, w):
-        data = frontpage.Page(_('Recent exercises'),
+        data = frontpage.Page(_('_Recent Exercises').replace("_", ""),
             [frontpage.Column(
-                [frontpage.LinkList(_('Recent exercises'),
+                [frontpage.LinkList(_('_Recent Exercises').replace("_", ""),
                    solfege.db.recent(8))])])
         self.display_frontpage(data, show_topics=True)
+        self.set_title("GNU Solfege - " + _("_Recent Exercises").replace("_", ""))
+        print (data)
         self.get_view().g_searchbox.hide()
 
     def display_recent_tests(self, w):
-        data = frontpage.Page(_('Recent tests'),
+        data = frontpage.Page(_('_Recent Tests').replace("_", ""),
             [frontpage.Column(
-                [frontpage.LinkList(_('Recent tests'),
+                [frontpage.LinkList(_('_Recent Tests').replace("_", ""),
                    solfege.db.recent_tests(8))])])
         self.display_testpage(data, show_topics=True)
         self.get_view().g_searchbox.hide()
+        self.set_title("GNU Solfege - " + _('_Recent Tests').replace("_", ""))
 
     def display_testpage(self, data=None, show_topics=False):
         """
         Display the front page of the data  in solfege.app.m_frontpage_data
         """
-        self.set_title("GNU Solfege - tests")
+        self.set_title("GNU Solfege - " + _("Tests"))
         if not self.show_view('testspage'):
             p = TestsView()
             p.connect('link-clicked', self.history_handler)
