@@ -16,6 +16,7 @@
 
 
 import logging
+import copy
 
 from solfege.mpd.rat import Rat
 from solfege.mpd import mfutils
@@ -591,6 +592,12 @@ class Track:
                 pos += e.m_duration
             else:
                 e.m_time = pos
+
+    def __add__(self, other):
+        ret = Track()
+        ret.m_v.extend(copy.deepcopy(self.m_v))
+        ret.m_v.extend(copy.deepcopy(other.m_v))
+        return ret
 
 
 class PercussionTrack(Track):

@@ -58,6 +58,27 @@ class TestTrack(unittest.TestCase):
         m = MidiEventStream(t1, t2)
         self.assertEqual("p0:0 p1:0 v0:100 n0:92 n0:90 d1/8 o92 v1:100 n1:90 d1/8 o90 n0:92 d1/8 o92 n0:94 d1/8 o94 o90", m.str_repr(1))
 
+    def test_add(self):
+        t1 = Track()
+        t1.note(8, 92, 121)
+        self.assertEqual("n92 d1/8 o92", t1.str_repr())
+        t2 = Track()
+        t2.note(2, 90, 120)
+        self.assertEqual("n90 d1/2 o90", t2.str_repr())
+        self.assertEqual("n92 d1/8 o92", t1.str_repr())
+        self.assertEqual("n90 d1/2 o90", t2.str_repr())
+        m1 = MidiEventStream(t1)
+        m2 = MidiEventStream(t2)
+        t3 = t1 + t2
+        self.assertEqual("n92 d1/8 o92 n90 d1/2 o90", t3.str_repr())
+        m3 = MidiEventStream(t3)
+        self.assertEqual("n92 d1/8 o92", t1.str_repr())
+        self.assertEqual("n90 d1/2 o90", t2.str_repr())
+        # FIXME volume bug?
+        self.assertEqual("p0:0 v0:100 n0:92 d1/8 o92", m1.str_repr(1))
+        self.assertEqual("p0:0 v0:100 n0:90 d1/2 o90", m2.str_repr(1))
+        self.assertEqual("p0:0 v0:100 n0:92 d1/8 o92 n0:90 d1/2 o90", m3.str_repr(1))
+
 
 class TestMidiEventStream(TmpFile):
 
