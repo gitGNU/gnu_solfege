@@ -180,6 +180,8 @@ def start_gui(datadir):
     lessonfile.infocache.parse_all_files(True)
     if options.screenshots:
         make_screenshots.make_screenshots()
+    if options.lessonfile:
+        solfege.app.practise_lessonfile(options.lessonfile)
 
 
 def start_app(datadir):

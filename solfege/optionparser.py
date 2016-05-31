@@ -54,6 +54,8 @@ class SolfegeOptionParser(optparse.OptionParser):
         self.add_option('--make-screenshots', action='store_true',
             dest='screenshots',
             help=_("Create or update the screenshots for the user manual. Intended for developers of this program."))
+        self.add_option('--run-lessonfile', '-l', dest='lessonfile',
+            help=_("Start lesson file. Example: -l solfege:lesson-files/chord-min-major"))
 
     def print_help(self, outfile=None):
         if outfile is None:
