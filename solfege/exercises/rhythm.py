@@ -248,8 +248,8 @@ class Gui(abstract.Gui, abstract.RhythmAddOnGuiClass):
         "used by the constructor"
         btn = Gtk.Button()
         if i > len(const.RHYTHMS):
-            im = Gtk.Image()
-            im.set_from_stock("gtk-missing-image", Gtk.IconSize.LARGE_TOOLBAR)
+            im = Gtk.Image.new_from_icon_name(
+                "image-missing", Gtk.IconSize.LARGE_TOOLBAR)
             im.show()
             btn.add(im)
         else:

@@ -108,7 +108,7 @@ class RhythmWidgetController(Gtk.HBox):
         b.connect('clicked', self.on_toggle_tie)
         self.pack_start(b, False, False, 0)
         im = Gtk.Image()
-        im.set_from_stock(Gtk.STOCK_DELETE, Gtk.IconSize.MENU)
+        im.set_from_icon_name("edit-delete", Gtk.IconSize.MENU)
         b = Gtk.Button()
         b.add(im)
         b.connect('clicked', self.ctrl_on_delete)

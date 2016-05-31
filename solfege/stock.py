@@ -60,7 +60,7 @@ class SolfegeIconFactory(BaseIconFactory):
 
     def __init__(self, widget, datadir):
         BaseIconFactory.__init__(self, widget, datadir)
-        icon_list = ['happyface', 'sadface',
+        icon_list = [
             'rhythm-c12c12c12', 'rhythm-c12c12r12', 'rhythm-c12r12c12',
             'rhythm-c16c16c16c16', 'rhythm-c16c16c8', 'rhythm-c16c8c16',
             'rhythm-c16c8.', 'rhythm-c4', 'rhythm-c8c16c16', 'rhythm-c8.c16',
@@ -72,5 +72,8 @@ class SolfegeIconFactory(BaseIconFactory):
         d = {}
         d['solfege-icon'] = 'graphics/solfege.svg'
         for iname in icon_list:
-            d['solfege-%s' % iname] = os.path.join("graphics", iname) + ".png"
+            if os.path.exists(os.path.join("graphics", iname) + ".svg"):
+                d['solfege-%s' % iname] = os.path.join("graphics", iname) + ".svg"
+            else:
+                d['solfege-%s' % iname] = os.path.join("graphics", iname) + ".png"
         self.add_icons(d)

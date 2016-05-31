@@ -1099,7 +1099,8 @@ class ExceptionDialog(Gtk.Dialog):
         hbox.set_spacing(12)
         hbox.set_border_width(6)
         self.vbox.pack_start(hbox, False, False, 0)
-        img = Gtk.Image.new_from_stock(Gtk.STOCK_DIALOG_ERROR, Gtk.IconSize.DIALOG)
+        img = Gtk.Image.new_from_icon_name("dialog-error",
+                                           Gtk.IconSize.DIALOG)
         img.props.valign = Gtk.Align.START
         hbox.pack_start(img, False, False, padding=0)
 
