@@ -1155,7 +1155,9 @@ class LessonfileCommon(object):
             self.header = _Header(self.blocklists['header'][0])
         else:
             self.header = _Header({})
-        self.header.update(self.m_header_defaults)
+        for k in self.m_header_defaults:
+            if k not in self.header:
+                self.header[k] = self.m_header_defaults[k]
 
 
 class QuestionsLessonfile(LessonfileCommon):
