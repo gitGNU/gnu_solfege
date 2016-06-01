@@ -484,8 +484,11 @@ class Section(Gtk.VBox):
         del self.m_model[idx]
         self.g_link_box.get_children()[idx].destroy()
 
-    def on_paste(self, btn):
-        idx = self._idx
+    def on_paste(self, btn, x):
+        if x == -1:
+            idx = -1
+        else:
+            idx = self._idx
         assert Editor.clipboard, "Paste buttons should be insensitive when the clipboard is empty."
         pobj = Editor.clipboard.pop()
         if isinstance(pobj, pd.LinkList):
@@ -494,7 +497,7 @@ class Section(Gtk.VBox):
             mobj = pobj
         if idx == -1:
             self.m_model.append(mobj)
-            self.g_link_box.pack_start(self.create_linkrow(mobj, True, True, 0))
+            self.g_link_box.pack_start(self.create_linkrow(mobj), True, True, 0)
         else:
             self.m_model.insert(idx, mobj)
             row = self.create_linkrow(mobj)
