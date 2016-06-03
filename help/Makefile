@@ -26,7 +26,7 @@ dist_files += help/Makefile help/README \
 	)
 
 # Add all .ly files in help/C/ly that are not generated files.
-dist_files += $(filter-out $(shell python tools/generate_theory_ly.py --ly-C-targets),$(wildcard help/C/ly/*.ly))
+dist_files += $(filter-out $(shell $(PYTHON) tools/generate_theory_ly.py --ly-C-targets),$(wildcard help/C/ly/*.ly))
 
 installfiles+=$(foreach dir,$(USER_MANUAL_LANGUAGES), \
 	$(wildcard help/$(dir)/*.html) \
@@ -37,11 +37,9 @@ installfiles+=help/style.css
 
 ifneq "$(skipmanual)" "yes"
 ifdef LILYPOND
-all: $(shell python tools/generate_theory_ly.py --png-targets)
+all: $(shell py -3 tools/generate_theory_ly.py --png-targets)
 endif
 endif
-
-
 # I have removed any code that will merge help/C/solfege.pot and
 # help/lang/lang.po since the Translation Project should do all merging.
 # generation of C/solfege.pot is in help/C/Makefile
