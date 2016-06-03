@@ -426,7 +426,9 @@ class Section(Gtk.VBox):
         return hbox
 
     def on_right_click_row(self, button, event, linked):
-        idx = self.m_model.index(linked)
+        for idx in range(len(self.m_model)):
+            if self.m_model[idx] is linked:
+                break
         if event.button == 3:
             self._linked = linked
             self._idx = idx
@@ -440,21 +442,19 @@ class Section(Gtk.VBox):
             return True
 
     def on_delete_link(self, menuitem):
-        idx = self.m_model.index(self._linked)
         if id(self._linked) in editor_of(self).m_page_mapping:
             editor_of(self).destroy_window(id(self._linked))
-        self.g_link_box.get_children()[idx].destroy()
+        self.g_link_box.get_children()[self._idx].destroy()
         del self.m_model[idx]
 
     def on_edit_linktext(self, menuitem):
-        idx = self.m_model.index(self._linked)
         # row is the hbox containing the linkbutton
-        row = self.g_link_box.get_children()[idx]
+        row = self.g_link_box.get_children()[self._idx]
         linkbutton = row.get_children()[0]
 
         def finish_edit(text):
             linkbutton.set_label(text)
-            self.m_model[idx].m_name = text
+            self.m_model[self._idx].m_name = text
             linkbutton.show()
             linkbutton.get_children()[0].set_alignment(0.0, 0.5)
             entry.destroy()
@@ -479,10 +479,9 @@ class Section(Gtk.VBox):
         self.m_parent.cut_section(self)
 
     def on_cut_link(self, menuitem):
-        idx = self._idx
-        Editor.clipboard.append(self.m_model[idx])
-        del self.m_model[idx]
-        self.g_link_box.get_children()[idx].destroy()
+        Editor.clipboard.append(self.m_model[self._idx])
+        del self.m_model[self._idx]
+        self.g_link_box.get_children()[self._idx].destroy()
 
     def on_paste(self, btn, x):
         if x == -1:
