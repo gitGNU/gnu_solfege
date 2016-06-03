@@ -34,6 +34,9 @@
 }
 
 /* toneincontext */
+#wlabelred { background: red; font-size: small}
+#wlabelyellow { background: yellow; font-size: small}
+#wlabelgreen { background: lightgreen; font-size:small}
 #labelred { background: red}
 #labelyellow { background: yellow}
 #labelgreen { background: lightgreen}

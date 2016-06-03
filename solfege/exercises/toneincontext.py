@@ -86,6 +86,28 @@ class ToneInKeyStatistics(statistics.LessonStatistics):
             return r[0]
         return 0
 
+    @staticmethod
+    def get_percentage_of_file(filename):
+        """
+        raise solfege.statistics.DB.FileNotInDB if the lesson file never
+        has been practised.
+        """
+        # how many answered correct
+        row = solfege.db.conn.execute(
+            "select count(guessedkey) from toneincontext "
+            "where answerkey=guessedkey and fileid=?",
+            (solfege.db.get_fileid(filename),))
+        correct = row.fetchone()
+        correct = correct[0] if correct else 0
+        # how many asked
+        row = solfege.db.conn.execute(
+            "select count(guessedkey) from toneincontext "
+            "where fileid=?",
+            (solfege.db.get_fileid(filename),))
+        asked = row.fetchone()
+        asked = asked[0] if correct else 1
+        return correct / asked
+
 
 class StatisticsViewer(Gtk.Grid):
 

@@ -229,6 +229,26 @@ class ExerciseView(SelectWinBase):
                                         label = Gtk.Label(lessonfile.infocache.get(link, fieldname))
                                     label.set_alignment(0.0, 0.5)
                                 self.g_grid.attach(label, col_idx * COLW + field_idx, y, 1, 1)
+                                if lessonfile.infocache.get(link, 'module') == 'toneincontext':
+                                    from solfege.exercises import toneincontext
+                                    try:
+                                        p = toneincontext.ToneInKeyStatistics.get_percentage_of_file(link) * 100
+                                    except solfege.statistics.DB.FileNotInDB:
+                                        pass
+                                    else:
+                                        label = Gtk.Label("{:.0f}%".format(p))
+                                        if p < 0.5:
+                                            label.set_name("wlabelred")
+                                        elif p < 0.9:
+                                            label.set_name("wlabelyellow")
+                                        else:
+                                            label.set_name("wlabelgreen")
+
+                                        g = Gtk.Grid()
+                                        g.props.valign = Gtk.Align.CENTER
+                                        g.attach(label, 0, 0, 1, 1)
+                                        label.set_width_chars(6)
+                                        self.g_grid.attach(g, col_idx * COLW + field_idx + 1, y, 1, 1)
                         except lessonfile.InfoCache.FileNotFound:
                             label = gu.ClickableLabel(_("«%s» was not found") % link)
                             label.make_warning()
