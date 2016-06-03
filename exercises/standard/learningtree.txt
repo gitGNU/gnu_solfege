@@ -579,13 +579,63 @@ FileHeader(1,
      ]),
     Page(_(u'Tone in context'), [
      Column([
-      LinkList(_(u'Tone in context - cadence major'), [
-       u'solfege:lesson-files/toneincontext-major-f4',
-       u'solfege:lesson-files/toneincontext-major-l4',
-       u'solfege:lesson-files/toneincontext-major',
-       u'solfege:lesson-files/toneincontext-major-cr-f6',
-       u'solfege:lesson-files/toneincontext-major-cr-l6',
-       u'solfege:lesson-files/toneincontext-major-cr',
+      LinkList(_(u'Tone in context'), [
+       Page(_(u'The Major Scale'), [
+        Column([
+         LinkList(_(u'The Major Scale'), [
+          u'solfege:lesson-files/toneincontext-major-f4',
+          u'solfege:lesson-files/toneincontext-major-l4',
+          u'solfege:lesson-files/toneincontext-major',
+          u'solfege:lesson-files/toneincontext-major-octaves',
+          u'solfege:lesson-files/toneincontext-major-notC',
+          u'solfege:lesson-files/toneincontext-major-notC-octaves',
+          u'solfege:lesson-files/toneincontext-major-random',
+          u'solfege:lesson-files/toneincontext-major-random-octaves',
+          ]),
+         ]),
+        ]),
+       Page(_(u'The Major Scale with Cromatics'), [
+        Column([
+         LinkList(_(u'The Major Scale with Cromatics'), [
+          u'solfege:lesson-files/toneincontext-major-cr-f6',
+          u'solfege:lesson-files/toneincontext-major-cr-l6',
+          u'solfege:lesson-files/toneincontext-major-cr',
+          u'solfege:lesson-files/toneincontext-major-cr-octaves',
+          u'solfege:lesson-files/toneincontext-major-cr-notC',
+          u'solfege:lesson-files/toneincontext-major-cr-notC-octaves',
+          u'solfege:lesson-files/toneincontext-major-cr-random',
+          u'solfege:lesson-files/toneincontext-major-cr-random-octaves',
+          ]),
+         ]),
+        ]),
+       Page(_(u'The Minor Scale'), [
+        Column([
+         LinkList(_(u'The Minor Scale'), [
+          u'solfege:lesson-files/toneincontext-minor-f4',
+          u'solfege:lesson-files/toneincontext-minor-l4',
+          u'solfege:lesson-files/toneincontext-minor',
+          u'solfege:lesson-files/toneincontext-minor-octaves',
+          u'solfege:lesson-files/toneincontext-minor-notC',
+          u'solfege:lesson-files/toneincontext-minor-notC-octaves',
+          u'solfege:lesson-files/toneincontext-minor-random',
+          u'solfege:lesson-files/toneincontext-minor-random-octaves',
+          ]),
+         ]),
+        ]),
+       Page(_(u'The Minor Scale with Cromatics'), [
+        Column([
+         LinkList(_(u'The Minor Scale with Cromatics'), [
+          u'solfege:lesson-files/toneincontext-minor-cr-f6',
+          u'solfege:lesson-files/toneincontext-minor-cr-l6',
+          u'solfege:lesson-files/toneincontext-minor-cr',
+          u'solfege:lesson-files/toneincontext-minor-cr-octaves',
+          u'solfege:lesson-files/toneincontext-minor-notC',
+          u'solfege:lesson-files/toneincontext-minor-cr-notC-octaves',
+          u'solfege:lesson-files/toneincontext-minor-random',
+          u'solfege:lesson-files/toneincontext-minor-random-octaves',
+          ]),
+         ]),
+        ]),
        u'solfege:lesson-files/toneincontext',
        ]),
       LinkList(_(u'Tone in dominant chord'), [
@@ -593,14 +643,6 @@ FileHeader(1,
        ]),
       ]),
      Column([
-      LinkList(_(u'Tone in context - cadence minor'), [
-       u'solfege:lesson-files/toneincontext-minor-f4',
-       u'solfege:lesson-files/toneincontext-minor-l4',
-       u'solfege:lesson-files/toneincontext-minor',
-       u'solfege:lesson-files/toneincontext-minor-cr-f6',
-       u'solfege:lesson-files/toneincontext-minor-cr-l6',
-       u'solfege:lesson-files/toneincontext-minor',
-       ]),
       ]),
      ]),
     ]),

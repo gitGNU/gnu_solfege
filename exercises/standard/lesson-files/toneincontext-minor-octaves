@@ -1,9 +1,10 @@
 # GNU Solfege
-# Copyright (C) 2011, 2016 Tom Cato Amundsen
+# Copyright (C) 2016 Tom Cato Amundsen
 
 header {
     module=toneincontext
-    title = _("All")
+    title = _("All (many octaves)")
     tones = 0, 2, 4, 5, 7, 9, 11, 12
+    many_octaves = yes
     cadence = "minor"
 }

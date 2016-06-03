@@ -99,7 +99,8 @@ class DB(object):
             self.upgrade_to_version_2()
         if db_ver < 3:
             self.upgrade_to_version_3()
-        self.set_variable("database_version", 3)
+        self.upgrade_to_version_4()
+        self.set_variable("database_version", 4)
         self.conn.commit()
 
     def insert_file(self, filename):
@@ -252,8 +253,22 @@ class DB(object):
         cursor = self.conn.cursor()
         cursor.execute("delete from sessions where fileid=?", (fileid,))
         cursor.execute("delete from sessioninfo where fileid=?", (fileid,))
+        cursor.execute("delete from toneincontext where fileid=?", (fileid,))
         self.conn.commit()
 
+    def upgrade_to_version_4(self):
+        try:
+            if self.get_variable("database_version") >= 4:
+                return
+        except self.VariableUndefinedError:
+            pass
+        self.conn.execute(
+            "create table if not exists toneincontext ( "
+            " fileid int, "
+            " timestamp int, "
+            " answerkey int, "
+            " guessedkey int "
+            ")")
     def upgrade_to_version_3(self):
         try:
             if self.get_variable("database_version") >= 3:
@@ -406,20 +421,27 @@ class DB(object):
         if not row:
             # Ususally the filename exists in the database, but when running
             # the test suite, it does not, so we have the code here to add it.
+            logging.debug("file %s not in database. Adding", filename)
             self.insert_file(filename)
             self.conn.commit()
         else:
             hashvalue, fileid = row
             if hashvalue != cur_lessonfile_hash_value:
+                logging.debug(" hashvalue != cur_lessonfile_hash_value")
                 replaces = solfege.lessonfile.infocache.get(filename, 'replaces')
                 if not isinstance(replaces, list):
                     replaces = [replaces]
                 if not hashvalue in replaces:
+                    logging.debug("  hash value changed. Deleing statistics")
                     solfege.db.delete_statistics(filename)
                     cursor.execute("update lessonfiles "
                         "set hash=?, test_passed=?, test_result=0.0 where fileid=?",
                         (cur_lessonfile_hash_value, None, fileid))
                     self.conn.commit()
+                else:
+                    logging.debug("  hash value matched")
+            else:
+                logging.debug(" hashvalue matched")
 
     def get_statistics_info(self):
         """
@@ -590,6 +612,10 @@ class AbstractStatistics(object):
         fileid = solfege.db.get_fileid(filename)
         solfege.db.conn.execute("delete from sessions "
                           "where fileid=? and timestamp=1", (fileid,))
+        solfege.db.conn.execute(
+            "delete from toneincontext "
+            "where fileid=?", (fileid,))
+        print("Deletet statistics for", filename)
 
     def enter_test_mode(self):
         self.m_test_mode = True

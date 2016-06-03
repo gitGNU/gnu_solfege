@@ -4,6 +4,8 @@
 header {
     module=toneincontext
     lesson_description = _("Find the last played tone's step in the final dominant chord.")
+    random_tonic = yes
+    tones = 0, 2, 4, 5, 7, 9, 11, 12
     title = _("Configure yourself")
 }
 
@@ -11,6 +13,7 @@ header {
 # get a list of checkboxes and can select which cadences to select from.
 cadence {
   name = _("Dominant 7")
-  music = "\staff\relative g'{ <a f c f,> <a f c f,> <bes f d bes> <g e bes c,> }"
+  key = "major"
+  music = music("\staff\relative g'{ <a f c f,> <a f c f,> <bes f d bes> <g e bes c,> }")
 }
 

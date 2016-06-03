@@ -6,5 +6,3 @@ header {
     title = _("Last 4 scale tones")
     tones = 7, 9, 11, 12
 }
-
-include("include/cadence-major")

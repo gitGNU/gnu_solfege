@@ -3,8 +3,7 @@
 
 header {
     module=toneincontext
-    title = _("Cromatic -first 4 tones")
+    title = _("First 6 tones")
     tones = 0, 1, 2, 3, 4, 5
+    cadence = "minor"
 }
-
-include("include/cadence-minor")

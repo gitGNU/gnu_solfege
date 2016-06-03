@@ -8,12 +8,47 @@ header {
 
 # We are in custom_mode since header.tones are not defind. The user
 # get a list of checkboxes and can select which cadences to select from.
+
+resolve {
+  key = "major"
+  list = "c",
+    "cis c2",
+    "d c2",
+    "dis4 d8 c2",
+    "e4 d8 c2",
+    "f4 e8 d c2",
+    "fis4 g8 a b c'2",
+    "g4 a8 b c'2",
+    "gis4 a8 b c'2",
+    "a4 b8 c'2",
+    "ais4 b8 c'2",
+    "b4 c'2",
+    "c'2"
+}
+resolve {
+  key = "minor"
+  list = "c2",
+    "des c2",
+    "d c2",
+    "es4 d8 c2",
+    "e4 es8 d c2",
+    "f4 es8 d c2",
+    "fis4 g8 as bes c'2",
+    "g4 as8 bes c'2",
+    "as4 bes8 c'2",
+    "a4 bes8 c'2",
+    "bes4 c'2",
+    "b4 c'2",
+    "c'2"
+}
 cadence {
   name = _("Major")
-  music = "\staff\relative g'{ <g e c> <a f c> <g f d b> <g e c> }"
+  key = "major"
+  music = music("\staff\relative g'{ <g e c> <a f c> <g f d b> <g e c> }")
 }
 
 cadence {
   name = _("Minor")
-  music = "\staff\relative g'{ <g es c c,> <as f c f,> <g f d b g,> <g es c c,> }"
+  key = "minor"
+  music = music("\staff\relative g'{ <g es c c,> <as f c f,> <g f d b g,> <g es c c,> }")
 }

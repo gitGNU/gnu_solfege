@@ -1,0 +1,10 @@
+# GNU Solfege
+# Copyright (C) 2016 Tom Cato Amundsen
+
+header {
+    module=toneincontext
+    title = _("All (random tonic, many octaves)")
+    tones = 0, 2, 4, 5, 7, 9, 11, 12
+    random_tonic = yes
+    many_octaves = yes
+}

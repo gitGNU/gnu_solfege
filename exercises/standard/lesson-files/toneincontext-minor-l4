@@ -3,8 +3,7 @@
 
 header {
     module=toneincontext
-    title = _("Last 4 tones")
-    tones = 7, 8, 10, 12
+    title = _("Last 4 scale tones")
+    tones = 7, 9, 11, 12
+    cadence = "minor"
 }
-
-include("include/cadence-minor")

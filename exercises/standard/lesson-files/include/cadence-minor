@@ -3,5 +3,5 @@
 # License is GPL, see file COPYING
 
 cadence {
-  music = "\staff\relative g'{ <g es c> <as f c> <g f d b> <g es c> }"
+  music = music("\staff\relative g'{ <g es c> <as f c> <g f d b> <g es c> }")
 }
