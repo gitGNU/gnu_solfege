@@ -24,7 +24,6 @@ import inspect
 from gi.repository import Gtk
 
 import solfege
-from solfege.i18n import _
 from solfege import abstract
 from solfege import cfg
 from solfege import gu

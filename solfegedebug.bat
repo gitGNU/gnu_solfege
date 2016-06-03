@@ -1,4 +1,3 @@
 
-set PYTHONHOME=
-..\python\python.exe solfege --debug
+py -3 solfege.py --debug
 pause
