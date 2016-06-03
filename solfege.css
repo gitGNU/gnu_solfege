@@ -32,3 +32,9 @@
 #intervalToggleButton {
 	padding: 2px;
 }
+
+/* toneincontext */
+#labelred { background: red}
+#labelyellow { background: yellow}
+#labelgreen { background: lightgreen}
+#labelgreyout{ background: gray; color: gray }

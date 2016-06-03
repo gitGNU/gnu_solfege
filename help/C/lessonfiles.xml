@@ -2252,14 +2252,19 @@ header {
   <xref linkend='lf-title' endterm='lf-title'/> = "First 4 scale tones"
   <xref linkend='lf-tones' endterm='lf-tones'/> = 3, 4
 }
+</programlisting>
+
+<para>The module has a predefined cadence it will play before the
+tone. If you define one or more <literal>cadence</literal> blocks with
+a variable named music containing some mpd parsable music,
+the program will select one by random. The predefined cadence
+looks like this:</para>
+
+<programlisting>
 cadence {
   music = "\staff\relative g'{ &lt;g e c> &lt;a f c> &lt;g f d b> &lt;g e c> }"
 }
 </programlisting>
-
-<para>The cadence block should be in C major. The program will select
-cadence by random if you write more than one cadence block.
-</para>
 
 <para>If you don't define the <xref linkend='lf-tones' endterm='lf-tones'/>
 variable, the program will let you select tones in the config page of the
@@ -2270,15 +2275,40 @@ exercise.
 <title>Header variables</title>
 <varlistentry>
     <term><literal id='lf-tones'>tones</literal></term>
-    <listitem><para>list of integers from 0 to 12.
+    <listitem><para>list of integers from 0 to 12, representing the
+        tones to ask for. If not defined, the lesson file with be
+        run in a mode where the user can configure most of the settings
+        independent of the lesson file.
     </para>
     </listitem>
 </varlistentry>
 <varlistentry>
     <term><literal id='lf-random_tonic'>random_tonic</literal></term>
     <listitem><para>Set to <literal>no</literal> if you don't want
-    transposition. Default value is <literal>yes</literal>.
-    </para></listitem>
+    transposition. Default value is <literal>yes</literal> Possible values:
+    </para>
+    <variablelist>
+      <varlistentry>
+        <term><literal>no</literal></term>
+        <listitem><para>No transposition. All question in C</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><literal>yes</literal></term>
+        <listitem><para>Each new question in a rando key.</para></listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><literal>other</literal></term>
+        <listitem><para>Run all questions in a new key each time you
+          start the lessonfile.</para></listitem>
+      </varlistentry>
+    </variablelist>
+    
+    </listitem>
+</varlistentry>
+<varlistentry>
+    <term><literal id="lf-many_octaves">many_octaves = no</literal></term>
+    <listitem><para>If set to <literal>yes</literal>, the question
+        will be translated to a random octave.</para></listitem>
 </varlistentry>
 <varlistentry>
     <term><literal id='lf-tone_in_cadence'>tone_in_cadence</literal></term>
