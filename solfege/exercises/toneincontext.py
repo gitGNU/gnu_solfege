@@ -283,7 +283,7 @@ class Teacher(abstract.Teacher):
         tr.m_octave_i += self.m_octave - 1
         t = mpd.music_to_track(r"\staff\transpose %s'{ \time 100/4 %s }" % (
             tr.get_octave_notename(), resolve))
-        t.prepend_bpm(90)
+        t.prepend_bpm(self.get_int("bpm"))
         return t
 
     def get_track_of_question(self):
@@ -291,7 +291,7 @@ class Teacher(abstract.Teacher):
         c = c.replace(r"\transpose c'",
                       r"\transpose %s" % self.m_transpose.get_octave_notename())
         cadence_track = mpd.music_to_track(c)
-        cadence_track.prepend_bpm(90)
+        cadence_track.prepend_bpm(self.get_int("bpm"))
 
         p = mpd.MusicalPitch.new_from_notename("c'") + self.m_tone
         p.m_octave_i = self.m_octave
@@ -376,18 +376,18 @@ class Gui(abstract.Gui):
         # self.g_random = gu.nCheckButton(self.m_exname, 'random_tonic', _("Random transpose"))
         # self.g_config_grid.attach(self.g_random, 0, 0, 1, 1)
         #
+        self.g_config_grid.set_column_homogeneous(True)
+        # Let us say the grid has 8 columns
         self.g_tones_category, box = gu.hig_category_vbox(_("Tones"))
-        self.g_config_grid.attach(self.g_tones_category, 0, 2, 3, 1)
+        self.g_config_grid.attach(self.g_tones_category, 0, 2, 8, 1)
         self.g_tone_selector = nConfigButtons(self.m_exname, 'tones')
-        self.g_tone_selector.show_all()
         box.pack_start(self.g_tone_selector, False, False, 0)
         self.g_many_octaves = b = gu.nCheckButton('toneincontext', 'many_octaves',
             _("Many octaves"))
-        self.g_config_grid.attach(b, 0, 3, 1, 1)
+        self.g_config_grid.attach(b, 0, 3, 4, 1)
         # Cadences
         self.g_cadences_category, self.g_cadences = gu.hig_category_vbox(_("Cadences"))
-        self.g_cadences.show()
-        self.g_config_grid.attach(self.g_cadences_category, 0, 4, 1, 1)
+        self.g_config_grid.attach(self.g_cadences_category, 0, 4, 4, 1)
         #
 
         def _ff(var):
@@ -399,6 +399,18 @@ class Gui(abstract.Gui):
                 # self.on_start_practise()
                 self.cancel_question()
         self.add_watch('tones', _ff)
+        self.g_config_grid.attach(Gtk.Label("BPM:"), 0, 5, 1, 1)
+        min_bpm, max_bpm = 30, 250
+        scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, min_bpm, max_bpm, 10)
+        scale.set_value_pos(Gtk.PositionType.LEFT)
+        if not (min_bpm < self.m_t.get_int("bpm") < max_bpm):
+            self.m_t.set_int("bpm", 90)
+        scale.set_value(self.m_t.get_int("bpm"))
+        def scale_value_changed(scale):
+            self.m_t.set_int("bpm", int(scale.get_value()))
+        scale.connect('value-changed', scale_value_changed)
+        self.g_config_grid.attach(scale, 1, 5, 7, 1)
+        self.g_config_grid.show_all()
         ##############
         # Statistics #
         ##############
