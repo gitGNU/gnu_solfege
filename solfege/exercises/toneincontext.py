@@ -67,20 +67,24 @@ class ToneInKeyStatistics(statistics.LessonStatistics):
     def key_to_pretty_name(self, key):
         return labels[int(key)]
 
-    def num_asked(self, key):
+    def num_asked(self, key, num):
         row = solfege.db.conn.execute(
-            "select count(guessedkey) from toneincontext "
-            "where answerkey=? and fileid=?",
-            (key, solfege.db.get_fileid(self.m_t.m_P.m_filename)))
+            "select count(*) from "
+            "(select guessedkey from toneincontext "
+            "where answerkey=? and fileid=? "
+            "order by -timestamp limit ?)",
+            (key, solfege.db.get_fileid(self.m_t.m_P.m_filename), num))
         for r in row:
             return r[0]
         return 0
 
-    def num_correct(self, key):
+    def num_correct(self, key, num):
         row = solfege.db.conn.execute(
-            "select count(guessedkey) from toneincontext "
-            "where answerkey=? and guessedkey=? and fileid=?",
-            (key, key, solfege.db.get_fileid(self.m_t.m_P.m_filename)))
+            "select count(*) from "
+            "(select guessedkey from toneincontext "
+            "where answerkey=? and guessedkey=? and fileid=? "
+            "order by -timestamp limit ?)",
+            (key, key, solfege.db.get_fileid(self.m_t.m_P.m_filename), num))
         for r in row:
             return r[0]
         return 0
@@ -118,12 +122,27 @@ class StatisticsViewer(Gtk.Grid):
         self.m_t = teacher
         self.set_column_homogeneous(True)
         self.labels = fill_grid(Gtk.Label, self)
+        label = Gtk.Label()
+        default_q = 20
+        label.props.halign = Gtk.Align.START
+        label.set_text(_("Statistics for the last %i times the tone was asked") % default_q)
+        self.attach(label, 0, 2, 8, 1)
+        def on_scale_value_changed(scale):
+            label.set_text(_("Statistics for the last %i times the tone was asked") % scale.get_value())
+            self.update()
+        self.g_statscale = scale \
+            = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, 1, 200, 1)
+        scale.set_draw_value(False)
+        scale.set_value(default_q)
+        scale.connect('value-changed', on_scale_value_changed)
+        self.attach(scale, 0, 3, 16, 1)
         self.show_all()
 
     def update(self, *w):
+        last = int(self.g_statscale.get_value())
         for n in range(13):
-            c = self.m_t.m_statistics.num_correct(n if n < 12 else 0)
-            a = self.m_t.m_statistics.num_asked(n if n < 12 else 0)
+            c = self.m_t.m_statistics.num_correct(n if n < 12 else 0, last)
+            a = self.m_t.m_statistics.num_asked(n if n < 12 else 0, last)
             p = 0 if a == 0 else c / a
             if n not in self.m_t.get_list("tones"):
                 self.labels[n].set_name("labelgreyout")
