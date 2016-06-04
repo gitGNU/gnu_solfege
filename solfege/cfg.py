@@ -289,9 +289,9 @@ def del_section(section):
 
 def dump(datadict, fn):
     f = codecs.open(fn, 'w', 'utf-8')
-    for section in datadict:
+    for section in sorted(datadict):
         f.write("[%s]\n" % section)
-        for name in datadict[section]:
+        for name in sorted(datadict[section]):
             f.write("%s=%s\n" % (name, datadict[section][name]))
         f.write("\n")
     f.close()
