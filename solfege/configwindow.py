@@ -398,7 +398,7 @@ class ConfigWindow(Gtk.Dialog, cfg.ConfigUtils):
                      'minor9', 'major9', 'minor10', 'major10']
         for interval in intervals:
             self.g_interval_accels.append((
-                mpd.Interval.new_from_int(intervals.index(interval)).get_name(),
+                mpd.Interval.new_from_int(intervals.index(interval) + 1).get_name(),
                 cfg.get_string('interval_input/%s' % interval)))
         self.g_intervals_treeview = Gtk.TreeView(self.g_interval_accels)
         renderer = Gtk.CellRendererText()
