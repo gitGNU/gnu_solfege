@@ -4,6 +4,6 @@
 header {
     module=toneincontext
     title = _("First 4 scale tones")
-    tones = 0, 2, 4, 5
+    tones = 0, 2, 3, 5
     cadence = "minor"
 }

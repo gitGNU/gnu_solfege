@@ -4,7 +4,7 @@
 header {
     module=toneincontext
     title = _("All (not C tonic, 1 octave)")
-    tones = 0, 2, 4, 5, 7, 9, 11, 12
+    tones = 0, 2, 3, 5, 7, 8, 10, 12
     random_tonic = other
     cadence = "minor"
 }
