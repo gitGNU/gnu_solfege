@@ -450,6 +450,7 @@ class Gui(abstract.Gui):
         i = self.m_t.new_question()
         if i == Teacher.OK:
             self.std_buttons_new_question()
+            self.g_flashbar.clear()
             self.m_t.play_question()
             for key, button in list(self.g_buttons.items()):
                 button.set_sensitive(key in self.get_list("tones"))
