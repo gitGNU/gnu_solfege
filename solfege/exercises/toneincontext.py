@@ -34,8 +34,15 @@ from solfege import statistics
 from solfege import statisticsviewer
 from solfege.mpd import elems
 
-labels = ['1', '♯1/♭2', '2', '♯2/♭3', '3', '4', '♯4/♭5',
-          '5', '♯5/6♭', '6', '♯6/♭7', '7', '1']
+
+labels = (
+    (_("Numbers"),
+     ['1', '♯1/♭2', '2', '♯2/♭3', '3', '4', '♯4/♭5',
+      '5', '♯5/6♭', '6', '♯6/♭7', '7', '1']),
+    (_("Solfege"),
+     ['Do', 'Ra', 'Re', 'Me', 'Mi', 'Fa', 'Se',
+      'Sol', 'Le', 'La', 'Te', 'Ti', 'Do']),
+)
 
 
 class ToneInKeyStatistics(statistics.LessonStatistics):
@@ -65,7 +72,7 @@ class ToneInKeyStatistics(statistics.LessonStatistics):
         solfege.db.conn.commit()
 
     def key_to_pretty_name(self, key):
-        return labels[int(key)]
+        return labels['number'][int(key)]
 
     def num_asked(self, key, num):
         row = solfege.db.conn.execute(
@@ -121,7 +128,8 @@ class StatisticsViewer(Gtk.Grid):
         self.props.margin = gu.hig.SPACE_SMALL
         self.m_t = teacher
         self.set_column_homogeneous(True)
-        self.labels = fill_grid(Gtk.Label, self)
+        self.labels = fill_grid(Gtk.Label, self,
+                                labels[teacher.get_int("labels")][1])
         label = Gtk.Label()
         default_q = 20
         label.props.halign = Gtk.Align.START
@@ -337,7 +345,7 @@ class Teacher(abstract.Teacher):
             self.m_transpose.set_from_notename("c'")
 
 
-def fill_grid(button_class, grid):
+def fill_grid(button_class, grid, labels):
     grid.set_column_homogeneous(True)
     buttons = {}
     for p, x in ((0, 1), (1, 3), (3, 6), (4, 8), (5, 10)):
@@ -357,7 +365,8 @@ class nConfigButtons(Gtk.Grid, cfg.ConfigUtils):
         Gtk.Grid.__init__(self)
         cfg.ConfigUtils.__init__(self, exname)
         self.m_varname = name
-        self.g_buttons = fill_grid(Gtk.CheckButton, self)
+        self.g_buttons = fill_grid(Gtk.CheckButton, self,
+                                   labels[self.get_int("labels")][1])
         for key, button in list(self.g_buttons.items()):
             button.connect('toggled', self.on_toggled)
         for key in self.get_list('tones'):
@@ -376,7 +385,7 @@ class Gui(abstract.Gui):
         grid = Gtk.Grid()
         grid.set_row_spacing(gu.hig.SPACE_SMALL)
         grid.set_column_spacing(gu.hig.SPACE_SMALL)
-        self.g_buttons = fill_grid(Gtk.Button, grid)
+        self.g_buttons = fill_grid(Gtk.Button, grid, labels[self.get_int("labels")][1])
         for key, button in list(self.g_buttons.items()):
             button.connect('clicked', self.on_left_click, key)
         self.practise_box.pack_start(grid, False, False, gu.hig.SPACE_SMALL)
@@ -418,6 +427,8 @@ class Gui(abstract.Gui):
                 # self.on_start_practise()
                 self.cancel_question()
         self.add_watch('tones', _ff)
+
+        # Tempo the music is played
         self.g_config_grid.attach(Gtk.Label("BPM:"), 0, 5, 1, 1)
         min_bpm, max_bpm = 30, 250
         scale = Gtk.Scale.new_with_range(Gtk.Orientation.HORIZONTAL, min_bpm, max_bpm, 10)
@@ -429,6 +440,13 @@ class Gui(abstract.Gui):
             self.m_t.set_int("bpm", int(scale.get_value()))
         scale.connect('value-changed', scale_value_changed)
         self.g_config_grid.attach(scale, 1, 5, 7, 1)
+
+        # Select answer button labels
+        combo = gu.nComboBox(self.m_t.m_exname, 'labels', labels[0][0],
+                             [n[0] for n in labels])
+        self.g_config_grid.attach(combo, 1, 6, 7, 1)
+        combo.connect('changed', self.update_tone_button_labels)
+
         self.g_config_grid.show_all()
         ##############
         # Statistics #
@@ -441,6 +459,10 @@ class Gui(abstract.Gui):
         self.g_notebook.append_page(self.g_statview, Gtk.Label(label=_("Statistics")))
         self.g_notebook.connect(
             'switch_page', self.g_statview.update)
+
+    def update_tone_button_labels(self, combo):
+        for idx, label in enumerate(labels[self.get_int("labels")][1]):
+            self.g_buttons[idx].set_label(label)
 
     def cancel_question(self):
         self.m_t.end_practise()
@@ -460,7 +482,7 @@ class Gui(abstract.Gui):
     def give_up(self, *w):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: %s")
-                 % labels[self.m_t.m_tone])
+                 % labels[self.get_int("label")][1][self.m_t.m_tone])
             self.m_t.give_up()
             self.std_buttons_give_up()
 
