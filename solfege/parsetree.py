@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 
 """
 literal ::=  stringliteral | integer | floatnumber

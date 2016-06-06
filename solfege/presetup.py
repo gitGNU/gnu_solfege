@@ -1,4 +1,4 @@
-﻿#!/usr/bin/python
+#!/usr/bin/python
 # GNU Solfege - free ear training software
 # Copyright (C) 2007, 2008, 2011, 2016  Tom Cato Amundsen
 #
