@@ -45,7 +45,7 @@ def get_drives():
     i = ctypes.c_int(maxlen - 1)
     v = ctypes.create_string_buffer(b'\000' * maxlen)
     retval = ctypes.windll.kernel32.GetLogicalDriveStringsA(i, v)
-    return [x.decode(sys.getfilesystemencoding()) for x in v.raw.split("\000") if x]
+    return [str(x) for x in bytes(v).split(b"\x00") if x]
 
 
 class OsUtilsException(Exception):

@@ -44,7 +44,8 @@ import locale
 import os
 import sys
 if sys.platform == 'win32':
-    from solfege import winreg
+    from solfege import mywinreg
+    import winreg
 # This name will be used as folder name on MS Windows, to create one
 # folder in the "My Documents" folder, and one folder in "Application Data"
 appname = "GNU Solfege"
@@ -75,7 +76,7 @@ def win32_program_files_folder():
     """
     Return the name of the C:\Program files folder.
     """
-    return winreg._get_reg_value(winreg._winreg.HKEY_LOCAL_MACHINE,
+    return mywinreg._get_reg_value(winreg.HKEY_LOCAL_MACHINE,
         r"SOFTWARE\Microsoft\Windows\CurrentVersion", r"ProgramFilesDir")
 
 
@@ -90,7 +91,7 @@ def user_data():
     place the directories trainingsets/ eartrainingtests/
     """
     if sys.platform == "win32":
-        return os.path.join(winreg._get_reg_user_value(winreg.SHELL_FOLDERS, 'Personal'), appname)
+        return os.path.join(mywinreg._get_reg_user_value(mywinreg.SHELL_FOLDERS, 'Personal'), appname)
     else:
         return os.path.expanduser("~/.solfege")
 
@@ -100,7 +101,7 @@ def rcfile():
     Return the full name of the users rc file.
     """
     if sys.platform == "win32":
-        return os.path.join(winreg.get_appdata(), appname, "solfegerc")
+        return os.path.join(mywinreg.get_appdata(), appname, "solfegerc")
     else:
         return os.path.expanduser("~/.solfegerc")
 
@@ -111,6 +112,6 @@ def app_data():
     created by the program. For example statistics and test results.
     """
     if sys.platform == "win32":
-        return os.path.join(winreg.get_appdata(), appname)
+        return os.path.join(mywinreg.get_appdata(), appname)
     else:
         return os.path.expanduser("~/.solfege")
