@@ -2,6 +2,7 @@
  * Copyright (C) 2001 Joe Lee
  *
  * Ported to gcc by Steve Lee
+ * Ported to Python 3.4 by Tom Cato Amundsen <tca@gnu.org>
  *
  * This program is free software; you can redistribute it and/or modify
  *it under the terms of the GNU General Public License as published by
@@ -18,42 +19,15 @@
  * Foundation, Inc., 51 Franklin ST, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-//lint -e725
-
-/////////////////////////////////////////////////////////////////////////////
-// Don't define/include unused stuff
-#define WIN32_LEAN_AND_MEAN
-#define NOGDI
-#define NOSERVICE
-#define NOMCX
-#define NOIME
-
 #include <windows.h>
 #include <windowsx.h>
-
-/////////////////////////////////////////////////////////////////////////////
-// Turn off warnings for /W4
-// To resume any of these warning: #pragma warning(default: 4xxx)
-#ifndef ALL_WARNINGS
-#pragma warning(disable: 4201)  // mmsystem.h uses nameless structs
-#endif
-
 #include <mmsystem.h>
-
-#include <python.h>
-//#include <stdio.h>
-//#include <string.h>
-//#include <stdlib.h>
-//#include <assert.h>
-
-#define UNUSED(x) ((void)x)	// for unreferenced parameters
-
-#define DLL_EXPORT __declspec(dllexport)
-
-
-////////////////////////////////////////////////////////
+#include <Python.h>
+#include "structmember.h"
 
 #define MAX_MIDI_BLOCK_SIZE 1024
+
+#define UNUSED(x) ((void)x)	/* for unreferenced parameters */
 
 enum {
 	BLOCK_WRITING = 0,
@@ -69,47 +43,14 @@ struct tag_MidiBlock {
 };
 typedef struct tag_MidiBlock MidiBlockNode;
 
-typedef struct {
-	PyObject_HEAD
 
-	int m_initialized;
+typedef struct {
+    PyObject_HEAD
 	HMIDISTRM m_midiOut;
 	MidiBlockNode *m_list;
 	MidiBlockNode *m_playNode;
 	MidiBlockNode *m_listEnd;
-} WinmidiObject;
-
-
-static PyTypeObject s_winmidiObjectType;
-
-static PyObject *s_output_devices(PyObject *self, PyObject *args);
-static PyObject *Winmidi_New(PyObject *self, PyObject *args);
-static void Winmidi_Dealloc(WinmidiObject *obj);
-static PyObject *Winmidi_GetAttr(WinmidiObject *self, char *name);
-static PyObject *Winmidi_NoteOn(PyObject *self, PyObject *args);
-static PyObject *Winmidi_NoteOff(PyObject *self, PyObject *args);
-static PyObject *Winmidi_ProgramChange(PyObject *self, PyObject *args);
-static PyObject *Winmidi_SetTempo(PyObject *self, PyObject *args);
-static PyObject *Winmidi_Play(PyObject *self, PyObject *args);
-static PyObject *Winmidi_Reset(PyObject *self, PyObject *args);
-
-
-static PyMethodDef s_winmidiObjectMethods[] = {
-	{"note_on", 		Winmidi_NoteOn, 		METH_VARARGS,	NULL},
-	{"note_off",		Winmidi_NoteOff,		METH_VARARGS,	NULL},
-	{"program_change",	Winmidi_ProgramChange,	METH_VARARGS,	NULL},
-	{"set_tempo",		Winmidi_SetTempo,		METH_VARARGS,	NULL},
-	{"play",			Winmidi_Play,			METH_VARARGS,	NULL},
-	{"reset",			Winmidi_Reset,			METH_VARARGS,	NULL},
-	{NULL,				NULL,					0,				NULL}
-};
-
-
-static PyMethodDef s_winmidiMethods[] = {
-	{"Winmidi", 	Winmidi_New,		METH_VARARGS,	NULL},
-	{"output_devices", s_output_devices,    METH_NOARGS, NULL},       
-	{NULL,			NULL,				0,				NULL}
-};
+} Winmidi;
 
 
 static void s_SetMidiError(const char *reason, UINT val) {
@@ -135,7 +76,7 @@ static void s_SetMidiError(const char *reason, UINT val) {
 
 
 static void FAR PASCAL s_MidiCallback(HMIDISTRM hms, UINT uMsg, DWORD dwUser, DWORD dw1, DWORD dw2) {
-	WinmidiObject *obj = (WinmidiObject *) dwUser;
+	Winmidi *obj = (Winmidi *) dwUser;
 	int retVal;
 
 	UNUSED(hms);
@@ -181,7 +122,7 @@ static void FAR PASCAL s_MidiCallback(HMIDISTRM hms, UINT uMsg, DWORD dwUser, DW
 }
 
 
-static int s_PrepareBlockNodes(WinmidiObject *obj) {
+static int s_PrepareBlockNodes(Winmidi *obj) {
 	UINT retVal;
 	MidiBlockNode *node;
 	MidiBlockNode *firstReady = 0;
@@ -227,7 +168,7 @@ static int s_PrepareBlockNodes(WinmidiObject *obj) {
 }
 
 
-static int s_CleanUpBlockNodes(WinmidiObject *obj) {
+static int s_CleanUpBlockNodes(Winmidi *obj) {
 	UINT retVal;
 	MidiBlockNode *node, *nextNode;
 
@@ -260,7 +201,7 @@ static int s_CleanUpBlockNodes(WinmidiObject *obj) {
 }
 
 
-static int s_FreeNodes(WinmidiObject *obj) {
+static int s_FreeNodes(Winmidi *obj) {
 	MidiBlockNode *node, *nextNode;
 
 	assert(obj);
@@ -284,7 +225,7 @@ static int s_FreeNodes(WinmidiObject *obj) {
 }
 
 
-int s_ResetMidiStream(WinmidiObject *obj, UINT devNum) {
+int s_ResetMidiStream(Winmidi *obj, UINT devNum) {
 	UINT retVal;
 
 	assert(obj);
@@ -310,7 +251,7 @@ int s_ResetMidiStream(WinmidiObject *obj, UINT devNum) {
 }
 
 
-static int s_SetUpNewBlock(WinmidiObject *obj) {
+static int s_SetUpNewBlock(Winmidi *obj) {
 	MidiBlockNode *node;
 
 	assert(obj);
@@ -348,7 +289,7 @@ static int s_SetUpNewBlock(WinmidiObject *obj) {
 }
 
 
-static MIDIEVENT *s_PrepWriteBlock(WinmidiObject *obj, int size) {
+static MIDIEVENT *s_PrepWriteBlock(Winmidi *obj, int size) {
 	MidiBlockNode *node;
 	MIDIEVENT *midiEvent;
 	assert(obj);
@@ -394,90 +335,87 @@ static PyObject *s_output_devices(PyObject *self, PyObject *args) {
 	result = PyList_New(0);
 	numDevs = midiOutGetNumDevs();
 	if (midiOutGetDevCaps(MIDI_MAPPER, &caps, sizeof(caps)) == 0)
-		PyList_Append(result, PyString_FromString(caps.szPname));
+		PyList_Append(result, PyUnicode_FromString(caps.szPname));
 	else
 		PyList_Append(result, Py_None);		
 	for(i = 0; i < numDevs; i++) {
 		if (midiOutGetDevCaps(i, &caps, sizeof(caps)) == 0)
-			PyList_Append(result, PyString_FromString(caps.szPname));
+			PyList_Append(result, PyUnicode_FromString(caps.szPname));
 		else
 			PyList_Append(result, Py_None);		
 	}
 	return result;
 }
 
-static PyObject *Winmidi_New(PyObject *self, PyObject *args) {
-	WinmidiObject *obj;
+static void
+Winmidi_dealloc(Winmidi* self)
+{
+    int retVal;
+    Py_TYPE(self)->tp_free((PyObject*)self);
+    retVal = midiStreamClose(self->m_midiOut);
+    if (retVal == MMSYSERR_INVALHANDLE) {
+	printf("midiSreamClose: MMSYSERR_INVALHANDLE\n");
+    }
+}
+
+static PyObject *
+Winmidi_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
 	UINT		retVal;
 	UINT		numDevs;
 	UINT		devNum;
-
-	UNUSED(self);
-
-	if(!PyArg_ParseTuple(args, "i:Winmidi", &devNum)) {
+    Winmidi *self;
+    if(!PyArg_ParseTuple(args, "i:Winmidi", &devNum)) {
 	return NULL;
-	}
+    }
 
-	/* Initialize the new object. */
-	obj = PyObject_NEW(WinmidiObject, &s_winmidiObjectType);
-	if(!obj) {
-	return NULL;
-	}
-	obj->m_midiOut = 0;
-	obj->m_initialized = 0;
-	obj->m_playNode = 0;
-	obj->m_list = 0;
-	obj->m_listEnd = 0;
-
+    self = (Winmidi *)type->tp_alloc(type, 0);
+    if (self != NULL) {
+	self->m_midiOut = 0;
+	self->m_playNode = 0;
+	self->m_list = 0;
+	self->m_listEnd = 0;
 	/* Get the number of MIDI devices on the system. */
 	numDevs = midiOutGetNumDevs();
 	if(numDevs == 0) {
-	PyErr_SetString(PyExc_RuntimeError, 
-		"No MIDI output devices found.");
-	Py_DECREF(obj);
-	return NULL;
+	    PyErr_SetString(PyExc_RuntimeError, 
+    		"No MIDI output devices found.");
+	    Py_DECREF(self);
+	    return NULL;
 	}
-
 	/* Open the MIDI output device. */
-	obj->m_midiOut = 0;
-	retVal = midiStreamOpen(&(obj->m_midiOut), &devNum, 1,
-		(DWORD) s_MidiCallback, (DWORD) obj, CALLBACK_FUNCTION); //lint !e620
+	self->m_midiOut = 0;
+	printf("B %i\n", devNum);
+	retVal = midiStreamOpen(&(self->m_midiOut), &devNum, 1,
+		(DWORD) s_MidiCallback, (DWORD) self, CALLBACK_FUNCTION); //lint !e620
+	printf("C %i\n", devNum);
 	if(retVal != MMSYSERR_NOERROR) {
-	s_SetMidiError("opening a MIDI stream", retVal);
-	Py_DECREF(obj);
-	return NULL;
+		s_SetMidiError("opening a MIDI stream", retVal);
+		Py_DECREF(self);
+		return NULL;
 	}
-	assert(obj->m_midiOut);
+	assert(self->m_midiOut);
 
-	/* printf("Winmidi object created.\n"); */
-	return (PyObject *) obj;
+    }
+
+    return (PyObject *)self;
+}
+
+static int
+Winmidi_init(Winmidi *self, PyObject *args, PyObject *kwds)
+{
+    return 0;
 }
 
 
-static void Winmidi_Dealloc(WinmidiObject *obj) {
-	assert(obj);
-
-	/* XXX - s_CleanUpBlockNodes and s_FreeNodes set the Python error
-	 * string on errors...	Should we do something different? */
-	if (obj->m_midiOut)
-        midiStreamStop(obj->m_midiOut);
-    (void)s_CleanUpBlockNodes(obj);
-	(void)midiStreamClose(obj->m_midiOut);
-	(void)s_FreeNodes(obj);
-
-	/* printf("Winmidi object destroyed.\n"); */
-	PyObject_Del(obj);
-}
-
-
-static PyObject *Winmidi_GetAttr(WinmidiObject *self, char *name) {
-	return Py_FindMethod(s_winmidiObjectMethods, (PyObject *) self, name);
-}
+static PyMemberDef Winmidi_members[] = {
+    {NULL}  /* Sentinel */
+};
 
 
 static PyObject *Winmidi_NoteOn(PyObject *self, PyObject *args) {
 	int delta, channel, note, vel;
-	WinmidiObject *obj;
+	Winmidi *obj;
 	MIDIEVENT *evt;
 
 	if(!PyArg_ParseTuple(args, "iiii:note_on", &delta, &channel,
@@ -496,7 +434,7 @@ static PyObject *Winmidi_NoteOn(PyObject *self, PyObject *args) {
 	PyErr_SetString(PyExc_RuntimeError, "vel out of range");
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -520,7 +458,7 @@ static PyObject *Winmidi_NoteOn(PyObject *self, PyObject *args) {
 
 static PyObject *Winmidi_NoteOff(PyObject *self, PyObject *args) {
 	int delta, channel, note, vel;
-	WinmidiObject *obj;
+	Winmidi *obj;
 	MIDIEVENT *evt;
 
 	if(!PyArg_ParseTuple(args, "iiii:note_off", &delta, &channel,
@@ -539,7 +477,7 @@ static PyObject *Winmidi_NoteOff(PyObject *self, PyObject *args) {
 	PyErr_SetString(PyExc_RuntimeError, "vel out of range");
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -564,7 +502,7 @@ static PyObject *Winmidi_NoteOff(PyObject *self, PyObject *args) {
 
 static PyObject *Winmidi_ProgramChange(PyObject *self, PyObject *args) {
 	int channel, program;
-	WinmidiObject *obj;
+	Winmidi *obj;
 	MIDIEVENT *evt;
 
 	if(!PyArg_ParseTuple(args, "ii:program_change", &channel, &program)) {
@@ -578,7 +516,7 @@ static PyObject *Winmidi_ProgramChange(PyObject *self, PyObject *args) {
 	PyErr_SetString(PyExc_RuntimeError, "program out of range");
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -602,7 +540,7 @@ static PyObject *Winmidi_ProgramChange(PyObject *self, PyObject *args) {
 
 static PyObject *Winmidi_SetTempo(PyObject *self, PyObject *args) {
 	int tempo;
-	WinmidiObject *obj;
+	Winmidi *obj;
 	MIDIEVENT *evt;
 
 	if(!PyArg_ParseTuple(args, "i:set_tempo", &tempo)) {
@@ -612,7 +550,7 @@ static PyObject *Winmidi_SetTempo(PyObject *self, PyObject *args) {
 	PyErr_SetString(PyExc_RuntimeError, "tempo out of range");
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -635,12 +573,12 @@ static PyObject *Winmidi_SetTempo(PyObject *self, PyObject *args) {
 
 
 static PyObject *Winmidi_Play(PyObject *self, PyObject *args) {
-	WinmidiObject *obj;
+	Winmidi *obj;
 	
 	if(!PyArg_ParseTuple(args, ":play")) {
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -660,13 +598,13 @@ static PyObject *Winmidi_Play(PyObject *self, PyObject *args) {
 
 
 static PyObject *Winmidi_Reset(PyObject *self, PyObject *args) {
-	WinmidiObject *obj;
+	Winmidi *obj;
 	UINT devNum;
 	
 	if(!PyArg_ParseTuple(args, "i:reset", &devNum)) {
 	return NULL;
 	}
-	obj = (WinmidiObject *) self;
+	obj = (Winmidi *) self;
 	if(!obj) {
 	PyErr_SetString(PyExc_RuntimeError, "invalid Winmidi object");
 	return NULL;
@@ -680,20 +618,81 @@ static PyObject *Winmidi_Reset(PyObject *self, PyObject *args) {
 	return Py_None;
 }
 
+static PyMethodDef Winmidi_methods[] = {
+    {"note_on", (PyCFunction)Winmidi_NoteOn, METH_VARARGS, ""},
+    {"note_off", (PyCFunction)Winmidi_NoteOff, METH_VARARGS, ""},
+    {"program_change", (PyCFunction)Winmidi_ProgramChange, METH_VARARGS, ""},
+    {"set_tempo", (PyCFunction)Winmidi_SetTempo, METH_VARARGS, ""},
+    {"play", (PyCFunction)Winmidi_Play, METH_VARARGS, ""},
+    {"reset", (PyCFunction)Winmidi_Reset, METH_VARARGS, ""},
+    {"output_devices", s_output_devices,    METH_NOARGS, NULL},
+    {NULL}  /* Sentinel */
+};
 
-DLL_EXPORT void initwinmidi(void) {
-	PyObject *m = Py_InitModule("winmidi", s_winmidiMethods);
-	if(!m) {
-	return;
-	}
+static PyTypeObject WinmidiType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "winmidi.Winmidi",             /* tp_name */
+    sizeof(Winmidi),             /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    (destructor)Winmidi_dealloc, /* tp_dealloc */
+    0,                         /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    0,                         /* tp_reserved */
+    0,                         /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    0,                         /* tp_hash  */
+    0,                         /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT |
+        Py_TPFLAGS_BASETYPE,   /* tp_flags */
+    "Winmidi objects",           /* tp_doc */
+    0,                         /* tp_traverse */
+    0,                         /* tp_clear */
+    0,                         /* tp_richcompare */
+    0,                         /* tp_weaklistoffset */
+    0,                         /* tp_iter */
+    0,                         /* tp_iternext */
+    Winmidi_methods,             /* tp_methods */
+    Winmidi_members,             /* tp_members */
+    0,                         /* tp_getset */
+    0,                         /* tp_base */
+    0,                         /* tp_dict */
+    0,                         /* tp_descr_get */
+    0,                         /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    (initproc)Winmidi_init,      /* tp_init */
+    0,                         /* tp_alloc */
+    Winmidi_new,                 /* tp_new */
+};
 
-	memset(&s_winmidiObjectType, 0, sizeof(s_winmidiObjectType));
-	s_winmidiObjectType.ob_type = &PyType_Type;
-	s_winmidiObjectType.tp_name = "Winmidi";
-	s_winmidiObjectType.tp_basicsize = sizeof(WinmidiObject);
-	s_winmidiObjectType.tp_dealloc = (destructor) Winmidi_Dealloc;
-	s_winmidiObjectType.tp_getattr = (getattrfunc) Winmidi_GetAttr;
+static PyModuleDef winmidimodule = {
+    PyModuleDef_HEAD_INIT,
+    "winmidi",
+    "Example module that creates an extension type.",
+    -1,
+    Winmidi_methods,
+    NULL, NULL, NULL, NULL
+};
 
+PyMODINIT_FUNC
+PyInit_winmidi(void)
+{
+    PyObject* m;
+
+    if (PyType_Ready(&WinmidiType) < 0)
+        return NULL;
+
+    m = PyModule_Create(&winmidimodule);
+    if (m == NULL)
+        return NULL;
+
+    Py_INCREF(&WinmidiType);
+    PyModule_AddObject(m, "Winmidi", (PyObject *)&WinmidiType);
+    return m;
 }
-
-/* vim:set sw=4 sta: */
