@@ -12,18 +12,6 @@ LicenseFile=COPYING.txt
 [Files]
 Source: "*.*"; DestDir: "{app}"; Flags: recursesubdirs
 
-[InstallDelete]
-Type: filesandordirs; Name: "{app}\GTK"
-Type: filesandordirs; Name: "{app}\python"
-Type: files; Name: "{app}\share\solfege\debugtree.txt"
-Type: files; Name: "{app}\share\solfege\learningtree.txt"
-Type: files; Name: "{app}\share\solfege\lesson-files\share\fil1.orc"
-Type: files; Name: "{app}\share\solfege\src\configureoutput.py"
-
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}\python"
-Type: filesandordirs; Name: "{app}\share"
-Type: filesandordirs; Name: "{app}\bin"
 
 [Icons]
 Name: "{app}\bin\GNU Solfege"; Filename: "{app}\python\pythonw.exe"; Parameters: """{app}\bin\win32-start-solfege.pyw"""; WorkingDir: "{app}\bin"

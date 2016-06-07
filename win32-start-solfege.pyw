@@ -1,6 +1,7 @@
 import os
 import sys
-from subprocess import Popen
+import subprocess
+
 
 prefix =  os.path.split(os.path.dirname(os.path.abspath(sys.argv[0])))[0]
 
@@ -22,4 +23,4 @@ lang = winlang.win32_get_langenviron()
 if lang and (lang != 'system default'):
     os.environ['LANGUAGE'] = lang
 
-Popen(cmd + sys.argv[1:])
+subprocess.call(cmd + sys.argv[1:])

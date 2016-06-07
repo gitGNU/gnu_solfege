@@ -276,12 +276,12 @@ count_lines:
 	@echo "Counted python files"
 
 winbuild:
-	$(PYTHON) -c "file('AUTHORS.txt', 'w').write(file('AUTHORS', 'rU').read())"
-	$(PYTHON) -c "file('COPYING.txt', 'w').write(file('COPYING', 'rU').read())"
-	$(PYTHON) -c "file('FAQ.txt', 'w').write(file('FAQ', 'rU').read())"
-	$(PYTHON) -c "file('README.txt', 'w').write(file('README', 'rU').read())"
-	$(PYTHON) -c "file('INSTALL.txt', 'w').write(file('INSTALL', 'rU').read())"
-	$(PYTHON) -c "file('INSTALL.win32.txt', 'w').write(file('INSTALL.win32', 'rU').read())"
+	$(PYTHON) -c "open('AUTHORS.txt', 'w').write(open('AUTHORS', 'rU').read())"
+	$(PYTHON) -c "open('COPYING.txt', 'w').write(open('COPYING', 'rU').read())"
+	$(PYTHON) -c "open('FAQ.txt', 'w').write(open('FAQ', 'rU').read())"
+	$(PYTHON) -c "open('README.txt', 'w').write(open('README', 'rU').read())"
+	$(PYTHON) -c "open('INSTALL.txt', 'w').write(open('INSTALL', 'rU').read())"
+	$(PYTHON) -c "open('INSTALL.win32.txt', 'w').write(open('INSTALL.win32', 'rU').read())"
 
 solfege/languages.py: $(wildcard po/*.po) tools/buildutil.py
 	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_languages_py()"

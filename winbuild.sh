@@ -62,7 +62,10 @@ setup() {
   # running from the source dir, and for the installer.
   rm win32 -rf
   mkdir win32
-  cp -a ../mypython win32/python
+  echo "copy ../Python34 to win32/python with explorer and press ENTER"
+  echo "we do this because msys cp is painfully slow"
+  read
+  #cp -a ../Python34 win32/python
   #echo '"lib/gtk-2.0/2.10.0/loaders/svg_loader.dll"' > win32/etc/gtk-2.0/gdk-pixbuf.loaders
   #echo '"svg" 2 "gdk-pixbuf" "Scalable Vector Graphics" "LGPL"' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
   #echo '"image/svg+xml" "image/svg" "image/svg-xml" "image/vnd.adobe.svg+xml" "text/xml-svg" "image/svg+xml-compressed" ""' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
@@ -94,21 +97,22 @@ build() {
   sed -e "s/type=external-midiplayer/type=sequencer-device/" -e "s/csound=csound/csound=AUTODETECT/" -e "s/mma=mma/mma=AUTODETECT/" tmp.cfg > default.config
   rm tmp.cfg
   ./configure PYTHON=win32/python/python.exe --enable-winmidi
-  make
-  make winbuild
+  make skipmanual=yes
+  #make winbuild
 }
 install() {
-  # Step 3: Install solfege into win32/ so that we can run from inside
-  # it, or create the installer.
+  ## Step 3: Install solfege into win32/ so that we can run from inside
+  ## it, or create the installer.
   cp README.txt INSTALL.win32.txt INSTALL.txt AUTHORS.txt COPYING.txt win32
+  make winbuild
   make DESTDIR=win32 prefix="" install skipmanual=yes
 
   cp solfege/soundcard/winmidi.pyd win32/share/solfege/solfege/soundcard
   cp win32-start-solfege.pyw win32/bin
-  cp solfegedebug.bat win32/bin/
+  ##cp solfegedebug.bat win32/bin/
 }
 cleanup_win32() {
-  # 185MB
+  # from 133 147
   cd win32/python
   rm -rf include
   rm -rf Tools
@@ -118,36 +122,9 @@ cleanup_win32() {
   rm -rf _tkinter.pyd tcl85.dll tclpip85.dll tk85.dll
   cd ..
   cd Lib # python/lib
-  rm -rf bsddb compiler curses hotshot idlelib importlib # ctypes distutils
+  rm -rf bsddb compiler curses hotshot idlelib
   rm -rf json lib2to3 lib-tk msilib pydoc_data test unittest wsgiref
-  #154 MB
-  cd site-packages/gtk
-  rm -rf glade-previewer.exe glade.exe
-  rm -rf lib/glade
-  rm -rf libgladeui-2-4.dll
-  rm -rf share/glade
-  rm -rf share/icons
-  find | grep gda | xargs rm -rf
-
-  rm -rf share/glib-2.0
-  rm -rf share/gtranslator lib/gtranslator libgtranslator-3.0-0.dll gtranslator.exe
-  find | grep dbus | xargs rm -rf
-  find | grep telepath | xargs rm -rf
-  find | grep aspell | xargs rm -rf
-  find | grep enchant | xargs rm -rf
-  find | grep gedit | xargs rm -rf
-  find | grep goffice | xargs rm -rf
-  find | grep gstreamer | xargs rm -rf
-  rm -f libwebkitgtk-3.0-0.dll
-  rm -f libgucharmap*
-  rm -f libgexiv*
-  rm -f libpoppler*
-  find | grep devhelp | xargs rm -rf
-  find | grep geoclue | xargs rm -rf
-  rm -f ghex.exe
-  rm -f zenity.exe
-  find | grep charmap | xargs rm -rf
-
+  rm -rf asyncio dbm turtledemo ensurepip html tkinter venv
 }
 if test "x$1" = "xbuildenv"; then
   buildenv

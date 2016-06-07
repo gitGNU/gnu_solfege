@@ -7,7 +7,7 @@ if [ "$OSTYPE" = "msys" ]; then
 	export PYTHON=/c/python34/python.exe
 	aclocal-1.11
 	autoconf
-	configure --disable-winmidi
+	configure
 	$PYTHON -c "import tools.buildutil; tools.buildutil.create_versions_file('$GIT')"
 else
 	aclocal $ACINCLUDE
