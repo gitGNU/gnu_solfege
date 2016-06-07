@@ -98,13 +98,12 @@ build() {
   rm tmp.cfg
   ./configure PYTHON=win32/python/python.exe --enable-winmidi
   make skipmanual=yes
-  #make winbuild
+  make winbuild
 }
 install() {
   ## Step 3: Install solfege into win32/ so that we can run from inside
   ## it, or create the installer.
   cp README.txt INSTALL.win32.txt INSTALL.txt AUTHORS.txt COPYING.txt win32
-  make winbuild
   make DESTDIR=win32 prefix="" install skipmanual=yes
 
   cp solfege/soundcard/winmidi.pyd win32/share/solfege/solfege/soundcard
@@ -143,6 +142,7 @@ if test "x$1" = "xclean"; then
 fi
 if test "x$1" = "xgo"; then
   setup
+  clean
   build
   install
 fi
