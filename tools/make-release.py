@@ -144,6 +144,8 @@ bl.call(["tar", "--gzip", "--create",
         env=os.environ)
 
 os.rename(distdir, bindistdir)
+shutil.copyfile("/home/tom/Dropbox/winmidi.pyd",
+         os.path.join(bindistdir, "solfege/soundcard/winmidi.pyd"))
 bl.call(["./configure"], cwd=bindistdir, env=os.environ)
 
 bl.call(["make", "update-manual"], cwd=bindistdir, env=os.environ)
