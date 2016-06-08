@@ -326,7 +326,14 @@ class SolfegeApp(cfg.ConfigUtils):
     def _practise_lessonfile(self, filename, urlobj=None):
         """
         return the module name.
+        If the module is a solfege builtin module, the name is just
+        the filename without .py ext, for example "idbyname"
+        If the file is saved in USERFILES/exercises/dirname/lesson-files/
+        it is named "user:dirname/modulename"
         """
+        # call normpath os fix paths\\like/this to only have
+        # one sort of separator
+        filename = os.path.normpath(filename)
         module = lessonfile.infocache.get(filename, 'module')
         if self.m_running_exercise:
             solfege.win.box_dict[self.m_running_exercise].on_end_practise()
@@ -425,9 +432,10 @@ class SolfegeApp(cfg.ConfigUtils):
         Return the imported module
         """
         if modulename.startswith("user:"):
-            collection = modulename[len("user:"):].split(os.sep)[0]
+            collection = modulename[len("user:"):].split('/')[0]
             module_dir = os.path.join(filesystem.user_data(),
                                       "exercises", collection, "modules")
+            module_dir = os.path.normpath(module_dir)
             sys.path.insert(0, module_dir)
             m = __import__(modulename.split("/")[1])
             importlib.reload(m)
