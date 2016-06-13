@@ -232,8 +232,10 @@ class Teacher(abstract.Teacher):
         """
         if not self.get_list("tones"):
             return self.ERR_NO_TONES
-        self.m_tone = random.choice(
-            [i for i in self.get_list("tones") if i != 12])
+        v = self.get_list("tones")[:]
+        if 0 in v and 12 in v:
+            del v[v.index(12)]
+        self.m_tone = random.choice(v)
         if self.get_bool('many_octaves'):
             self.m_octave = random.choice((-1, 0, 1, 2))
         else:
@@ -263,28 +265,38 @@ class Teacher(abstract.Teacher):
                 self.m_cadence = self.cadence[self.m_P.header.cadence]
         return self.OK
 
+    def play_wrong_guess(self):
+        soundcard.synth.play_track(
+            self.get_track_of_cadence() + self.get_track_of_tone(self.m_guessed))
+
     def play_answer(self):
-        soundcard.synth.play_track(self.get_track_of_answer())
+        soundcard.synth.play_track(self.get_track_of_solution(self.m_tone))
 
     def play_question(self):
         """
-        Play the resolution of the previous question, if any, and then
+        FIXME wrong description
+        Play the solution of the previous question, if any, and then
         the cadence and the new question.
         """
-        t = self.get_track_of_question()
-        soundcard.synth.play_track(t)
+        soundcard.synth.play_track(
+            self.get_track_of_cadence()
+            + self.get_track_of_tone(self.m_tone))
 
     def guess_answer(self, answer):
-        if answer == 12:
-            answer = 0
+        self.m_guessed = answer
         assert self.q_status not in (self.QSTATUS_NO, self.QSTATUS_GIVE_UP)
-        if self.m_tone == answer or (answer == 0 and self.m_tone == 12):
+        if self.m_tone == answer or (answer == 12 and self.m_tone == 0):
             if self.q_status == self.QSTATUS_NEW:
                 self.m_statistics.add_correct(answer)
-            answer_track = self.get_track_of_answer()
+            # We must create the track and save it before creating a new
+            # question, because get_track_of_solution uses the variables
+            # that new_question() will change.
+            answer_track = self.get_track_of_solution(answer)
             self.new_question()
-            question_track = self.get_track_of_question()
-            soundcard.synth.play_track(answer_track + question_track)
+            soundcard.synth.play_track(
+                answer_track
+                + self.get_track_of_cadence()
+                + self.get_track_of_tone(self.m_tone))
             self.q_status = self.QSTATUS_NEW
             return 1
         else:
@@ -292,7 +304,7 @@ class Teacher(abstract.Teacher):
                 self.m_statistics.add_wrong(self.m_tone, answer)
                 self.q_status = self.QSTATUS_WRONG
 
-    def get_track_of_answer(self):
+    def get_track_of_solution(self, tone):
         """
         If the lessonfile have defined a resolve block with the same key
         as the cadense that is selected, it will use that. If not it will
@@ -301,30 +313,40 @@ class Teacher(abstract.Teacher):
         # First see if we have a matching resolve block in the lesson file
         try:
             resolve = [r for r in self.m_P.blocklists['resolve']
-                       if r['key'] == self.m_cadence['key']][0]['list'][self.m_tone]
+                       if r['key'] == self.m_cadence['key']][0]['list'][tone]
         except (IndexError, KeyError):
             # If not found, we use the builtin definition
-            resolve = self.resolve[self.m_cadence['key']][self.m_tone]
+            resolve = self.resolve[self.m_cadence['key']][tone]
 
         tr = self.m_transpose.clone()
         tr.m_octave_i += self.m_octave - 1
+        if tone == 12 and 0 in self.get_list('tones'):
+            tr.m_octave_i -= 1
         t = mpd.music_to_track(r"\staff\transpose %s'{ \time 100/4 %s }" % (
             tr.get_octave_notename(), resolve))
         t.prepend_bpm(self.get_int("bpm"))
         return t
 
-    def get_track_of_question(self):
+    def get_track_of_cadence(self):
         c = self.m_cadence['music'].get_mpd_music_string(self.m_P)
         c = c.replace(r"\transpose c'",
                       r"\transpose %s" % self.m_transpose.get_octave_notename())
         cadence_track = mpd.music_to_track(c)
         cadence_track.prepend_bpm(self.get_int("bpm"))
+        return cadence_track
 
-        p = mpd.MusicalPitch.new_from_notename("c'") + self.m_tone
+    def get_track_of_tone(self, tone):
+        """
+        Return a track that will play the tone defined by the
+        tone argument, an integer from 0 to 11, and played in the key
+        and octave as the last created question.
+        """
+        p = mpd.MusicalPitch.new_from_notename("c'") + tone
         p.m_octave_i = self.m_octave
+        if tone == 12:
+            p.m_octave_i += 1
         s = r"\staff{ %s }" % p.transpose_by_musicalpitch(self.m_transpose).get_octave_notename()
-        track = mpd.music_to_track(s)
-        return cadence_track + track
+        return mpd.music_to_track(s)
 
     def give_up(self):
         self.m_qstatus = self.QSTATUS_GIVE_UP
@@ -382,13 +404,72 @@ class Gui(abstract.Gui):
 
     def __init__(self, teacher):
         abstract.Gui.__init__(self, teacher)
-        grid = Gtk.Grid()
+        self.g_buttongrid = grid = Gtk.Grid()
         grid.set_row_spacing(gu.hig.SPACE_SMALL)
         grid.set_column_spacing(gu.hig.SPACE_SMALL)
         self.g_buttons = fill_grid(Gtk.Button, grid, labels[self.get_int("labels")][1])
         for key, button in list(self.g_buttons.items()):
             button.connect('clicked', self.on_left_click, key)
         self.practise_box.pack_start(grid, False, False, gu.hig.SPACE_SMALL)
+        #########################################
+        # GUI to practise what is answered wrong
+        self.g_wgrid = Gtk.Grid()
+        self.g_wgrid.set_row_spacing(gu.hig.SPACE_SMALL)
+        self.g_wgrid.set_column_spacing(gu.hig.SPACE_SMALL)
+        #l = Gtk.Label("You answered wrong")
+        #l.props.halign = Gtk.Align.START
+        #self.g_wgrid.attach(l, 0, 0, 4, 1)
+
+        self.g_wgrid.attach(
+            Gtk.Label(_("You answered:"), halign=Gtk.Align.END),
+            0, 1, 1, 1)
+        self.g_wrong = Gtk.Label()
+        self.g_wgrid.attach(self.g_wrong, 1, 1, 1, 1)
+        b = Gtk.Button(_("Play cadence and tone"))
+        b.connect('clicked', lambda w: self.m_t.play_wrong_guess())
+        self.g_wgrid.attach(b, 2, 1, 1, 1)
+        b = Gtk.Button(_("Play tone"))
+        b.connect('clicked', lambda w: soundcard.synth.play_track(
+            self.m_t.get_track_of_tone(self.m_t.m_guessed)))
+        self.g_wgrid.attach(b, 3, 1, 1, 1)
+        b = Gtk.Button(_("Play tone with solution"))
+        b.connect('clicked', lambda w: soundcard.synth.play_track(
+            self.m_t.get_track_of_solution(self.m_t.m_guessed)))
+        self.g_wgrid.attach(b, 4, 1, 1, 1)
+
+        self.g_wgrid.attach(
+            Gtk.Label(_("Correct answer:"), halign=Gtk.Align.END),
+            0, 2, 1, 1)
+        self.g_correct = Gtk.Label()
+        self.g_wgrid.attach(self.g_correct, 1, 2, 1, 1)
+        b = Gtk.Button(_("Play cadence and tone"))
+        b.connect('clicked', lambda w: self.m_t.play_question())
+        self.g_wgrid.attach(b, 2, 2, 1, 1)
+        b = Gtk.Button(_("Play tone"))
+        b.connect('clicked', lambda w: soundcard.synth.play_track(
+            self.m_t.get_track_of_tone(self.m_t.m_tone)))
+        self.g_wgrid.attach(b, 3, 2, 1, 1)
+        b = Gtk.Button(_("Play tone with solution"))
+        b.connect('clicked', lambda w: soundcard.synth.play_track(
+            self.m_t.get_track_of_solution(self.m_t.m_tone)))
+        self.g_wgrid.attach(b, 4, 2, 1, 1)
+        l = Gtk.Label(_("You should listen to both tones several times and try to hear the difference and the similarity between the tones."))
+        self.g_wgrid.attach(l, 0, 3, 4, 1)
+        b = Gtk.Button(_("Play cadence"))
+        def play_cadence(*w):
+            solfege.soundcard.synth.play_track(self.m_t.get_track_of_cadence())
+        b.connect('clicked', play_cadence)
+        self.g_wgrid.attach(b, 0, 4, 3, 1)
+        b = Gtk.Button(_("Done"))
+        def done(*w):
+            self.end_practise_wrong_answer()
+            self.new_question()
+        b.connect('clicked', done)
+        self.g_wgrid.attach(b, 3, 4, 2, 1)
+        l.set_line_wrap(True)
+        l.set_max_width_chars(40)
+        self.practise_box.pack_start(self.g_wgrid, False, False, 0)
+        ###########
         self.g_flashbar = gu.FlashBar()
         self.g_flashbar.show()
         self.practise_box.pack_start(self.g_flashbar, False, False, 0)
@@ -397,6 +478,7 @@ class Gui(abstract.Gui):
             ('repeat', lambda _o, self=self: self.m_t.play_question()),
             ('give_up', self.give_up))
         self.practise_box.show_all()
+        self.g_wgrid.hide()
         ###############
         # config_grid #
         ###############
@@ -482,7 +564,7 @@ class Gui(abstract.Gui):
     def give_up(self, *w):
         if self.m_t.q_status == self.QSTATUS_WRONG:
             self.g_flashbar.push(_("The answer is: %s")
-                 % labels[self.get_int("label")][1][self.m_t.m_tone])
+                 % labels[self.get_int("labels")][1][self.m_t.m_tone])
             self.m_t.give_up()
             self.std_buttons_give_up()
 
@@ -499,10 +581,25 @@ class Gui(abstract.Gui):
             else:
                 self.g_flashbar.flash(("Wrong"))
                 self.std_buttons_answer_wrong()
-                if self.get_bool("config/auto_repeat_question_if_wrong_answer"):
-                    self.m_t.play_question()
+                self.do_practise_wrong_answer()
 
+    def do_practise_wrong_answer(self):
+        self.g_buttongrid.hide()
+        self.g_flashbar.hide()
+        self.action_area.hide()
+        self.g_wgrid.show()
+        self.g_wrong.set_label(
+            labels[self.get_int('labels')][1][self.m_t.m_guessed])
+        self.g_correct.set_label(
+            labels[self.get_int('labels')][1][self.m_t.m_tone])
+    def end_practise_wrong_answer(self, *w):
+        self.g_buttongrid.show()
+        self.g_flashbar.show()
+        self.action_area.show()
+        self.g_wgrid.hide()
     def on_start_practise(self):
+        # Just to make sure the correct gui is shown.
+        self.end_practise_wrong_answer()
         self.m_t.start_practise()
         super(Gui, self).on_start_practise()
         if self.m_t.m_custom_mode:
