@@ -115,31 +115,6 @@ __all__ = [
 ]
 
 
-if sys.version_info < (2, 6):
-    # PY26
-    class Popen(subprocess.Popen):
-        """
-        We define this class because Popen.kill was added in Python 2.6,
-        and we want to run with 2.5 too.
-        """
-
-        def __init__(self, *args, **kwargs):
-            subprocess.Popen.__init__(self, *args, **kwargs)
-
-        def kill(self):
-            if sys.platform == 'win32':
-                # http://code.activestate.com/recipes/347462/
-                PROCESS_TERMINATE = 1
-                handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, self.pid)
-                ctypes.windll.kernel32.TerminateProcess(handle, -1)
-                ctypes.windll.kernel32.CloseHandle(handle)
-            else:
-                os.kill(self.pid, signal.SIGKILL)
-                self.wait()
-else:
-    Popen = subprocess.Popen
-
-
 class PopenSingleton(object):
     """
     A special version of Popen that will kill the previous program
@@ -148,7 +123,7 @@ class PopenSingleton(object):
     that should be killed before a new is run.
     """
 
-    class __impl(Popen):
+    class __impl(subprocess.Popen):
         """ Implementation of the singleton interface """
 
         def spam(self):

@@ -91,9 +91,9 @@ def play_mediafile(typeid, filename):
                 info = subprocess.STARTUPINFO()
                 info.dwFlags = 1
                 info.wShowWindow = 0
-                _mediaplayer = osutils.Popen(args=args, startupinfo=info)
+                _mediaplayer = subprocess.Popen(args=args, startupinfo=info)
             else:
-                _mediaplayer = osutils.Popen(args=args)
+                _mediaplayer = subprocess.Popen(args=args)
         except OSError as e:
             raise osutils.BinaryForMediaPlayerException(typeid,
                 cfg.get_string("sound/%s_player" % typeid), e)

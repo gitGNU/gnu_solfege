@@ -1003,7 +1003,7 @@ class LogWidget(Gtk.ScrolledWindow):
         Return the Popen objects .returncode
         """
         self.write("$ %s\n" % " ".join(args[0]))
-        p = osutils.Popen(
+        p = Popen(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             *args, **kwargs)

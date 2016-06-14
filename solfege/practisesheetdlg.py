@@ -139,7 +139,7 @@ class HtmlSheetWriter(BaseSheetWriter):
             args.insert(0, sys.executable)
         logger.write("\nRunning LilyPond\n", "h1")
         try:
-            p = osutils.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while 1:
                 p.poll()
                 # returncode is not None means that the process has finished
@@ -232,7 +232,7 @@ class LatexSheetWriter(BaseSheetWriter):
             args.insert(0, sys.executable)
         logger.write("\nRunning LilyPond\n", "h1")
         try:
-            p = osutils.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            p = subprocess.Popen(args, cwd=directory, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             while 1:
                 p.poll()
                 # returncode is not None means that the process has finished
@@ -250,7 +250,7 @@ class LatexSheetWriter(BaseSheetWriter):
                 cfg.get_string("programs/lilypond-book"), e)
         logger.write("\nRunning LaTeX\n", "h1")
         try:
-            p = osutils.Popen(
+            p = subprocess.Popen(
                 (cfg.get_string("programs/latex"), "--interaction=nonstopmode", filename),
                 cwd=os.path.join(directory, self.lilyout),
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
