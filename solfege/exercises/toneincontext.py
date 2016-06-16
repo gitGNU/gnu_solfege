@@ -348,9 +348,6 @@ class Teacher(abstract.Teacher):
         s = r"\staff{ %s }" % p.transpose_by_musicalpitch(self.m_transpose).get_octave_notename()
         return mpd.music_to_track(s)
 
-    def give_up(self):
-        self.m_qstatus = self.QSTATUS_GIVE_UP
-
     def start_practise(self):
         self.m_custom_mode = bool(not self.m_P.header.tones)
         if self.m_custom_mode:
@@ -475,8 +472,7 @@ class Gui(abstract.Gui):
         self.practise_box.pack_start(self.g_flashbar, False, False, 0)
         self.std_buttons_add(
             ('new', self.new_question),
-            ('repeat', lambda _o, self=self: self.m_t.play_question()),
-            ('give_up', self.give_up))
+            ('repeat', lambda _o, self=self: self.m_t.play_question()))
         self.practise_box.show_all()
         self.g_wgrid.hide()
         ###############
@@ -560,13 +556,6 @@ class Gui(abstract.Gui):
                 button.set_sensitive(key in self.get_list("tones"))
         elif i == Teacher.ERR_NO_CADENCES:
             self.g_flashbar.flash(_("No cadences selected"))
-
-    def give_up(self, *w):
-        if self.m_t.q_status == self.QSTATUS_WRONG:
-            self.g_flashbar.push(_("The answer is: %s")
-                 % labels[self.get_int("labels")][1][self.m_t.m_tone])
-            self.m_t.give_up()
-            self.std_buttons_give_up()
 
     def on_left_click(self, button, tone_int):
         if self.m_t.q_status == self.QSTATUS_SOLVED:
