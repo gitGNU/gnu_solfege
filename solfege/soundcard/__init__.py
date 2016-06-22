@@ -85,7 +85,7 @@ def play_mediafile(typeid, filename):
             args.append(os.path.abspath(filename))
         if _mediaplayer and _mediaplayer.poll() is None:
             _mediaplayer.kill()
-            _mediaplaer = None
+            _mediaplayer = None
         try:
             if sys.platform == 'win32':
                 info = subprocess.STARTUPINFO()
