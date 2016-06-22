@@ -445,7 +445,7 @@ class Section(Gtk.VBox):
         if id(self._linked) in editor_of(self).m_page_mapping:
             editor_of(self).destroy_window(id(self._linked))
         self.g_link_box.get_children()[self._idx].destroy()
-        del self.m_model[idx]
+        del self.m_model[self._idx]
 
     def on_edit_linktext(self, menuitem):
         # row is the hbox containing the linkbutton
@@ -831,7 +831,7 @@ class Editor(Gtk.Window, gu.EditorDialogBase):
                 win.show()
             except IOError as e:
                 gu.dialog_ok(_("Loading file '%(filename)s' failed: %(msg)s") %
-                        {'filename': fn, 'msg': str(e)}, self)
+                        {'filename': fn, 'msg': str(e)}, solfege.win)
 
     def load_file(self, filename):
         """
