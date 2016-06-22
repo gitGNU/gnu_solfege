@@ -135,6 +135,7 @@ class StatisticsViewer(Gtk.Grid):
         label.props.halign = Gtk.Align.START
         label.set_text(_("Statistics for the last %i times the tone was asked") % default_q)
         self.attach(label, 0, 2, 8, 1)
+
         def on_scale_value_changed(scale):
             label.set_text(_("Statistics for the last %i times the tone was asked") % scale.get_value())
             self.update()
@@ -413,9 +414,6 @@ class Gui(abstract.Gui):
         self.g_wgrid = Gtk.Grid()
         self.g_wgrid.set_row_spacing(gu.hig.SPACE_SMALL)
         self.g_wgrid.set_column_spacing(gu.hig.SPACE_SMALL)
-        #l = Gtk.Label("You answered wrong")
-        #l.props.halign = Gtk.Align.START
-        #self.g_wgrid.attach(l, 0, 0, 4, 1)
 
         self.g_wgrid.attach(
             Gtk.Label(_("You answered:"), halign=Gtk.Align.END),
@@ -453,11 +451,13 @@ class Gui(abstract.Gui):
         l = Gtk.Label(_("You should listen to both tones several times and try to hear the difference and the similarity between the tones."))
         self.g_wgrid.attach(l, 0, 3, 4, 1)
         b = Gtk.Button(_("Play cadence"))
+
         def play_cadence(*w):
             solfege.soundcard.synth.play_track(self.m_t.get_track_of_cadence())
         b.connect('clicked', play_cadence)
         self.g_wgrid.attach(b, 0, 4, 3, 1)
         b = Gtk.Button(_("Done"))
+
         def done(*w):
             self.end_practise_wrong_answer()
             self.new_question()
@@ -514,6 +514,7 @@ class Gui(abstract.Gui):
         if not (min_bpm < self.m_t.get_int("bpm") < max_bpm):
             self.m_t.set_int("bpm", 90)
         scale.set_value(self.m_t.get_int("bpm"))
+
         def scale_value_changed(scale):
             self.m_t.set_int("bpm", int(scale.get_value()))
         scale.connect('value-changed', scale_value_changed)
@@ -578,11 +579,13 @@ class Gui(abstract.Gui):
             labels[self.get_int('labels')][1][self.m_t.m_guessed])
         self.g_correct.set_label(
             labels[self.get_int('labels')][1][self.m_t.m_tone])
+
     def end_practise_wrong_answer(self, *w):
         self.g_buttongrid.show()
         self.g_flashbar.show()
         self.action_area.show()
         self.g_wgrid.hide()
+
     def on_start_practise(self):
         # Just to make sure the correct gui is shown.
         self.end_practise_wrong_answer()
@@ -604,7 +607,7 @@ class Gui(abstract.Gui):
             self.m_t.m_cadences['minor'] = False
             self.m_t.m_cadences['major'] = False
             b = _(" (builtin)") if 'cadence' in self.m_t.m_P.blocklists \
-               else ""
+                else ""
             for k in Teacher.cadence:
                 btn = Gtk.CheckButton(Teacher.cadence[k]['name'] + b)
                 btn.show()
