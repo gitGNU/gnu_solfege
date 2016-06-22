@@ -41,7 +41,7 @@ class Identifier(str):
             else:
                 if name in namespace:
                     return namespace[name]
-        if self.check_ns:
+        if Identifier.check_ns:
             raise LookupException("Unknown identifier '%s'" % name, self)
         return self
 

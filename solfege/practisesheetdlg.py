@@ -20,6 +20,7 @@ import codecs
 import logging
 import os
 import subprocess
+import locale
 import sys
 import textwrap
 import time
@@ -35,6 +36,7 @@ from solfege import lessonfile
 from solfege import lessonfilegui
 from solfege import osutils
 from solfege.multipleintervalconfigwidget import IntervalCheckBox
+from solfege import parsetree
 import xml.etree.ElementTree as et
 
 import solfege
@@ -147,6 +149,7 @@ class HtmlSheetWriter(BaseSheetWriter):
                     break
                 while 1:
                     s = p.stdout.readline()
+                    s = s.decode(locale.getpreferredencoding())
                     if not s:
                         break
                     logger.write(s)
@@ -240,6 +243,7 @@ class LatexSheetWriter(BaseSheetWriter):
                     break
                 while 1:
                     s = p.stdout.readline()
+                    s = s.decode(locale.getpreferredencoding())
                     if not s:
                         break
                     logger.write(s)
@@ -263,6 +267,7 @@ class LatexSheetWriter(BaseSheetWriter):
                     while Gtk.events_pending():
                         Gtk.main_iteration()
                     s = p.stdout.readline()
+                    s = s.decode(locale.getpreferredencoding())
                     if not s:
                         break
                     logger.write(s)
@@ -415,6 +420,8 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             self.load_file(filename)
         self.add_to_instance_dict()
 
+        # The popupmenu shown to add exercises
+        self.g_emenu = self.create_learning_tree_menu()
     def view_lesson(self, idx):
         self.g_qtype.handler_block(self.g_qtype_event_handler)
         self.g_intervals.handler_block(self.g_intervals_event_handler)
@@ -449,8 +456,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
         self.g_lesson_title.handler_unblock(self.g_lesson_title_event_handle)
 
     def on_add_lesson_clicked(self, button):
-        menu = self.create_learning_tree_menu()
-        menu.popup(None, None, None, None, 1, 0)
+        self.g_emenu.popup(None, None, None, None, 1, 0)
 
     def on_remove_lesson_clicked(self, button):
         path, column = self.g_treeview.get_cursor()
@@ -513,7 +519,9 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
             print("only some modules work:", self.ok_modules)
             return
         p = lessonfile.LessonfileCommon()
+        parsetree.Identifier.check_ns = False
         p.parse_file(lessonfile.uri_expand(filename))
+        parsetree.Identifier.check_ns = True
         if module == 'idbyname':
             self._add_idbyname_lesson(p, filename)
         elif module == 'harmonicinterval':
@@ -565,6 +573,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
         Delete any extra questions and then add new random questions
         if some sections have too few questions generated.
         """
+        parsetree.Identifier.check_ns = False
         for section in self.m_sections:
             # Remove trailing questions if we have too many questions
             del self.m_sections[section['count']:]
@@ -574,7 +583,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
                 for question_dict in solfege.app.sheet_gen_questions(
                         count, section):
                     section['questions'].append(question_dict)
-
+        parsetree.Identifier.check_ns = True
     def _delete_questions(self, idx):
         """
         Delete the generated questions for exercise idx in self.m_sections.
@@ -697,7 +706,7 @@ class PractiseSheetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercis
         tree = et.ElementTree(doc)
         f = open(self.m_filename, 'w')
         print('<?xml version="1.0" encoding="utf-8"?>', file=f)
-        tree.write(f, encoding="utf-8")
+        tree.write(f, encoding="unicode")
         f.close()
         self.m_changed = False
 
