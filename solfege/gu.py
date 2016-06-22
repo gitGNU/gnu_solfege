@@ -29,7 +29,6 @@ from gi.repository import Gdk
 from gi.repository import Pango
 
 from solfege import cfg
-from solfege import osutils
 from solfege import soundcard
 from solfege import utils
 
@@ -1003,7 +1002,7 @@ class LogWidget(Gtk.ScrolledWindow):
         Return the Popen objects .returncode
         """
         self.write("$ %s\n" % " ".join(args[0]))
-        p = Popen(
+        p = subprocess.Popen(
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             *args, **kwargs)
