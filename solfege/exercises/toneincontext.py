@@ -529,9 +529,6 @@ class Gui(abstract.Gui):
         ##############
         # Statistics #
         ##############
-        self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
-                                   _("Tone in cadence"))
-        #
         self.g_statview = StatisticsViewer(self.m_t)
         self.g_statview.show()
         self.g_notebook.append_page(self.g_statview, Gtk.Label(label=_("Statistics")))
