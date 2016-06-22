@@ -29,6 +29,7 @@ from solfege import lessonfile
 from solfege import lessonfilegui
 from solfege import lfmod
 from solfege import osutils
+from solfege import parsetree
 from solfege.dataparser import Dataparser
 
 import solfege
@@ -174,8 +175,10 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
             print("Only harmonicinterval, melodicinterval and idbyname module exercises are working now. Ignoring...")
             return
         if module == 'idbyname':
+            parsetree.Identifier.check_ns = False
             p = lessonfile.LessonfileCommon()
             p.parse_file(filename)
+            parsetree.Identifier.check_ns = True
             if not [q for q in p.m_questions if isinstance(q.music, lessonfile.MpdParsable)]:
                 gu.dialog_ok(_("This lesson file cannot be exported because some of the music in the file are not parsable by the mpd module."), self)
                 return
@@ -346,6 +349,7 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         time.sleep(0.1)
         while Gtk.events_pending():
             Gtk.main_iteration()
+        parsetree.Identifier.check_ns = False
         try:
             for prog in solfege.app.export_training_set(v, export_to, output_format, self.g_named_tracks.get_active()):
                 progress_bar.set_fraction(prog)
@@ -355,3 +359,5 @@ class TrainingSetDialog(Gtk.Window, gu.EditorDialogBase, lessonfilegui.Exercises
         except osutils.BinaryBaseException as e:
             progress_dialog.destroy()
             solfege.win.display_error_message2(e.msg1, e.msg2)
+        finally:
+            parsetree.Identifier.check_ns = True
