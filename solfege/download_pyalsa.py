@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import importlib
 import os
 import sys
 import urllib.request, urllib.parse, urllib.error
@@ -103,7 +104,7 @@ ________________________________________________________________________________
         return
     sys.path.append(os.path.join(pdir, "pyalsa-%s" % pyalsa_ver))
     import pyalsa
-    reload(pyalsa)
+    importlib.reload(pyalsa)
     print(pyalsa)
     logwin.write("\npyalsa module: %s\n\n" % str(pyalsa))
     logwin.write("The module is built. Now you must make Solfege find it.\n")
