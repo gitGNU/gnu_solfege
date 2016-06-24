@@ -211,13 +211,6 @@ test-screenshots:
 solfege/_version.py:
 	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_versions_file('@GIT@')"
 
-check-revision-id:
-ifndef skip_rev_test
-	# We force recreating solfege/_version.py here
-	$(PYTHON) -c "import tools.buildutil; tools.buildutil.create_versions_file('@GIT@')"
-	$(PYTHON) tools/test-revision-id.py
-endif
-
 prepare-release: check-for-new-po-files check-for-new-manual-po-files update-manual check-revision-id test
 
 dist: po/solfege.pot help/C/solfege.pot
@@ -238,7 +231,7 @@ binary-tarball:
 	$(MAKE) update-manual
 	$(MAKE)
 	cd .. && mv build-branch solfege-$(VERSION) && tar --gzip --create --file=solfege-bin-$(VERSION).tar.gz solfege-$(VERSION)
-	
+
 dist_workhorse: all AUTHORS INSTALL README FAQ INSTALL.win32
 	rm -rf $(DISTNAME)
 ifdef GIT
@@ -292,7 +285,6 @@ all: $(TARGETS) solfege.1
 
 .PHONY: help
 help:
-	@echo "set skip_rev_test=yes if you need to skip the bzr revid test"
 	@echo "set skipmanual=yes       Don't rebuild the music theory images"
 	@echo "make po-update           Update po/solfege.pot and msgmerge with po/*.po"
 	@echo "make manual-po-update    Update help/*/solfege.pot and msgmerge with help/*/*.po"
