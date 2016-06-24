@@ -109,11 +109,11 @@ class Gui(abstract.Gui):
         # statistics #
         ##############
         self.setup_statisticsviewer(statisticsviewer.StatisticsViewer,
-                                   _("Statistics for this example exercise"))
+                                   "Statistics for this example exercise")
 
     def give_up(self, _o=None):
         if self.m_t.q_status == self.QSTATUS_WRONG:
-            self.g_flashbar.push(_("The answer is: xxx"))
+            self.g_flashbar.push("The answer is: xxx")
             self.m_t.give_up()
             self.std_buttons_give_up()
 
@@ -130,7 +130,7 @@ class Gui(abstract.Gui):
         super(Gui, self).on_start_practise()
         if not self.m_t.m_custom_mode:
             self.m_t.m_statistics.reset_session()
-        self.g_statview.g_heading.set_text("%s - %s" % (_("Example"), self.m_t.m_P.header.title))
+        self.g_statview.g_heading.set_text("%s - %s" % ("Example", self.m_t.m_P.header.title))
         self.std_buttons_start_practise()
         if solfege.app.m_test_mode:
             self.g_flashbar.delayed_flash(self.short_delay,
@@ -158,5 +158,5 @@ class Gui(abstract.Gui):
         self.set_float('seconds_before_new_question', self.m_saved_s_new)
         self.m_t.exit_test_mode()
         self.g_new.show()
-        self.g_new.set_label(_("_New something"))
+        self.g_new.set_label("_New something")
         self.g_give_up.show()
