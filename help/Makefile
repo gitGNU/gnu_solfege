@@ -37,7 +37,7 @@ installfiles+=help/style.css
 
 ifneq "$(skipmanual)" "yes"
 ifdef LILYPOND
-all: $(shell py -3 tools/generate_theory_ly.py --png-targets)
+all: $(shell $(PYTHON) tools/generate_theory_ly.py --png-targets)
 endif
 endif
 # I have removed any code that will merge help/C/solfege.pot and
