@@ -1092,6 +1092,8 @@ class LessonfileCommon(object):
         self.m_location = os.path.split(uri_expand(filename))[0]
         self.m_filename = filename
         e = dataparser.read_encoding_marker_from_file(uri_expand(filename))
+        if not e:
+            e = "utf-8"
         # We open and read the file without using the codecs module
         # because the lexer class will check for a coding tag in
         # the lesson file before decoding it. FIXMEPY3 wrong comment
