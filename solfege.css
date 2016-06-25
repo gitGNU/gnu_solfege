@@ -4,8 +4,10 @@
 */
 
 
-#ProgressionNameLabel, #Feedback { font: "Sans 18" }
-#ProgressionLabelNumber { font: "Sans 12" }
+#ProgressionNameLabel, #Feedback {
+  font: Sans 20;
+}
+#ProgressionLabelNumber { font: Sans 9 }
 #BoldText { font: Bold }
 
 #StatisticsH1, #Heading1 { font: Sans 18 }
