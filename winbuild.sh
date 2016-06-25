@@ -65,28 +65,6 @@ setup() {
   echo "copy ../Python34 to win32/python with explorer and press ENTER"
   echo "we do this because msys cp is painfully slow"
   read
-  #cp -a ../Python34 win32/python
-  #echo '"lib/gtk-2.0/2.10.0/loaders/svg_loader.dll"' > win32/etc/gtk-2.0/gdk-pixbuf.loaders
-  #echo '"svg" 2 "gdk-pixbuf" "Scalable Vector Graphics" "LGPL"' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-  #echo '"image/svg+xml" "image/svg" "image/svg-xml" "image/vnd.adobe.svg+xml" "text/xml-svg" "image/svg+xml-compressed" ""' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-  #echo '"svg" "svgz" "svg.gz" ""' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-  #echo '" <svg" "*    " 100' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-  #echo '" <!DOCTYPE svg" "*             " 100' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-  #echo ' ' >> win32/etc/gtk-2.0/gdk-pixbuf.loaders
-  ## We did the above instead of using gdk-pixbuf-query-loaderse.exe because
-  ## we need to make a relocatable file.
-  ##win32/bin/gdk-pixbuf-query-loaders.exe win32/lib/gtk-2.0/2.10.0/loaders/svg_loader.dll > win32/etc/gtk-2.0/gdk-pixbuf.loaders 
-
-  ##mv win32/zlib-1.2.4/zlib1.dll win32/bin
-  ## Move these so CSound can find python25.dll
-  #cp -a ../pygtk-stuff/* win32/bin/lib/site-packages
-
-  #cp testgtkenv.bat testgtkenv.py win32/bin/
-  #echo "gtk-theme-name = \"MS-Windows\""  > win32/etc/gtk-2.0/gtkrc
-  #find win32 -name "*.def" | xargs rm
-  #find win32 -name "*.a" | xargs rm
-  #find win32 -name "*.lib" | xargs rm
-  #(cd win32 && find -name *.pyc | xargs rm)
 }
 
 build() {
@@ -142,7 +120,7 @@ if test "x$1" = "xclean"; then
 fi
 if test "x$1" = "xgo"; then
   setup
-  clean
+  cleanup_win32
   build
   install
 fi
