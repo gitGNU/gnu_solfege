@@ -318,7 +318,7 @@ class RhythmWidget(MusicDisplayer):
         self._display()
         if self.m_score.m_staffs:
             timeposes = self.m_score.m_staffs[0].get_timeposes()
-            if self.m_cursor > len(timeposes) - 1:
+            if self.m_cursor is not None and self.m_cursor > len(timeposes) - 1:
                 self.m_cursor = len(timeposes) - 1
         else:
             self.m_cursor = None
