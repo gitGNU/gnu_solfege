@@ -121,10 +121,10 @@ class LabelObjectBox(gu.AlignedHBox):
                 l = new_labelobject(lf.m_elements[k]['label'])
             else:
                 l = Gtk.Label(label=k)
-            self.pack_start(l, False, False)
+            self.pack_start(l, False, False, 0)
             if i != len(v) - 1:
                 l = Gtk.Label(label="-")
-                self.pack_start(l, False, False)
+                self.pack_start(l, False, False, 0)
         self.setup_post()
         self.show_all()
 
