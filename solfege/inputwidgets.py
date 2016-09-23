@@ -321,15 +321,16 @@ class IntervalButtonsWidget(IntervalButtonsWidgetBase):
                 (0, 1), (1, 1), (2, 1), (3, 1),
                 (0, 2), (1, 2), (2, 2), (3, 2))):
             g1.attach(self.mk_button(i + 1), x, y, 1, 1)
-        g2 = Gtk.Grid()
+        spacing = Gtk.Label("")
+        spacing.show()
+        g1.attach(spacing, 0, 3, 1, 1)
         for i, (x, y) in enumerate((
                 (0, 0), (1, 0), (2, 0), (3, 0),
                 (0, 1), (1, 1), (2, 1), (3, 1),
                 (0, 2), (1, 2), (2, 2), (3, 2))):
-            g2.attach(self.mk_button(i + 13), x, y, 1, 1)
+            g1.attach(self.mk_button(i + 13), x, y + 4, 1, 1)
         self.set_row_spacing(gu.hig.SPACE_MEDIUM)
         self.add(g1)
-        self.add(g2)
         self.post_construct(vars_to_watch)
 
 
